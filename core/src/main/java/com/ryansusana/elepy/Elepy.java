@@ -43,7 +43,7 @@ public class Elepy {
 
     private List<ElepyModule> modules;
     private List<Schema> schemas;
-    private String[] packages;
+    private List<String> packages;
 
     private boolean initialized = false;
 
@@ -58,7 +58,7 @@ public class Elepy {
         this.baseObjectEvaluator = baseObjectEvaluator;
 
         this.http = service;
-        this.packages = packages;
+        this.packages = Arrays.asList(packages);
         this.schemas = schemas;
 
         this.modules = new ArrayList<>();
@@ -81,7 +81,7 @@ public class Elepy {
             module.setup();
         }
         setupLogs();
-        int i = 0;
+
         Map<RestModel, Class<?>> classes = new HashMap<>();
 
         Reflections reflections = new Reflections(packages);
@@ -152,6 +152,7 @@ public class Elepy {
         }
         return schemas;
     }
+
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> setupPojos(Map<RestModel, Class<?>> classes) {
@@ -359,6 +360,9 @@ public class Elepy {
         throw new IllegalStateException(cls.getSimpleName() + "doesn't have a field annotated with MongoId");
     }
 
+    public void addPackage(String packageName) {
+        this.packages.add(packageName);
+    }
 
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
