@@ -1,0 +1,18 @@
+<div id="sidebar" class="uk-light uk-padding">
+    <div class="models">
+        <h3>Admin Panel</h3>
+        {% for descriptor in descriptors %}
+        <p>
+            <a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a>
+        </p>
+        {% endfor %}
+    </div>
+    <div class="sidebar-footer">
+
+
+        <p>Designed &amp; Developed by
+            <a href="https://ryansusana.com">Ryan Susana</a>
+        </p>
+    </div>
+
+</div>

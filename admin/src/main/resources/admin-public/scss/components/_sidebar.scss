@@ -1,0 +1,19 @@
+$sidebar-width:22rem;
+
+#sidebar{
+    position: fixed;
+    box-sizing: border-box;
+    top: $navbar-nav-item-height;
+    width: $sidebar-width;
+    background-color: $global-secondary-background;
+    height: calc(100vh - #{$navbar-nav-item-height});
+    .models{
+        height: 95%;
+    }
+    .sidebar-footer{
+        height: 50%;
+        p{
+            font-size: 0.8em;
+        }
+    }
+}

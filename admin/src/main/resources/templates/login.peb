@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="css/main.css">
+    <title>Elepy Admin Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.42/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.42/js/uikit-icons.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+            crossorigin="anonymous"></script>
+    <script src="/js/login.js"></script>
+</head>
+
+<body>
+
+<div id="login-section" class="uk-section" style="">
+    <div class="uk-container">
+        <div class="uk-flex-center" uk-grid>
+            <div class="uk-width-2-5">
+                <div class="login-card ">
+                    <div class="login-header">
+                        <h2>Elepy Admin Panel</h2>
+                        <h5>version: ICE</h5>
+                    </div>
+
+                    <div class="login-content">
+
+                        <form id="login-form" method="post" action="/login" class="uk-form-stacked">
+
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-stacked-text">Username</label>
+                                <div class="uk-form-controls">
+                                    <input name="username" class="uk-input" type="text"
+                                           placeholder="Username">
+                                </div>
+                            </div>
+
+
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-stacked-text">Password</label>
+                                <div class="uk-form-controls">
+                                    <input name="password" class="uk-input" type="password"
+                                           placeholder="Password">
+                                </div>
+                            </div>
+
+                        </form>
+
+
+                    </div>
+                    <div class="login-footer">
+
+                        <p class=" uk-text-center">
+                            <button type="submit" form="login-form" class="uk-button uk-button-primary"><i class="fas fa-sign-in-alt"></i>Sign in</button>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+</script>
+</body>
+
+</html>

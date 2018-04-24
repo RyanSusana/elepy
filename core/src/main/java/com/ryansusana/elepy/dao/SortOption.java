@@ -1,0 +1,15 @@
+package com.ryansusana.elepy.dao;
+
+public enum SortOption {
+    ASCENDING(1), DESCENDING(-1);
+
+    private final int val;
+
+    public int getVal() {
+        return val;
+    }
+
+    SortOption(int val){
+        this.val = val;
+    }
+}

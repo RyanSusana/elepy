@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
+
+
+$secondary-color: #1c9edb;
+$global-link-color: $secondary-color;
+$primary-color: red;
+
+$global-primary-background: $secondary-color;
+$main-gradient: linear-gradient(to top left, #ff512f, #f09819);
+$dark-grey: #212121;
+$global-secondary-background: $dark-grey;
+$grey: #B2B2B2;
+$off-white: #F2F2F2;
+$light-grey: #CCCCCC;
+$progress-background: darken($dark-grey, 4%);
+
+$navbar-nav-item-hover-color: white;
+$logo-font-size: 1.6rem;
+$logo-color: white;
+$logo-hover-color: darken(white, 10%);
+$navbar-background: $secondary-color;
+$navbar-nav-item-height: 50px;
+$navbar-nav-item-color: white;
+$navbar-nav-item-active-color: white;
+$global-background: lighten($off-white, 40%);
+
+$card-default-hover-background: white;
+
+$raleway: 'Raleway', sans-serif;
+
+$quicksand: 'Quicksand', sans-serif;
+$roboto-slab: 'Roboto Slab', serif;
+
+$base-heading-font-family: $roboto-slab;
+$base-body-font-family: $raleway;
+
+.edit-modal-body {
+  min-height: 65vh !important;
+}
+.fas{
+  margin-right: 0.6em;
+}
+
+@mixin base-background($default: false) {
+
+  @if ($default) {
+
+    background-color: $dark-grey;
+  } @else {
+    @include background-gradient($behind: white, $opacity: 0.1);
+  }
+}
+
+@mixin background-gradient($opacity:1, $behind: white, $gradient: white, $direction: to top) {
+  background: $gradient, $behind;
+}
+
+@mixin tint-over($gradient, $opacity:0.5) {
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: $gradient;
+    opacity: $opacity;
+  }
+}
+
+@import "animate/animate";
+
+@import "uikit/variables-theme.scss";
+@import "uikit/mixins-theme.scss";
+@mixin hook-card() {
+  color: #000;
+}
+
+@import "uikit/uikit-theme.scss";
+@import "components/sidebar";
+@import "components/nav";
+@import "components/main-content";
+
+@import "components/login";
+
+.uk-button {
+  border-radius: $button-line-height;
+}
+
+.uk-button-large {
+  border-radius: $button-large-line-height;
+}
+
+pre {
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+}

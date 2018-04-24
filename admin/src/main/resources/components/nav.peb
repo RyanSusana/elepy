@@ -1,0 +1,31 @@
+<div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; bottom: #transparent-sticky-navbar">
+
+    <nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
+
+        <div class="uk-navbar-left uk-logo">
+            <a class="uk-navbar-item uk-logo" href="/admin">Elepy</a>
+        </div>
+        <div class="uk-navbar-center">
+            <ul class="uk-navbar-nav">
+                <li class="welcome">
+                    Welcome to Elepy version: ICE
+                </li>
+
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                <li class="">
+                    <a href="/admin"><i class="fas fa-home"></i>Home</a>
+                </li>
+
+                <li>
+                    <a href="/admin-logout"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                </li>
+            </ul>
+
+        </div>
+
+
+    </nav>
+</div>

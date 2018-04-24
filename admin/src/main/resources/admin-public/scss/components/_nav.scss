@@ -1,0 +1,13 @@
+.uk-navbar-nav {
+  color: #ffffff;
+  li {
+    transition: .2s all;
+    &:hover:not(.welcome) {
+      background-color: darken($secondary-color, 5%);
+    }
+  }
+}
+
+.uk-navbar-nav > li > a {
+  text-transform: none;
+}
