@@ -1,4 +1,4 @@
-#About Elepy
+## About Elypi
 
 Elepy is a Rest API generation tool for Java/Kotlin developed by Ryan Susana. It is extremely customizable! The library comes bundled with an admin control panel that lets you easily control your content.
 
