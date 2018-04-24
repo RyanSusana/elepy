@@ -40,6 +40,8 @@ public class ElepyAdminPanel extends ElepyModule {
         super(elepy);
         this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
         this.userService = new UserService(userDao);
+
+
     }
 
 
@@ -115,15 +117,10 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
-        //http().staticFiles.location("/admin-public");
+        http().staticFiles.location("/admin-public");
 
-        if (true) {
-            String projectDir = System.getProperty("user.dir");
-            String staticDir = "D:/Users/Ryan/Documents/rycms/elepy/admin/src/main/resources/admin-public";
-            http().staticFiles.externalLocation( staticDir);
-        } else {
-            http().staticFiles.location("/admin-public");
-        }
+        elepy().addPackage(User.class.getPackage().getName());
+
     }
 
     private void setupAdmin() {
