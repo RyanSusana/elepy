@@ -1,12 +1,9 @@
 # About Elepy
 
-Elepy is a Rest API Generation Tool/Headless Content Management System for Java/Kotlin developed by Ryan Susana. It is extremely customizable! The framework comes bundled with an admin control panel that lets you easily control your content.
+Elepy is a Rest API Generation Framework/Headless Content Management System for Java/Kotlin developed by [Ryan Susana](https://ryansusana.com/). It is extremely customizable! The framework comes bundled with an admin control panel that lets you easily control your content.
 
 Because it's backed by MongoDB, it's able to handle extremely complex objects with ease.
 
-Every part of the generation library is customizable. That means that you can use Elepy to handle really complicated application logic as well.
-
-Everything about this 
 ## Api Generator
 The API generator, Elepy, is the core of the framework. It's super fast, thanks to [spark-java](http://sparkjava.com/) and [jongo](http://jongo.org/).  Most API's (5-6 models) load within 1 second. The api is completely @Annotation based, meaning that you only need to annotate your POJO's and voilà you have a completely configurable REST API for that POJO. The only restriction is that your POJO has a field annotated with `@MongoId` from the Jongo library and your POJO class must also be annotated with `@RestModel` from the Elepy framework.
 
@@ -27,7 +24,17 @@ A `/config` route is also generated that displays how your REST API is modeled. 
 
 Elepy is also modular. All modules must extend the ElepyModule class and they can be hooked onto with the `elepyInstance.addModule(...)` method. The image upload module and the Elepy Admin Panel module are examples.
 
+## Elepy Admin Panel
 
+Elepy comes bundled with an Admin Panel.
 
+This module comes built-in with a User rest model. It communicates with the `/config` route to dynamically generate a nice UI to handle all of Elepy's features. It is built using 2 frameworks, VueJS and UIKit. It is currently limited to models that are 2 deep, so objects inside of objects is about as far as it goes. The UI is very informative, modern and user-friendly.
+
+It features:
+
+ - All of Elepy's functionality, this includes but is not limited to: basic routes, search and sort
+ - A rich UI dedicated to speed and user-friendliness. A lot of attention was put to detail and interaction going smoothly
+ - A built in user model that generates a base admin user that you can log into(if there are no users in the database) it also uses BCrypt to automatically encrypt passwords.
+ - *More features soon to come...*
 
  
