@@ -16,14 +16,12 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$drop-z-index:                               $global-z-index + 20 !default;
-$drop-width:                                 300px !default;
-$drop-margin:                                $global-margin !default;
-
+$drop-z-index: $global-z-index + 20 !default;
+$drop-width: 300px !default;
+$drop-margin: $global-margin !default;
 
 /* ========================================================================
    Component: Drop
@@ -36,39 +34,53 @@ $drop-margin:                                $global-margin !default;
  */
 
 .uk-drop {
-    /* 1 */
-    display: none;
-    /* 2 */
-    position: absolute;
-    z-index: $drop-z-index;
-    /* 3 */
-    box-sizing: border-box;
-    width: $drop-width;
+  /* 1 */
+  display: none;
+  /* 2 */
+  position: absolute;
+  z-index: $drop-z-index;
+  /* 3 */
+  box-sizing: border-box;
+  width: $drop-width;
 }
 
 /* Show */
-.uk-drop.uk-open { display: block; }
-
+.uk-drop.uk-open {
+  display: block;
+}
 
 /* Direction / Alignment modifiers
  ========================================================================== */
 
 /* Direction */
-[class*='uk-drop-top'] { margin-top: (-$drop-margin); }
-[class*='uk-drop-bottom'] { margin-top: $drop-margin; }
-[class*='uk-drop-left'] { margin-left: (-$drop-margin); }
-[class*='uk-drop-right'] { margin-left: $drop-margin; }
+[class*='uk-drop-top'] {
+  margin-top: (-$drop-margin);
+}
 
+[class*='uk-drop-bottom'] {
+  margin-top: $drop-margin;
+}
+
+[class*='uk-drop-left'] {
+  margin-left: (-$drop-margin);
+}
+
+[class*='uk-drop-right'] {
+  margin-left: $drop-margin;
+}
 
 /* Grid modifiers
  ========================================================================== */
 
-.uk-drop-stack .uk-drop-grid > * { width: 100% !important; }
-
+.uk-drop-stack .uk-drop-grid > * {
+  width: 100% !important;
+}
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-drop-misc)) {@include hook-drop-misc();}
+@if (mixin-exists(hook-drop-misc)) {
+  @include hook-drop-misc();
+}
 
 // @mixin hook-drop-misc(){}

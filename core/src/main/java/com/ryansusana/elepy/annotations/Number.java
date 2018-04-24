@@ -11,5 +11,5 @@ public @interface Number {
 
     float minimum() default Integer.MIN_VALUE;
 
-    float maximum() default  Integer.MAX_VALUE;
+    float maximum() default Integer.MAX_VALUE;
 }

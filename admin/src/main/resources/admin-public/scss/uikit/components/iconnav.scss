@@ -9,19 +9,17 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$iconnav-margin-horizontal:                       $global-small-margin !default;
-$iconnav-margin-vertical:                         $iconnav-margin-horizontal !default;
+$iconnav-margin-horizontal: $global-small-margin !default;
+$iconnav-margin-vertical: $iconnav-margin-horizontal !default;
 
-$iconnav-item-color:                              $global-muted-color !default;
+$iconnav-item-color: $global-muted-color !default;
 
-$iconnav-item-hover-color:                        $global-color !default;
+$iconnav-item-hover-color: $global-color !default;
 
-$iconnav-item-active-color:                       $global-color !default;
-
+$iconnav-item-active-color: $global-color !default;
 
 /* ========================================================================
    Component: Iconnav
@@ -34,16 +32,18 @@ $iconnav-item-active-color:                       $global-color !default;
  */
 
 .uk-iconnav {
-    display: flex;
-    /* 1 */
-    flex-wrap: wrap;
-    /* 2 */
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    /* 3 */
-    margin-left: (-$iconnav-margin-horizontal);
-    @if(mixin-exists(hook-iconnav)) {@include hook-iconnav();}
+  display: flex;
+  /* 1 */
+  flex-wrap: wrap;
+  /* 2 */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* 3 */
+  margin-left: (-$iconnav-margin-horizontal);
+  @if (mixin-exists(hook-iconnav)) {
+    @include hook-iconnav();
+  }
 }
 
 /*
@@ -52,12 +52,11 @@ $iconnav-item-active-color:                       $global-color !default;
  */
 
 .uk-iconnav > * {
-    /* 1 */
-    flex: none;
-    /* 2 */
-    padding-left: $iconnav-margin-horizontal;
+  /* 1 */
+  flex: none;
+  /* 2 */
+  padding-left: $iconnav-margin-horizontal;
 }
-
 
 /* Items
  ========================================================================== */
@@ -69,27 +68,32 @@ $iconnav-item-active-color:                       $global-color !default;
  */
 
 .uk-iconnav > * > a {
-    /* 1 */
-    display: block;
-    /* 2 */
-    color: $iconnav-item-color;
-    @if(mixin-exists(hook-iconnav-item)) {@include hook-iconnav-item();}
+  /* 1 */
+  display: block;
+  /* 2 */
+  color: $iconnav-item-color;
+  @if (mixin-exists(hook-iconnav-item)) {
+    @include hook-iconnav-item();
+  }
 }
 
 /* Hover + Focus */
 .uk-iconnav > * > a:hover,
 .uk-iconnav > * > a:focus {
-    color: $iconnav-item-hover-color;
-    outline: none;
-    @if(mixin-exists(hook-iconnav-item-hover)) {@include hook-iconnav-item-hover();}
+  color: $iconnav-item-hover-color;
+  outline: none;
+  @if (mixin-exists(hook-iconnav-item-hover)) {
+    @include hook-iconnav-item-hover();
+  }
 }
 
 /* Active */
 .uk-iconnav > .uk-active > a {
-    color: $iconnav-item-active-color;
-    @if(mixin-exists(hook-iconnav-item-active)) {@include hook-iconnav-item-active();}
+  color: $iconnav-item-active-color;
+  @if (mixin-exists(hook-iconnav-item-active)) {
+    @include hook-iconnav-item-active();
+  }
 }
-
 
 /* Modifier: 'uk-iconnav-vertical'
  ========================================================================== */
@@ -100,24 +104,25 @@ $iconnav-item-active-color:                       $global-color !default;
  */
 
 .uk-iconnav-vertical {
-    /* 1 */
-    flex-direction: column;
-    /* 2 */
-    margin-left: 0;
-    margin-top: (-$iconnav-margin-vertical);
+  /* 1 */
+  flex-direction: column;
+  /* 2 */
+  margin-left: 0;
+  margin-top: (-$iconnav-margin-vertical);
 }
 
 /* 2 */
 .uk-iconnav-vertical > * {
-    padding-left: 0;
-    padding-top: $iconnav-margin-vertical;
+  padding-left: 0;
+  padding-top: $iconnav-margin-vertical;
 }
-
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-iconnav-misc)) {@include hook-iconnav-misc();}
+@if (mixin-exists(hook-iconnav-misc)) {
+  @include hook-iconnav-misc();
+}
 
 // @mixin hook-iconnav(){}
 // @mixin hook-iconnav-item(){}
@@ -125,15 +130,12 @@ $iconnav-item-active-color:                       $global-color !default;
 // @mixin hook-iconnav-item-active(){}
 // @mixin hook-iconnav-misc(){}
 
-
 // Inverse
 // ========================================================================
 
-$inverse-iconnav-item-color:                $inverse-global-muted-color !default;
-$inverse-iconnav-item-hover-color:          $inverse-global-color !default;
-$inverse-iconnav-item-active-color:         $inverse-global-color !default;
-
-
+$inverse-iconnav-item-color: $inverse-global-muted-color !default;
+$inverse-iconnav-item-hover-color: $inverse-global-color !default;
+$inverse-iconnav-item-active-color: $inverse-global-color !default;
 
 // @mixin hook-inverse-iconnav-item(){}
 // @mixin hook-inverse-iconnav-item-hover(){}

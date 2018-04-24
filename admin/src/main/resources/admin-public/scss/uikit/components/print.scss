@@ -7,51 +7,64 @@
 //
 // ========================================================================
 
-
 /* ========================================================================
    Component: Print
  ========================================================================== */
 
 @media print {
 
-    *,
-    *::before,
-    *::after {
-        background: transparent !important;
-        color: black !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
 
-    a,
-    a:visited { text-decoration: underline; }
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
 
-    pre,
-    blockquote {
-        border: 1px solid #999;
-        page-break-inside: avoid;
-    }
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
 
-    thead { display: table-header-group; }
+  thead {
+    display: table-header-group;
+  }
 
-    tr,
-    img { page-break-inside: avoid; }
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
 
-    img { max-width: 100% !important; }
+  img {
+    max-width: 100% !important;
+  }
 
-    @page { margin: 0.5cm; }
+  @page {
+    margin: 0.5cm;
+  }
 
-    p,
-    h2,
-    h3 {
-        orphans: 3;
-        widows: 3;
-    }
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
 
-    h2,
-    h3 { page-break-after: avoid; }
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
 
-   @if(mixin-exists(hook-print)) {@include hook-print();}
+  @if (mixin-exists(hook-print)) {
+    @include hook-print();
+  }
 
 }
 

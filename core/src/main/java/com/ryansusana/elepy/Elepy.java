@@ -26,19 +26,15 @@ import static spark.Spark.*;
 
 public class Elepy {
 
+    protected final Service http;
     private final ObjectMapper objectMapper;
     private final DB db;
-
     private final String baseSlug;
     private final String configSlug;
-    private List<Filter> adminFilters;
-    private Filter basePublicFilter;
-
-
     private final ObjectEvaluator<Object> baseObjectEvaluator;
     private final Mapper mapper;
-    protected final Service http;
-
+    private List<Filter> adminFilters;
+    private Filter basePublicFilter;
     private List<Object> descriptors;
 
     private List<ElepyModule> modules;
@@ -281,7 +277,7 @@ public class Elepy {
     }
 
 
-    private void setupFilters(RestModel restModel, Class<?> clazz) throws IllegalAccessException, InstantiationException, ClassCastException {
+    private void setupFilters(RestModel restModel, Class<?> clazz) throws ClassCastException {
 
 
         final Filter adminFilter = allAdminFilters();
@@ -385,6 +381,10 @@ public class Elepy {
         return this.basePublicFilter;
     }
 
+    public void setBasePublicFilter(Filter basePublicFilter) {
+        this.basePublicFilter = basePublicFilter;
+    }
+
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {
         return this.baseObjectEvaluator;
     }
@@ -399,9 +399,5 @@ public class Elepy {
 
     public boolean isInitialized() {
         return this.initialized;
-    }
-
-    public void setBasePublicFilter(Filter basePublicFilter) {
-        this.basePublicFilter = basePublicFilter;
     }
 }

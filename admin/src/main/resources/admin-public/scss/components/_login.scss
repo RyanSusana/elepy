@@ -1,56 +1,57 @@
 
-#login-section{
-    height: 100vh;
-    position: relative;
+#login-section {
+  height: 100vh;
+  position: relative;
 
-    @include background-gradient($gradient: linear-gradient(to right, rgba(#77a1d3, 0.4), rgba(#79cbca, 0.4), rgba(#e684ae, 0.4)), $behind: url('/images/bg1.jpg'));
-    background-size: cover;
-  
+  @include background-gradient($gradient: linear-gradient(to right, rgba(#77a1d3, 0.4), rgba(#79cbca, 0.4), rgba(#e684ae, 0.4)), $behind: url('/images/bg1.jpg'));
+  background-size: cover;
+
 }
-.login-card{
-    box-shadow: 0 0 3rem rgba(black, 0.4);
-    transition:.4s all;
-    
-    .login-footer{
-        
-        padding: 1.3rem;
-        background-color: #000;
-        p{
-            margin-bottom: 0;
-        }
-    }
-    .login-header{
-   
-        background-color: #000;
-        
-        padding: 3rem;
-        h5{
-            margin-top: 12px;
-        }
-        *{
-            margin: 0;
-            color: white;
-            text-align: center;
-            margin-bottom: 0;
-        }
 
+.login-card {
+  box-shadow: 0 0 3rem rgba(black, 0.4);
+  transition: .4s all;
+
+  .login-footer {
+
+    padding: 1.3rem;
+    background-color: #000;
+    p {
+      margin-bottom: 0;
     }
-    
-    .login-content{
-        padding: 2rem;
-        margin-top: 0;
-        top: 0;
-        background-color: $off-white;
-        box-sizing: border-box;
+  }
+  .login-header {
+
+    background-color: #000;
+
+    padding: 3rem;
+    h5 {
+      margin-top: 12px;
     }
-    .uk-button{
-        transition: .4s all;
-        &:hover{
-            background-color: darken($global-primary-background, 20%);
-           
-            background-color: whitesmoke;
-            color: #000;        
-         }
-         
+    * {
+      margin: 0;
+      color: white;
+      text-align: center;
+      margin-bottom: 0;
     }
+
+  }
+
+  .login-content {
+    padding: 2rem;
+    margin-top: 0;
+    top: 0;
+    background-color: $off-white;
+    box-sizing: border-box;
+  }
+  .uk-button {
+    transition: .4s all;
+    &:hover {
+      background-color: darken($global-primary-background, 20%);
+
+      background-color: whitesmoke;
+      color: #000;
+    }
+
+  }
 }

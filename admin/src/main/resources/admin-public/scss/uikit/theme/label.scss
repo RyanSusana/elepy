@@ -3,7 +3,6 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
@@ -11,15 +10,11 @@
 // New
 //
 
-$label-border-radius:                            2px !default;
-$label-text-transform:                           uppercase !default;
-
+$label-border-radius: 2px !default;
+$label-text-transform: uppercase !default;
 
 // Component
 // ========================================================================
-
-
-
 
 // Color modifiers
 // ========================================================================
@@ -30,12 +25,10 @@ $label-text-transform:                           uppercase !default;
 
 // @mixin hook-label-danger(){}
 
-
 // Miscellaneous
 // ========================================================================
 
 // @mixin hook-label-misc(){}
-
 
 // Inverse
 // ========================================================================

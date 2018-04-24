@@ -84,12 +84,12 @@ public class FieldDescriber {
             fieldMap.put("objectName", field.getType().getSimpleName());
 
 
-            List<Map<String,Object>> innerFields = new ArrayList<>();
+            List<Map<String, Object>> innerFields = new ArrayList<>();
             for (Field innerField : field.getType().getDeclaredFields()) {
 
                 innerFields.add(new FieldDescriber(innerField).getFieldMap());
             }
-            fieldMap.put("fields",innerFields );
+            fieldMap.put("fields", innerFields);
         }
         if (type.equals(FieldType.TEXT)) {
             fieldMap.put("textType", field.getAnnotation(Text.class) != null ? field.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
@@ -99,15 +99,15 @@ public class FieldDescriber {
         }
     }
 
-    public NumberType getNumberType(){
-        if(!type.equals(FieldType.NUMBER)){
+    public NumberType getNumberType() {
+        if (!type.equals(FieldType.NUMBER)) {
             throw new IllegalArgumentException("This field is not a number");
         }
         return (NumberType) fieldMap.get("numberType");
     }
 
-    public NumberType getTextType(){
-        if(!type.equals(FieldType.NUMBER)){
+    public NumberType getTextType() {
+        if (!type.equals(FieldType.NUMBER)) {
             throw new IllegalArgumentException("This field is not a string");
         }
         return (NumberType) fieldMap.get("textType");

@@ -3,49 +3,43 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$navbar-nav-item-font-size:                      $global-small-font-size !default;
+$navbar-nav-item-font-size: $global-small-font-size !default;
 
-$navbar-dropdown-margin:                         15px !default;
-$navbar-dropdown-padding:                        25px !default;
-$navbar-dropdown-background:                     $global-background !default;
-$navbar-dropdown-grid-gutter-horizontal:         ($navbar-dropdown-padding * 2) !default;
+$navbar-dropdown-margin: 15px !default;
+$navbar-dropdown-padding: 25px !default;
+$navbar-dropdown-background: $global-background !default;
+$navbar-dropdown-grid-gutter-horizontal: ($navbar-dropdown-padding * 2) !default;
 
 //
 // New
 //
 
-$navbar-nav-item-text-transform:                 uppercase !default;
+$navbar-nav-item-text-transform: uppercase !default;
 
-$navbar-dropdown-nav-font-size:                  $global-small-font-size !default;
+$navbar-dropdown-nav-font-size: $global-small-font-size !default;
 
-$navbar-dropdown-box-shadow:                     0 5px 12px rgba(0,0,0,0.15) !default;
+$navbar-dropdown-box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15) !default;
 
-$navbar-dropbar-box-shadow:                      0 5px 7px rgba(0, 0, 0, 0.05) !default;
+$navbar-dropbar-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.05) !default;
 
-$navbar-dropdown-grid-divider-border-width:      $global-border-width !default;
-$navbar-dropdown-grid-divider-border:            $navbar-dropdown-nav-divider-border !default;
-
+$navbar-dropdown-grid-divider-border-width: $global-border-width !default;
+$navbar-dropdown-grid-divider-border: $navbar-dropdown-nav-divider-border !default;
 
 // Component
 // ========================================================================
 
 // @mixin hook-navbar(){}
 
-
 // Container
 // ========================================================================
 
 // @mixin hook-navbar-container(){}
 
-
 // Nav
 // ========================================================================
-
-
 
 // @mixin hook-navbar-nav-item-hover(){}
 
@@ -53,12 +47,10 @@ $navbar-dropdown-grid-divider-border:            $navbar-dropdown-nav-divider-bo
 
 // @mixin hook-navbar-nav-item-active(){}
 
-
 // Item
 // ========================================================================
 
 // @mixin hook-navbar-item(){}
-
 
 // Toggle
 // ========================================================================
@@ -71,12 +63,10 @@ $navbar-dropdown-grid-divider-border:            $navbar-dropdown-nav-divider-bo
 
 // @mixin hook-navbar-toggle-icon-hover(){}
 
-
 // Subtitle
 // ========================================================================
 
 // @mixin hook-navbar-subtitle(){}
-
 
 // Style modifiers
 // ========================================================================
@@ -85,19 +75,11 @@ $navbar-dropdown-grid-divider-border:            $navbar-dropdown-nav-divider-bo
 
 // @mixin hook-navbar-sticky(){}
 
-
 // Dropdown
 // ========================================================================
 
-
-
-
-
-
 // Dropdown nav
 // ========================================================================
-
-
 
 // @mixin hook-navbar-dropdown-nav-item(){}
 
@@ -107,20 +89,13 @@ $navbar-dropdown-grid-divider-border:            $navbar-dropdown-nav-divider-bo
 
 // @mixin hook-navbar-dropdown-nav-divider(){}
 
-
 // Dropbar
 // ========================================================================
 
 // @mixin hook-navbar-dropbar(){}
 
-
-
-
 // Miscellaneous
 // ========================================================================
-
-
-
 
 // Inverse
 // ========================================================================

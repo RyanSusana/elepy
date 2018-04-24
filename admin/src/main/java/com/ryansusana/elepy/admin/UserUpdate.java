@@ -2,7 +2,6 @@ package com.ryansusana.elepy.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
-import com.ryansusana.elepy.concepts.ObjectUpdateEvaluator;
 import com.ryansusana.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
 import com.ryansusana.elepy.routes.Update;
@@ -27,7 +26,7 @@ public class UserUpdate implements Update<User> {
             response.body("No object with this id");
             return false;
         }
-        ObjectUpdateEvaluator<User> updateEvaluator = new ObjectUpdateEvaluatorImpl();
+        ObjectUpdateEvaluatorImpl<User> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
 
         updateEvaluator.evaluate(before.get(), updated);
 
@@ -37,6 +36,7 @@ public class UserUpdate implements Update<User> {
             }
         }
 
+        assert updated != null;
         if (!updated.getPassword().equals(before.get().getPassword())) {
             updated = updated.hashWord();
         }

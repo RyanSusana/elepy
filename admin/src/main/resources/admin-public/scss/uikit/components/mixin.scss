@@ -4,7 +4,6 @@
 //
 // ========================================================================
 
-
 // SVG
 // ========================================================================
 
@@ -24,9 +23,9 @@
   @return $string;
 }
 
-@mixin svg-fill($src, $color-default, $color-new){
+@mixin svg-fill($src, $color-default, $color-new) {
 
-    $replace-src: str-replace($src, $color-default, $color-new) !default;
-    $replace-src: str-replace($replace-src, "#", "%23");
-    background-image: url(quote($replace-src));
+  $replace-src: str-replace($src, $color-default, $color-new) !default;
+  $replace-src: str-replace($replace-src, "#", "%23");
+  background-image: url(quote($replace-src));
 }

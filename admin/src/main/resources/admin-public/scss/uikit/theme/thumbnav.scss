@@ -3,7 +3,6 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
@@ -11,28 +10,19 @@
 // New
 //
 
-$thumbnav-item-background:                       rgba($global-background, 0.4) !default;
-$thumbnav-item-hover-background:                 transparent !default;
-$thumbnav-item-active-background:                transparent !default;
-
+$thumbnav-item-background: rgba($global-background, 0.4) !default;
+$thumbnav-item-hover-background: transparent !default;
+$thumbnav-item-active-background: transparent !default;
 
 // Component
 // ========================================================================
 
 // @mixin hook-thumbnav(){}
 
-
-
-
-
-
-
-
 // Miscellaneous
 // ========================================================================
 
 // @mixin hook-thumbnav-misc(){}
-
 
 // Inverse
 // ========================================================================

@@ -9,7 +9,7 @@ import java.util.UUID;
 public class IdProvider {
     public static String getRandomHexString(int numchars) {
         Random r = new Random();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (sb.length() < numchars) {
             sb.append(Integer.toHexString(r.nextInt()));
         }

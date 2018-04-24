@@ -11,18 +11,16 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$pagination-margin-horizontal:                   20px !default;
+$pagination-margin-horizontal: 20px !default;
 
-$pagination-item-color:                          $global-muted-color !default;
-$pagination-item-hover-color:                    $global-color !default;
-$pagination-item-hover-text-decoration:          none !default;
-$pagination-item-active-color:                   $global-color !default;
-$pagination-item-disabled-color:                 $global-muted-color !default;
-
+$pagination-item-color: $global-muted-color !default;
+$pagination-item-hover-color: $global-color !default;
+$pagination-item-hover-text-decoration: none !default;
+$pagination-item-active-color: $global-color !default;
+$pagination-item-disabled-color: $global-muted-color !default;
 
 /* ========================================================================
    Component: Pagination
@@ -35,15 +33,17 @@ $pagination-item-disabled-color:                 $global-muted-color !default;
  */
 
 .uk-pagination {
-    display: flex;
-    /* 1 */
-    flex-wrap: wrap;
-    /* 2 */
-    margin-left: (-$pagination-margin-horizontal);
-    /* 3 */
-    padding: 0;
-    list-style: none;
-    @if(mixin-exists(hook-pagination)) {@include hook-pagination();}
+  display: flex;
+  /* 1 */
+  flex-wrap: wrap;
+  /* 2 */
+  margin-left: (-$pagination-margin-horizontal);
+  /* 3 */
+  padding: 0;
+  list-style: none;
+  @if (mixin-exists(hook-pagination)) {
+    @include hook-pagination();
+  }
 }
 
 /*
@@ -53,14 +53,13 @@ $pagination-item-disabled-color:                 $global-muted-color !default;
  */
 
 .uk-pagination > * {
-    /* 1 */
-    flex: none;
-    /* 2 */
-    padding-left: $pagination-margin-horizontal;
-    /* 3 */
-    position: relative;
+  /* 1 */
+  flex: none;
+  /* 2 */
+  padding-left: $pagination-margin-horizontal;
+  /* 3 */
+  position: relative;
 }
-
 
 /* Items
  ========================================================================== */
@@ -71,38 +70,47 @@ $pagination-item-disabled-color:                 $global-muted-color !default;
  */
 
 .uk-pagination > * > * {
-    /* 1 */
-    display: block;
-    /* 2 */
-    color: $pagination-item-color;
-    @if(mixin-exists(hook-pagination-item)) {@include hook-pagination-item();}
+  /* 1 */
+  display: block;
+  /* 2 */
+  color: $pagination-item-color;
+  @if (mixin-exists(hook-pagination-item)) {
+    @include hook-pagination-item();
+  }
 }
 
 /* Hover + Focus */
 .uk-pagination > * > :hover,
 .uk-pagination > * > :focus {
-    color: $pagination-item-hover-color;
-    text-decoration: $pagination-item-hover-text-decoration;
-    @if(mixin-exists(hook-pagination-item-hover)) {@include hook-pagination-item-hover();}
+  color: $pagination-item-hover-color;
+  text-decoration: $pagination-item-hover-text-decoration;
+  @if (mixin-exists(hook-pagination-item-hover)) {
+    @include hook-pagination-item-hover();
+  }
 }
 
 /* Active */
 .uk-pagination > .uk-active > * {
-    color: $pagination-item-active-color;
-    @if(mixin-exists(hook-pagination-item-active)) {@include hook-pagination-item-active();}
+  color: $pagination-item-active-color;
+  @if (mixin-exists(hook-pagination-item-active)) {
+    @include hook-pagination-item-active();
+  }
 }
 
 /* Disabled */
 .uk-pagination > .uk-disabled > * {
-    color: $pagination-item-disabled-color;
-    @if(mixin-exists(hook-pagination-item-disabled)) {@include hook-pagination-item-disabled();}
+  color: $pagination-item-disabled-color;
+  @if (mixin-exists(hook-pagination-item-disabled)) {
+    @include hook-pagination-item-disabled();
+  }
 }
-
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-pagination-misc)) {@include hook-pagination-misc();}
+@if (mixin-exists(hook-pagination-misc)) {
+  @include hook-pagination-misc();
+}
 
 // @mixin hook-pagination(){}
 // @mixin hook-pagination-item(){}
@@ -111,16 +119,13 @@ $pagination-item-disabled-color:                 $global-muted-color !default;
 // @mixin hook-pagination-item-disabled(){}
 // @mixin hook-pagination-misc(){}
 
-
 // Inverse
 // ========================================================================
 
-$inverse-pagination-item-color:                 $inverse-global-muted-color !default;
-$inverse-pagination-item-hover-color:           $inverse-global-color !default;
-$inverse-pagination-item-active-color:          $inverse-global-color !default;
-$inverse-pagination-item-disabled-color:        $inverse-global-muted-color !default;
-
-
+$inverse-pagination-item-color: $inverse-global-muted-color !default;
+$inverse-pagination-item-hover-color: $inverse-global-color !default;
+$inverse-pagination-item-active-color: $inverse-global-color !default;
+$inverse-pagination-item-disabled-color: $inverse-global-muted-color !default;
 
 // @mixin hook-inverse-pagination-item(){}
 // @mixin hook-inverse-pagination-item-hover(){}

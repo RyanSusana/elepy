@@ -7,7 +7,10 @@ import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 import org.jongo.MongoCursor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class MongoSchemaDao implements Crud<Map<String, Object>> {
     private final Jongo jongo;
@@ -17,7 +20,7 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
     public MongoSchemaDao(DB jongo, Schema schema) {
         this.jongo = new Jongo(jongo);
         this.schema = schema;
-        this.collectionName = schema.getSlug().replaceAll("/","");
+        this.collectionName = schema.getSlug().replaceAll("/", "");
     }
 
     protected MongoCollection collection() {
@@ -26,7 +29,7 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
 
     public String getId(Map<String, Object> object) {
         final Object id = object.get("id");
-        if (id != null && id instanceof String) {
+        if (id instanceof String) {
             return (String) id;
         }
         throw new IllegalStateException(object.getClass().getName() + ": has no annotation id");
@@ -42,13 +45,13 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
                     for (Object o : dbo.keySet()) {
                         if (o instanceof String) {
                             String key = (String) o;
-                            if(key.equals("_id")){
+                            if (key.equals("_id")) {
                                 key = "id";
                             }
                             map.put(key, dbo.get(o));
                         }
                     }
-                    return map ;
+                    return map;
                 }
         );
 
@@ -57,7 +60,7 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
 
     @Override
     public Optional<Map<String, Object>> getById(String id) {
-       Optional.ofNullable(collection().findOne("{_id: #}", id).map(dbObject -> {
+        return Optional.ofNullable(collection().findOne("{_id: #}", id).map(dbObject -> {
             Map dbo = dbObject.toMap();
 
             Map<String, Object> map = new HashMap<>();
@@ -66,9 +69,8 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
                     map.put((String) o, dbo.get(o));
                 }
             }
-            return map ;
+            return map;
         }));
-        return Optional.empty();
     }
 
     @Override

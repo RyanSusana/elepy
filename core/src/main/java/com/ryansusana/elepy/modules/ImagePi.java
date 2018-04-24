@@ -33,11 +33,11 @@ public class ImagePi extends ElepyModule {
         http().post("/images/upload", (request, response) -> {
             request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
 
-                final Part part = request.raw().getPart("image");
+            final Part part = request.raw().getPart("image");
 
 
-                final GridFSInputFile upload = imageDao.upload(part);
-                return upload.getFilename();
+            final GridFSInputFile upload = imageDao.upload(part);
+            return upload.getFilename();
 
         });
 

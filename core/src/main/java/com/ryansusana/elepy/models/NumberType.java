@@ -16,10 +16,10 @@ public enum NumberType {
         this.availableClasses = Arrays.asList(availableClasses);
     }
 
-    public static NumberType guessType(java.lang.reflect.Field field){
+    public static NumberType guessType(java.lang.reflect.Field field) {
         for (NumberType numberType : NumberType.values()) {
             for (Class<? extends Number> availableClass : numberType.availableClasses) {
-                if(field.getType().equals(availableClass)){
+                if (field.getType().equals(availableClass)) {
                     return numberType;
                 }
             }

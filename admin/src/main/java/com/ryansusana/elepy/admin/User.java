@@ -9,7 +9,7 @@ import com.ryansusana.elepy.concepts.IdProvider;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-@RestModel(slug = "/users", name = "Users", icon="users",findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
+@RestModel(slug = "/users", name = "Users", icon = "users", findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
 public class User {
 
     @MongoId

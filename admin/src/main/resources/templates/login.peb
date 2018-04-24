@@ -61,7 +61,9 @@
                     <div class="login-footer">
 
                         <p class=" uk-text-center">
-                            <button type="submit" form="login-form" class="uk-button uk-button-primary"><i class="fas fa-sign-in-alt"></i>Sign in</button>
+                            <button type="submit" form="login-form" class="uk-button uk-button-primary"><i
+                                    class="fas fa-sign-in-alt"></i>Sign in
+                            </button>
                         </p>
                     </div>
                 </div>
@@ -73,7 +75,6 @@
 
 
 </div>
-
 
 
 <script>

@@ -3,7 +3,6 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
@@ -11,37 +10,30 @@
 // New
 //
 
-$nav-default-font-size:                          $global-small-font-size !default;
-
+$nav-default-font-size: $global-small-font-size !default;
 
 // Sublists
 // ========================================================================
 
 // @mixin hook-nav-sub(){}
 
-
 // Parent icon modifier
 // ========================================================================
 
 // @mixin hook-nav-parent-icon(){}
-
 
 // Header
 // ========================================================================
 
 // @mixin hook-nav-header(){}
 
-
 // Divider
 // ========================================================================
 
 // @mixin hook-nav-divider(){}
 
-
 // Default style modifier
 // ========================================================================
-
-
 
 // @mixin hook-nav-default-item(){}
 
@@ -52,7 +44,6 @@ $nav-default-font-size:                          $global-small-font-size !defaul
 // @mixin hook-nav-default-header(){}
 
 // @mixin hook-nav-default-divider(){}
-
 
 // Primary style modifier
 // ========================================================================
@@ -69,12 +60,10 @@ $nav-default-font-size:                          $global-small-font-size !defaul
 
 // @mixin hook-nav-primary-divider(){}
 
-
 // Miscellaneous
 // ========================================================================
 
 // @mixin hook-nav-misc(){}
-
 
 // Inverse
 // ========================================================================

@@ -10,7 +10,6 @@
 //
 // ========================================================================
 
-
 /* ========================================================================
    Component: Slider
  ========================================================================== */
@@ -20,11 +19,12 @@
  */
 
 .uk-slider {
-    /* 1 */
-    -webkit-tap-highlight-color: transparent;
-    @if(mixin-exists(hook-slider)) {@include hook-slider();}
+  /* 1 */
+  -webkit-tap-highlight-color: transparent;
+  @if (mixin-exists(hook-slider)) {
+    @include hook-slider();
+  }
 }
-
 
 /* Container
  ========================================================================== */
@@ -34,8 +34,8 @@
  */
 
 .uk-slider-container {
-    /* 1 */
-    overflow: hidden;
+  /* 1 */
+  overflow: hidden;
 }
 
 /* Items
@@ -47,10 +47,10 @@
  */
 
 .uk-slider-items {
-    /* 1 */
-    will-change: transform;
-    /* 2 */
-    position: relative;
+  /* 1 */
+  will-change: transform;
+  /* 2 */
+  position: relative;
 }
 
 /*
@@ -59,17 +59,18 @@
  */
 
 .uk-slider-items:not(.uk-grid) {
-    display: flex;
-    /* 1 */
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    /* 2 */
-    -webkit-touch-callout: none;
+  display: flex;
+  /* 1 */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* 2 */
+  -webkit-touch-callout: none;
 }
 
-.uk-slider-items.uk-grid { flex-wrap: nowrap; }
-
+.uk-slider-items.uk-grid {
+  flex-wrap: nowrap;
+}
 
 /* Item
  ========================================================================== */
@@ -81,19 +82,20 @@
  */
 
 .uk-slider-items > * {
-    /* 1 */
-    flex: none;
-    /* 2 */
-    position: relative;
-    /* 3 */
-    touch-action: pan-y;
+  /* 1 */
+  flex: none;
+  /* 2 */
+  position: relative;
+  /* 3 */
+  touch-action: pan-y;
 }
-
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-slider-misc)) {@include hook-slider-misc();}
+@if (mixin-exists(hook-slider-misc)) {
+  @include hook-slider-misc();
+}
 
 // @mixin hook-slider(){}
 // @mixin hook-slider-misc(){}

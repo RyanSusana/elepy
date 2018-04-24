@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Text {
     TextType value() default TextType.TEXTFIELD;
 
-    int minimumLength () default 0;
+    int minimumLength() default 0;
 
     int maximumLength() default Integer.MAX_VALUE;
 }

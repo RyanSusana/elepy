@@ -25,6 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
+@SuppressWarnings("ALL")
 public class ElepyAdminPanel extends ElepyModule {
     private final UserDao userDao;
     private final UserService userService;
@@ -71,7 +72,7 @@ public class ElepyAdminPanel extends ElepyModule {
             if (entry.getName().startsWith(jarConnection.getEntryName())) {
                 String fileName = StringUtils.removeStart(entry.getName(), jarConnection.getEntryName());
                 if (!entry.isDirectory()) {
-                    InputStream entryInputStream = null;
+                    InputStream entryInputStream;
                     entryInputStream = jarFile.getInputStream(entry);
 
                     FileUtils.copyInputStreamToFile(entryInputStream, new File(destination, fileName));
@@ -150,9 +151,7 @@ public class ElepyAdminPanel extends ElepyModule {
         }
 
 
-        http().before("/admin/*/*", (request, response) -> {
-            elepy().allAdminFilters().handle(request, response);
-        });
+        http().before("/admin/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
         http().before("/admin/*", (request, response) -> {
             elepy().allAdminFilters().handle(request, response);
         });

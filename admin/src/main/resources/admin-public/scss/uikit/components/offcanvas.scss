@@ -20,27 +20,25 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$offcanvas-z-index:                              $global-z-index !default;
+$offcanvas-z-index: $global-z-index !default;
 
-$offcanvas-bar-width:                            270px !default;
-$offcanvas-bar-padding-vertical:                 $global-margin !default;
-$offcanvas-bar-padding-horizontal:               $global-margin !default;
-$offcanvas-bar-background:                       $global-secondary-background !default;
-$offcanvas-bar-color-mode:                       light !default;
+$offcanvas-bar-width: 270px !default;
+$offcanvas-bar-padding-vertical: $global-margin !default;
+$offcanvas-bar-padding-horizontal: $global-margin !default;
+$offcanvas-bar-background: $global-secondary-background !default;
+$offcanvas-bar-color-mode: light !default;
 
-$offcanvas-bar-width-m:                          350px !default;
-$offcanvas-bar-padding-vertical-m:               $global-medium-gutter !default;
-$offcanvas-bar-padding-horizontal-m:             $global-medium-gutter !default;
+$offcanvas-bar-width-m: 350px !default;
+$offcanvas-bar-padding-vertical-m: $global-medium-gutter !default;
+$offcanvas-bar-padding-horizontal-m: $global-medium-gutter !default;
 
-$offcanvas-close-position:                       20px !default;
-$offcanvas-close-padding:                        5px !default;
+$offcanvas-close-position: 20px !default;
+$offcanvas-close-padding: 5px !default;
 
-$offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
-
+$offcanvas-overlay-background: rgba(0, 0, 0, 0.1) !default;
 
 /* ========================================================================
    Component: Off-canvas
@@ -52,14 +50,14 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas {
-    /* 1 */
-    display: none;
-    /* 2 */
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: $offcanvas-z-index;
+  /* 1 */
+  display: none;
+  /* 2 */
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $offcanvas-z-index;
 }
 
 /*
@@ -67,10 +65,9 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-flip .uk-offcanvas {
-    right: 0;
-    left: auto;
+  right: 0;
+  left: auto;
 }
-
 
 /* Bar
  ========================================================================== */
@@ -83,56 +80,71 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-bar {
-    /* 1 */
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    /* 2 */
-    box-sizing: border-box;
-    width: $offcanvas-bar-width;
-    padding: $offcanvas-bar-padding-vertical $offcanvas-bar-padding-horizontal;
-    background: $offcanvas-bar-background;
-    /* 3 */
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    /* 4 */
-    transform: translateX(-100%);
-    @if(mixin-exists(hook-offcanvas-bar)) {@include hook-offcanvas-bar();}
+  /* 1 */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  /* 2 */
+  box-sizing: border-box;
+  width: $offcanvas-bar-width;
+  padding: $offcanvas-bar-padding-vertical $offcanvas-bar-padding-horizontal;
+  background: $offcanvas-bar-background;
+  /* 3 */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* 4 */
+  transform: translateX(-100%);
+  @if (mixin-exists(hook-offcanvas-bar)) {
+    @include hook-offcanvas-bar();
+  }
 }
 
 /* Tablet landscape and bigger */
 @media (min-width: $breakpoint-medium) {
 
-    .uk-offcanvas-bar {
-        width: $offcanvas-bar-width-m;
-        padding: $offcanvas-bar-padding-vertical-m $offcanvas-bar-padding-horizontal-m;
-    }
+  .uk-offcanvas-bar {
+    width: $offcanvas-bar-width-m;
+    padding: $offcanvas-bar-padding-vertical-m $offcanvas-bar-padding-horizontal-m;
+  }
 
 }
 
 // Color Mode
-@if ( $offcanvas-bar-color-mode == light ) { .uk-offcanvas-bar { @extend .uk-light !optional;} }
-@if ( $offcanvas-bar-color-mode == dark ) { .uk-offcanvas-bar { @extend .uk-dark !optional;} }
+@if ($offcanvas-bar-color-mode == light) {
+  .uk-offcanvas-bar {
+    @extend .uk-light !optional;
+  }
+}
+
+@if ($offcanvas-bar-color-mode == dark) {
+  .uk-offcanvas-bar {
+    @extend .uk-dark !optional;
+  }
+}
 
 /* Flip modifier */
 .uk-offcanvas-flip .uk-offcanvas-bar {
-    left: auto;
-    right: 0;
-    transform: translateX(100%);
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
 }
 
 /*
  * Open
  */
 
-.uk-open > .uk-offcanvas-bar { transform: translateX(0); }
+.uk-open > .uk-offcanvas-bar {
+  transform: translateX(0);
+}
 
 /*
  * Slide Animation (Used in slide and push mode)
  */
 
-.uk-offcanvas-bar-animation { transition: transform 0.3s ease-out; }
+.uk-offcanvas-bar-animation {
+  transition: transform 0.3s ease-out;
+}
 
 /*
  * Reveal Animation
@@ -143,29 +155,33 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-reveal {
-    /* 1 */
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    /* 2 */
-    width: 0;
-    overflow: hidden;
-    /* 3 */
-    transition: width 0.3s ease-out;
+  /* 1 */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  /* 2 */
+  width: 0;
+  overflow: hidden;
+  /* 3 */
+  transition: width 0.3s ease-out;
 }
 
 .uk-offcanvas-reveal .uk-offcanvas-bar {
-    /* 4 */
-    transform: translateX(0);
+  /* 4 */
+  transform: translateX(0);
 }
 
-.uk-open > .uk-offcanvas-reveal { width: $offcanvas-bar-width; }
+.uk-open > .uk-offcanvas-reveal {
+  width: $offcanvas-bar-width;
+}
 
 /* Tablet landscape and bigger */
 @media (min-width: $breakpoint-medium) {
 
-    .uk-open > .uk-offcanvas-reveal { width: $offcanvas-bar-width-m; }
+  .uk-open > .uk-offcanvas-reveal {
+    width: $offcanvas-bar-width-m;
+  }
 
 }
 
@@ -174,24 +190,24 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-flip .uk-offcanvas-reveal {
-    right: 0;
-    left: auto;
+  right: 0;
+  left: auto;
 }
-
 
 /* Close
  * Adopts `uk-close`
  ========================================================================== */
 
 .uk-offcanvas-close {
-    position: absolute;
-    z-index: $offcanvas-z-index;
-    top: $offcanvas-close-position;
-    right: $offcanvas-close-position;
-    padding: $offcanvas-close-padding;
-    @if(mixin-exists(hook-offcanvas-close)) {@include hook-offcanvas-close();}
+  position: absolute;
+  z-index: $offcanvas-z-index;
+  top: $offcanvas-close-position;
+  right: $offcanvas-close-position;
+  padding: $offcanvas-close-padding;
+  @if (mixin-exists(hook-offcanvas-close)) {
+    @include hook-offcanvas-close();
+  }
 }
-
 
 /* Overlay
  ========================================================================== */
@@ -203,10 +219,10 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-overlay {
-    /* 1 */
-    width: 100vw;
-    /* 2 */
-    touch-action: none;
+  /* 1 */
+  width: 100vw;
+  /* 2 */
+  touch-action: none;
 }
 
 /*
@@ -215,22 +231,25 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-overlay::before {
-    /* 1 */
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: $offcanvas-overlay-background;
-    /* 2 */
-    opacity: 0;
-    transition: opacity 0.15s linear;
-    @if(mixin-exists(hook-offcanvas-overlay)) {@include hook-offcanvas-overlay();}
+  /* 1 */
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $offcanvas-overlay-background;
+  /* 2 */
+  opacity: 0;
+  transition: opacity 0.15s linear;
+  @if (mixin-exists(hook-offcanvas-overlay)) {
+    @include hook-offcanvas-overlay();
+  }
 }
 
-.uk-offcanvas-overlay.uk-open::before { opacity: 1; }
-
+.uk-offcanvas-overlay.uk-open::before {
+  opacity: 1;
+}
 
 /* Container
  ========================================================================== */
@@ -241,14 +260,17 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-page,
-.uk-offcanvas-container { overflow-x: hidden; }
+.uk-offcanvas-container {
+  overflow-x: hidden;
+}
 
 /*
  * Prevent all scrollbars if overlay is used
  */
 
-.uk-offcanvas-container-overlay { overflow: hidden; }
-
+.uk-offcanvas-container-overlay {
+  overflow: hidden;
+}
 
 /* Content
  ========================================================================== */
@@ -262,38 +284,49 @@ $offcanvas-overlay-background:                   rgba(0,0,0,0.1) !default;
  */
 
 .uk-offcanvas-container .uk-offcanvas-content {
-    position: relative;
-    left: 0;
-    transition: left 0.3s ease-out;
-    /* 1 */
-    -webkit-overflow-scrolling: touch;
+  position: relative;
+  left: 0;
+  transition: left 0.3s ease-out;
+  /* 1 */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Disable scrolling if overlay mode */
-.uk-offcanvas-overlay .uk-offcanvas-content { overflow-y: hidden; }
+.uk-offcanvas-overlay .uk-offcanvas-content {
+  overflow-y: hidden;
+}
 
 /*
  * Activate slide-out animation
  */
 
-:not(.uk-offcanvas-flip) > .uk-offcanvas-content-animation { left: $offcanvas-bar-width; }
+:not(.uk-offcanvas-flip) > .uk-offcanvas-content-animation {
+  left: $offcanvas-bar-width;
+}
 
-.uk-offcanvas-flip > .uk-offcanvas-content-animation { left: (-$offcanvas-bar-width); }
+.uk-offcanvas-flip > .uk-offcanvas-content-animation {
+  left: (-$offcanvas-bar-width);
+}
 
 /* Tablet landscape and bigger */
 @media (min-width: $breakpoint-medium) {
 
-    :not(.uk-offcanvas-flip) > .uk-offcanvas-content-animation { left: $offcanvas-bar-width-m; }
+  :not(.uk-offcanvas-flip) > .uk-offcanvas-content-animation {
+    left: $offcanvas-bar-width-m;
+  }
 
-    .uk-offcanvas-flip > .uk-offcanvas-content-animation { left: (-$offcanvas-bar-width-m); }
+  .uk-offcanvas-flip > .uk-offcanvas-content-animation {
+    left: (-$offcanvas-bar-width-m);
+  }
 
 }
-
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-offcanvas-misc)) {@include hook-offcanvas-misc();}
+@if (mixin-exists(hook-offcanvas-misc)) {
+  @include hook-offcanvas-misc();
+}
 
 // @mixin hook-offcanvas-bar(){}
 // @mixin hook-offcanvas-close(){}

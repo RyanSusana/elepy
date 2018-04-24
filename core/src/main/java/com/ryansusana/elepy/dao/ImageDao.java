@@ -32,7 +32,7 @@ public class ImageDao extends MongoDao<Image> {
         gfsFile.setContentType(part.getContentType());
         gfsFile.save();
 
-        create(new Image(newFileName,Calendar.getInstance().getTime()));
+        create(new Image(newFileName, Calendar.getInstance().getTime()));
         return gfsFile;
     }
 
@@ -43,7 +43,7 @@ public class ImageDao extends MongoDao<Image> {
 
     private String getRandomHexString(int numchars) {
         Random r = new Random();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (sb.length() < numchars) {
             sb.append(Integer.toHexString(r.nextInt()));
         }

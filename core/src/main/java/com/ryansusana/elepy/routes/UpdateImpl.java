@@ -2,7 +2,6 @@ package com.ryansusana.elepy.routes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
-import com.ryansusana.elepy.concepts.ObjectUpdateEvaluator;
 import com.ryansusana.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
 import spark.Request;
@@ -28,12 +27,12 @@ public class UpdateImpl<T> implements Update<T> {
             return false;
         }
 
-        ObjectUpdateEvaluator<T> updateEvaluator = new ObjectUpdateEvaluatorImpl();
+        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<T>();
 
         updateEvaluator.evaluate(before.get(), updated);
 
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-            if(updated!=null) {
+            if (updated != null) {
                 objectEvaluator.evaluate(updated);
 
             }

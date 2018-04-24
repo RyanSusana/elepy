@@ -56,7 +56,7 @@ public class MongoDao<T> implements Crud<T> {
         return Optional.ofNullable(collection().findOne("{_id: #}", id).as(classType));
     }
 
-    public String getId(T object) throws IllegalAccessException {
+    public String getId(T object) {
         String id = null;
         for (Field field : object.getClass().getDeclaredFields()) {
 
@@ -70,15 +70,13 @@ public class MongoDao<T> implements Crud<T> {
                 }
             }
         }
-        if (id == null) {
-            for (Field field : object.getClass().getDeclaredFields()) {
+        for (Field field : object.getClass().getDeclaredFields()) {
 
-                if (field.getName().equals("id") && field.getType().equals(String.class)) {
-                    try {
-                        return (String) field.get(object);
-                    } catch (IllegalAccessException | ClassCastException e) {
-                        throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
-                    }
+            if (field.getName().equals("id") && field.getType().equals(String.class)) {
+                try {
+                    return (String) field.get(object);
+                } catch (IllegalAccessException | ClassCastException e) {
+                    throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
                 }
             }
         }
@@ -107,7 +105,7 @@ public class MongoDao<T> implements Crud<T> {
         qmap.put("$or", expressions);
         try {
 
-            Find find = query.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), hashs) : collection().find();
+            Find find = query.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().find();
             if (query.getSortBy() != null && query.getSortOption() != null) {
                 find = find.sort(String.format("{%s: %d}", query.getSortBy(), query.getSortOption().getVal()));
             }
@@ -148,11 +146,9 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public void update(T item) {
-        try {
-            collection().update("{_id: #}", getId(item)).with(item);
-        } catch (IllegalAccessException e) {
-            throw new RestErrorMessage("Problem while finding the id of this class");
-        }
+
+        collection().update("{_id: #}", getId(item)).with(item);
+
     }
 
     @Override
@@ -161,6 +157,7 @@ public class MongoDao<T> implements Crud<T> {
             final Field idField = IdProvider.getIdField(item);
             final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
             if (!annotation.idGenerator().equals(IdGenerationType.NONE)) {
+                assert idField != null;
                 idField.setAccessible(true);
 
                 idField.set(item, annotation.idGenerator().generateId());

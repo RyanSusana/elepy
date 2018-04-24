@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
 
-
 $secondary-color: #1c9edb;
 $global-link-color: $secondary-color;
 $primary-color: red;
@@ -37,8 +36,13 @@ $base-body-font-family: $raleway;
 .edit-modal-body {
   min-height: 65vh !important;
 }
-.fas{
+
+.fas {
   margin-right: 0.6em;
+}
+
+@mixin background-gradient($opacity:1, $behind: white, $gradient: white, $direction: to top) {
+  background: $gradient, $behind;
 }
 
 @mixin base-background($default: false) {
@@ -49,10 +53,6 @@ $base-body-font-family: $raleway;
   } @else {
     @include background-gradient($behind: white, $opacity: 0.1);
   }
-}
-
-@mixin background-gradient($opacity:1, $behind: white, $gradient: white, $direction: to top) {
-  background: $gradient, $behind;
 }
 
 @mixin tint-over($gradient, $opacity:0.5) {

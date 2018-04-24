@@ -5,16 +5,14 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$progress-height:                                15px !default;
-$progress-margin-vertical:                       $global-margin !default;
-$progress-background:                            $global-muted-background !default;
+$progress-height: 15px !default;
+$progress-margin-vertical: $global-margin !default;
+$progress-background: $global-muted-background !default;
 
-$progress-bar-background:                        $global-primary-background !default;
-
+$progress-bar-background: $global-primary-background !default;
 
 /* ========================================================================
    Component: Progress
@@ -30,32 +28,38 @@ $progress-bar-background:                        $global-primary-background !def
  */
 
 .uk-progress {
-    /* 1 */
-    vertical-align: baseline;
-    /* 2 */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    /* 3 */
-    display: block;
-    width: 100%;
-    /* 4 */
-    border: 0;
-    /* 5 */
-    background-color: $progress-background;
-    /* 6 */
-    margin-bottom: $progress-margin-vertical;
-    height: $progress-height;
-    @if(mixin-exists(hook-progress)) {@include hook-progress();}
+  /* 1 */
+  vertical-align: baseline;
+  /* 2 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* 3 */
+  display: block;
+  width: 100%;
+  /* 4 */
+  border: 0;
+  /* 5 */
+  background-color: $progress-background;
+  /* 6 */
+  margin-bottom: $progress-margin-vertical;
+  height: $progress-height;
+  @if (mixin-exists(hook-progress)) {
+    @include hook-progress();
+  }
 }
 
 /* Add margin if adjacent element */
-* + .uk-progress { margin-top: $progress-margin-vertical; }
+* + .uk-progress {
+  margin-top: $progress-margin-vertical;
+}
 
 /*
  * Remove animated circles for indeterminate state in IE11 and Edge
  */
 
-.uk-progress:indeterminate { color: transparent; }
+.uk-progress:indeterminate {
+  color: transparent;
+}
 
 /*
  * Progress container
@@ -64,11 +68,15 @@ $progress-bar-background:                        $global-primary-background !def
 
 .uk-progress::-webkit-progress-bar {
   background-color: $progress-background;
-  @if(mixin-exists(hook-progress)) {@include hook-progress();}
+  @if (mixin-exists(hook-progress)) {
+    @include hook-progress();
+  }
 }
 
 /* 2 */
-.uk-progress:indeterminate::-moz-progress-bar { width: 0; }
+.uk-progress:indeterminate::-moz-progress-bar {
+  width: 0;
+}
 
 /*
  * Progress bar
@@ -76,29 +84,36 @@ $progress-bar-background:                        $global-primary-background !def
  */
 
 .uk-progress::-webkit-progress-value {
-    background-color: $progress-bar-background;
-    transition: width 0.6s ease;
-    @if(mixin-exists(hook-progress-bar)) {@include hook-progress-bar();}
+  background-color: $progress-bar-background;
+  transition: width 0.6s ease;
+  @if (mixin-exists(hook-progress-bar)) {
+    @include hook-progress-bar();
+  }
 }
 
 .uk-progress::-moz-progress-bar {
-    background-color: $progress-bar-background;
-    @if(mixin-exists(hook-progress-bar)) {@include hook-progress-bar();}
+  background-color: $progress-bar-background;
+  @if (mixin-exists(hook-progress-bar)) {
+    @include hook-progress-bar();
+  }
 }
 
 .uk-progress::-ms-fill {
-    background-color: $progress-bar-background;
-    transition: width 0.6s ease;
-    /* 1 */
-    border: 0;
-    @if(mixin-exists(hook-progress-bar)) {@include hook-progress-bar();}
+  background-color: $progress-bar-background;
+  transition: width 0.6s ease;
+  /* 1 */
+  border: 0;
+  @if (mixin-exists(hook-progress-bar)) {
+    @include hook-progress-bar();
+  }
 }
-
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-progress-misc)) {@include hook-progress-misc();}
+@if (mixin-exists(hook-progress-misc)) {
+  @include hook-progress-misc();
+}
 
 // @mixin hook-progress(){}
 // @mixin hook-progress-bar(){}

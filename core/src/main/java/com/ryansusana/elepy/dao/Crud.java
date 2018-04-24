@@ -20,6 +20,6 @@ public interface Crud<T> {
 
     void create(final T item);
 
-    String getId(final T item) throws IllegalAccessException;
+    String getId(final T item);
 
 }

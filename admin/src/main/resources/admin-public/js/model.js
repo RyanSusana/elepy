@@ -1,4 +1,4 @@
-var app = new Vue({
+const app = new Vue({
     el: '#app',
     delimiters: ['((', '))'],
     data: {
@@ -17,7 +17,7 @@ var app = new Vue({
     methods: {
         search: function () {
             var ref = this;
-            console.log("search")
+            console.log("search");
             clearTimeout(this.searchTimeout);
 
             this.searchTimeout = setTimeout(function () {
@@ -25,8 +25,8 @@ var app = new Vue({
             }, 500);
         },
         fromDate: function (field, index) {
-            this.selectedData[field] = document.getElementById('date-form-field-' + index).value
-            this.newData[field] = document.getElementById('date-form2-field-' + index).value
+            this.selectedData[field] = document.getElementById('date-form-field-' + index).value;
+            this.newData[field] = document.getElementById('date-form2-field-' + index).value;
 
             console.log(document.getElementById('date-form2-field-' + index).value);
 
@@ -54,7 +54,7 @@ var app = new Vue({
 
             })
                 .catch(function (error) {
-                    console.log(error.response.status)
+                    console.log(error.response.status);
                     UIkit.notification(error.response.data, {status: 'danger'})
 
                 });
@@ -74,8 +74,8 @@ var app = new Vue({
             var ref = this;
             axios.get('/admin/config' + document.getElementById("slug").innerText)
                 .then(function (response) {
-                    ref.selectedModel = response.data
-                    ref.initData(ref.selectedModel, '')
+                    ref.selectedModel = response.data;
+                    ref.initData(ref.selectedModel, '');
                     ref.getModelData();
                 })
                 .catch(function (error) {
@@ -90,14 +90,14 @@ var app = new Vue({
                     cancel: "Cancel"
                 }, stack: true
             }).then(function () {
-                console.log(ref.selectedModel.slug + '/' + ref.selectedData.id)
+                console.log(ref.selectedModel.slug + '/' + ref.selectedData.id);
                 axios({
                     method: 'delete',
                     url: ref.selectedModel.slug + '/' + ref.selectedData.id
                 }).then(function (response) {
 
                     UIkit.modal(document.getElementById("edit-modal"), {stack: true}).hide();
-                    UIkit.notification(response.data, {status: 'success'})
+                    UIkit.notification(response.data, {status: 'success'});
                     ref.getModelData();
                 })
                     .catch(function (error) {
@@ -118,13 +118,13 @@ var app = new Vue({
                 //ref.modelData = response.data
                 UIkit.modal(document.getElementById("add-modal")).hide();
                 ref.initData(ref.selectedModel, '');
-                UIkit.notification("Successfully created the item!", {status: 'success'})
+                UIkit.notification("Successfully created the item!", {status: 'success'});
 
                 ref.getModelData();
 
             })
                 .catch(function (error) {
-                    console.log(error.response.status)
+                    console.log(error.response.status);
                     UIkit.notification(error.response.data, {status: 'danger'})
 
                 });
@@ -147,9 +147,9 @@ var app = new Vue({
                 } else if (field.type == 'DATE') {
                     Vue.set(this.bufData, pre + field.name, '2018-01-01');
 
-                }else if (field.type == 'NUMBER'){
+                } else if (field.type == 'NUMBER') {
                     Vue.set(this.bufData, pre + field.name, 0);
-                }else {
+                } else {
                     Vue.set(this.bufData, pre + field.name, '');
                 }
             }
@@ -160,8 +160,8 @@ var app = new Vue({
 
             Object.keys(source).forEach(key => {
                 _.set(target, key, source[key]);
-        });
-            console.log(target)
+            });
+            console.log(target);
             this.newData = target;
         }
     },
@@ -169,10 +169,10 @@ var app = new Vue({
         this.getModel();
 
     }
-})
+});
 Date.prototype.yyyymmdd = function () {
-    var mm = this.getMonth() + 1; // getMonth() is zero-based
-    var dd = this.getDate();
+    const mm = this.getMonth() + 1; // getMonth() is zero-based
+    const dd = this.getDate();
 
     return [this.getFullYear(),
         (mm > 9 ? '-' : '-0') + mm,
@@ -181,20 +181,20 @@ Date.prototype.yyyymmdd = function () {
 };
 
 function transform(obj) {
-    let tmp = {}
+    let tmp = {};
     Object.keys(obj).forEach(k => {
         if (k.includes('.')) {
-        let path = k.split('.')
-        let x = path.pop()
-        path.reduce((cur, p) => {
-            if (!(p in cur)) cur[p] = {}
-        return cur[p]
-    }, tmp)[x] = obj[k]
-    }
-else {
-        tmp[k] = obj[k]
-    }
-})
+            let path = k.split('.');
+            let x = path.pop();
+            path.reduce((cur, p) => {
+                if (!(p in cur)) cur[p] = {};
+                return cur[p]
+            }, tmp)[x] = obj[k]
+        }
+        else {
+            tmp[k] = obj[k]
+        }
+    });
     return tmp
 }
 

@@ -22,29 +22,27 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$grid-gutter-horizontal:                         $global-gutter !default;
-$grid-gutter-vertical:                           $grid-gutter-horizontal !default;
-$grid-gutter-horizontal-l:                       $global-medium-gutter !default;
-$grid-gutter-vertical-l:                         $grid-gutter-horizontal-l !default;
+$grid-gutter-horizontal: $global-gutter !default;
+$grid-gutter-vertical: $grid-gutter-horizontal !default;
+$grid-gutter-horizontal-l: $global-medium-gutter !default;
+$grid-gutter-vertical-l: $grid-gutter-horizontal-l !default;
 
-$grid-small-gutter-horizontal:                   $global-small-gutter !default;
-$grid-small-gutter-vertical:                     $grid-small-gutter-horizontal !default;
+$grid-small-gutter-horizontal: $global-small-gutter !default;
+$grid-small-gutter-vertical: $grid-small-gutter-horizontal !default;
 
-$grid-medium-gutter-horizontal:                  $global-gutter !default;
-$grid-medium-gutter-vertical:                    $grid-medium-gutter-horizontal !default;
+$grid-medium-gutter-horizontal: $global-gutter !default;
+$grid-medium-gutter-vertical: $grid-medium-gutter-horizontal !default;
 
-$grid-large-gutter-horizontal:                   $global-medium-gutter !default;
-$grid-large-gutter-vertical:                     $grid-large-gutter-horizontal !default;
-$grid-large-gutter-horizontal-l:                 $global-large-gutter !default;
-$grid-large-gutter-vertical-l:                   $grid-large-gutter-horizontal-l !default;
+$grid-large-gutter-horizontal: $global-medium-gutter !default;
+$grid-large-gutter-vertical: $grid-large-gutter-horizontal !default;
+$grid-large-gutter-horizontal-l: $global-large-gutter !default;
+$grid-large-gutter-vertical-l: $grid-large-gutter-horizontal-l !default;
 
-$grid-divider-border-width:                      $global-border-width !default;
-$grid-divider-border:                            $global-border !default;
-
+$grid-divider-border-width: $global-border-width !default;
+$grid-divider-border: $global-border !default;
 
 /* ========================================================================
    Component: Grid
@@ -56,13 +54,13 @@ $grid-divider-border:                            $global-border !default;
  */
 
 .uk-grid {
-    display: flex;
-    /* 1 */
-    flex-wrap: wrap;
-    /* 2 */
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  display: flex;
+  /* 1 */
+  flex-wrap: wrap;
+  /* 2 */
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /*
@@ -71,14 +69,17 @@ $grid-divider-border:                            $global-border !default;
  * Reset margin for e.g. paragraphs
  */
 
-.uk-grid > * { margin: 0; }
+.uk-grid > * {
+  margin: 0;
+}
 
 /*
  * Remove margin from the last-child
  */
 
-.uk-grid > * > :last-child { margin-bottom: 0; }
-
+.uk-grid > * > :last-child {
+  margin-bottom: 0;
+}
 
 /* Gutter
  ========================================================================== */
@@ -88,25 +89,38 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid { margin-left: (-$grid-gutter-horizontal); }
-.uk-grid > * { padding-left: $grid-gutter-horizontal; }
+.uk-grid {
+  margin-left: (-$grid-gutter-horizontal);
+}
+
+.uk-grid > * {
+  padding-left: $grid-gutter-horizontal;
+}
 
 /* Vertical */
 .uk-grid + .uk-grid,
 .uk-grid > .uk-grid-margin,
-* + .uk-grid-margin { margin-top: $grid-gutter-vertical; }
+* + .uk-grid-margin {
+  margin-top: $grid-gutter-vertical;
+}
 
 /* Desktop and bigger */
 @media (min-width: $breakpoint-large) {
 
-    /* Horizontal */
-    .uk-grid { margin-left: (-$grid-gutter-horizontal-l); }
-    .uk-grid > * { padding-left: $grid-gutter-horizontal-l; }
+  /* Horizontal */
+  .uk-grid {
+    margin-left: (-$grid-gutter-horizontal-l);
+  }
+  .uk-grid > * {
+    padding-left: $grid-gutter-horizontal-l;
+  }
 
-    /* Vertical */
-    .uk-grid + .uk-grid,
-    .uk-grid > .uk-grid-margin,
-    * + .uk-grid-margin { margin-top: $grid-gutter-vertical-l; }
+  /* Vertical */
+  .uk-grid + .uk-grid,
+  .uk-grid > .uk-grid-margin,
+  * + .uk-grid-margin {
+    margin-top: $grid-gutter-vertical-l;
+  }
 
 }
 
@@ -115,51 +129,78 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid-small { margin-left: (-$grid-small-gutter-horizontal); }
-.uk-grid-small > * { padding-left: $grid-small-gutter-horizontal; }
+.uk-grid-small {
+  margin-left: (-$grid-small-gutter-horizontal);
+}
+
+.uk-grid-small > * {
+  padding-left: $grid-small-gutter-horizontal;
+}
 
 /* Vertical */
 .uk-grid + .uk-grid-small,
 .uk-grid-small > .uk-grid-margin,
-* + .uk-grid-margin-small { margin-top: $grid-small-gutter-vertical; }
+* + .uk-grid-margin-small {
+  margin-top: $grid-small-gutter-vertical;
+}
 
 /*
  * Medium
  */
 
 /* Horizontal */
-.uk-grid-medium { margin-left: (-$grid-medium-gutter-horizontal); }
-.uk-grid-medium > * { padding-left: $grid-medium-gutter-horizontal; }
+.uk-grid-medium {
+  margin-left: (-$grid-medium-gutter-horizontal);
+}
+
+.uk-grid-medium > * {
+  padding-left: $grid-medium-gutter-horizontal;
+}
 
 /* Vertical */
 .uk-grid + .uk-grid-medium,
 .uk-grid-medium > .uk-grid-margin,
-* + .uk-grid-margin-medium { margin-top: $grid-medium-gutter-vertical; }
+* + .uk-grid-margin-medium {
+  margin-top: $grid-medium-gutter-vertical;
+}
 
 /*
  * Large
  */
 
 /* Horizontal */
-.uk-grid-large { margin-left: (-$grid-large-gutter-horizontal); }
-.uk-grid-large > * { padding-left: $grid-large-gutter-horizontal; }
+.uk-grid-large {
+  margin-left: (-$grid-large-gutter-horizontal);
+}
+
+.uk-grid-large > * {
+  padding-left: $grid-large-gutter-horizontal;
+}
 
 /* Vertical */
 .uk-grid + .uk-grid-large,
 .uk-grid-large > .uk-grid-margin,
-* + .uk-grid-margin-large { margin-top: $grid-large-gutter-vertical; }
+* + .uk-grid-margin-large {
+  margin-top: $grid-large-gutter-vertical;
+}
 
 /* Desktop and bigger */
 @media (min-width: $breakpoint-large) {
 
-    /* Horizontal */
-    .uk-grid-large { margin-left: (-$grid-large-gutter-horizontal-l); }
-    .uk-grid-large > * { padding-left: $grid-large-gutter-horizontal-l; }
+  /* Horizontal */
+  .uk-grid-large {
+    margin-left: (-$grid-large-gutter-horizontal-l);
+  }
+  .uk-grid-large > * {
+    padding-left: $grid-large-gutter-horizontal-l;
+  }
 
-    /* Vertical */
-    .uk-grid + .uk-grid-large,
-    .uk-grid-large > .uk-grid-margin,
-    * + .uk-grid-margin-large { margin-top: $grid-large-gutter-vertical-l; }
+  /* Vertical */
+  .uk-grid + .uk-grid-large,
+  .uk-grid-large > .uk-grid-margin,
+  * + .uk-grid-margin-large {
+    margin-top: $grid-large-gutter-vertical-l;
+  }
 
 }
 
@@ -168,34 +209,42 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid-collapse { margin-left: 0; }
-.uk-grid-collapse > * { padding-left: 0; }
+.uk-grid-collapse {
+  margin-left: 0;
+}
+
+.uk-grid-collapse > * {
+  padding-left: 0;
+}
 
 /* Vertical */
 .uk-grid + .uk-grid-collapse,
-.uk-grid-collapse > .uk-grid-margin { margin-top: 0; }
-
+.uk-grid-collapse > .uk-grid-margin {
+  margin-top: 0;
+}
 
 /* Divider
  ========================================================================== */
 
-.uk-grid-divider > * { position: relative; }
+.uk-grid-divider > * {
+  position: relative;
+}
 
 .uk-grid-divider > :not(.uk-first-column)::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    border-left: $grid-divider-border-width solid $grid-divider-border;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: $grid-divider-border-width solid $grid-divider-border;
 }
 
 /* Vertical */
 .uk-grid-divider.uk-grid-stack > .uk-grid-margin::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    border-top: $grid-divider-border-width solid $grid-divider-border;
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: $grid-divider-border-width solid $grid-divider-border;
 }
 
 /*
@@ -203,35 +252,52 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid-divider { margin-left: -($grid-gutter-horizontal * 2); }
-.uk-grid-divider > * { padding-left: ($grid-gutter-horizontal * 2); }
+.uk-grid-divider {
+  margin-left: -($grid-gutter-horizontal * 2);
+}
 
-.uk-grid-divider > :not(.uk-first-column)::before { left: $grid-gutter-horizontal; }
+.uk-grid-divider > * {
+  padding-left: ($grid-gutter-horizontal * 2);
+}
+
+.uk-grid-divider > :not(.uk-first-column)::before {
+  left: $grid-gutter-horizontal;
+}
 
 /* Vertical */
-.uk-grid-divider.uk-grid-stack > .uk-grid-margin { margin-top: ($grid-gutter-vertical * 2); }
+.uk-grid-divider.uk-grid-stack > .uk-grid-margin {
+  margin-top: ($grid-gutter-vertical * 2);
+}
 
 .uk-grid-divider.uk-grid-stack > .uk-grid-margin::before {
-    top: (-$grid-gutter-vertical);
-    left: ($grid-gutter-horizontal * 2);
+  top: (-$grid-gutter-vertical);
+  left: ($grid-gutter-horizontal * 2);
 }
 
 /* Desktop and bigger */
 @media (min-width: $breakpoint-large) {
 
-    /* Horizontal */
-    .uk-grid-divider { margin-left: -($grid-gutter-horizontal-l * 2); }
-    .uk-grid-divider > * { padding-left: ($grid-gutter-horizontal-l * 2); }
+  /* Horizontal */
+  .uk-grid-divider {
+    margin-left: -($grid-gutter-horizontal-l * 2);
+  }
+  .uk-grid-divider > * {
+    padding-left: ($grid-gutter-horizontal-l * 2);
+  }
 
-    .uk-grid-divider > :not(.uk-first-column)::before { left: $grid-gutter-horizontal-l; }
+  .uk-grid-divider > :not(.uk-first-column)::before {
+    left: $grid-gutter-horizontal-l;
+  }
 
-    /* Vertical */
-    .uk-grid-divider.uk-grid-stack > .uk-grid-margin { margin-top: ($grid-gutter-vertical-l * 2); }
+  /* Vertical */
+  .uk-grid-divider.uk-grid-stack > .uk-grid-margin {
+    margin-top: ($grid-gutter-vertical-l * 2);
+  }
 
-    .uk-grid-divider.uk-grid-stack > .uk-grid-margin::before {
-        top: (-$grid-gutter-vertical-l);
-        left: ($grid-gutter-horizontal-l * 2);
-    }
+  .uk-grid-divider.uk-grid-stack > .uk-grid-margin::before {
+    top: (-$grid-gutter-vertical-l);
+    left: ($grid-gutter-horizontal-l * 2);
+  }
 
 }
 
@@ -240,17 +306,26 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid-divider.uk-grid-small { margin-left: -($grid-small-gutter-horizontal * 2); }
-.uk-grid-divider.uk-grid-small > * { padding-left: ($grid-small-gutter-horizontal * 2); }
+.uk-grid-divider.uk-grid-small {
+  margin-left: -($grid-small-gutter-horizontal * 2);
+}
 
-.uk-grid-divider.uk-grid-small > :not(.uk-first-column)::before { left: $grid-small-gutter-horizontal; }
+.uk-grid-divider.uk-grid-small > * {
+  padding-left: ($grid-small-gutter-horizontal * 2);
+}
+
+.uk-grid-divider.uk-grid-small > :not(.uk-first-column)::before {
+  left: $grid-small-gutter-horizontal;
+}
 
 /* Vertical */
-.uk-grid-divider.uk-grid-small.uk-grid-stack > .uk-grid-margin { margin-top: ($grid-small-gutter-vertical * 2); }
+.uk-grid-divider.uk-grid-small.uk-grid-stack > .uk-grid-margin {
+  margin-top: ($grid-small-gutter-vertical * 2);
+}
 
 .uk-grid-divider.uk-grid-small.uk-grid-stack > .uk-grid-margin::before {
-    top: (-$grid-small-gutter-vertical);
-    left: ($grid-small-gutter-horizontal * 2);
+  top: (-$grid-small-gutter-vertical);
+  left: ($grid-small-gutter-horizontal * 2);
 }
 
 /*
@@ -258,17 +333,26 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid-divider.uk-grid-medium { margin-left: -($grid-medium-gutter-horizontal * 2); }
-.uk-grid-divider.uk-grid-medium > * { padding-left: ($grid-medium-gutter-horizontal * 2); }
+.uk-grid-divider.uk-grid-medium {
+  margin-left: -($grid-medium-gutter-horizontal * 2);
+}
 
-.uk-grid-divider.uk-grid-medium > :not(.uk-first-column)::before { left: $grid-medium-gutter-horizontal; }
+.uk-grid-divider.uk-grid-medium > * {
+  padding-left: ($grid-medium-gutter-horizontal * 2);
+}
+
+.uk-grid-divider.uk-grid-medium > :not(.uk-first-column)::before {
+  left: $grid-medium-gutter-horizontal;
+}
 
 /* Vertical */
-.uk-grid-divider.uk-grid-medium.uk-grid-stack > .uk-grid-margin { margin-top: ($grid-medium-gutter-vertical * 2); }
+.uk-grid-divider.uk-grid-medium.uk-grid-stack > .uk-grid-margin {
+  margin-top: ($grid-medium-gutter-vertical * 2);
+}
 
 .uk-grid-divider.uk-grid-medium.uk-grid-stack > .uk-grid-margin::before {
-    top: (-$grid-medium-gutter-vertical);
-    left: ($grid-medium-gutter-horizontal * 2);
+  top: (-$grid-medium-gutter-vertical);
+  left: ($grid-medium-gutter-horizontal * 2);
 }
 
 /*
@@ -276,38 +360,54 @@ $grid-divider-border:                            $global-border !default;
  */
 
 /* Horizontal */
-.uk-grid-divider.uk-grid-large { margin-left: -($grid-large-gutter-horizontal * 2); }
-.uk-grid-divider.uk-grid-large > * { padding-left: ($grid-large-gutter-horizontal * 2); }
+.uk-grid-divider.uk-grid-large {
+  margin-left: -($grid-large-gutter-horizontal * 2);
+}
 
-.uk-grid-divider.uk-grid-large > :not(.uk-first-column)::before { left: $grid-large-gutter-horizontal; }
+.uk-grid-divider.uk-grid-large > * {
+  padding-left: ($grid-large-gutter-horizontal * 2);
+}
+
+.uk-grid-divider.uk-grid-large > :not(.uk-first-column)::before {
+  left: $grid-large-gutter-horizontal;
+}
 
 /* Vertical */
-.uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin { margin-top: ($grid-large-gutter-vertical * 2); }
+.uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin {
+  margin-top: ($grid-large-gutter-vertical * 2);
+}
 
 .uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin::before {
-    top: (-$grid-large-gutter-vertical);
-    left: ($grid-large-gutter-horizontal * 2);
+  top: (-$grid-large-gutter-vertical);
+  left: ($grid-large-gutter-horizontal * 2);
 }
 
 /* Desktop and bigger */
 @media (min-width: $breakpoint-large) {
 
-    /* Horizontal */
-    .uk-grid-divider.uk-grid-large { margin-left: -($grid-large-gutter-horizontal-l * 2); }
-    .uk-grid-divider.uk-grid-large > * { padding-left: ($grid-large-gutter-horizontal-l * 2); }
+  /* Horizontal */
+  .uk-grid-divider.uk-grid-large {
+    margin-left: -($grid-large-gutter-horizontal-l * 2);
+  }
+  .uk-grid-divider.uk-grid-large > * {
+    padding-left: ($grid-large-gutter-horizontal-l * 2);
+  }
 
-    .uk-grid-divider.uk-grid-large > :not(.uk-first-column)::before { left: $grid-large-gutter-horizontal-l; }
+  .uk-grid-divider.uk-grid-large > :not(.uk-first-column)::before {
+    left: $grid-large-gutter-horizontal-l;
+  }
 
-    /* Vertical */
-    .uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin { margin-top: ($grid-large-gutter-vertical-l * 2); }
+  /* Vertical */
+  .uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin {
+    margin-top: ($grid-large-gutter-vertical-l * 2);
+  }
 
-    .uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin::before {
-        top: (-$grid-large-gutter-vertical-l);
-        left: ($grid-large-gutter-horizontal-l * 2);
-    }
+  .uk-grid-divider.uk-grid-large.uk-grid-stack > .uk-grid-margin::before {
+    top: (-$grid-large-gutter-vertical-l);
+    left: ($grid-large-gutter-horizontal-l * 2);
+  }
 
 }
-
 
 /* Match child of a grid cell
  ========================================================================== */
@@ -321,32 +421,32 @@ $grid-divider-border:                            $global-border !default;
 
 .uk-grid-match > *,
 .uk-grid-item-match {
-    display: flex;
-    /* 1 */
-    flex-wrap: wrap;
+  display: flex;
+  /* 1 */
+  flex-wrap: wrap;
 }
 
 .uk-grid-match > * > :not([class*='uk-width']),
 .uk-grid-item-match > :not([class*='uk-width']) {
-    /* 2 */
-    box-sizing: border-box;
-    width: 100%;
-    /* 3 */
-    flex: auto;
+  /* 2 */
+  box-sizing: border-box;
+  width: 100%;
+  /* 3 */
+  flex: auto;
 }
-
 
 // Hooks
 // ========================================================================
 
-@if(mixin-exists(hook-grid-misc)) {@include hook-grid-misc();}
+@if (mixin-exists(hook-grid-misc)) {
+  @include hook-grid-misc();
+}
 
 // @mixin hook-grid-misc(){}
-
 
 // Inverse
 // ========================================================================
 
-$inverse-grid-divider-border:                   $inverse-global-border !default;
+$inverse-grid-divider-border: $inverse-global-border !default;
 
 

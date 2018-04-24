@@ -32,7 +32,6 @@ public class ObjectEvaluatorImpl implements ObjectEvaluator {
     }
 
 
-
     private void checkAnnotations(Object obj, FieldDescriber fieldDescriber) {
         if (fieldDescriber.isRequired() && (obj == null || (obj instanceof Date && ((Date) obj).getTime() < 100000) || (obj instanceof String && ((String) obj).isEmpty()))) {
             throw new RestErrorMessage(fieldDescriber.getPrettyName() + " is blank, please fill it in!");
@@ -49,7 +48,7 @@ public class ObjectEvaluatorImpl implements ObjectEvaluator {
                 }
             }
         }
-        if (fieldDescriber.getType().equals(Text.class)) {
+        if (fieldDescriber.getType().equals(FieldType.TEXT)) {
             String text = (String) obj;
             if (fieldDescriber.getField().isAnnotationPresent(Text.class)) {
                 Text textAnnotation = fieldDescriber.getField().getAnnotation(Text.class);

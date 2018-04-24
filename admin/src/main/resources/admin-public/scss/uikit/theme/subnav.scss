@@ -3,7 +3,6 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
@@ -11,27 +10,22 @@
 // New
 //
 
-$subnav-item-font-size:                          $global-small-font-size !default;
-$subnav-item-text-transform:                     uppercase !default;
-
+$subnav-item-font-size: $global-small-font-size !default;
+$subnav-item-text-transform: uppercase !default;
 
 // Component
 // ========================================================================
 
 // @mixin hook-subnav(){}
 
-
-
 // @mixin hook-subnav-item-hover(){}
 
 // @mixin hook-subnav-item-active(){}
-
 
 // Divider modifier
 // ========================================================================
 
 // @mixin hook-subnav-divider(){}
-
 
 // Pill modifier
 // ========================================================================
@@ -44,18 +38,15 @@ $subnav-item-text-transform:                     uppercase !default;
 
 // @mixin hook-subnav-pill-item-active(){}
 
-
 // Disabled
 // ========================================================================
 
 // @mixin hook-subnav-item-disabled(){}
 
-
 // Miscellaneous
 // ========================================================================
 
 // @mixin hook-subnav-misc(){}
-
 
 // Inverse
 // ========================================================================

@@ -3,32 +3,25 @@
 //
 // ========================================================================
 
-
 // Variables
 // ========================================================================
 
-$dropdown-padding:                               25px !default;
-$dropdown-background:                            $global-background !default;
+$dropdown-padding: 25px !default;
+$dropdown-background: $global-background !default;
 
 //
 // New
 //
 
-$dropdown-nav-font-size:                         $global-small-font-size !default;
+$dropdown-nav-font-size: $global-small-font-size !default;
 
-$dropdown-box-shadow:                            0 5px 12px rgba(0,0,0,0.15) !default;
-
+$dropdown-box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15) !default;
 
 // Component
 // ========================================================================
 
-
-
-
 // Nav
 // ========================================================================
-
-
 
 // @mixin hook-dropdown-nav-item(){}
 
@@ -37,7 +30,6 @@ $dropdown-box-shadow:                            0 5px 12px rgba(0,0,0,0.15) !de
 // @mixin hook-dropdown-nav-header(){}
 
 // @mixin hook-dropdown-nav-divider(){}
-
 
 // Miscellaneous
 // ========================================================================

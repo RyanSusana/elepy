@@ -15,7 +15,8 @@ public class UserDao extends MongoDao<User> {
     public Optional<User> getByUsernameOrEmail(String usernameOrEmail) {
         return Optional.ofNullable(collection().findOne("{$or:[{username: #}, {email: #}]}", usernameOrEmail, usernameOrEmail).as(getClassType()));
     }
-    public long count(){
+
+    public long count() {
         return collection().count();
     }
 }
