@@ -16,6 +16,8 @@ import org.jongo.Mapper;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.jongo.marshall.jackson.oid.MongoId;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Service;
 
@@ -26,25 +28,27 @@ import static spark.Spark.*;
 
 public class Elepy {
 
-    protected final Service http;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Elepy.class);
+    private final Service http;
     private final ObjectMapper objectMapper;
     private final DB db;
     private final String baseSlug;
     private final String configSlug;
     private final ObjectEvaluator<Object> baseObjectEvaluator;
     private final Mapper mapper;
-    private List<Filter> adminFilters;
-    private Filter basePublicFilter;
-    private List<Object> descriptors;
+    private final List<Filter> adminFilters;
+    private final Filter basePublicFilter;
+    private final List<Object> descriptors;
 
-    private List<ElepyModule> modules;
-    private List<Schema> schemas;
-    private List<String> packages;
+    private final List<ElepyModule> modules;
+    private final List<Schema> schemas;
+    private final List<String> packages;
+    private final String name;
 
     private boolean initialized = false;
 
 
-    public Elepy(ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, List<Schema> schemas, String... packages) {
+    public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, List<Schema> schemas, String... packages) {
         this.objectMapper = objectMapper;
         this.db = db;
         this.adminFilters = adminFilters;
@@ -54,10 +58,12 @@ public class Elepy {
         this.baseObjectEvaluator = baseObjectEvaluator;
 
         this.http = service;
-        this.packages = Arrays.asList(packages);
+        this.packages = new ArrayList<>();
+        this.packages.addAll(Arrays.asList(packages));
         this.schemas = schemas;
-
+        descriptors = new ArrayList<>();
         this.modules = new ArrayList<>();
+        this.name = name;
 
         final JacksonMapper.Builder builder = new JacksonMapper.Builder();
 
@@ -88,7 +94,7 @@ public class Elepy {
         final List<Map<String, Object>> maps = setupPojos(classes);
         final List<Schema> schemas1 = setupSchemas(schemas);
 
-        descriptors = new ArrayList<>();
+
         descriptors.addAll(maps);
         descriptors.addAll(schemas1);
 
@@ -223,7 +229,7 @@ public class Elepy {
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
             if (!request.requestMethod().toUpperCase().equals("OPTIONS") && response.status() != 404)
-                System.out.println(request.requestMethod() + " ['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+                LOGGER.info(request.requestMethod() + " ['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
     }
 
@@ -381,8 +387,9 @@ public class Elepy {
         return this.basePublicFilter;
     }
 
-    public void setBasePublicFilter(Filter basePublicFilter) {
-        this.basePublicFilter = basePublicFilter;
+
+    public Service http() {
+        return http;
     }
 
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {

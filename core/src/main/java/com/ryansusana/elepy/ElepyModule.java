@@ -15,7 +15,7 @@ public abstract class ElepyModule {
 
     public ElepyModule(Elepy inst) {
         this.elepy = inst;
-        this.http = elepy.http;
+        this.http = elepy.http();
     }
 
     public Elepy elepy() {
