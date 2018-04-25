@@ -14,7 +14,7 @@
             </ul>
         </div>
         <div class="uk-navbar-right">
-            <ul class="uk-navbar-nav">
+            <ul class="uk-navbar-nav uk-margin-small-right">
                 <li class="">
                     <a href="/admin"><i class="fas fa-home"></i>Home</a>
                 </li>
