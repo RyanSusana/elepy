@@ -25,7 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
-@SuppressWarnings("ALL")
+
 public class ElepyAdminPanel extends ElepyModule {
     private final UserDao userDao;
     private final UserService userService;
@@ -48,7 +48,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void routes() {
-        compileSass();
+        //compileSass();
         setupLogin();
         setupAdmin();
     }
@@ -94,7 +94,7 @@ public class ElepyAdminPanel extends ElepyModule {
                 }
 
                 File sassLocation = new File(fs + "elepy-admin" + fs + "scss");
-                copyResourcesRecursively(this.getClass().getClassLoader().getResource("admin-public/scss"), sassLocation);
+                copyResourcesRecursively(this.getClass().getClassLoader().getResource("admin-panel-public/scss"), sassLocation);
                 URI inputFile = new File(fs + "elepy-admin" + fs + "scss" + fs + "main.scss").toURI();
 
 
@@ -107,7 +107,6 @@ public class ElepyAdminPanel extends ElepyModule {
                 Output output = compiler.compile(context);
 
 
-                System.out.println("Compiled css");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -118,7 +117,10 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
-        http().staticFiles.location("/admin-public");
+
+        http().staticFileLocation("/admin-panel-public");
+
+
 
         elepy().addPackage(User.class.getPackage().getName());
 
