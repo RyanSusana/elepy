@@ -36,6 +36,11 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
     }
 
     @Override
+    public long count(String query, Object... parameters) {
+        return 0;
+    }
+
+    @Override
     public List<Map<String, Object>> getAll() {
         MongoCursor<Map<String, Object>> models = collection().find().map(
                 dbObject -> {
@@ -75,6 +80,11 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
 
     @Override
     public List<Map<String, Object>> search(SearchSetup query) {
+        return null;
+    }
+
+    @Override
+    public List<Map<String, Object>> search(String query, Object... params) {
         return null;
     }
 

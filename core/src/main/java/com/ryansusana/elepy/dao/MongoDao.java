@@ -1,11 +1,12 @@
 package com.ryansusana.elepy.dao;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
+import com.ryansusana.elepy.annotations.Unique;
+import com.ryansusana.elepy.concepts.FieldUtils;
 import com.ryansusana.elepy.concepts.IdProvider;
 import com.ryansusana.elepy.models.IdGenerationType;
 import com.ryansusana.elepy.models.RestErrorMessage;
@@ -38,6 +39,7 @@ public class MongoDao<T> implements Crud<T> {
         this.objectMapper = new ObjectMapper();
         this.classType = classType;
         this.collectionName = collectionName.replaceAll("/", "");
+
     }
 
     protected MongoCollection collection() {
@@ -56,33 +58,10 @@ public class MongoDao<T> implements Crud<T> {
         return Optional.ofNullable(collection().findOne("{_id: #}", id).as(classType));
     }
 
-    public String getId(T object) {
-        String id = null;
-        for (Field field : object.getClass().getDeclaredFields()) {
 
-            if (field.getAnnotation(MongoId.class) != null) {
-                field.setAccessible(true);
-
-                try {
-                    return (String) field.get(object);
-                } catch (IllegalAccessException | ClassCastException e) {
-                    throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
-                }
-            }
-        }
-        for (Field field : object.getClass().getDeclaredFields()) {
-
-            if (field.getName().equals("id") && field.getType().equals(String.class)) {
-                try {
-                    return (String) field.get(object);
-                } catch (IllegalAccessException | ClassCastException e) {
-                    throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
-                }
-            }
-        }
-        throw new IllegalStateException(object.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
-
-
+    @Override
+    public long count(String query, Object... parameters) {
+        return collection().count(query, parameters);
     }
 
 
@@ -90,6 +69,7 @@ public class MongoDao<T> implements Crud<T> {
     public List<T> search(SearchSetup query) {
 
         final List<Field> searchableFields = getSearchableFields();
+        System.out.println(searchableFields.size());
         List<Map<String, String>> expressions = new ArrayList<>();
         Map<String, Object> qmap = new HashMap<>();
         Pattern[] hashs = new Pattern[searchableFields.size()];
@@ -99,7 +79,7 @@ public class MongoDao<T> implements Crud<T> {
         }
         for (Field field : searchableFields) {
             Map<String, String> keyValue = new HashMap<>();
-            keyValue.put(getPropertyName(field), "#");
+            keyValue.put(FieldUtils.getPropertyName(field), "#");
             expressions.add(keyValue);
         }
         qmap.put("$or", expressions);
@@ -117,25 +97,14 @@ public class MongoDao<T> implements Crud<T> {
 
     }
 
-    private String getPropertyName(Field field) {
-        if (field.isAnnotationPresent(JsonProperty.class)) {
-            return field.getAnnotation(JsonProperty.class).value();
-        } else if (field.isAnnotationPresent(MongoId.class)) {
-            return "_id";
-        } else {
-            return field.getName();
-        }
+    @Override
+    public List<T> search(String query, Object... params) {
+        return Lists.newArrayList(collection().find(query,params).as(classType).iterator());
     }
 
 
     private List<Field> getSearchableFields() {
-        List<Field> searchableFields = new ArrayList<>();
-        for (Field field : classType.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Searchable.class) || field.isAnnotationPresent(MongoId.class)) {
-                searchableFields.add(field);
-            }
-        }
-        return searchableFields;
+        return FieldUtils.searchForFieldsWithAnnotation(classType, Searchable.class, MongoId.class, Unique.class);
     }
 
 
@@ -159,7 +128,6 @@ public class MongoDao<T> implements Crud<T> {
             if (!annotation.idGenerator().equals(IdGenerationType.NONE)) {
                 assert idField != null;
                 idField.setAccessible(true);
-
                 idField.set(item, annotation.idGenerator().generateId());
             }
 
@@ -168,6 +136,15 @@ public class MongoDao<T> implements Crud<T> {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public String getId(T item) {
+        String id = FieldUtils.getId(item);
+        if (id == null) {
+            throw new IllegalStateException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
+        }
+        return id;
     }
 
 

@@ -1,6 +1,8 @@
 package com.ryansusana.elepy.routes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryansusana.elepy.concepts.IntegrityEvaluator;
+import com.ryansusana.elepy.concepts.IntegrityEvaluatorImpl;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.dao.Crud;
 import spark.Request;
@@ -24,6 +26,7 @@ public class CreateImpl<T> implements Create<T> {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             objectEvaluator.evaluate(product);
         }
+        new IntegrityEvaluatorImpl<T>().evaluate(product,dao);
         dao.create(product);
         response.body(request.body());
         return Optional.ofNullable(product);

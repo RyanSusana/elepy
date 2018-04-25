@@ -1,6 +1,7 @@
 package com.ryansusana.elepy.routes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryansusana.elepy.concepts.IntegrityEvaluatorImpl;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
@@ -38,7 +39,7 @@ public class UpdateImpl<T> implements Update<T> {
             }
         }
 
-
+        new IntegrityEvaluatorImpl<T>().evaluate(updated, dao);
         dao.update(updated);
         response.status(200);
         response.body("The item is updated");
