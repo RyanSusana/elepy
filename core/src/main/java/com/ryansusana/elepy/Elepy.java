@@ -193,7 +193,7 @@ public class Elepy {
                     http.get(baseSlug + restModel.slug(), (request, response) -> objectMapper.writeValueAsString(restModel.findRoute().newInstance().find(request, response, dao, objectMapper)));
                 if (!restModel.findOne().equals(RestModelAccessType.DISABLED))
                     http.get(baseSlug + restModel.slug() + "/:id", (request, response) -> {
-                        final List<Object> set = restModel.findRoute().newInstance().find(request, response, dao, objectMapper);
+                        final Optional<Object> set = restModel.findOneRoute().newInstance().findOne(request, response, dao, objectMapper);
                         return objectMapper.writeValueAsString(set);
                     });
 
