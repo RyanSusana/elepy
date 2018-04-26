@@ -15,6 +15,7 @@ The generator also comes with handy interfaces and annotations that allow you to
  - Pretty names to be displayed on your front end: `@PrettyName`
  - Non editable fields after the initial create(id's are non-editable by default) `@NonEditable`
  - Searchable fields for the findAll route `@Searchable`
+ - Unique fields `@Unique`
  
  All of these things get handled by Elepy's implementation of it's own ObjectEvaluator and ObjectUpdateEvaluator. You can also add your own ObjectEvaluators to a POJO by adding to the objectEvaluators array in `@RestModel`
 
