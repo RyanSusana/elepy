@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryansusana.elepy.concepts.IntegrityEvaluatorImpl;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.dao.Crud;
+import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.routes.Create;
 import spark.Request;
 import spark.Response;
@@ -15,15 +16,22 @@ public class UserCreate implements Create<User> {
     @Override
     public Optional<User> create(Request request, Response response, Crud<User> dao, Class<? extends User> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
         String body = request.body();
-        User product = objectMapper.readValue(body, clazz);
+        User user = objectMapper.readValue(body, clazz);
+        User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);
+
 
         for (ObjectEvaluator<User> objectEvaluator : objectEvaluators) {
-            objectEvaluator.evaluate(product);
+            objectEvaluator.evaluate(user);
         }
-        new IntegrityEvaluatorImpl<User>().evaluate(product, dao);
-        product = product.hashWord();
-        dao.create(product);
+        new IntegrityEvaluatorImpl<User>().evaluate(user, dao);
+
+        if (!loggedInUser.getUserType().hasMoreRightsThan(user.getUserType())) {
+
+            throw new RestErrorMessage("You are not allowed to create users with an equal higher rank than you!");
+        }
+        user = user.hashWord();
+        dao.create(user);
         response.body(request.body());
-        return Optional.ofNullable(product);
+        return Optional.ofNullable(user);
     }
 }

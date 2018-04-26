@@ -7,9 +7,6 @@ import spark.Response;
 
 public class DeleteImpl<T> implements Delete<T> {
 
-    public DeleteImpl() {
-    }
-
     @Override
     public boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) {
         dao.delete(request.params("id"));

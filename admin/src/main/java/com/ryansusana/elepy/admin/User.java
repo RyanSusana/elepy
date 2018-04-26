@@ -11,7 +11,7 @@ import com.ryansusana.elepy.models.IdGenerationType;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-@RestModel(slug = "/users", name = "Users", icon = "users", idGenerator = IdGenerationType.HEX_10, createRoute = UserCreate.class, findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
+@RestModel(slug = "/users", name = "Users", icon = "users", idGenerator = IdGenerationType.HEX_10, deleteRoute = UserDelete.class, createRoute = UserCreate.class, findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
 public class User {
 
     @MongoId
@@ -22,6 +22,9 @@ public class User {
     @PrettyName("Username")
     @Unique
     private final String username;
+
+    @PrettyName("Password")
+    @JsonProperty("password")
     private final String password;
 
     @Searchable
@@ -30,16 +33,23 @@ public class User {
     @Unique
     private final String email;
 
+
+    @Searchable
+    @JsonProperty("user_type")
+    @PrettyName("user_role")
+    private final UserType userType;
+
     @JsonCreator
-    public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("email") String email) {
+    public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("email") String email, @JsonProperty("user_type") UserType userType) {
         this.id = id == null ? IdProvider.getRandomHexString(9) : id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.userType = userType == null ? UserType.USER : userType;
     }
 
     User hashWord() {
-        return new User(id, username, BCrypt.hashpw(password, BCrypt.gensalt()), email);
+        return new User(id, username, BCrypt.hashpw(password, BCrypt.gensalt()), email, userType);
     }
 
     public String getId() {
@@ -56,5 +66,9 @@ public class User {
 
     public String getEmail() {
         return this.email;
+    }
+
+    public UserType getUserType() {
+        return userType;
     }
 }

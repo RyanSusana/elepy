@@ -69,7 +69,6 @@ public class MongoDao<T> implements Crud<T> {
     public List<T> search(SearchSetup query) {
 
         final List<Field> searchableFields = getSearchableFields();
-        System.out.println(searchableFields.size());
         List<Map<String, String>> expressions = new ArrayList<>();
         Map<String, Object> qmap = new HashMap<>();
         Pattern[] hashs = new Pattern[searchableFields.size()];

@@ -2,6 +2,7 @@ package com.ryansusana.elepy.admin;
 
 import com.ryansusana.elepy.Elepy;
 import com.ryansusana.elepy.ElepyModule;
+import com.ryansusana.elepy.models.RestErrorMessage;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
@@ -25,10 +26,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
-
 public class ElepyAdminPanel extends ElepyModule {
     private final UserDao userDao;
     private final UserService userService;
+    public static final String ADMIN_USER = "adminUser";
 
 
     public ElepyAdminPanel(Elepy elepy, Service service) {
@@ -121,7 +122,6 @@ public class ElepyAdminPanel extends ElepyModule {
         http().staticFileLocation("/admin-panel-public");
 
 
-
         elepy().addPackage(User.class.getPackage().getName());
 
     }
@@ -190,12 +190,12 @@ public class ElepyAdminPanel extends ElepyModule {
     private void setupLogin() {
 
         if (userDao.count() == 0) {
-            User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "");
+            User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
             userDao.create(user);
         }
 
         elepy().addAdminFilter((request, response) -> {
-            final User adminUser = request.session().attribute("adminUser");
+            final User adminUser = request.session().attribute(ADMIN_USER);
             if (adminUser == null) {
                 request.session().attribute("redirectUrl", request.uri());
                 response.redirect("/login");
@@ -214,7 +214,10 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
             if (user.isPresent()) {
-                request.session().attribute("adminUser", user.get());
+                if (user.get().getUserType().getLevel() < 0) {
+                    throw new RestErrorMessage("Your account has been suspended!");
+                }
+                request.session().attribute(ADMIN_USER, user.get());
                 response.status(200);
                 request.session().removeAttribute("redirectUrl");
                 return redirectUrl;
