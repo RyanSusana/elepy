@@ -32,15 +32,15 @@ public @interface RestModel {
 
     RestModelAccessType create() default RestModelAccessType.PUBLIC;
 
-    Class<? extends Create> createRoute() default CreateImpl.class;
+    Class<? extends Create> createRoute() default DefaultCreate.class;
 
-    Class<? extends Find> findRoute() default FindImpl.class;
+    Class<? extends Find> findRoute() default DefaultFind.class;
 
-    Class<? extends Update> updateRoute() default UpdateImpl.class;
+    Class<? extends Update> updateRoute() default DefaultUpdate.class;
 
-    Class<? extends FindOne> findOneRoute() default FindOneImpl.class;
+    Class<? extends FindOne> findOneRoute() default DefaultFindOne.class;
 
-    Class<? extends Delete> deleteRoute() default DeleteImpl.class;
+    Class<? extends Delete> deleteRoute() default DefaultDelete.class;
 
 
     Class<? extends ObjectEvaluator>[] objectEvaluators() default {};
