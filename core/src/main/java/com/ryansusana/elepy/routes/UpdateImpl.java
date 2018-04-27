@@ -5,6 +5,7 @@ import com.ryansusana.elepy.concepts.IntegrityEvaluatorImpl;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
+import com.ryansusana.elepy.models.RestErrorMessage;
 import spark.Request;
 import spark.Response;
 
@@ -15,7 +16,7 @@ public class UpdateImpl<T> implements Update<T> {
 
 
     @Override
-    public boolean update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public Optional<T> update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
         String body = request.body();
 
         T updated = objectMapper.readValue(body, clazz);
@@ -24,8 +25,7 @@ public class UpdateImpl<T> implements Update<T> {
 
         if (!before.isPresent()) {
             response.status(404);
-            response.body("No object with this id");
-            return false;
+            throw new RestErrorMessage("No object found with this ID");
         }
 
         ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<T>();
@@ -43,6 +43,6 @@ public class UpdateImpl<T> implements Update<T> {
         dao.update(updated);
         response.status(200);
         response.body("The item is updated");
-        return true;
+        return Optional.of(updated);
     }
 }
