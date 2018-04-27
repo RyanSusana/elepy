@@ -6,12 +6,10 @@ import com.ryansusana.elepy.annotations.PrettyName;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
 import com.ryansusana.elepy.annotations.Unique;
-import com.ryansusana.elepy.concepts.IdProvider;
-import com.ryansusana.elepy.models.IdGenerationType;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-@RestModel(slug = "/users", name = "Users", icon = "users", idGenerator = IdGenerationType.HEX_10, deleteRoute = UserDelete.class, createRoute = UserCreate.class, findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
+@RestModel(slug = "/users", name = "Users", icon = "users", deleteRoute = UserDelete.class, createRoute = UserCreate.class, findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
 public class User {
 
     @MongoId
@@ -41,7 +39,7 @@ public class User {
 
     @JsonCreator
     public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("email") String email, @JsonProperty("user_type") UserType userType) {
-        this.id = id == null ? IdProvider.getRandomHexString(9) : id;
+        this.id =  id;
         this.username = username;
         this.password = password;
         this.email = email;

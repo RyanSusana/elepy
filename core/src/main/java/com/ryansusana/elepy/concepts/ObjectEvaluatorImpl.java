@@ -52,7 +52,7 @@ public class ObjectEvaluatorImpl implements ObjectEvaluator {
             String text = (String) obj;
             if (fieldDescriber.getField().isAnnotationPresent(Text.class)) {
                 Text textAnnotation = fieldDescriber.getField().getAnnotation(Text.class);
-                if (text.length() >= textAnnotation.maximumLength() || text.length() <= textAnnotation.minimumLength()) {
+                if (text.length() > textAnnotation.maximumLength() || text.length() < textAnnotation.minimumLength()) {
                     throw new RestErrorMessage(String.format("%s must be between %d and %d characters long", fieldDescriber.getPrettyName(), textAnnotation.minimumLength(), textAnnotation.maximumLength()));
                 }
             }

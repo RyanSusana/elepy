@@ -1,8 +1,9 @@
 package com.ryansusana.elepy.annotations;
 
 
+import com.ryansusana.elepy.concepts.IdProvider;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
-import com.ryansusana.elepy.models.IdGenerationType;
+import com.ryansusana.elepy.id.HexIdProvider;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import com.ryansusana.elepy.routes.*;
 
@@ -20,7 +21,7 @@ public @interface RestModel {
 
     String icon() default "file";
 
-    IdGenerationType idGenerator() default IdGenerationType.NONE;
+    Class<? extends IdProvider> idProvider() default HexIdProvider.class;
 
     RestModelAccessType findAll() default RestModelAccessType.PUBLIC;
 

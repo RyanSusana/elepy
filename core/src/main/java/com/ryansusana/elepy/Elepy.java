@@ -11,6 +11,7 @@ import com.ryansusana.elepy.dao.MongoDao;
 import com.ryansusana.elepy.dao.MongoSchemaDao;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import com.ryansusana.elepy.models.Schema;
+import com.ryansusana.elepy.modules.EleHTML;
 import com.ryansusana.elepy.modules.ImagePi;
 import org.jongo.Mapper;
 import org.jongo.marshall.jackson.JacksonMapper;
@@ -194,7 +195,12 @@ public class Elepy {
                 if (!restModel.findOne().equals(RestModelAccessType.DISABLED))
                     http.get(baseSlug + restModel.slug() + "/:id", (request, response) -> {
                         final Optional<Object> set = restModel.findOneRoute().newInstance().findOne(request, response, dao, objectMapper);
-                        return objectMapper.writeValueAsString(set);
+                        if (set.isPresent()) {
+                            System.out.println(EleHTML.eleToHtml(set.get()).render());
+                            return objectMapper.writeValueAsString(set.get());
+                        }
+                        response.status(404);
+                        return "";
                     });
 
 
@@ -249,7 +255,6 @@ public class Elepy {
         } else {
             model.put("slug", baseSlug + restModel.slug());
         }
-        model.put("id_generator", restModel.idGenerator());
         model.put("icon", restModel.icon());
         model.put("name", restModel.name());
 

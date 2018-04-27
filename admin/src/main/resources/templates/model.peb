@@ -189,39 +189,40 @@
 
                             <div v-for="(field, index) in selectedModel.fields" v-if="field.type != 'OBJECT' "
                                  class="uk-margin">
-                                <label class="uk-form-label">((field.pretty_name))</label>
+                                <label v-show = "(field.name != 'id')" class="uk-form-label">((field.pretty_name))</label>
                                 <div class="uk-form-controls">
                                     <!-- TEXTFIELD -->
                                     <input class="uk-input"
-                                           v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD')"
-                                           :disabled="(field.name == 'id' && selectedModel.id_generator != 'NONE') || (field.editable == false)"
+                                           v-show = "(field.name != 'id')"
+                                           v-if="(field.name != 'id') && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD'))"
+                                           :disabled="(field.name == 'id') || (field.editable == false)"
                                            v-model="newData[field.name]" type="text"
                                            placeholder="">
                                     <!-- DATE -->
                                     <input :id="'date-form-field-'+index" class="uk-input"
                                            v-if="field.type == 'DATE'"
-                                           :disabled="field.name == 'id' || (field.editable == false)"
+
                                            v-on:blur="fromDate(field.name, index)"
                                            v-bind:value="toDate(newData[field.name])"
                                            type="date">
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
-                                           :disabled="field.name == 'id' || (field.editable == false)"
+                                        step="any"
                                            v-model="newData[field.name]"
                                            type="number">
                                     <!-- TEXTAREA -->
 
                                     <textarea class="uk-textarea"
                                               v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
-                                              :disabled="field.name == 'id' || (field.editable == false)"
+
                                               v-model="newData[field.name]" type="text"
-                                              :disabled="field.name == 'id' || field.editable == false"
+
                                               placeholder="" rows="5"></textarea>
 
                                     <!-- ENUM -->
                                     <div class="uk-form-controls">
                                         <select class="uk-select" v-model="newData[field.name]"
-                                                :disabled="field.name == 'id' || field.editable == false"
+
                                                 v-if="field.type == 'ENUM' ">
                                             <option v-for="value in field.availableValues">((value))</option>
 

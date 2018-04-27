@@ -1,15 +1,17 @@
-package com.ryansusana.elepy.concepts;
+package com.ryansusana.elepy.utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ryansusana.elepy.annotations.PrettyName;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class FieldUtils {
+public class ClassUtils {
 
 
     @SafeVarargs
@@ -45,7 +47,7 @@ public class FieldUtils {
         return getPropertyName(field);
     }
 
-    public static String getId(Object object) {
+    public static Optional<String> getId(Object object) {
 
         for (Field field : object.getClass().getDeclaredFields()) {
 
@@ -53,7 +55,7 @@ public class FieldUtils {
                 field.setAccessible(true);
 
                 try {
-                    return (String) field.get(object);
+                    return Optional.ofNullable((String) field.get(object));
                 } catch (IllegalAccessException | ClassCastException e) {
                     throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
                 }
@@ -63,14 +65,39 @@ public class FieldUtils {
 
             if (field.getName().equals("id") && field.getType().equals(String.class)) {
                 try {
-                    return (String) field.get(object);
+                    return Optional.ofNullable((String) field.get(object));
                 } catch (IllegalAccessException | ClassCastException e) {
                     throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
                 }
             }
         }
-        return null;
+        return Optional.empty();
 
+    }
+
+    public static Field getIdField(Class cls) {
+        for (Field field : cls.getDeclaredFields()) {
+
+            if (field.getAnnotation(MongoId.class) != null) {
+                field.setAccessible(true);
+
+                try {
+                    return field;
+                } catch (ClassCastException e) {
+                    throw new IllegalStateException(cls.getName() + ": " + e.getMessage());
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Optional<Constructor<?>> getEmptyConstructor(Class<?> cls) {
+        for (Constructor<?> constructor : cls.getConstructors()) {
+            if (constructor.getParameterCount() == 0) {
+                return Optional.of(constructor);
+            }
+        }
+        return Optional.empty();
     }
 
 }

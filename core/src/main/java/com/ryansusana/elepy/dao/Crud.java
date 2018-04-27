@@ -1,7 +1,7 @@
 package com.ryansusana.elepy.dao;
 
 
-import com.ryansusana.elepy.concepts.FieldUtils;
+import com.ryansusana.elepy.utils.ClassUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,13 @@ public interface Crud<T> {
     void create(final T item);
 
     default String getId(final T item) {
-        return FieldUtils.getId(item);
+        Optional<String> id = ClassUtils.getId(item);
+
+        if (id.isPresent()) {
+            return id.get();
+        }
+        throw new IllegalStateException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
+
     }
 
     long count(String query, Object... parameters);

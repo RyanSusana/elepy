@@ -6,10 +6,8 @@ import com.mongodb.DB;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
 import com.ryansusana.elepy.annotations.Unique;
-import com.ryansusana.elepy.concepts.FieldUtils;
-import com.ryansusana.elepy.concepts.IdProvider;
-import com.ryansusana.elepy.models.IdGenerationType;
 import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.utils.ClassUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jongo.Find;
 import org.jongo.Jongo;
@@ -17,13 +15,17 @@ import org.jongo.Mapper;
 import org.jongo.MongoCollection;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.jongo.marshall.jackson.oid.MongoId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class MongoDao<T> implements Crud<T> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDao.class);
     private final Jongo jongo;
     private final Class<? extends T> classType;
     private final String collectionName;
@@ -78,7 +80,7 @@ public class MongoDao<T> implements Crud<T> {
         }
         for (Field field : searchableFields) {
             Map<String, String> keyValue = new HashMap<>();
-            keyValue.put(FieldUtils.getPropertyName(field), "#");
+            keyValue.put(ClassUtils.getPropertyName(field), "#");
             expressions.add(keyValue);
         }
         qmap.put("$or", expressions);
@@ -98,12 +100,12 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public List<T> search(String query, Object... params) {
-        return Lists.newArrayList(collection().find(query,params).as(classType).iterator());
+        return Lists.newArrayList(collection().find(query, params).as(classType).iterator());
     }
 
 
     private List<Field> getSearchableFields() {
-        return FieldUtils.searchForFieldsWithAnnotation(classType, Searchable.class, MongoId.class, Unique.class);
+        return ClassUtils.searchForFieldsWithAnnotation(classType, Searchable.class, MongoId.class, Unique.class);
     }
 
 
@@ -122,16 +124,23 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public void create(T item) {
         try {
-            final Field idField = IdProvider.getIdField(item);
+            final Field idField = ClassUtils.getIdField(item.getClass());
             final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
-            if (!annotation.idGenerator().equals(IdGenerationType.NONE)) {
-                assert idField != null;
-                idField.setAccessible(true);
-                idField.set(item, annotation.idGenerator().generateId());
+            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.idProvider());
+            if (!o.isPresent()) {
+                throw new IllegalStateException(annotation.idProvider() + " has no empty constructor.");
             }
+            final com.ryansusana.elepy.concepts.IdProvider<T> provider = ((Constructor<com.ryansusana.elepy.concepts.IdProvider<T>>) o.get()).newInstance();
+
+            assert idField != null;
+            idField.setAccessible(true);
+            idField.set(item, provider.getId(this));
+
 
             collection().insert(item);
         } catch (IllegalAccessException e) {
+            LOGGER.error("Illegal access on Item creation", e);
+        } catch (InvocationTargetException | InstantiationException e) {
             e.printStackTrace();
         }
 
@@ -139,11 +148,11 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public String getId(T item) {
-        String id = FieldUtils.getId(item);
-        if (id == null) {
+        Optional<String> id = ClassUtils.getId(item);
+        if (!id.isPresent()) {
             throw new IllegalStateException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
         }
-        return id;
+        return id.get();
     }
 
 
