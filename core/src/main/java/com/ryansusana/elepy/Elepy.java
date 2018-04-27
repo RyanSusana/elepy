@@ -180,8 +180,8 @@ public class Elepy {
                     });
                 if (!restModel.delete().equals(RestModelAccessType.DISABLED))
                     http.delete(baseSlug + restModel.slug() + "/:id", ((request, response) -> {
-                        final boolean delete = restModel.deleteRoute().newInstance().delete(request, response, dao, objectMapper);
-                        if (delete) {
+                        Optional delete = restModel.deleteRoute().newInstance().delete(request, response, dao, objectMapper);
+                        if (delete.isPresent()) {
                             response.status(200);
                             return "Successfully deleted item!";
                         } else {

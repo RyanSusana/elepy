@@ -5,7 +5,9 @@ import com.ryansusana.elepy.dao.Crud;
 import spark.Request;
 import spark.Response;
 
+import java.util.Optional;
+
 
 public interface Delete<T> {
-    boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
+    Optional<T> delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
 }

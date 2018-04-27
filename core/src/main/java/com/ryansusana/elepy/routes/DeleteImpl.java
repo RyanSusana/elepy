@@ -5,12 +5,17 @@ import com.ryansusana.elepy.dao.Crud;
 import spark.Request;
 import spark.Response;
 
+import java.util.Optional;
+
 public class DeleteImpl<T> implements Delete<T> {
 
     @Override
-    public boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) {
-        dao.delete(request.params("id"));
-        return !dao.getById(request.params("id")).isPresent();
+    public Optional<T> delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) {
 
+        final Optional<T> id = dao.getById(request.params("id"));
+        if (id.isPresent()) {
+            dao.delete(request.params("id"));
+        }
+        return id;
     }
 }
