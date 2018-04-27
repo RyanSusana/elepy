@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public class DefaultUpdate<T> implements Update<T> {
 
+    private T before;
 
     @Override
     public Optional<T> update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
@@ -28,6 +29,7 @@ public class DefaultUpdate<T> implements Update<T> {
             throw new RestErrorMessage("No object found with this ID");
         }
 
+        this.before = before.get();
         ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<T>();
 
         updateEvaluator.evaluate(before.get(), updated);
@@ -44,5 +46,12 @@ public class DefaultUpdate<T> implements Update<T> {
         response.status(200);
         response.body("The item is updated");
         return Optional.of(updated);
+    }
+
+    public T before() {
+        if (before == null) {
+            throw new IllegalStateException("Before not yet set!");
+        }
+        return before;
     }
 }
