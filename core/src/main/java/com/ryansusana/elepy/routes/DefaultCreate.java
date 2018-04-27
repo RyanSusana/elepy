@@ -11,7 +11,7 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-public class CreateImpl<T> implements Create<T> {
+public class DefaultCreate<T> implements Create<T> {
     @Override
     public Optional<T> create(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
 

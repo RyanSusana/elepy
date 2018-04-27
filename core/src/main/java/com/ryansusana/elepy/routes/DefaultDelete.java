@@ -7,7 +7,7 @@ import spark.Response;
 
 import java.util.Optional;
 
-public class DeleteImpl<T> implements Delete<T> {
+public class DefaultDelete<T> implements Delete<T> {
 
     @Override
     public Optional<T> delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) {

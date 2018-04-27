@@ -9,7 +9,7 @@ import spark.Response;
 
 import java.util.List;
 
-public class FindImpl<T> implements Find<T> {
+public class DefaultFind<T> implements Find<T> {
 
 
     @Override

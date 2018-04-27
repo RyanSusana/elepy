@@ -7,10 +7,10 @@ import spark.Response;
 
 import java.util.Optional;
 
-public class FindOneImpl<T> implements FindOne<T> {
+public class DefaultFindOne<T> implements FindOne<T> {
 
 
-    public FindOneImpl() {
+    public DefaultFindOne() {
     }
 
     @Override
