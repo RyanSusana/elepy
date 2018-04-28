@@ -87,8 +87,12 @@ public class MongoDao<T> implements Crud<T> {
         try {
 
             Find find = query.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().find();
+            List<Field> sortedFields;
             if (query.getSortBy() != null && query.getSortOption() != null) {
                 find = find.sort(String.format("{%s: %d}", query.getSortBy(), query.getSortOption().getVal()));
+            } else {
+                RestModel restModel = classType.getAnnotation(RestModel.class);
+                find = find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
             }
             return Lists.newArrayList(find.as(classType).iterator());
         } catch (Exception e) {
