@@ -22,9 +22,7 @@ public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
 
 
         Optional<String> id = ClassUtils.getId(item);
-        if (!id.isPresent()) {
-            throw new IllegalStateException("No id present");
-        }
+
         for (Field field : uniqueFields) {
 
             Object prop = field.get(item);
@@ -38,8 +36,10 @@ public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
 
                 T foundRecord = foundItems.get(0);
 
-                if (!id.equals(ClassUtils.getId(foundRecord))) {
-                    throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                if (id.isPresent()) {
+                    if (!id.equals(ClassUtils.getId(foundRecord))) {
+                        throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                    }
                 }
             }
         }
