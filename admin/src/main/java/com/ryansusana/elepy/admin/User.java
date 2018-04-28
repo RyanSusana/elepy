@@ -12,7 +12,6 @@ import com.ryansusana.elepy.models.RestModelAccessType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 
-
 @RestModel(
         //The only 2 required properties in RestModels are are slug and name
         slug = "/users",
@@ -45,8 +44,8 @@ import org.jongo.marshall.jackson.oid.MongoId;
         idProvider = HexIdProvider.class,
 
         //Array of ObjectEvaluators that evaluates an object on Create and Update operations
-        objectEvaluators = {}
-        )
+        objectEvaluators = {UserEvaluator.class}
+)
 public class User {
 
     //The only MUST-HAVE annotation is atleast one @MongoId used by Elepy and Jongo to generate ID's for resources
@@ -82,7 +81,7 @@ public class User {
 
     @JsonCreator
     public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("email") String email, @JsonProperty("user_type") UserType userType) {
-        this.id =  id;
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
