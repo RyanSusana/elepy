@@ -6,19 +6,61 @@ import com.ryansusana.elepy.annotations.PrettyName;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
 import com.ryansusana.elepy.annotations.Unique;
+import com.ryansusana.elepy.dao.SortOption;
+import com.ryansusana.elepy.id.HexIdProvider;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-@RestModel(slug = "/users", name = "Users", icon = "users", deleteRoute = UserDelete.class, createRoute = UserCreate.class, findAll = RestModelAccessType.ADMIN, findOne = RestModelAccessType.ADMIN, create = RestModelAccessType.ADMIN, updateRoute = UserUpdate.class)
+
+
+@RestModel(
+        //The only 2 required properties in RestModels are are slug and name
+        slug = "/users",
+        name = "Users",
+
+        //Fontawesome icon from the free cdn
+        icon = "users",
+
+        description = "",
+
+        //Custom route classes these must have an empty constructor and implement one of the Crud Operations: Create, FindOne, Find, Update or Delete.
+        deleteRoute = UserDelete.class,
+        createRoute = UserCreate.class,
+        updateRoute = UserUpdate.class,
+
+        //Access type on each of the routes, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
+        //If admin it will run through all the hooked admin filters
+        findAll = RestModelAccessType.ADMIN,
+        findOne = RestModelAccessType.ADMIN,
+        create = RestModelAccessType.ADMIN,
+
+        //Sort
+        //The default sorted mongo field. default is "_id"
+        defaultSortField = "username",
+        //Ascending sort or descending sort
+        defaultSortDirection = SortOption.ASCENDING,
+
+
+        //Specifies the class that will handle ID creation for this resource
+        idProvider = HexIdProvider.class,
+
+        //Array of ObjectEvaluators that evaluates an object on Create and Update operations
+        objectEvaluators = {}
+        )
 public class User {
 
+    //The only MUST-HAVE annotation is atleast one @MongoId used by Elepy and Jongo to generate ID's for resources
     @MongoId
     private final String id;
 
-    @Searchable
-    @JsonProperty("username")
-    @PrettyName("Username")
+    //This specifies that the property must be unique
     @Unique
+    //Only this is necessary to search for users with a with a username
+    @Searchable
+    //How the username gets saved in the database
+    @JsonProperty("username")
+    //A nice looking name for the admin UI :)
+    @PrettyName("Username")
     private final String username;
 
     @PrettyName("Password")
@@ -36,6 +78,7 @@ public class User {
     @JsonProperty("user_type")
     @PrettyName("User role")
     private final UserType userType;
+
 
     @JsonCreator
     public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("email") String email, @JsonProperty("user_type") UserType userType) {
