@@ -38,4 +38,9 @@ It features:
  - A built in user model that generates a base admin user that you can log into(if there are no users in the database) it also uses BCrypt to automatically encrypt passwords.
  - *More features soon to come...*
 
- 
+
+
+## Guide to creating a RestResource
+For a comprehensive guide to creating a RestResource, take a look at [the User-resource located in the admin module](https://github.com/RyanSusana/elepy/blob/master/admin/src/main/java/com/ryansusana/elepy/admin/User.java). This is an immutable POJO class that uses Elepy's annotations to its maximum potential!
+  
+
