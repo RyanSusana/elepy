@@ -34,7 +34,7 @@ public class User {
 
     @Searchable
     @JsonProperty("user_type")
-    @PrettyName("user_role")
+    @PrettyName("User role")
     private final UserType userType;
 
     @JsonCreator

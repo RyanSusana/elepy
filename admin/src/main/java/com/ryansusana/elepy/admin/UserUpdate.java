@@ -1,6 +1,7 @@
 package com.ryansusana.elepy.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryansusana.elepy.concepts.IntegrityEvaluatorImpl;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
@@ -47,7 +48,7 @@ public class UserUpdate implements Update<User> {
                 objectEvaluator.evaluate(updated);
             }
         }
-
+        new IntegrityEvaluatorImpl<User>().evaluate(updated, dao);
         assert updated != null;
         if (!updated.getPassword().equals(before.get().getPassword())) {
             updated = updated.hashWord();
