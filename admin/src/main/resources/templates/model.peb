@@ -32,9 +32,9 @@
                 </thead>
 
                 <tbody>
-                <tr v-for="data in modelData">
+                <tr v-for="data in modelData" v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editModal()">
                     <td v-for="field in selectedModel.fields"
-                        v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editModal()"
+
                         v-if="field.type != 'OBJECT' ">(( (field.type == 'DATE'? toDate(data[field.name])
                         :data[field.name]) | truncate(100) ))
                     </td>
@@ -195,11 +195,11 @@
                                     <input class="uk-input"
                                            v-show = "(field.name != 'id')"
                                            v-if="(field.name != 'id') && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD'))"
-                                           :disabled="(field.name == 'id') || (field.editable == false)"
+                                           :disabled="(field.name == 'id') )"
                                            v-model="newData[field.name]" type="text"
                                            placeholder="">
                                     <!-- DATE -->
-                                    <input :id="'date-form-field-'+index" class="uk-input"
+                                    <input :id="'date-form2-field-'+index" class="uk-input"
                                            v-if="field.type == 'DATE'"
 
                                            v-on:blur="fromDate(field.name, index)"
@@ -243,7 +243,7 @@
                                             <!-- TEXTFIELD -->
                                             <input class="uk-input"
                                                    v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD')"
-                                                   :disabled="field.name == 'id' || (field.editable == false)"
+                                                   :disabled="field.name == 'id'"
                                                    v-model="newData[fieldOuter.name][field.name]"
                                                    type="text"
                                                    :disabled="field.name == 'id' || field.editable == false"
@@ -251,23 +251,23 @@
                                             <!-- DATE -->
                                             <input :id="'date-form2-field-'+index" class="uk-input"
                                                    v-if="field.type == 'DATE'"
-                                                   :disabled="field.name == 'id' || (field.editable == false)"
+
                                                    v-on:blur="fromDate(field.name, index)"
                                                    v-bind:value="toDate(newData[fieldOuter.name][field.name])"
                                                    type="date">
                                             <!-- NUMBER -->
                                             <input class="uk-input" v-if="field.type == 'NUMBER'"
-                                                   :disabled="field.name == 'id' || (field.editable == false)"
+
                                                    v-model="newData[fieldOuter.name][field.name]"
                                                    type="number">
                                             <!-- TEXTAREA -->
 
                                             <textarea class="uk-textarea"
                                                       v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
-                                                      :disabled="field.name == 'id' || (field.editable == false)"
+
                                                       v-model="newData[fieldOuter.name][field.name]"
                                                       type="text"
-                                                      :disabled="field.name == 'id' || field.editable == false"
+
                                                       placeholder=""
                                                       rows="5"></textarea>
 
