@@ -195,7 +195,7 @@
                                     <input class="uk-input"
                                            v-show = "(field.name != 'id')"
                                            v-if="(field.name != 'id') && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD'))"
-                                           :disabled="(field.name == 'id') )"
+                                           :disabled="(field.name == 'id') "
                                            v-model="newData[field.name]" type="text"
                                            placeholder="">
                                     <!-- DATE -->

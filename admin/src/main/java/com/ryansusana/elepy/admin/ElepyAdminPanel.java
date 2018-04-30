@@ -9,6 +9,8 @@ import io.bit3.jsass.Output;
 import io.bit3.jsass.context.FileContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Service;
 import spark.template.pebble.PebbleTemplateEngine;
@@ -30,7 +32,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private final UserDao userDao;
     private final UserService userService;
     public static final String ADMIN_USER = "adminUser";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
 
     public ElepyAdminPanel(Elepy elepy, Service service) {
         super(elepy, service);
@@ -189,10 +191,6 @@ public class ElepyAdminPanel extends ElepyModule {
 
     private void setupLogin() {
 
-        if (userDao.count() == 0) {
-            User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
-            userDao.create(user);
-        }
 
         elepy().addAdminFilter((request, response) -> {
             final User adminUser = request.session().attribute(ADMIN_USER);
@@ -225,6 +223,16 @@ public class ElepyAdminPanel extends ElepyModule {
 
             response.status(401);
             return "Invalid login credentials";
+        });
+        http().get("/setup", (request, response) -> {
+
+            if (userDao.count() == 0) {
+                User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
+                userDao.create(user);
+                return "Generated first admin account";
+            }
+            response.redirect("/admin");
+            return "";
         });
     }
 
