@@ -2,8 +2,8 @@
 #login-section {
   height: 100vh;
   position: relative;
-
-  @include background-gradient($gradient: linear-gradient(to right, rgba(#77a1d3, 0.4), rgba(#79cbca, 0.4), rgba(#e684ae, 0.4)), $behind: url('/images/bg1.jpg'));
+  $main-gradient: linear-gradient(to top left, #ff512f, #f09819);
+  @include background-gradient($gradient: linear-gradient(to top right, rgba(#ff512f, 0.25), rgba(#f09819, 0.25)), $behind: url('/images/bg1.jpg'));
   background-size: cover;
 
 }
