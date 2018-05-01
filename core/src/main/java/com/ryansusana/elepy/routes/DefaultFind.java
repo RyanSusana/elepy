@@ -26,7 +26,6 @@ public class DefaultFind<T> implements Find<T> {
         );
 
         if (q != null || fieldSort != null || fieldDirection != null) {
-
             return dao.search(new SearchSetup(q, fieldSort, (fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING));
         }
         return dao.getAll();
