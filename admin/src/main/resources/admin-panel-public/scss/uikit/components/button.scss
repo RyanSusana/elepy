@@ -203,6 +203,7 @@ $button-link-disabled-color: $global-muted-color !default;
 
 .uk-button-primary {
   background-color: $button-primary-background;
+  background-color: var(--primary-color);
   color: $button-primary-color;
   @if (mixin-exists(hook-button-primary)) {
     @include hook-button-primary();
@@ -213,6 +214,8 @@ $button-link-disabled-color: $global-muted-color !default;
 .uk-button-primary:hover,
 .uk-button-primary:focus {
   background-color: $button-primary-hover-background;
+  background-color: var(--primary-color);
+  background-color: var(--primary-hover-color);
   color: $button-primary-hover-color;
   @if (mixin-exists(hook-button-primary-hover)) {
     @include hook-button-primary-hover();

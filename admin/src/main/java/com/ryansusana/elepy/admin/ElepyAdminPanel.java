@@ -3,36 +3,20 @@ package com.ryansusana.elepy.admin;
 import com.ryansusana.elepy.Elepy;
 import com.ryansusana.elepy.ElepyModule;
 import com.ryansusana.elepy.models.RestErrorMessage;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
-import io.bit3.jsass.context.FileContext;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Service;
 import spark.template.pebble.PebbleTemplateEngine;
-import sun.net.www.protocol.file.FileURLConnection;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.JarURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 
 public class ElepyAdminPanel extends ElepyModule {
-    private final UserDao userDao;
-    private final UserService userService;
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
+    private final UserDao userDao;
+    private final UserService userService;
 
     public ElepyAdminPanel(Elepy elepy, Service service) {
         super(elepy, service);
@@ -51,70 +35,9 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void routes() {
-        //compileSass();
+
         setupLogin();
         setupAdmin();
-    }
-
-    public void copyResourcesRecursively(URL originUrl, File destination) throws Exception {
-        URLConnection urlConnection = originUrl.openConnection();
-        if (urlConnection instanceof JarURLConnection) {
-            copyJarResourcesRecursively(destination, (JarURLConnection) urlConnection);
-        } else if (urlConnection instanceof FileURLConnection) {
-            FileUtils.copyDirectory(new File(originUrl.getPath()), destination);
-        } else {
-            throw new Exception("URLConnection[" + urlConnection.getClass().getSimpleName() +
-                    "] is not a recognized/implemented connection type.");
-        }
-    }
-
-    public void copyJarResourcesRecursively(File destination, JarURLConnection jarConnection) throws IOException {
-        JarFile jarFile = jarConnection.getJarFile();
-
-        for (JarEntry entry : Collections.list(jarFile.entries())) {
-            if (entry.getName().startsWith(jarConnection.getEntryName())) {
-                String fileName = StringUtils.removeStart(entry.getName(), jarConnection.getEntryName());
-                if (!entry.isDirectory()) {
-                    InputStream entryInputStream;
-                    entryInputStream = jarFile.getInputStream(entry);
-
-                    FileUtils.copyInputStreamToFile(entryInputStream, new File(destination, fileName));
-                }
-            }
-        }
-    }
-
-    private void compileSass() {
-
-
-        new Thread(() -> {
-            try {
-                String fs = System.getProperty("file.separator");
-                File outputFile = new File(fs + "elepy-admin" + fs + "main.css");
-                if (!outputFile.exists()) {
-                    outputFile.getParentFile().mkdirs();
-                    outputFile.createNewFile();
-                }
-
-                File sassLocation = new File(fs + "elepy-admin" + fs + "scss");
-                copyResourcesRecursively(this.getClass().getClassLoader().getResource("admin-panel-public/scss"), sassLocation);
-                URI inputFile = new File(fs + "elepy-admin" + fs + "scss" + fs + "main.scss").toURI();
-
-
-                Compiler compiler = new Compiler();
-
-                Options options = new Options();
-
-
-                FileContext context = new FileContext(inputFile, outputFile.toURI(), options);
-                Output output = compiler.compile(context);
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-
     }
 
 

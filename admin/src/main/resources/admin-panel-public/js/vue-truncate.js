@@ -28,7 +28,7 @@
             // Fix for case when text dont have any `space`
             last = last || length - clamp.length;
 
-            tcText =  tcText.slice(0, last);
+            tcText = tcText.slice(0, last);
 
             return tcText + clamp;
         });
@@ -37,7 +37,9 @@
     if (typeof exports == "object") {
         module.exports = vueTruncate;
     } else if (typeof define == "function" && define.amd) {
-        define([], function(){ return vueTruncate });
+        define([], function () {
+            return vueTruncate
+        });
     } else if (window.Vue) {
         window.VueTruncate = vueTruncate;
         Vue.use(VueTruncate);

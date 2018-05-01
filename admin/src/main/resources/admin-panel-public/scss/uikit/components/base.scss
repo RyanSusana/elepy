@@ -97,7 +97,9 @@ html {
   -webkit-text-size-adjust: 100%;
   /* 3 */
   background: $base-body-background;
+  background: var(--body-bg);
   color: $base-body-color;
+  color: var(--text-color);
   @if (mixin-exists(hook-base-body)) {
     @include hook-base-body();
   }
@@ -138,6 +140,8 @@ a:hover {
 a,
 .uk-link {
   color: $base-link-color;
+  color: var(--primary-color);
+  color: var(--link-color);
   text-decoration: $base-link-text-decoration;
   cursor: pointer;
   @if (mixin-exists(hook-base-link)) {
@@ -148,6 +152,9 @@ a,
 a:hover,
 .uk-link:hover {
   color: $base-link-hover-color;
+  color: var(--primary-color);
+  color: var(--link-color);
+  color: var(--link-hover-color);
   text-decoration: $base-link-hover-text-decoration;
   @if (mixin-exists(hook-base-link-hover)) {
     @include hook-base-link-hover();
@@ -206,6 +213,7 @@ strong {
 
 em {
   color: $base-em-color;
+  color: var(--em-color);
 }
 
 /*
@@ -349,6 +357,7 @@ h6, .uk-h6 {
   font-family: $base-heading-font-family;
   font-weight: $base-heading-font-weight;
   color: $base-heading-color;
+  color: var(--heading-color);
   text-transform: $base-heading-text-transform;
   @if (mixin-exists(hook-base-heading)) {
     @include hook-base-heading();

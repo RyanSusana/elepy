@@ -36,7 +36,7 @@
                     <td v-for="field in selectedModel.fields"
 
                         v-if="field.type != 'OBJECT' ">(( (field.type == 'DATE'? toDate(data[field.name])
-                        :data[field.name]) | truncate(100) ))
+                        :data[field.name]) ))
                     </td>
 
                 </tr>
@@ -189,11 +189,11 @@
 
                             <div v-for="(field, index) in selectedModel.fields" v-if="field.type != 'OBJECT' "
                                  class="uk-margin">
-                                <label v-show = "(field.name != 'id')" class="uk-form-label">((field.pretty_name))</label>
+                                <label v-show="(field.name != 'id')" class="uk-form-label">((field.pretty_name))</label>
                                 <div class="uk-form-controls">
                                     <!-- TEXTFIELD -->
                                     <input class="uk-input"
-                                           v-show = "(field.name != 'id')"
+                                           v-show="(field.name != 'id')"
                                            v-if="(field.name != 'id') && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD'))"
                                            :disabled="(field.name == 'id') "
                                            v-model="newData[field.name]" type="text"
@@ -207,7 +207,7 @@
                                            type="date">
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
-                                        step="any"
+                                           step="any"
                                            v-model="newData[field.name]"
                                            type="number">
                                     <!-- TEXTAREA -->

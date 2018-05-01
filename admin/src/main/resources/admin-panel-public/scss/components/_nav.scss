@@ -1,9 +1,12 @@
 .uk-navbar-nav {
   color: #ffffff;
+  color: var(--navbar-color);
   li {
     transition: .2s all;
     &:hover:not(.welcome) {
-      background-color: darken($secondary-color, 5%);
+
+      background-color: darken($primary-color, 5%);
+      background-color: var(--primary-hover-color);
     }
   }
 }

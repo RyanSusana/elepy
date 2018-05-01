@@ -17,8 +17,8 @@
 // Variables
 // ========================================================================
 
-$search-color: $global-color !default;
-$search-placeholder-color: $global-muted-color !default;
+$search-color: var(--text-color) !default;
+$search-placeholder-color: var(--text-muted-color) !default;
 
 $search-icon-color: $global-muted-color !default;
 
@@ -121,6 +121,10 @@ $search-toggle-hover-color: $global-color !default;
   /* 9 */
   border: none;
   color: $search-color;
+  background: transparent;
+  background: var(--body-bg);
+  background: var(--search-bg);
+  padding: 10px;
   @if (mixin-exists(hook-search-input)) {
     @include hook-search-input();
   }

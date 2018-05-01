@@ -99,6 +99,9 @@ $navbar-dropbar-z-index: $global-z-index - 20 !default;
 
 .uk-navbar-container:not(.uk-navbar-transparent) {
   background: $navbar-background;
+  background: var(--primary-color);
+  background: var(--navbar-bg);
+
   @if (mixin-exists(hook-navbar-container)) {
     @include hook-navbar-container();
   }
@@ -260,6 +263,11 @@ $navbar-dropbar-z-index: $global-z-index - 20 !default;
 
 .uk-navbar-nav > li > a {
   color: $navbar-nav-item-color;
+
+  color: var(--text-color);
+
+  color: var(--navbar-color);
+
   @if (mixin-exists(hook-navbar-nav-item)) {
     @include hook-navbar-nav-item();
   }
@@ -274,6 +282,9 @@ $navbar-dropbar-z-index: $global-z-index - 20 !default;
 .uk-navbar-nav > li > a:focus,
 .uk-navbar-nav > li > a.uk-open {
   color: $navbar-nav-item-hover-color;
+  color: var(--text-color);
+  color: var(--text-muted-color);
+  color: var(--navbar-color);
   outline: none;
   @if (mixin-exists(hook-navbar-nav-item-hover)) {
     @include hook-navbar-nav-item-hover();

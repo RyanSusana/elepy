@@ -1,6 +1,22 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab");
 
+:root {
+    --primary-color: #1c9edb;
+    --primary-hover-color: #167dae;
+    --navbar-bg: var(--primary-color);
+    --navbar-hover-bg: var(--primary-hover-color);
+    --sidebar-color: white;
+    --sidebar-bg: #111;
+    --body-bg: #fff;
+    --hover-bg: #eee;
+    --text-color: #212121;
+    --navbar-color: var(--sidebar-color);
+    --text-muted-color: #3b3b3b;
+    --link-color: var(--primary-color);
+    --link-hover-color: var(--primary-hover-color);
+}
+
 .edit-modal-body {
     min-height: 65vh !important;
 }
@@ -3218,7 +3234,9 @@ html {
     -webkit-text-size-adjust: 100%;
     /* 3 */
     background: white;
+    background: var(--body-bg);
     color: #666;
+    color: var(--text-color);
 }
 
 /*
@@ -3251,6 +3269,8 @@ a:hover {
 a,
 .uk-link {
     color: #1c9edb;
+    color: var(--primary-color);
+    color: var(--link-color);
     text-decoration: none;
     cursor: pointer;
 }
@@ -3258,6 +3278,9 @@ a,
 a:hover,
 .uk-link:hover {
     color: #0f6ecd;
+    color: var(--primary-color);
+    color: var(--link-color);
+    color: var(--link-hover-color);
     text-decoration: underline;
 }
 
@@ -3307,6 +3330,7 @@ strong {
  */
 em {
     color: #f0506e;
+    color: var(--em-color);
 }
 
 /*
@@ -3438,6 +3462,7 @@ h6, .uk-h6 {
     font-family: "Roboto Slab", serif;
     font-weight: normal;
     color: #333;
+    color: var(--heading-color);
     text-transform: none;
 }
 
@@ -4187,6 +4212,7 @@ a.uk-link-reset:hover,
 .uk-table-hover > tr:hover,
 .uk-table-hover tbody tr:hover {
     background: #ffd;
+    background: var(--hover-bg);
 }
 
 /* Size modifier
@@ -5300,6 +5326,7 @@ select.uk-form-width-xsmall {
  */
 .uk-button-primary {
     background-color: #1c9edb;
+    background-color: var(--primary-color);
     color: #fff;
     border: 1px solid transparent;
 }
@@ -5308,6 +5335,8 @@ select.uk-form-width-xsmall {
 .uk-button-primary:hover,
 .uk-button-primary:focus {
     background-color: #198ec4;
+    background-color: var(--primary-color);
+    background-color: var(--primary-hover-color);
     color: #fff;
 }
 
@@ -5482,21 +5511,21 @@ select.uk-form-width-xsmall {
 }
 
 /* Group
- ========================================================================== */
+   ========================================================================== */
 /*
- * Collapse border
- */
+   * Collapse border
+   */
 .uk-button-group > .uk-button:nth-child(n+2),
 .uk-button-group > div:nth-child(n+2) .uk-button {
     margin-left: -1px;
 }
 
 /*
- * Create position context to superimpose the successor elements border
- * Known issue: If you use an `a` element as button and an icon inside,
- * the active state will not work if you click the icon inside the button
- * Workaround: Just use a `button` or `input` element as button
- */
+   * Create position context to superimpose the successor elements border
+   * Known issue: If you use an `a` element as button and an icon inside,
+   * the active state will not work if you click the icon inside the button
+   * Workaround: Just use a `button` or `input` element as button
+   */
 .uk-button-group .uk-button:hover,
 .uk-button-group .uk-button:focus,
 .uk-button-group .uk-button:active,
@@ -6412,8 +6441,8 @@ select.uk-form-width-xsmall {
 }
 
 /*
- * Default
- */
+   * Default
+   */
 .uk-card-body .uk-nav-default {
     margin: -15px -30px;
 }
@@ -6456,8 +6485,8 @@ select.uk-form-width-xsmall {
 }
 
 /*
- * Small
- */
+   * Small
+   */
 .uk-card-small .uk-nav-default {
     margin: -5px -20px;
 }
@@ -6478,8 +6507,8 @@ select.uk-form-width-xsmall {
 }
 
 /*
- * Large
- */
+   * Large
+   */
 /* Desktop and bigger */
 @media (min-width: 1200px) {
     .uk-card-large .uk-nav-default {
@@ -6686,8 +6715,8 @@ select.uk-form-width-xsmall {
 }
 
 /*
- * Content
- */
+   * Content
+   */
 .uk-alert h1,
 .uk-alert h2,
 .uk-alert h3,
@@ -7027,6 +7056,10 @@ select.uk-form-width-xsmall {
     /* 9 */
     border: none;
     color: #666;
+    background: transparent;
+    background: var(--body-bg);
+    background: var(--search-bg);
+    padding: 10px;
 }
 
 .uk-search-input:focus {
@@ -7427,6 +7460,8 @@ ul.uk-nav-sub {
  ========================================================================== */
 .uk-navbar-container:not(.uk-navbar-transparent) {
     background: #1c9edb;
+    background: var(--primary-color);
+    background: var(--navbar-bg);
 }
 
 /*
@@ -7562,6 +7597,8 @@ ul.uk-nav-sub {
  */
 .uk-navbar-nav > li > a {
     color: white;
+    color: var(--text-color);
+    color: var(--navbar-color);
     text-transform: uppercase;
     transition: 0.1s ease-in-out;
     transition-property: color, background-color;
@@ -7575,6 +7612,9 @@ ul.uk-nav-sub {
 .uk-navbar-nav > li > a:focus,
 .uk-navbar-nav > li > a.uk-open {
     color: white;
+    color: var(--text-color);
+    color: var(--text-muted-color);
+    color: var(--navbar-color);
     outline: none;
 }
 
@@ -7791,8 +7831,8 @@ ul.uk-nav-sub {
 }
 
 /*
- * Navbar
- */
+   * Navbar
+   */
 .uk-navbar-container > .uk-container .uk-navbar-left {
     margin-left: -15px;
     margin-right: -15px;
@@ -7803,8 +7843,8 @@ ul.uk-nav-sub {
 }
 
 /*
- * Grid Divider
- */
+   * Grid Divider
+   */
 .uk-navbar-dropdown-grid > * {
     position: relative;
 }
@@ -14759,11 +14799,29 @@ iframe.uk-cover {
     top: 50px;
     width: 22rem;
     background-color: #212121;
+    background-color: var(--sidebar-bg);
     height: calc(100vh - 50px);
 }
 
 #sidebar .models {
     height: 95%;
+    color: #1c9edb;
+    color: var(--sidebar-color);
+}
+
+#sidebar .models p {
+    color: #1c9edb;
+    color: var(--sidebar-color);
+}
+
+#sidebar .models a {
+    color: #1c9edb;
+    color: var(--sidebar-color);
+}
+
+#sidebar .models h3 {
+    color: #1c9edb;
+    color: var(--sidebar-color);
 }
 
 #sidebar .sidebar-footer {
@@ -14772,10 +14830,12 @@ iframe.uk-cover {
 
 #sidebar .sidebar-footer p {
     font-size: 0.8em;
+    color: var(--sidebar-color);
 }
 
 .uk-navbar-nav {
     color: #ffffff;
+    color: var(--navbar-color);
 }
 
 .uk-navbar-nav li {
@@ -14784,6 +14844,7 @@ iframe.uk-cover {
 
 .uk-navbar-nav li:hover:not(.welcome) {
     background-color: #198ec4;
+    background-color: var(--primary-hover-color);
 }
 
 .uk-navbar-nav > li > a {
@@ -14808,6 +14869,10 @@ iframe.uk-cover {
 .main-content #content-form {
     padding: 2rem;
     margin-top: 20px;
+}
+
+.uk-modal-title {
+    color: black;
 }
 
 #login-section {

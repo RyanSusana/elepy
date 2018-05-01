@@ -1,4 +1,4 @@
-<div id="sidebar" class="uk-light uk-padding">
+<div id="sidebar" class="uk-padding">
     <div class="models">
         <h3>Admin Panel</h3>
         {% for descriptor in descriptors %}

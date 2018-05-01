@@ -195,6 +195,7 @@ $table-expand-min-width: 150px !default;
 .uk-table-hover > tr:hover,
 .uk-table-hover tbody tr:hover {
   background: $table-hover-row-background;
+  background: var(--hover-bg);
   @if (mixin-exists(hook-table-hover)) {
     @include hook-table-hover();
   }

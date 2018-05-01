@@ -1,10 +1,28 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
 
-$secondary-color: #1c9edb;
-$global-link-color: $secondary-color;
-$primary-color: red;
+$primary-color: #1c9edb;
 
-$global-primary-background: $secondary-color;
+$dark-grey: #212121;
+:root {
+  --primary-color: #{$primary-color};
+  --primary-hover-color: #{darken($primary-color,10%)};
+  --navbar-bg: var(--primary-color);
+  --navbar-hover-bg: var(--primary-hover-color);
+  --sidebar-color: white;
+  --sidebar-bg: #111;
+  --body-bg: #fff;
+  --hover-bg: #eee;
+  --text-color: $dark-grey;
+  --navbar-color: var(--sidebar-color);
+  --text-muted-color: lighten($dark-grey, 10%);
+  --link-color: var(--primary-color);
+  --link-hover-color: var(--primary-hover-color);
+}
+
+$sidebar-color: $primary-color;
+$global-link-color: $primary-color;
+
+$global-primary-background: $primary-color;
 $main-gradient: linear-gradient(to top left, #ff512f, #f09819);
 $dark-grey: #212121;
 $global-secondary-background: $dark-grey;
@@ -17,7 +35,7 @@ $navbar-nav-item-hover-color: white;
 $logo-font-size: 1.6rem;
 $logo-color: white;
 $logo-hover-color: darken(white, 10%);
-$navbar-background: $secondary-color;
+$navbar-background: $primary-color;
 $navbar-nav-item-height: 50px;
 $navbar-nav-item-color: white;
 $navbar-nav-item-active-color: white;

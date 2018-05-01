@@ -2,10 +2,15 @@
 
 }
 
+body {
+
+}
+
 .main-content {
   padding-top: 0px;
   margin-left: $sidebar-width;
 
+  //min-height: 100vh;
   .data-section {
     height: 70vh;
     overflow-y: scroll;
@@ -19,4 +24,8 @@
     padding: 2rem;
     margin-top: 20px;
   }
+}
+
+.uk-modal-title {
+  color: black;
 }

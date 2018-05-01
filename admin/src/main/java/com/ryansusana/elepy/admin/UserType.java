@@ -53,8 +53,9 @@ public enum UserType {
     public boolean hasMoreRightsThan(UserType other) {
         return this.level > other.level;
     }
+
     public int getLevel() {
         return level;
     }
 
-    }
+}
