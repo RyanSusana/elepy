@@ -8,7 +8,7 @@
   --sidebar-color: white;
   --sidebar-bg: #111;
   --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55), url(/images/admin-bg-pattern.png);
-  --hover-bg: #eee;
+  --hover-bg: #99999933;
   --text-color: #212121;
   --navbar-color: var(--sidebar-color);
   --text-muted-color: #3b3b3b;
