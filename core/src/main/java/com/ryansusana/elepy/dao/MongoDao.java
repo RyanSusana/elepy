@@ -50,7 +50,11 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public List<T> getAll() {
+        RestModel restModel = classType.getAnnotation(RestModel.class);
+        if(restModel!=null){
+            return Lists.newArrayList(collection().find().sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal())).as(classType).iterator());
 
+        }
         return Lists.newArrayList(collection().find().as(classType).iterator());
     }
 
