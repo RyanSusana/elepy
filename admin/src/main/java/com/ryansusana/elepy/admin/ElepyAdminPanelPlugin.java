@@ -8,14 +8,22 @@ public abstract class ElepyAdminPanelPlugin {
     private final String slug;
     private final ElepyAdminPanel adminPanel;
 
-    protected ElepyAdminPanelPlugin(String name, String slug, ElepyAdminPanel adminPanel) {
+
+    public ElepyAdminPanelPlugin(String name, String slug, ElepyAdminPanel adminPanel) {
         this.name = name;
         this.slug = slug;
         this.adminPanel = adminPanel;
     }
 
 
-    public abstract String render(Map<String, Object> model);
+    public abstract String renderContent(Map<String, Object> model);
 
 
+    public String getName() {
+        return name;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
 }

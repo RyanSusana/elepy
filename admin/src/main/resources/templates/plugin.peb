@@ -1,0 +1,14 @@
+{% extends "templates/base.peb" %}
+
+
+
+
+{% block title %}
+           {{plugin.name}}
+        {% endblock %}
+
+{% block main %}
+
+
+
+{% endblock %}

@@ -164,12 +164,18 @@ public class ElepyAdminPanel extends ElepyModule {
                 return "Generated first admin account";
             }
             response.redirect("/admin");
-            return "";
+            return "templates/base.peb";
         });
 
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            //http().get();
-            //addplugin route
+            http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
+                Map<String, Object> model = new HashMap<>();
+                String content = plugin.renderContent(null);
+
+                model.put("content", content);
+
+                return render(model, "templates/plugin.peb");
+            });
         }
     }
 
