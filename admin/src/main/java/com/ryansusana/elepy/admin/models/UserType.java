@@ -1,4 +1,4 @@
-package com.ryansusana.elepy.admin;
+package com.ryansusana.elepy.admin.models;
 
 import java.util.ArrayList;
 import java.util.List;

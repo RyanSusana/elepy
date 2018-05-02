@@ -1,7 +1,12 @@
-package com.ryansusana.elepy.admin;
+package com.ryansusana.elepy.admin.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ryansusana.elepy.admin.services.BCrypt;
+import com.ryansusana.elepy.admin.services.UserEvaluator;
+import com.ryansusana.elepy.admin.services.UserCreate;
+import com.ryansusana.elepy.admin.services.UserDelete;
+import com.ryansusana.elepy.admin.services.UserUpdate;
 import com.ryansusana.elepy.annotations.PrettyName;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
@@ -88,7 +93,7 @@ public class User {
         this.userType = userType == null ? UserType.USER : userType;
     }
 
-    User hashWord() {
+    public User hashWord() {
         return new User(id, username, BCrypt.hashpw(password, BCrypt.gensalt()), email, userType);
     }
 

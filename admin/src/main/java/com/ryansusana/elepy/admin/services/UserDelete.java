@@ -1,6 +1,8 @@
-package com.ryansusana.elepy.admin;
+package com.ryansusana.elepy.admin.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryansusana.elepy.admin.ElepyAdminPanel;
+import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.dao.Crud;
 import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.routes.Delete;

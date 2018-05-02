@@ -2,6 +2,11 @@ package com.ryansusana.elepy.admin;
 
 import com.ryansusana.elepy.Elepy;
 import com.ryansusana.elepy.ElepyModule;
+import com.ryansusana.elepy.admin.dao.UserDao;
+import com.ryansusana.elepy.admin.models.User;
+import com.ryansusana.elepy.admin.models.UserType;
+import com.ryansusana.elepy.admin.services.BCrypt;
+import com.ryansusana.elepy.admin.services.UserService;
 import com.ryansusana.elepy.models.RestErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

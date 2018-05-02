@@ -1,6 +1,7 @@
-package com.ryansusana.elepy.admin;
+package com.ryansusana.elepy.admin.dao;
 
 import com.mongodb.DB;
+import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.dao.MongoDao;
 import org.jongo.Mapper;
 

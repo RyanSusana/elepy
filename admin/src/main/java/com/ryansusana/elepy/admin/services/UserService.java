@@ -1,4 +1,7 @@
-package com.ryansusana.elepy.admin;
+package com.ryansusana.elepy.admin.services;
+
+import com.ryansusana.elepy.admin.models.User;
+import com.ryansusana.elepy.admin.dao.UserDao;
 
 import java.util.Optional;
 
