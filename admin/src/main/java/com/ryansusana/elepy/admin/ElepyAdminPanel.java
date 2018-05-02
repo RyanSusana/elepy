@@ -22,18 +22,24 @@ public class ElepyAdminPanel extends ElepyModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final UserDao userDao;
     private final UserService userService;
+    private boolean initiated = false;
+
+    private final Set<ElepyAdminPanelPlugin> plugins;
+
 
     public ElepyAdminPanel(Elepy elepy, Service service) {
         super(elepy, service);
         this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
         this.userService = new UserService(userDao);
+        this.plugins = new TreeSet<>();
+
     }
 
     public ElepyAdminPanel(Elepy elepy) {
         super(elepy);
         this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
         this.userService = new UserService(userDao);
-
+        this.plugins = new TreeSet<>();
 
     }
 
@@ -48,10 +54,8 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
-
+        initiated = true;
         http().staticFileLocation("/admin-panel-public");
-
-
         elepy().addPackage(User.class.getPackage().getName());
 
     }
@@ -162,9 +166,22 @@ public class ElepyAdminPanel extends ElepyModule {
             response.redirect("/admin");
             return "";
         });
+
+        for (ElepyAdminPanelPlugin plugin : this.plugins) {
+            //http().get();
+            //addplugin route
+        }
     }
 
     private String render(Map<String, Object> model, String templatePath) {
         return new PebbleTemplateEngine().render(new ModelAndView(model, templatePath));
+    }
+
+    public ElepyAdminPanel addPlugin(ElepyAdminPanelPlugin plugin) {
+        if (initiated) {
+            throw new IllegalStateException("Can't add plugins after setup() has been called!");
+        }
+        this.plugins.add(plugin);
+        return this;
     }
 }
