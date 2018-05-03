@@ -1,21 +1,25 @@
 package com.ryansusana.elepy.dao;
 
 
+import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.utils.ClassUtils;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface Crud<T> {
 
-    List<T> getAll();
+    default Page<T> get() {
+        return get(new PageSetup(Integer.MAX_VALUE, 1));
+    }
+
+    Page<T> get(PageSetup pageSetup);
 
 
     Optional<T> getById(final String id);
 
-    List<T> search(final SearchSetup search);
+    Page<T> search(final SearchSetup search, PageSetup pageSetup);
 
-    List<T> search(final String query, Object... params);
+    Page<T> search(final String query, Object... params);
 
     void delete(final String id);
 
@@ -30,6 +34,17 @@ public interface Crud<T> {
             return id.get();
         }
         throw new IllegalStateException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
+
+    }
+
+    default Page<T> getNextPage(Page<T> page) {
+
+        if (page.getCurrentPageNumber() == page.getLastPageNumber()) {
+            throw new RestErrorMessage("No more results");
+        }
+        PageSetup pageSetup = new PageSetup(page.getOriginalSize(), page.getCurrentPageNumber() + 1);
+
+        return get(pageSetup);
 
     }
 

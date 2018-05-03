@@ -48,16 +48,25 @@ public class MongoDao<T> implements Crud<T> {
         return jongo.getCollection(collectionName);
     }
 
-    @Override
-    public List<T> getAll() {
-        RestModel restModel = classType.getAnnotation(RestModel.class);
-        if(restModel!=null){
-            return Lists.newArrayList(collection().find().sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal())).as(classType).iterator());
 
-        }
-        return Lists.newArrayList(collection().find().as(classType).iterator());
+    @Override
+    public Page<T> get(PageSetup pageSearch) {
+        return toPage(addDefaultSort(collection().find()), pageSearch);
     }
 
+    @Override
+    public Page<T> search(String query, Object... params) {
+
+        return toPage(addDefaultSort(collection().find(query, params)), new PageSetup(Integer.MAX_VALUE, 1));
+    }
+
+    private Find addDefaultSort(Find find) {
+        RestModel restModel = classType.getAnnotation(RestModel.class);
+        if (restModel != null) {
+            find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
+        }
+        return find;
+    }
 
     @Override
     public Optional<T> getById(final String id) {
@@ -71,8 +80,19 @@ public class MongoDao<T> implements Crud<T> {
     }
 
 
+    private Page<T> toPage(Find find, PageSetup pageSearch) {
+        final long dbSize = collection().count();
+        final long remainder = dbSize % pageSearch.getPageSize();
+        long amountOfPages = dbSize / pageSearch.getPageSize();
+
+        if (remainder > 0) amountOfPages++;
+        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber()-1) * pageSearch.getPageSize()).as(classType).iterator());
+
+        return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
+    }
+
     @Override
-    public List<T> search(SearchSetup query) {
+    public Page<T> search(SearchSetup query, PageSetup pageSetup) {
 
         final List<Field> searchableFields = getSearchableFields();
         List<Map<String, String>> expressions = new ArrayList<>();
@@ -91,24 +111,17 @@ public class MongoDao<T> implements Crud<T> {
         try {
 
             Find find = query.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().find();
-            List<Field> sortedFields;
             if (query.getSortBy() != null && query.getSortOption() != null) {
-                find = find.sort(String.format("{%s: %d}", query.getSortBy(), query.getSortOption().getVal()));
+                find.sort(String.format("{%s: %d}", query.getSortBy(), query.getSortOption().getVal()));
             } else {
-                RestModel restModel = classType.getAnnotation(RestModel.class);
-                find = find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
+                addDefaultSort(find);
             }
-            return Lists.newArrayList(find.as(classType).iterator());
+            return toPage(find, pageSetup);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());
         }
 
-    }
-
-    @Override
-    public List<T> search(String query, Object... params) {
-        return Lists.newArrayList(collection().find(query, params).as(classType).iterator());
     }
 
 

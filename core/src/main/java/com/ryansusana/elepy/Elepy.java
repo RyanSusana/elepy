@@ -141,7 +141,7 @@ public class Elepy {
                 });
                 get(baseSlug + schema.getSlug(), (request, response) -> {
                     response.type("application/json");
-                    return objectMapper.writeValueAsString(dao.getAll());
+                    return objectMapper.writeValueAsString(dao.get());
                 });
                 get(baseSlug + schema.getSlug() + "/:id", (request, response) -> {
                     response.type("application/json");

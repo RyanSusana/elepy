@@ -43,7 +43,7 @@ public class ImagePi extends ElepyModule {
 
         http().get("/images/gallery", (request, response) -> {
             List<Image> images = new ArrayList<>();
-            for (Image image : imageDao.getAll()) {
+            for (Image image : imageDao.get().getValues()) {
                 if (image.isExternal()) {
                     images.add(image);
                 } else {

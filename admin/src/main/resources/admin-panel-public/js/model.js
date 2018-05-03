@@ -64,7 +64,7 @@ const app = new Vue({
             var ref = this;
             axios.get(ref.selectedModel.slug + "?q=" + ref.searchQuery)
                 .then(function (response) {
-                    ref.modelData = response.data
+                    ref.modelData = response.data.values
                 })
                 .catch(function (error) {
                     UIkit.notification(error.response.status, {status: 'danger'})

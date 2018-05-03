@@ -1,14 +1,11 @@
 package com.ryansusana.elepy.dao;
 
-import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.ryansusana.elepy.models.Schema;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-import org.jongo.MongoCursor;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,27 +37,32 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
         return 0;
     }
 
+//    @Override
+//    public List<Map<String, Object>> get() {
+//        MongoCursor<Map<String, Object>> models = collection().find().map(
+//                dbObject -> {
+//                    Map dbo = dbObject.toMap();
+//
+//                    Map<String, Object> map = new HashMap<>();
+//                    for (Object o : dbo.keySet()) {
+//                        if (o instanceof String) {
+//                            String key = (String) o;
+//                            if (key.equals("_id")) {
+//                                key = "id";
+//                            }
+//                            map.put(key, dbo.get(o));
+//                        }
+//                    }
+//                    return map;
+//                }
+//        );
+//
+//        return Lists.newArrayList(models.iterator());
+//    }
+
     @Override
-    public List<Map<String, Object>> getAll() {
-        MongoCursor<Map<String, Object>> models = collection().find().map(
-                dbObject -> {
-                    Map dbo = dbObject.toMap();
-
-                    Map<String, Object> map = new HashMap<>();
-                    for (Object o : dbo.keySet()) {
-                        if (o instanceof String) {
-                            String key = (String) o;
-                            if (key.equals("_id")) {
-                                key = "id";
-                            }
-                            map.put(key, dbo.get(o));
-                        }
-                    }
-                    return map;
-                }
-        );
-
-        return Lists.newArrayList(models.iterator());
+    public Page<Map<String, Object>> get(PageSetup pageSetup) {
+        return null;
     }
 
     @Override
@@ -79,12 +81,12 @@ public class MongoSchemaDao implements Crud<Map<String, Object>> {
     }
 
     @Override
-    public List<Map<String, Object>> search(SearchSetup query) {
+    public Page<Map<String, Object>> search(SearchSetup search, PageSetup pageSetup) {
         return null;
     }
 
     @Override
-    public List<Map<String, Object>> search(String query, Object... params) {
+    public Page<Map<String, Object>> search(String query, Object... params) {
         return null;
     }
 

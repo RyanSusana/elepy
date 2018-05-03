@@ -75,12 +75,7 @@
             <artifactId>reflections</artifactId>
             <version>0.9.11</version>
         </dependency>
-        <dependency>
-            <groupId>io.bit3</groupId>
-            <artifactId>jsass</artifactId>
-            <version>5.7.0</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
