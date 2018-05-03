@@ -79,6 +79,7 @@ public class ElepyAdminPanel extends ElepyModule {
                 Map<String, Object> model = new HashMap<>();
 
                 model.put("descriptors", descriptors);
+                model.put("plugins", plugins);
 
                 model.put("currentDescriptor", descriptor);
                 return render(model, "templates/model.peb");
@@ -88,6 +89,8 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
         http().before("/admin/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
+        http().before("/plugins/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
+        http().before("/plugins/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
         http().before("/admin/*", (request, response) -> {
             elepy().allAdminFilters().handle(request, response);
         });
@@ -98,7 +101,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
             Map<String, Object> model = new HashMap<>();
             model.put("descriptors", descriptors);
-
+            model.put("plugins", plugins);
             return render(model, "templates/base.peb");
         });
         http().get("/admin-logout", (request, response) -> {
@@ -108,7 +111,17 @@ public class ElepyAdminPanel extends ElepyModule {
 
             return "";
         });
-
+        for (ElepyAdminPanelPlugin plugin : this.plugins) {
+            http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
+                Map<String, Object> model = new HashMap<>();
+                String content = plugin.renderContent(null);
+                model.put("descriptors", descriptors);
+                model.put("content", content);
+                model.put("plugin", plugin);
+                model.put("plugins", plugins);
+                return render(model, "templates/plugin.peb");
+            });
+        }
 
     }
 
@@ -167,16 +180,7 @@ public class ElepyAdminPanel extends ElepyModule {
             return "templates/base.peb";
         });
 
-        for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
-                String content = plugin.renderContent(null);
 
-                model.put("content", content);
-
-                return render(model, "templates/plugin.peb");
-            });
-        }
     }
 
     private String render(Map<String, Object> model, String templatePath) {
@@ -187,7 +191,9 @@ public class ElepyAdminPanel extends ElepyModule {
         if (initiated) {
             throw new IllegalStateException("Can't add plugins after setup() has been called!");
         }
+        plugin.setAdminPanel(this);
         this.plugins.add(plugin);
         return this;
     }
+
 }

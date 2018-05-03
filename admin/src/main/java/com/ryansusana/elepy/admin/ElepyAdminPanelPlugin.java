@@ -1,18 +1,21 @@
 package com.ryansusana.elepy.admin;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
-public abstract class ElepyAdminPanelPlugin {
+public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPanelPlugin> {
 
     private final String name;
     private final String slug;
-    private final ElepyAdminPanel adminPanel;
 
 
-    public ElepyAdminPanelPlugin(String name, String slug, ElepyAdminPanel adminPanel) {
+    private ElepyAdminPanel adminPanel;
+
+
+    public ElepyAdminPanelPlugin(String name, String slug) {
         this.name = name;
         this.slug = slug;
-        this.adminPanel = adminPanel;
     }
 
 
@@ -25,5 +28,18 @@ public abstract class ElepyAdminPanelPlugin {
 
     public String getSlug() {
         return slug;
+    }
+
+    public ElepyAdminPanel getAdminPanel() {
+        return adminPanel;
+    }
+
+    protected void setAdminPanel(ElepyAdminPanel adminPanel) {
+        this.adminPanel = adminPanel;
+    }
+
+    @Override
+    public int compareTo(@NotNull ElepyAdminPanelPlugin o) {
+        return name.compareTo(o.name);
     }
 }

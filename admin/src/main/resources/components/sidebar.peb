@@ -1,9 +1,18 @@
 <div id="sidebar" class="uk-padding">
     <div class="models">
-        <h3>Admin Panel</h3>
+        <h3>Resources</h3>
         {% for descriptor in descriptors %}
             <p>
                 <a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a>
+            </p>
+        {% endfor %}
+
+        {% if  plugins.size>0%}
+            <h4>Plugins</h4>
+        {% endif %}
+        {% for plugin in plugins %}
+            <p>
+                <a href="/plugins{{plugin.slug}}">{{plugin.name}}</a>
             </p>
         {% endfor %}
     </div>

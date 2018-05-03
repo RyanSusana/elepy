@@ -9,6 +9,9 @@
 
 {% block main %}
 
+{% autoescape false %}
+	{{ content }}
+{% endautoescape %}
 
 
 {% endblock %}
