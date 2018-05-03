@@ -1,6 +1,8 @@
 package com.ryansusana.elepy.admin;
 
+import com.mongodb.DB;
 import org.jetbrains.annotations.NotNull;
+import spark.Service;
 
 import java.util.Map;
 
@@ -18,6 +20,8 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
         this.slug = slug;
     }
 
+
+    public abstract void setup(Service http, DB db);
 
     public abstract String renderContent(Map<String, Object> model);
 
