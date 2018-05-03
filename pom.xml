@@ -7,7 +7,7 @@
     <groupId>com.ryansusana</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
     <modules>
         <module>admin</module>
         <module>core</module>
