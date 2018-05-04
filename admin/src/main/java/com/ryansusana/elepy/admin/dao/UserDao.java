@@ -6,6 +6,7 @@ import com.ryansusana.elepy.dao.MongoDao;
 import org.jongo.Mapper;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class UserDao extends MongoDao<User> {
     public UserDao(DB db, Mapper objectMapper) {
@@ -14,7 +15,7 @@ public class UserDao extends MongoDao<User> {
 
 
     public Optional<User> getByUsernameOrEmail(String usernameOrEmail) {
-        return Optional.ofNullable(collection().findOne("{$or:[{username: #}, {email: #}]}", usernameOrEmail, usernameOrEmail).as(getClassType()));
+        return Optional.ofNullable(collection().findOne("{$or:[{username: #}, {email: #}]}", Pattern.compile(usernameOrEmail, Pattern.CASE_INSENSITIVE), Pattern.compile(usernameOrEmail, Pattern.CASE_INSENSITIVE)).as(getClassType()));
     }
 
     public long count() {
