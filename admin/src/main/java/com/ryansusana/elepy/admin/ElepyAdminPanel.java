@@ -112,7 +112,7 @@ public class ElepyAdminPanel extends ElepyModule {
             return "";
         });
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(http(), elepy().getDb());
+            plugin.setup(http(), elepy().getDb(), elepy().getObjectMapper());
             http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
                 Map<String, Object> model = new HashMap<>();
                 String content = plugin.renderContent(null);
