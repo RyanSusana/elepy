@@ -12,7 +12,6 @@ import com.ryansusana.elepy.dao.MongoSchemaDao;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import com.ryansusana.elepy.models.Schema;
 import com.ryansusana.elepy.modules.EleHTML;
-import com.ryansusana.elepy.modules.ImagePi;
 import org.jongo.Mapper;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.jongo.marshall.jackson.oid.MongoId;
@@ -72,9 +71,6 @@ public class Elepy {
         builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 
         this.mapper = builder.build();
-
-        addModule(new ImagePi(this, this.http));
-
     }
 
     public void init() {
