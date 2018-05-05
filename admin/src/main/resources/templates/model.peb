@@ -5,7 +5,7 @@
         {% endblock %}
 
 {% block main %}
-
+{% if customView is null %}
 <div v-if="selectedModel!=null" class="uk-container uk-position-relative placeholder">
 
     <div class="content">
@@ -307,6 +307,14 @@
     </div>
 
 </div>
+
+{%else%}
+
+{% autoescape false %}
+{{ customView }}
+{% endautoescape %}
+{% endif %}
+
 
 {% endblock %}
 

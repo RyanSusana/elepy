@@ -2,18 +2,23 @@ package com.ryansusana.elepy.admin;
 
 import com.ryansusana.elepy.Elepy;
 import com.ryansusana.elepy.ElepyModule;
+import com.ryansusana.elepy.admin.annotations.View;
+import com.ryansusana.elepy.admin.concepts.ResourceView;
 import com.ryansusana.elepy.admin.dao.UserDao;
 import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.admin.models.UserType;
 import com.ryansusana.elepy.admin.services.BCrypt;
 import com.ryansusana.elepy.admin.services.UserService;
 import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Service;
 import spark.template.pebble.PebbleTemplateEngine;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
@@ -47,8 +52,13 @@ public class ElepyAdminPanel extends ElepyModule {
     @Override
     public void routes() {
 
-        setupLogin();
-        setupAdmin();
+        try {
+            setupLogin();
+            setupAdmin();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
 
@@ -60,7 +70,20 @@ public class ElepyAdminPanel extends ElepyModule {
 
     }
 
-    private void setupAdmin() {
+    private void defaultDecriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
+        http().get("/admin" + descriptor.get("slug"), (request, response) -> {
+
+            Map<String, Object> model = new HashMap<>();
+
+            model.put("descriptors", descriptors);
+            model.put("plugins", plugins);
+
+            model.put("currentDescriptor", descriptor);
+            return render(model, "templates/model.peb");
+        });
+    }
+
+    private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
         List<Map<String, Object>> descriptors = new ArrayList<>();
         for (Object o : elepy().getDescriptors()) {
             if (o instanceof Map) {
@@ -74,16 +97,38 @@ public class ElepyAdminPanel extends ElepyModule {
                         descriptor
                 );
             });
-            http().get("/admin" + descriptor.get("slug"), (request, response) -> {
 
-                Map<String, Object> model = new HashMap<>();
+            if (descriptor.containsKey("javaClass")) {
+                final Class<?> javaClass = Class.forName((String) descriptor.get("javaClass"));
 
-                model.put("descriptors", descriptors);
-                model.put("plugins", plugins);
+                if (javaClass.isAnnotationPresent(View.class)) {
 
-                model.put("currentDescriptor", descriptor);
-                return render(model, "templates/model.peb");
-            });
+                    final View annotation = javaClass.getAnnotation(View.class);
+
+                    final Optional<Constructor<?>> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
+
+                    if (!emptyConstructor.isPresent()) {
+                        throw new IllegalAccessException("Resource View Class must contain an empty constructor");
+                    }
+                    final ResourceView resourceView = (ResourceView) emptyConstructor.get().newInstance();
+                    http().get("/admin" + descriptor.get("slug"), (request, response) -> {
+
+                        Map<String, Object> model = new HashMap<>();
+
+                        model.put("customView", resourceView.renderView(descriptor));
+                        model.put("descriptors", descriptors);
+                        model.put("plugins", plugins);
+
+                        model.put("currentDescriptor", descriptor);
+                        return render(model, "templates/model.peb");
+                    });
+                } else {
+                    defaultDecriptorPanel(descriptor, descriptors);
+                }
+            } else {
+                defaultDecriptorPanel(descriptor, descriptors);
+            }
+
 
         }
 

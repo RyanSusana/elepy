@@ -32,7 +32,7 @@ import org.jongo.marshall.jackson.oid.MongoId;
         createRoute = UserCreate.class,
         updateRoute = UserUpdate.class,
 
-        //Access type on each of the routes, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
+        //Access type on each of the setup, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
         //If admin it will run through all the hooked admin filters
         findAll = RestModelAccessType.ADMIN,
         findOne = RestModelAccessType.ADMIN,
