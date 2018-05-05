@@ -258,6 +258,7 @@ public class Elepy {
         model.put("icon", restModel.icon());
         model.put("name", restModel.name());
 
+        model.put("javaClass", clazz.getName());
         List<Map<String, Object>> fields = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
             fields.add(new FieldDescriber(field).getFieldMap());
