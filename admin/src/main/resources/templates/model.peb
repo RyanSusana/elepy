@@ -36,7 +36,7 @@
                     <td v-for="field in selectedModel.fields"
 
                         v-if="field.type != 'OBJECT' ">(( (field.type == 'DATE'? toDate(data[field.name])
-                        : data[field.name]) | truncate(100) ))
+                        : data[field.name]) | truncate(90) ))
                     </td>
 
                 </tr>

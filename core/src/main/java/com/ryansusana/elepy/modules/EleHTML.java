@@ -38,7 +38,7 @@ public class EleHTML {
             return div(h4(fieldDescriber.getPrettyName()), eleToHtml(field.get(object)));
         }
 
-        return p(em(fieldDescriber.getPrettyName()), text(": " + field.get(object).toString()));
+        return rawHtml(fieldDescriber.getPrettyName()+": " + field.get(object).toString()+"<br>");
 
 
     }
