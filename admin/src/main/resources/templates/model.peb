@@ -68,12 +68,8 @@
                                            :disabled="field.name == 'id' || field.editable == false"
                                            placeholder="">
                                     <!-- DATE -->
-                                    <input :id="'date-form-field-'+index" class="uk-input"
-                                           v-if="field.type == 'DATE'"
-                                           :disabled="field.name == 'id' || (field.editable == false)"
-                                           v-on:blur="fromDate(field.name, index)"
-                                           v-bind:value="toDate(selectedData[field.name])"
-                                           type="date">
+
+                                    <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[field.name]"  :disabled="field.name == 'id' || (field.editable == false)" placeholder = "Click to select a date" input-class = "uk-input" calendar-class="uk-dark"></vuejs-datepicker>
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
                                            :disabled="field.name == 'id' || (field.editable == false)"
@@ -87,6 +83,19 @@
                                               v-model="selectedData[field.name]" type="text"
                                               :disabled="field.name == 'id' || field.editable == false"
                                               placeholder="" rows="5"></textarea>
+
+                                    <!-- WYSIWYG -->
+                                    <div class="uk-padding uk-background-muted" v-html="compileMarkdown(selectedData[field.name])"
+                                         v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
+                                    </div>
+                                    <textarea class="uk-textarea"
+                                              v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
+                                              :disabled="field.name == 'id' || (field.editable == false)"
+                                              v-model="selectedData[field.name]" type="text"
+                                              :disabled="field.name == 'id' || field.editable == false"
+                                              placeholder="" rows="13"></textarea>
+
+
 
                                     <!-- ENUM -->
                                     <div class="uk-form-controls">
@@ -118,12 +127,8 @@
                                                    :disabled="field.name == 'id' || field.editable == false"
                                                    placeholder="">
                                             <!-- DATE -->
-                                            <input :id="'date-form-field-'+index" class="uk-input"
-                                                   v-if="field.type == 'DATE'"
-                                                   :disabled="field.name == 'id' || (field.editable == false)"
-                                                   v-on:blur="fromDate(field.name, index)"
-                                                   v-bind:value="toDate(selectedData[fieldOuter.name][field.name])"
-                                                   type="date">
+                                            <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[fieldOuter.name][field.name]"  :disabled="field.name == 'id' || (field.editable == false)" placeholder = "Click to select a date" input-class = "uk-input" calendar-class="uk-dark"></vuejs-datepicker>
+
                                             <!-- NUMBER -->
                                             <input class="uk-input" v-if="field.type == 'NUMBER'"
                                                    :disabled="field.name == 'id' || (field.editable == false)"
@@ -139,7 +144,16 @@
                                                       :disabled="field.name == 'id' || field.editable == false"
                                                       placeholder=""
                                                       rows="5"></textarea>
-
+                                            <!-- WYSIWYG -->
+                                            <div class="uk-padding uk-background-muted" v-html="compileMarkdown(selectedData[fieldOuter.name][field.name])"
+                                                 v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
+                                            </div>
+                                            <textarea class="uk-textarea"
+                                                      v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
+                                                      :disabled="field.name == 'id' || (field.editable == false)"
+                                                      v-model="selectedData[fieldOuter.name][field.name]" type="text"
+                                                      :disabled="field.name == 'id' || field.editable == false"
+                                                      placeholder="" rows="13"></textarea>
                                             <!-- ENUM -->
                                             <div class="uk-form-controls">
                                                 <select class="uk-select"
@@ -199,12 +213,9 @@
                                            v-model="newData[field.name]" type="text"
                                            placeholder="">
                                     <!-- DATE -->
-                                    <input :id="'date-form2-field-'+index" class="uk-input"
-                                           v-if="field.type == 'DATE'"
 
-                                           v-on:blur="fromDate(field.name, index)"
-                                           v-bind:value="toDate(newData[field.name])"
-                                           type="date">
+                                    <vuejs-datepicker v-if="field.type == 'DATE'" v-model="newData[field.name]"  :disabled="field.name == 'id' || (field.editable == false)" placeholder = "Click to select a date" input-class = "uk-input" calendar-class="uk-dark"></vuejs-datepicker>
+
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
                                            step="any"
@@ -218,7 +229,16 @@
                                               v-model="newData[field.name]" type="text"
 
                                               placeholder="" rows="5"></textarea>
-
+                                    <!-- WYSIWYG -->
+                                    <div class="uk-padding uk-background-muted" v-html="compileMarkdown(newData[field.name])"
+                                         v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
+                                    </div>
+                                    <textarea class="uk-textarea"
+                                              v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
+                                              :disabled="field.name == 'id' || (field.editable == false)"
+                                              v-model="newData[field.name]" type="text"
+                                              :disabled="field.name == 'id' || field.editable == false"
+                                              placeholder="" rows="13"></textarea>
                                     <!-- ENUM -->
                                     <div class="uk-form-controls">
                                         <select class="uk-select" v-model="newData[field.name]"
@@ -326,6 +346,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
 <script src="/js/vue-truncate.js"></script>
+<script src="https://unpkg.com/marked@0.3.6"></script>
+<script src="https://unpkg.com/vuejs-datepicker"></script>
 <script src="/js/model.js"></script>
 
 {% endblock %}

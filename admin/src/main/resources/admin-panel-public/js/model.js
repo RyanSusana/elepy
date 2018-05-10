@@ -1,6 +1,9 @@
 const app = new Vue({
     el: '#app',
     delimiters: ['((', '))'],
+    components: {
+        'vuejs-datepicker': vuejsDatepicker
+    },
     data: {
         bufData: {},
         newData: {},
@@ -24,16 +27,8 @@ const app = new Vue({
                 ref.getModelData();
             }, 500);
         },
-        fromDate: function (field, index) {
-            this.selectedData[field] = document.getElementById('date-form-field-' + index).value;
-            this.newData[field] = document.getElementById('date-form2-field-' + index).value;
-
-            console.log(document.getElementById('date-form2-field-' + index).value);
-
-        },
-        toDate: function (milli) {
-            var date = new Date(milli);
-            return date.yyyymmdd();
+        compileMarkdown: function (item) {
+            return marked(item, { sanitize: true })
         },
 
         editModal: function () {
