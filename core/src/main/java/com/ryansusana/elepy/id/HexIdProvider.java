@@ -27,10 +27,10 @@ public class HexIdProvider extends IdProvider {
     }
 
     @Override
-    public String getId(Crud dao) {
+    public String getId(Object item, Crud dao) {
         String id = generateOne();
         if (dao.getById(id).isPresent()) {
-            return getId(dao);
+            return getId(item, dao);
         }
         return id;
     }

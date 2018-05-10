@@ -86,7 +86,7 @@ public class MongoDao<T> implements Crud<T> {
         long amountOfPages = dbSize / pageSearch.getPageSize();
 
         if (remainder > 0) amountOfPages++;
-        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber()-1) * pageSearch.getPageSize()).as(classType).iterator());
+        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(classType).iterator());
 
         return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
     }
@@ -155,7 +155,7 @@ public class MongoDao<T> implements Crud<T> {
 
             assert idField != null;
             idField.setAccessible(true);
-            idField.set(item, provider.getId(this));
+            idField.set(item, provider.getId(item, this));
 
 
             collection().insert(item);
