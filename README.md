@@ -36,7 +36,10 @@ It features:
  - All of Elepy's functionality, this includes but is not limited to: basic routes, search and sort
  - A rich UI dedicated to speed and user-friendliness. A lot of attention was put to detail and interaction going smoothly
  - A built in user model that generates a base admin user that you can log into(if there are no users in the database) it also uses BCrypt to automatically encrypt passwords.
- - *More features soon to come...*
+ - Custom Resource Views with `@View` this gives you full control on how a resource looks on the admin panel. All you need to do is render html content with scripts to access ajax data. Elepy supports Vue and Axios out the box.
+ - Pluginnable: Plugins are supported with the addPlugin method on ElepyAdminPanels a plugin must have a name and a slug and implement the renderContent method. With this method you get access to the Database and the main section of the Elepy when an admin clicks on your slug. Because Elepy is developer first, you should probably look for any malicious code(code that might mess up your database) before using any Elepy plugin or module
+ -Skinnable: The Elepy Admin Panel supports the use of overridable CSS4 Variables. This allows you to change the colors and fonts used by Elepy.
+
 
 
 
