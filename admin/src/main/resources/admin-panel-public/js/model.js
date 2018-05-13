@@ -31,6 +31,17 @@ const app = new Vue({
             return marked(item, { sanitize: true })
         },
 
+        fromDate: function (field, index) {
+            this.selectedData[field] = document.getElementById('date-form-field-' + index).value;
+            this.newData[field] = document.getElementById('date-form2-field-' + index).value;
+
+            console.log(document.getElementById('date-form2-field-' + index).value);
+
+        },
+        toDate: function (milli) {
+            var date = new Date(milli);
+            return date.yyyymmdd();
+        },
         editModal: function () {
             UIkit.modal(document.getElementById("edit-modal"), {stack: true}).show();
         },

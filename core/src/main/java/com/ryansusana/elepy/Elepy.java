@@ -237,6 +237,11 @@ public class Elepy {
             if (!request.requestMethod().toUpperCase().equals("OPTIONS") && response.status() != 404)
                 LOGGER.info(request.requestMethod() + " ['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
+        http.options("/*", (request, response) -> {
+
+                    return "";
+                }
+        );
     }
 
     private void setupDescriptors(List<Object> descriptors) {

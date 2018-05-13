@@ -6,7 +6,12 @@ import j2html.TagCreator;
 import j2html.tags.DomContent;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static j2html.TagCreator.*;
@@ -36,9 +41,22 @@ public class EleHTML {
 
         if (fieldDescriber.getType().equals(FieldType.OBJECT)) {
             return div(h4(fieldDescriber.getPrettyName()), eleToHtml(field.get(object)));
+        } else if (fieldDescriber.getType().equals(FieldType.DATE)) {
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            final Object date = field.get(object);
+            if (date instanceof Date) {
+
+                return rawHtml(fieldDescriber.getPrettyName() + ": " + simpleDateFormat.format((Date) date) + "<br>");
+            } else if (date instanceof Instant) {
+                final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.systemDefault());
+                return rawHtml(fieldDescriber.getPrettyName() + ": " + dateTimeFormatter.format((Instant) date) + "<br>");
+
+            }
         }
 
-        return rawHtml(fieldDescriber.getPrettyName()+": " + field.get(object).toString()+"<br>");
+        return rawHtml(fieldDescriber.getPrettyName() + ": " + field.get(object).toString() + "<br>");
 
 
     }
