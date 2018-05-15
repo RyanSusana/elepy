@@ -22,7 +22,6 @@ public enum FieldType {
     public static FieldType getByRepresentation(java.lang.reflect.Field field) {
 
 
-        System.out.println(field.getType().getSimpleName());
         if (field.getAnnotation(Text.class) != null) {
             return TEXT;
         }
