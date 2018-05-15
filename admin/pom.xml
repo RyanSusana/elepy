@@ -9,7 +9,18 @@
 
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <build>
 
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>admin-panel-public/scss/**</exclude>
+                    <exclude>admin-panel-public/.sass-cache/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
     <artifactId>elepy-admin</artifactId>
     <dependencies>
         <dependency>
