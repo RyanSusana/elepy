@@ -9,6 +9,7 @@ import com.ryansusana.elepy.concepts.FieldDescriber;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.dao.MongoDao;
 import com.ryansusana.elepy.dao.MongoSchemaDao;
+import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import com.ryansusana.elepy.models.Schema;
 import com.ryansusana.elepy.modules.EleHTML;
@@ -242,6 +243,12 @@ public class Elepy {
                     return "";
                 }
         );
+
+        http.exception(RestErrorMessage.class, (exception, request, response) -> {
+            response.body(exception.getMessage());
+            response.status(401);
+        });
+
     }
 
     private void setupDescriptors(List<Object> descriptors) {
