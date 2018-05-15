@@ -51,13 +51,13 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public Page<T> get(PageSetup pageSearch) {
-        return toPage(addDefaultSort(collection().find()), pageSearch);
+        return toPage(addDefaultSort(collection().find()), pageSearch, (int) collection().count());
     }
 
     @Override
     public Page<T> search(String query, Object... params) {
 
-        return toPage(addDefaultSort(collection().find(query, params)), new PageSetup(Integer.MAX_VALUE, 1));
+        return toPage(addDefaultSort(collection().find(query, params)), new PageSetup(Integer.MAX_VALUE, 1), (int)collection().count(query,params));
     }
 
     private Find addDefaultSort(Find find) {
@@ -80,14 +80,14 @@ public class MongoDao<T> implements Crud<T> {
     }
 
 
-    private Page<T> toPage(Find find, PageSetup pageSearch) {
-        final long dbSize = collection().count();
-        final long remainder = dbSize % pageSearch.getPageSize();
-        long amountOfPages = dbSize / pageSearch.getPageSize();
+    private Page<T> toPage(Find find, PageSetup pageSearch, int amountOfResultsWithThatQuery) {
 
-        if (remainder > 0) amountOfPages++;
+
         final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(classType).iterator());
 
+        final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
+        long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
+        if (remainder > 0) amountOfPages++;
         return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
     }
 
@@ -111,12 +111,14 @@ public class MongoDao<T> implements Crud<T> {
         try {
 
             Find find = query.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().find();
+
+            long amountResultsTotal = query.getQuery() != null ? collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().count();
             if (query.getSortBy() != null && query.getSortOption() != null) {
                 find.sort(String.format("{%s: %d}", query.getSortBy(), query.getSortOption().getVal()));
             } else {
                 addDefaultSort(find);
             }
-            return toPage(find, pageSetup);
+            return toPage(find, pageSetup, (int) amountResultsTotal);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());
