@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
+//@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
 
 $primary-color: #FF7700;
 
@@ -48,8 +48,6 @@ $raleway: 'Raleway', sans-serif;
 $quicksand: 'Quicksand', sans-serif;
 $roboto-slab: 'Roboto Slab', serif;
 
-$base-heading-font-family: $roboto-slab;
-$base-body-font-family: $raleway;
 
 .edit-modal-body {
   min-height: 65vh !important;
@@ -90,10 +88,9 @@ $base-body-font-family: $raleway;
 
 @import "uikit/variables-theme.scss";
 @import "uikit/mixins-theme.scss";
-@mixin hook-card() {
-  color: #000;
+@mixin hook-pagination-item-active(){
+  font-weight: bold;
 }
-
 @import "uikit/uikit-theme.scss";
 @import "components/sidebar";
 @import "components/nav";
