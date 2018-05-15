@@ -9,6 +9,7 @@ import com.ryansusana.elepy.models.TextType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +98,30 @@ public class FieldDescriber {
         if (type.equals(FieldType.NUMBER)) {
             fieldMap.put("numberType", field.getAnnotation(Number.class) != null ? field.getAnnotation(Number.class).value() : NumberType.guessType(field));
         }
+        if (type.equals(FieldType.OBJECT_ARRAY)) {
+
+            final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+
+
+            List<Map<String, Object>> innerFields = new ArrayList<>();
+            for (Field innerField : array.getDeclaredFields()) {
+
+                innerFields.add(new FieldDescriber(innerField).getFieldMap());
+            }
+            fieldMap.put("fields", innerFields);
+            fieldMap.put("arrayType", array.getSimpleName());
+
+        }
+        if (type.equals(FieldType.ENUM_ARRAY)) {
+            final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+            fieldMap.put("availableValues", array.getEnumConstants());
+        }
+        if(type.equals(FieldType.PRIMITIVE_ARRAY)){
+            final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+            fieldMap.put("primitiveType", FieldType.getUnannotatedFieldType(array));
+        }
     }
+
 
     public NumberType getNumberType() {
         if (!type.equals(FieldType.NUMBER)) {
