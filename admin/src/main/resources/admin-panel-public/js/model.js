@@ -12,10 +12,17 @@ const app = new Vue({
         models: [],
         modelData: null,
         searchTimeout: null,
-        searchQuery: ""
+        searchQuery: "",
+        lastSelectedPageNum: 1,
+        curPage: {}
 
     },
-    computed: {},
+    computed: {
+
+        lastPageNumber: function () {
+            return this.curPage.lastPageNumber;
+        }
+    },
 
     methods: {
         search: function () {
@@ -28,7 +35,7 @@ const app = new Vue({
             }, 500);
         },
         compileMarkdown: function (item) {
-            return marked(item, { sanitize: true })
+            return marked(item, {sanitize: true})
         },
 
         fromDate: function (field, index) {
@@ -68,14 +75,30 @@ const app = new Vue({
         },
         getModelData: function () {
             var ref = this;
-            axios.get(ref.selectedModel.slug + "?q=" + ref.searchQuery)
+            axios.get(ref.selectedModel.slug + "?pageSize=10&q=" + ref.searchQuery)
                 .then(function (response) {
-                    ref.modelData = response.data.values
+
+                    ref.modelData = response.data.values;
+                    ref.curPage = response.data;
                 })
                 .catch(function (error) {
                     UIkit.notification(error.response.status, {status: 'danger'})
                 });
         },
+        page: function (pageNumber) {
+            var ref = this;
+            axios.get(ref.selectedModel.slug + "?pageSize=10&q=" + ref.searchQuery + "&pageNumber=" + pageNumber)
+                .then(function (response) {
+
+
+                    ref.modelData = response.data.values;
+                    ref.curPage = response.data;
+                })
+                .catch(function (error) {
+                    UIkit.notification(error.response.status, {status: 'danger'})
+                });
+        }
+        ,
         getModel: function () {
             var ref = this;
             axios.get('/admin/config' + document.getElementById("slug").innerText)
