@@ -19,6 +19,11 @@
                     class="fas fa-plus"></i>Add
                 to {{currentDescriptor.name}}</button>
         </div>
+        <ul class="uk-pagination uk-flex-center" uk-margin>
+            <li><a href="#"><span uk-pagination-previous></span></a></li>
+            <li v-for = "link in lastPageNumber"  :class="{'uk-active': link == curPage.currentPageNumber}" ><a v-on:click="page(link)" >((link))</a></li>
+            <li><a href="#"><span uk-pagination-next></span></a></li>
+        </ul>
         <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
         <div class="data-section">
 
