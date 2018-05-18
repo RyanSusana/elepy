@@ -25,6 +25,22 @@ const app = new Vue({
     },
 
     methods: {
+        next: function () {
+            if (this.curPage.currentPageNumber < this.curPage.lastPageNumber) {
+                this.page(this.curPage.currentPageNumber + 1);
+            } else {
+                this.page(1);
+            }
+        }
+        ,
+        previous: function () {
+            if (this.curPage.currentPageNumber > 1) {
+                this.page(this.curPage.currentPageNumber - 1);
+            } else {
+                this.page(this.curPage.lastPageNumber);
+            }
+        }
+        ,
         search: function () {
             var ref = this;
             console.log("search");

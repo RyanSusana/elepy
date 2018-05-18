@@ -2,7 +2,6 @@ package com.ryansusana.elepy.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
-import org.jetbrains.annotations.NotNull;
 import spark.Service;
 
 import java.util.Map;
@@ -44,7 +43,7 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
     }
 
     @Override
-    public int compareTo(@NotNull ElepyAdminPanelPlugin o) {
+    public int compareTo( ElepyAdminPanelPlugin o) {
         return name.compareTo(o.name);
     }
 }

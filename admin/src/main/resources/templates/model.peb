@@ -20,9 +20,9 @@
                 to {{currentDescriptor.name}}</button>
         </div>
         <ul class="uk-pagination uk-flex-center" uk-margin>
-            <li><a href="#"><span uk-pagination-previous></span></a></li>
+            <li><button v-on:click = "previous()" class="uk-link uk-link-reset"><span uk-pagination-previous></span></button></li>
             <li v-for = "link in lastPageNumber"  :class="{'uk-active': link == curPage.currentPageNumber}" ><a v-on:click="page(link)" >((link))</a></li>
-            <li><a href="#"><span uk-pagination-next></span></a></li>
+            <li><button v-on:click = "next()" class="uk-link uk-link-reset"><span uk-pagination-next></span></button></li>
         </ul>
         <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
         <div class="data-section">
