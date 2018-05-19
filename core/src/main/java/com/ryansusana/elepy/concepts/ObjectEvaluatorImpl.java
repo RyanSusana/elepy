@@ -8,7 +8,7 @@ import com.ryansusana.elepy.models.RestErrorMessage;
 import java.lang.reflect.Field;
 import java.util.Date;
 
-public class ObjectEvaluatorImpl implements ObjectEvaluator {
+public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
 
 
     public void evaluate(Object o) throws Exception {

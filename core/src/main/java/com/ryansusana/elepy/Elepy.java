@@ -6,6 +6,7 @@ import com.mongodb.DB;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.concepts.FieldDescriber;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
+import com.ryansusana.elepy.concepts.ObjectEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
 import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.models.RestModelAccessType;
@@ -62,6 +63,7 @@ public class Elepy {
         this.basePublicFilter = (request, response) -> {
 
         };
+        this.baseObjectEvaluator = new ObjectEvaluatorImpl<>();
         this.configSlug = "/config";
         this.objectMapper = new ObjectMapper();
         this.mapper = JacksonMapper.Builder.jacksonMapper().build();
@@ -222,6 +224,9 @@ public class Elepy {
         http.exception(RestErrorMessage.class, (exception, request, response) -> {
             response.body(exception.getMessage());
             response.status(401);
+        });
+        http.exception(Exception.class, (exception, request, response) -> {
+            exception.printStackTrace();
         });
 
     }
