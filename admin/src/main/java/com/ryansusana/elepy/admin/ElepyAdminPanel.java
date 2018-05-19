@@ -5,20 +5,30 @@ import com.ryansusana.elepy.ElepyModule;
 import com.ryansusana.elepy.admin.annotations.View;
 import com.ryansusana.elepy.admin.concepts.ResourceView;
 import com.ryansusana.elepy.admin.dao.UserDao;
+import com.ryansusana.elepy.admin.models.Attachment;
+import com.ryansusana.elepy.admin.models.AttachmentType;
 import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.admin.models.UserType;
 import com.ryansusana.elepy.admin.services.BCrypt;
 import com.ryansusana.elepy.admin.services.UserService;
 import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.utils.ClassUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Service;
 import spark.template.pebble.PebbleTemplateEngine;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.*;
 
 
@@ -30,6 +40,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private boolean initiated = false;
 
     private final Set<ElepyAdminPanelPlugin> plugins;
+    private final Set<Attachment> attachments;
 
 
     public ElepyAdminPanel(Elepy elepy, Service service) {
@@ -37,6 +48,7 @@ public class ElepyAdminPanel extends ElepyModule {
         this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
         this.userService = new UserService(userDao);
         this.plugins = new TreeSet<>();
+        this.attachments = new TreeSet<>();
 
     }
 
@@ -45,7 +57,7 @@ public class ElepyAdminPanel extends ElepyModule {
         this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
         this.userService = new UserService(userDao);
         this.plugins = new TreeSet<>();
-
+        this.attachments = new TreeSet<>();
     }
 
 
@@ -53,8 +65,11 @@ public class ElepyAdminPanel extends ElepyModule {
     public void routes() {
 
         try {
+
             setupLogin();
             setupAdmin();
+            setupAttachments();
+            initiated = true;
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
@@ -64,10 +79,26 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
-        initiated = true;
+
         http().staticFileLocation("/admin-panel-public");
         elepy().addPackage(User.class.getPackage().getName());
 
+    }
+
+    public void setupAttachments() {
+        for (Attachment attachment : attachments) {
+            http().get("/attachments" + attachment.getType().getRoute() + attachment.getFileName(), (request, response) -> {
+                response.type(attachment.getContentType());
+                HttpServletResponse raw = response.raw();
+
+                raw.getOutputStream().write(attachment.getSrc());
+                raw.getOutputStream().flush();
+                raw.getOutputStream().close();
+
+                response.raw().getOutputStream();
+                return response.raw();
+            });
+        }
     }
 
     private void defaultDecriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
@@ -241,4 +272,48 @@ public class ElepyAdminPanel extends ElepyModule {
         return this;
     }
 
+
+    public void attachSrc(Attachment attachment) {
+        if (initiated) {
+            throw new IllegalStateException("Can't attach after setup() has been called!");
+        }
+        attachments.add(attachment);
+    }
+
+    public void attachSrc(String fileName, String contentType, byte[] src, AttachmentType type) {
+        attachSrc(new Attachment(fileName, contentType, src, type));
+    }
+
+    public void attachSrc(ClassLoader classLoader, String file) throws IOException {
+        attachSrc(file, classLoader.getResourceAsStream(file));
+    }
+
+    public void attachSrc(String fileName, InputStream inputStream) throws IOException {
+        final String[] fileNameParts = fileName.split("\\.");
+
+
+        final String extension = fileNameParts[fileNameParts.length - 1];
+        final Tika tika = new Tika();
+
+        final byte[] bytes = IOUtils.toByteArray(inputStream);
+
+        final String contentType = tika.detect(inputStream, fileName);
+
+
+        attachSrc(fileName, contentType, bytes, AttachmentType.guessTypeFromMime(contentType));
+    }
+
+    public void attachSrc(File file) throws IOException {
+        final String[] fileNameParts = file.getName().split("\\.");
+
+
+        final String extension = fileNameParts[fileNameParts.length - 1];
+        final byte[] bytes = FileUtils.readFileToByteArray(file);
+
+        final String contentType = Files.probeContentType(file.toPath());
+
+
+        attachSrc(file.getName(), contentType, bytes, AttachmentType.guessTypeFromMime(contentType));
+
+    }
 }
