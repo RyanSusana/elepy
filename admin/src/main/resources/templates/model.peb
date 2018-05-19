@@ -6,7 +6,7 @@
 
 {% block main %}
 {% if customView is null %}
-<div v-if="selectedModel!=null" class="uk-container uk-position-relative placeholder">
+<div v-if="selectedModel!=null" class="uk-container uk-position-relative placeholder" v-cloak>
 
     <div class="content">
         <h3 class="uk-card-title">{{currentDescriptor.name}}</h3>
