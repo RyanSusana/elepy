@@ -39,7 +39,7 @@ import java.util.jar.JarFile;
 public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
-    private final UserDao userDao;
+    private UserDao userDao;
     private final UserService userService;
     private boolean initiated = false;
 
@@ -59,6 +59,11 @@ public class ElepyAdminPanel extends ElepyModule {
     public ElepyAdminPanel(Elepy elepy) {
         super(elepy);
         this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
+        this.userService = new UserService(userDao);
+        this.plugins = new TreeSet<>();
+        this.attachments = new TreeSet<>();
+    }
+    public  ElepyAdminPanel(){
         this.userService = new UserService(userDao);
         this.plugins = new TreeSet<>();
         this.attachments = new TreeSet<>();
@@ -83,6 +88,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
+        this.userDao = new UserDao(elepy().getDb(), elepy().getMapper());
         elepy().addPackage(User.class.getPackage().getName());
 
     }
