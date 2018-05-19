@@ -55,6 +55,7 @@ public class Elepy {
         this.name = name;
         this.singletons = new TreeMap<>();
         this.descriptors = new ArrayList<>();
+        this.adminFilters = new ArrayList<>();
         this.http = http;
 
         this.baseSlug = "/";
