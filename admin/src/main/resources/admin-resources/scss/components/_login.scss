@@ -3,7 +3,7 @@
   height: 100vh;
   position: relative;
   $main-gradient: linear-gradient(to top left, #ff512f, #f09819);
-  @include background-gradient($gradient: linear-gradient(to top right, rgba(#ff512f, 0.25), rgba(#f09819, 0.25)), $behind: url('/images/bg1.jpg'));
+  @include background-gradient($gradient: linear-gradient(to top right, rgba(#ff512f, 0.25), rgba(#f09819, 0.25)), $behind: url('/admin-resources/images/bg1.jpg'));
   background-size: cover;
 
 }
