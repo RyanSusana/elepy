@@ -28,7 +28,6 @@ public class Elepy {
     private static final Logger LOGGER = LoggerFactory.getLogger(Elepy.class);
     private final Service http;
     private ObjectMapper objectMapper;
-    // private DB db; // TODO make singleton to make Elepy independable to MongoDB
     private String baseSlug;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
