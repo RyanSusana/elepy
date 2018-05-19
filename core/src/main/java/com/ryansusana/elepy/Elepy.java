@@ -1,14 +1,12 @@
 package com.ryansusana.elepy;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.concepts.FieldDescriber;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
-import com.ryansusana.elepy.dao.MongoDao;
-import com.ryansusana.elepy.dao.MongoSchemaDao;
+import com.ryansusana.elepy.dao.Crud;
 import com.ryansusana.elepy.models.RestErrorMessage;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import com.ryansusana.elepy.models.Schema;
@@ -24,8 +22,6 @@ import spark.Service;
 
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static spark.Spark.*;
 
 public class Elepy {
 
@@ -90,11 +86,9 @@ public class Elepy {
         annotated.forEach(claszz -> classes.put(claszz.getAnnotation(RestModel.class), claszz));
 
         final List<Map<String, Object>> maps = setupPojos(classes);
-        final List<Schema> schemas1 = setupSchemas(schemas);
 
 
         descriptors.addAll(maps);
-        descriptors.addAll(schemas1);
 
 
         setupDescriptors(descriptors);
@@ -107,52 +101,6 @@ public class Elepy {
 
     }
 
-    private List<Schema> setupSchemas(List<Schema> schemas) {
-        try {
-            for (Schema schema : schemas) {
-
-                MongoSchemaDao dao = new MongoSchemaDao(db, schema);
-                TypeReference<HashMap<String, Object>> typeRef
-                        = new TypeReference<HashMap<String, Object>>() {
-                };
-                post(baseSlug + schema.getSlug(), (request, response) -> {
-                    String body = request.body();
-                    Map<String, Object> product = objectMapper.readValue(body, typeRef);
-
-                    //evaluateObject(restModel, product);
-                    dao.create(product);
-                    return "Created";
-                });
-                put(baseSlug + schema.getSlug(), (request, response) -> {
-                    String body = request.body();
-
-                    Map<String, Object> product = objectMapper.readValue(body, typeRef);
-                    //evaluateObject(restModel, product);
-                    dao.update(product);
-                    return "updated";
-                });
-                delete(baseSlug + schema.getSlug() + "/:id", (request, response) -> {
-
-                    dao.delete(request.params("id"));
-                    return "Deleted";
-                });
-                get(baseSlug + schema.getSlug(), (request, response) -> {
-                    response.type("application/json");
-                    return objectMapper.writeValueAsString(dao.get());
-                });
-                get(baseSlug + schema.getSlug() + "/:id", (request, response) -> {
-                    response.type("application/json");
-                    return objectMapper.writeValueAsString(dao.getById(request.params("id")));
-                });
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
-        return schemas;
-    }
-
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> setupPojos(Map<RestModel, Class<?>> classes) {
@@ -163,7 +111,8 @@ public class Elepy {
             try {
                 List<ObjectEvaluator> evaluators = getObjectEvaluators(restModel);
                 descriptors.add(getPojoDescriptor(restModel, clazz));
-                final MongoDao<Object> dao = new MongoDao<>(db, restModel.slug(), mapper, clazz);
+                final Crud<?> dao = restModel.crudProvider().newInstance().setElepy(this).crudFor(clazz);
+                
                 setupFilters(restModel, clazz);
                 if (!restModel.create().equals(RestModelAccessType.DISABLED))
                     http.post(baseSlug + restModel.slug(), (request, response) -> {

@@ -3,6 +3,8 @@ package com.ryansusana.elepy.annotations;
 
 import com.ryansusana.elepy.concepts.IdProvider;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
+import com.ryansusana.elepy.dao.CrudProvider;
+import com.ryansusana.elepy.dao.MongoProvider;
 import com.ryansusana.elepy.dao.SortOption;
 import com.ryansusana.elepy.id.HexIdProvider;
 import com.ryansusana.elepy.models.RestModelAccessType;
@@ -50,6 +52,7 @@ public @interface RestModel {
 
     Class<? extends ObjectEvaluator>[] objectEvaluators() default {};
 
+    Class<? extends CrudProvider> crudProvider() default MongoProvider.class;
 
     SortOption defaultSortDirection() default SortOption.ASCENDING;
 
