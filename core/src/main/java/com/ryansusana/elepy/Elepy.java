@@ -63,7 +63,7 @@ public class Elepy {
         this.basePublicFilter = (request, response) -> {
 
         };
-        this.baseObjectEvaluator = new ObjectEvaluatorImpl<>();
+        setBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
         this.objectMapper = new ObjectMapper();
         this.mapper = JacksonMapper.Builder.jacksonMapper().build();
@@ -390,7 +390,7 @@ public class Elepy {
 
     private void checkConfig() {
         if (initialized) {
-            throw new IllegalStateException("Elepy already initialized, please do all");
+            throw new IllegalStateException("Elepy already initialized, please do all configuration before calling init()");
         }
     }
 
