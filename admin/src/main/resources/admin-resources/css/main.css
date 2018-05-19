@@ -6,7 +6,7 @@
   --navbar-hover-bg: var(--primary-hover-color);
   --sidebar-color: white;
   --sidebar-bg: #111;
-  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55),url(/images/admin-bg-pattern.png);
+  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55),url(/admin-resources/images/admin-bg-pattern.png);
   --hover-bg: #99999933;
   --text-color: #212121;
   --navbar-color: var(--sidebar-color);

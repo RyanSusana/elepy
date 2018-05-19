@@ -20,6 +20,16 @@
                 </excludes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     <artifactId>elepy-admin</artifactId>
     <dependencies>
@@ -37,6 +47,12 @@
             <groupId>com.ryansusana</groupId>
             <artifactId>elepy-core</artifactId>
             <version>0.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.18</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

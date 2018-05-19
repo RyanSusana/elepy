@@ -7,12 +7,15 @@ public class Attachment implements Comparable<Attachment> {
 
     private final AttachmentType type;
 
+    private final boolean fromDirectory;
 
-    public Attachment(String fileName, String contentType, byte[] src, AttachmentType type) {
+
+    public Attachment(String fileName, String contentType, byte[] src, AttachmentType type, boolean fromDirectory) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.src = src;
         this.type = type;
+        this.fromDirectory = fromDirectory;
     }
 
     public String getFileName() {
@@ -29,6 +32,10 @@ public class Attachment implements Comparable<Attachment> {
 
     public AttachmentType getType() {
         return type;
+    }
+
+    public boolean isFromDirectory() {
+        return fromDirectory;
     }
 
     @Override

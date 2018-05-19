@@ -28,8 +28,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 
 public class ElepyAdminPanel extends ElepyModule {
@@ -65,7 +69,7 @@ public class ElepyAdminPanel extends ElepyModule {
     public void routes() {
 
         try {
-
+            attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin();
             setupAdmin();
             setupAttachments();
@@ -79,15 +83,13 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
-
-        http().staticFileLocation("/admin-panel-public");
         elepy().addPackage(User.class.getPackage().getName());
 
     }
 
     public void setupAttachments() {
         for (Attachment attachment : attachments) {
-            http().get("/attachments" + attachment.getType().getRoute() + attachment.getFileName(), (request, response) -> {
+            http().get((attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
                 response.type(attachment.getContentType());
                 HttpServletResponse raw = response.raw();
 
@@ -280,15 +282,15 @@ public class ElepyAdminPanel extends ElepyModule {
         attachments.add(attachment);
     }
 
-    public void attachSrc(String fileName, String contentType, byte[] src, AttachmentType type) {
-        attachSrc(new Attachment(fileName, contentType, src, type));
+    public void attachSrc(String fileName, String contentType, byte[] src, AttachmentType type, boolean isFromDirectory) {
+        attachSrc(new Attachment(fileName, contentType, src, type, isFromDirectory));
     }
 
-    public void attachSrc(ClassLoader classLoader, String file) throws IOException {
-        attachSrc(file, classLoader.getResourceAsStream(file));
+    public void attachSrc(ClassLoader classLoader, String file, boolean isFromDirectory) throws IOException {
+        attachSrc(file, classLoader.getResourceAsStream(file), isFromDirectory);
     }
 
-    public void attachSrc(String fileName, InputStream inputStream) throws IOException {
+    public void attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory) throws IOException {
         final String[] fileNameParts = fileName.split("\\.");
 
 
@@ -300,7 +302,7 @@ public class ElepyAdminPanel extends ElepyModule {
         final String contentType = tika.detect(inputStream, fileName);
 
 
-        attachSrc(fileName, contentType, bytes, AttachmentType.guessTypeFromMime(contentType));
+        attachSrc(fileName, contentType, bytes, AttachmentType.guessTypeFromMime(contentType), isFromDirectory);
     }
 
     public void attachSrc(File file) throws IOException {
@@ -313,7 +315,26 @@ public class ElepyAdminPanel extends ElepyModule {
         final String contentType = Files.probeContentType(file.toPath());
 
 
-        attachSrc(file.getName(), contentType, bytes, AttachmentType.guessTypeFromMime(contentType));
+        attachSrc(file.getName(), contentType, bytes, AttachmentType.guessTypeFromMime(contentType), false);
 
+    }
+
+    public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException {
+        Enumeration<URL> en = classLoader.getResources(
+                directory);
+        List<String> profiles = new ArrayList<>();
+        if (en.hasMoreElements()) {
+            URL url = en.nextElement();
+            JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
+            try (JarFile jar = urlcon.getJarFile();) {
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (entry.getName().startsWith(directory) && !entry.isDirectory()) {
+                        attachSrc(classLoader, entry.getName(), true);
+                    }
+                }
+            }
+        }
     }
 }
