@@ -337,8 +337,13 @@ public class Elepy {
 
 
     public <T> T getSingleton(Class<T> cls) {
+        final T t = (T) singletons.get(cls.getName());
 
-        return (T) singletons.get(cls.getName());
+        if (t != null) {
+            return t;
+        }
+
+        throw new NoSuchElementException(String.format("No singleton for %s available", cls.getName()));
 
     }
 
