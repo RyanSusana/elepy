@@ -9,13 +9,16 @@ public class Attachment implements Comparable<Attachment> {
 
     private final boolean fromDirectory;
 
+    private final String directory;
 
-    public Attachment(String fileName, String contentType, byte[] src, AttachmentType type, boolean fromDirectory) {
+
+    public Attachment(String fileName, String contentType, byte[] src, AttachmentType type, boolean fromDirectory, String directory) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.src = src;
         this.type = type;
         this.fromDirectory = fromDirectory;
+        this.directory = directory;
     }
 
     public String getFileName() {
@@ -36,6 +39,10 @@ public class Attachment implements Comparable<Attachment> {
 
     public boolean isFromDirectory() {
         return fromDirectory;
+    }
+
+    public String getDirectory() {
+        return directory;
     }
 
     @Override

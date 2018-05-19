@@ -21,16 +21,15 @@ import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Service;
 import spark.template.pebble.PebbleTemplateEngine;
+import spark.utils.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -40,7 +39,7 @@ public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private UserDao userDao;
-    private final UserService userService;
+    private UserService userService;
     private boolean initiated = false;
 
     private final Set<ElepyAdminPanelPlugin> plugins;
@@ -63,8 +62,8 @@ public class ElepyAdminPanel extends ElepyModule {
         this.plugins = new TreeSet<>();
         this.attachments = new TreeSet<>();
     }
-    public  ElepyAdminPanel(){
-        this.userService = new UserService(userDao);
+
+    public ElepyAdminPanel() {
         this.plugins = new TreeSet<>();
         this.attachments = new TreeSet<>();
     }
@@ -88,14 +87,16 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
+
         this.userDao = new UserDao(elepy().getDb(), elepy().getMapper());
+        this.userService = new UserService(userDao);
         elepy().addPackage(User.class.getPackage().getName());
 
     }
 
     public void setupAttachments() {
         for (Attachment attachment : attachments) {
-            http().get((attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
+            http().get(attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
                 response.type(attachment.getContentType());
                 HttpServletResponse raw = response.raw();
 
@@ -290,15 +291,15 @@ public class ElepyAdminPanel extends ElepyModule {
         attachments.add(attachment);
     }
 
-    public void attachSrc(String fileName, String contentType, byte[] src, AttachmentType type, boolean isFromDirectory) {
-        attachSrc(new Attachment(fileName, contentType, src, type, isFromDirectory));
+    public void attachSrc(String fileName, String contentType, byte[] src, AttachmentType type, boolean isFromDirectory, String directory) {
+        attachSrc(new Attachment(fileName, contentType, src, type, isFromDirectory, directory));
     }
 
-    public void attachSrc(ClassLoader classLoader, String file, boolean isFromDirectory) throws IOException {
-        attachSrc(file, classLoader.getResourceAsStream(file), isFromDirectory);
+    public void attachSrc(ClassLoader classLoader, String file, boolean isFromDirectory, String directory) throws IOException {
+        attachSrc(file, classLoader.getResourceAsStream(file), isFromDirectory, directory);
     }
 
-    public void attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory) throws IOException {
+    public void attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory, String directory) throws IOException {
         final String[] fileNameParts = fileName.split("\\.");
 
 
@@ -310,38 +311,59 @@ public class ElepyAdminPanel extends ElepyModule {
         final String contentType = tika.detect(inputStream, fileName);
 
 
-        attachSrc(fileName, contentType, bytes, AttachmentType.guessTypeFromMime(contentType), isFromDirectory);
+        attachSrc(fileName, contentType, bytes, AttachmentType.guessTypeFromMime(contentType), isFromDirectory, directory);
     }
 
-    public void attachSrc(File file) throws IOException {
+    public void attachSrc(File file, boolean isFromDirectory, String directory) throws IOException {
         final String[] fileNameParts = file.getName().split("\\.");
 
 
         final String extension = fileNameParts[fileNameParts.length - 1];
         final byte[] bytes = FileUtils.readFileToByteArray(file);
+        final Tika tika = new Tika();
+        final String contentType = tika.detect(new FileInputStream(file), file.getName());
 
-        final String contentType = Files.probeContentType(file.toPath());
 
-
-        attachSrc(file.getName(), contentType, bytes, AttachmentType.guessTypeFromMime(contentType), false);
+        attachSrc(file.getName(), contentType, bytes, AttachmentType.guessTypeFromMime(contentType), isFromDirectory, directory);
 
     }
 
-    public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException {
+    public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
         Enumeration<URL> en = classLoader.getResources(
                 directory);
         List<String> profiles = new ArrayList<>();
+
         if (en.hasMoreElements()) {
             URL url = en.nextElement();
-            JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
-            try (JarFile jar = urlcon.getJarFile();) {
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    if (entry.getName().startsWith(directory) && !entry.isDirectory()) {
-                        attachSrc(classLoader, entry.getName(), true);
+            try {
+                JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
+
+                try (JarFile jar = urlcon.getJarFile();) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
+                        if (entry.getName().startsWith(directory) && !entry.isDirectory()) {
+                            attachSrc(classLoader, entry.getName(), true, "");
+                        }
                     }
                 }
+            } catch (ClassCastException e) {
+                final URL resource = classLoader.getResource(directory);
+
+                if (resource == null) {
+                    throw new FileNotFoundException("Resource doen't exist: " + directory);
+                }
+
+                for (File file : FileUtils.listFiles(new File(resource.getFile()), null, true)) {
+                    if (!file.isDirectory()) {
+
+                        String pre = StringUtils.cleanPath(file.getPath()).split(directory)[1];
+
+                        attachSrc(file, true, StringUtils.cleanPath(directory + (directory.endsWith("/") ? "" : "/") + (pre.replaceAll(file.getName(), ""))));
+                    }
+                }
+
+
             }
         }
     }
