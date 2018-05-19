@@ -27,27 +27,39 @@ public class Elepy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Elepy.class);
     private final Service http;
-    private final ObjectMapper objectMapper;
-    private final DB db;
-    private final String baseSlug;
-    private final String configSlug;
-    private final ObjectEvaluator<Object> baseObjectEvaluator;
-    private final Mapper mapper;
-    private final List<Filter> adminFilters;
-    private final Filter basePublicFilter;
-    private final List<Object> descriptors;
+    private ObjectMapper objectMapper;
+    // private DB db; // TODO make singleton to make Elepy independable to MongoDB
+    private String baseSlug;
+    private String configSlug;
+    private ObjectEvaluator<Object> baseObjectEvaluator;
+
+    private Mapper mapper;
+    private List<Filter> adminFilters;
+    private Filter basePublicFilter;
+    private List<Object> descriptors;
 
     private final List<ElepyModule> modules;
     private final List<Schema> schemas;
     private final List<String> packages;
     private final String name;
 
+    private final Map<String, Object> singletons;
+
     private boolean initialized = false;
 
 
+    public Elepy(String name, Service http) {
+        this.modules = new ArrayList<>();
+        this.schemas = new ArrayList<>();
+        this.packages = new ArrayList<>();
+        this.name = name;
+        this.singletons = new TreeMap<>();
+        this.http = http;
+    }
+
     public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, List<Schema> schemas, String... packages) {
         this.objectMapper = objectMapper;
-        this.db = db;
+        //this.db = db;
         this.adminFilters = adminFilters;
         this.basePublicFilter = basePublicFilter;
         this.baseSlug = baseSlug;
@@ -58,9 +70,12 @@ public class Elepy {
         this.packages = new ArrayList<>();
         this.packages.addAll(Arrays.asList(packages));
         this.schemas = schemas;
-        descriptors = new ArrayList<>();
+        this.descriptors = new ArrayList<>();
+        this.singletons = new TreeMap<>();
         this.modules = new ArrayList<>();
         this.name = name;
+
+        this.attachSingleton(db);
 
         final JacksonMapper.Builder builder = new JacksonMapper.Builder();
 
@@ -254,8 +269,6 @@ public class Elepy {
 
 
         final Filter adminFilter = allAdminFilters();
-
-
         if (adminFilter != null) {
             http.before(baseSlug + restModel.slug(), (request, response) -> {
                 switch (request.requestMethod().toUpperCase()) {
@@ -323,6 +336,17 @@ public class Elepy {
     }
 
 
+    public <T> T getSingleton(Class<T> cls) {
+
+        return (T) singletons.get(cls.getName());
+
+    }
+
+    public Elepy attachSingleton(Object object) {
+        singletons.put(object.getClass().getName(), object);
+        return this;
+    }
+
     public Elepy addModule(ElepyModule module) {
         return addModule(module, this.http);
     }
@@ -340,12 +364,50 @@ public class Elepy {
         this.packages.add(packageName);
     }
 
+
+    private void checkConfig() {
+        if (initialized) {
+            throw new IllegalStateException("Elepy already initialized, please do all");
+        }
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        checkConfig();
+        this.objectMapper = objectMapper;
+    }
+
+
+    public void setBaseSlug(String baseSlug) {
+        checkConfig();
+        this.baseSlug = baseSlug;
+    }
+
+    public void setConfigSlug(String configSlug) {
+        checkConfig();
+        this.configSlug = configSlug;
+    }
+
+    public void setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
+        checkConfig();
+        this.baseObjectEvaluator = baseObjectEvaluator;
+    }
+
+    public void setMapper(Mapper mapper) {
+        checkConfig();
+        this.mapper = mapper;
+    }
+
+    public void setBasePublicFilter(Filter basePublicFilter) {
+        checkConfig();
+        this.basePublicFilter = basePublicFilter;
+    }
+
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
     }
 
     public DB getDb() {
-        return this.db;
+        return getSingleton(DB.class);
     }
 
     public String getBaseSlug() {
