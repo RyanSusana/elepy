@@ -12055,7 +12055,7 @@ iframe.uk-cover {
 #login-section {
   height: 100vh;
   position: relative;
-  background: linear-gradient(to top right, rgba(255, 81, 47, 0.25), rgba(240, 152, 25, 0.25)), url("/images/bg1.jpg");
+  background: linear-gradient(to top right, rgba(255, 81, 47, 0.25), rgba(240, 152, 25, 0.25)), url("/admin-resources/images/bg1.jpg");
   background-size: cover; }
 
 .login-card {
