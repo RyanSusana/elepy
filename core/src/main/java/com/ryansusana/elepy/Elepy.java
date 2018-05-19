@@ -54,7 +54,18 @@ public class Elepy {
         this.packages = new ArrayList<>();
         this.name = name;
         this.singletons = new TreeMap<>();
+        this.descriptors = new ArrayList<>();
         this.http = http;
+
+        this.baseSlug = "/";
+
+        this.basePublicFilter = (request, response) -> {
+
+        };
+        this.configSlug = "/config";
+        this.objectMapper = new ObjectMapper();
+        this.mapper = JacksonMapper.Builder.jacksonMapper().build();
+
     }
 
     public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, List<Schema> schemas, String... packages) {
@@ -269,6 +280,7 @@ public class Elepy {
 
 
         final Filter adminFilter = allAdminFilters();
+
         if (adminFilter != null) {
             http.before(baseSlug + restModel.slug(), (request, response) -> {
                 switch (request.requestMethod().toUpperCase()) {
@@ -362,11 +374,12 @@ public class Elepy {
                 return;
             }
         }
-        throw new IllegalStateException(cls.getSimpleName() + "doesn't have a field annotated with MongoId");
+        throw new IllegalStateException(cls.getSimpleName() + " doesn't have a field annotated with MongoId");
     }
 
-    public void addPackage(String packageName) {
+    public Elepy addPackage(String packageName) {
         this.packages.add(packageName);
+        return this;
     }
 
 
@@ -376,35 +389,41 @@ public class Elepy {
         }
     }
 
-    public void setObjectMapper(ObjectMapper objectMapper) {
+    public Elepy setObjectMapper(ObjectMapper objectMapper) {
         checkConfig();
         this.objectMapper = objectMapper;
+        return this;
     }
 
 
-    public void setBaseSlug(String baseSlug) {
+    public Elepy setBaseSlug(String baseSlug) {
         checkConfig();
         this.baseSlug = baseSlug;
+        return this;
     }
 
-    public void setConfigSlug(String configSlug) {
+    public Elepy setConfigSlug(String configSlug) {
         checkConfig();
         this.configSlug = configSlug;
+        return this;
     }
 
-    public void setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
+    public Elepy setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
         checkConfig();
         this.baseObjectEvaluator = baseObjectEvaluator;
+        return this;
     }
 
-    public void setMapper(Mapper mapper) {
+    public Elepy setMapper(Mapper mapper) {
         checkConfig();
         this.mapper = mapper;
+        return this;
     }
 
-    public void setBasePublicFilter(Filter basePublicFilter) {
+    public Elepy setBasePublicFilter(Filter basePublicFilter) {
         checkConfig();
         this.basePublicFilter = basePublicFilter;
+        return this;
     }
 
     public ObjectMapper getObjectMapper() {
