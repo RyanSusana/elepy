@@ -112,7 +112,7 @@ public class Elepy {
                 List<ObjectEvaluator> evaluators = getObjectEvaluators(restModel);
                 descriptors.add(getPojoDescriptor(restModel, clazz));
                 final Crud<?> dao = restModel.crudProvider().newInstance().setElepy(this).crudFor(clazz);
-                
+
                 setupFilters(restModel, clazz);
                 if (!restModel.create().equals(RestModelAccessType.DISABLED))
                     http.post(baseSlug + restModel.slug(), (request, response) -> {
@@ -312,12 +312,19 @@ public class Elepy {
         return this;
     }
 
-    public Elepy addModule(ElepyModule module) {
+    public Elepy addModule(ElepyModule module, Service http) {
         if (initialized) {
             throw new IllegalStateException("Elepy already initialized, you must add modules before calling init()");
         }
+        module.setElepy(this);
+        module.setHttp(http);
         modules.add(module);
         return this;
+    }
+
+
+    public Elepy addModule(ElepyModule module) {
+        return addModule(module, this.http);
     }
 
     private void evaluateHasIdField(Class cls) {
