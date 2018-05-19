@@ -144,11 +144,13 @@ public class ElepyAdminPanel extends ElepyModule {
                         throw new IllegalAccessException("Resource View Class must contain an empty constructor");
                     }
                     final ResourceView resourceView = (ResourceView) emptyConstructor.get().newInstance();
+                    resourceView.setup(this);
                     http().get("/admin" + descriptor.get("slug"), (request, response) -> {
 
                         Map<String, Object> model = new HashMap<>();
 
                         model.put("customView", resourceView.renderView(descriptor));
+                        model.put("customHeaders", resourceView.renderExtraHeaders());
                         model.put("descriptors", descriptors);
                         model.put("plugins", plugins);
 
