@@ -3,6 +3,7 @@ package com.ryansusana.elepy.dao;
 
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
+import com.ryansusana.elepy.Elepy;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
 import com.ryansusana.elepy.annotations.Unique;
@@ -24,7 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class MongoDao<T> implements Crud<T> {
+public class MongoDao<T> implements Crud<T>, CrudProvider<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDao.class);
     private final Jongo jongo;
     private final Class<? extends T> classType;
@@ -57,7 +58,7 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public Page<T> search(String query, Object... params) {
 
-        return toPage(addDefaultSort(collection().find(query, params)), new PageSetup(Integer.MAX_VALUE, 1), (int)collection().count(query,params));
+        return toPage(addDefaultSort(collection().find(query, params)), new PageSetup(Integer.MAX_VALUE, 1), (int) collection().count(query, params));
     }
 
     private Find addDefaultSort(Find find) {
@@ -189,5 +190,11 @@ public class MongoDao<T> implements Crud<T> {
 
     public String getCollectionName() {
         return this.collectionName;
+    }
+
+    @Override
+    public Crud<T> crudFor(Class<T> type, Elepy elepy) {
+        final RestModel model = type.getAnnotation(RestModel.class);
+        return new MongoDao<>(elepy.getSingleton(DB.class), model.slug().replaceAll("/", ""), type);
     }
 }
