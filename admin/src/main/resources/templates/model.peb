@@ -4,6 +4,13 @@
            {{currentDescriptor.name}}
         {% endblock %}
 
+{% block headers %}
+            {% autoescape false %}
+            {{ customHeaders }}
+            {% endautoescape %}
+{% endblock %}
+
+
 {% block main %}
 {% if customView is null %}
 <div v-if="selectedModel!=null" class="uk-container uk-position-relative placeholder" v-cloak>
@@ -20,9 +27,15 @@
                 to {{currentDescriptor.name}}</button>
         </div>
         <ul class="uk-pagination uk-flex-center" uk-margin>
-            <li><button v-on:click = "previous()" class="uk-link uk-link-reset"><span uk-pagination-previous></span></button></li>
-            <li v-for = "link in lastPageNumber"  :class="{'uk-active': link == curPage.currentPageNumber}" ><a v-on:click="page(link)" >((link))</a></li>
-            <li><button v-on:click = "next()" class="uk-link uk-link-reset"><span uk-pagination-next></span></button></li>
+            <li>
+                <button v-on:click="previous()" class="uk-link uk-link-reset"><span uk-pagination-previous></span>
+                </button>
+            </li>
+            <li v-for="link in lastPageNumber" :class="{'uk-active': link == curPage.currentPageNumber}"><a
+                    v-on:click="page(link)">((link))</a></li>
+            <li>
+                <button v-on:click="next()" class="uk-link uk-link-reset"><span uk-pagination-next></span></button>
+            </li>
         </ul>
         <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
         <div class="data-section">
@@ -74,7 +87,10 @@
                                            placeholder="">
                                     <!-- DATE -->
 
-                                    <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[field.name]"  :disabled="field.name == 'id' || (field.editable == false)" placeholder = "Click to select a date" input-class = "uk-input" calendar-class="uk-dark"></vuejs-datepicker>
+                                    <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[field.name]"
+                                                      :disabled="field.name == 'id' || (field.editable == false)"
+                                                      placeholder="Click to select a date" input-class="uk-input"
+                                                      calendar-class="uk-dark"></vuejs-datepicker>
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
                                            :disabled="field.name == 'id' || (field.editable == false)"
@@ -90,7 +106,8 @@
                                               placeholder="" rows="5"></textarea>
 
                                     <!-- WYSIWYG -->
-                                    <div class="uk-padding uk-background-muted" v-html="compileMarkdown(selectedData[field.name])"
+                                    <div class="uk-padding uk-background-muted"
+                                         v-html="compileMarkdown(selectedData[field.name])"
                                          v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
                                     </div>
                                     <textarea class="uk-textarea"
@@ -99,7 +116,6 @@
                                               v-model="selectedData[field.name]" type="text"
                                               :disabled="field.name == 'id' || field.editable == false"
                                               placeholder="" rows="13"></textarea>
-
 
 
                                     <!-- ENUM -->
@@ -132,7 +148,12 @@
                                                    :disabled="field.name == 'id' || field.editable == false"
                                                    placeholder="">
                                             <!-- DATE -->
-                                            <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[fieldOuter.name][field.name]"  :disabled="field.name == 'id' || (field.editable == false)" placeholder = "Click to select a date" input-class = "uk-input" calendar-class="uk-dark"></vuejs-datepicker>
+                                            <vuejs-datepicker v-if="field.type == 'DATE'"
+                                                              v-model="selectedData[fieldOuter.name][field.name]"
+                                                              :disabled="field.name == 'id' || (field.editable == false)"
+                                                              placeholder="Click to select a date"
+                                                              input-class="uk-input"
+                                                              calendar-class="uk-dark"></vuejs-datepicker>
 
                                             <!-- NUMBER -->
                                             <input class="uk-input" v-if="field.type == 'NUMBER'"
@@ -150,7 +171,8 @@
                                                       placeholder=""
                                                       rows="5"></textarea>
                                             <!-- WYSIWYG -->
-                                            <div class="uk-padding uk-background-muted" v-html="compileMarkdown(selectedData[fieldOuter.name][field.name])"
+                                            <div class="uk-padding uk-background-muted"
+                                                 v-html="compileMarkdown(selectedData[fieldOuter.name][field.name])"
                                                  v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
                                             </div>
                                             <textarea class="uk-textarea"
@@ -219,7 +241,10 @@
                                            placeholder="">
                                     <!-- DATE -->
 
-                                    <vuejs-datepicker v-if="field.type == 'DATE'" v-model="newData[field.name]"  :disabled="field.name == 'id' || (field.editable == false)" placeholder = "Click to select a date" input-class = "uk-input" calendar-class="uk-dark"></vuejs-datepicker>
+                                    <vuejs-datepicker v-if="field.type == 'DATE'" v-model="newData[field.name]"
+                                                      :disabled="field.name == 'id' || (field.editable == false)"
+                                                      placeholder="Click to select a date" input-class="uk-input"
+                                                      calendar-class="uk-dark"></vuejs-datepicker>
 
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
@@ -235,7 +260,8 @@
 
                                               placeholder="" rows="5"></textarea>
                                     <!-- WYSIWYG -->
-                                    <div class="uk-padding uk-background-muted" v-html="compileMarkdown(newData[field.name])"
+                                    <div class="uk-padding uk-background-muted"
+                                         v-html="compileMarkdown(newData[field.name])"
                                          v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
                                     </div>
                                     <textarea class="uk-textarea"
