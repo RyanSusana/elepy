@@ -2,8 +2,17 @@ package com.ryansusana.elepy.dao;
 
 import com.ryansusana.elepy.Elepy;
 
-public interface  CrudProvider<T> {
+public abstract class CrudProvider<T> {
+    private Elepy elepy;
 
 
-     Crud<T> crudFor(Class<T> type, Elepy elepy);
+    public Elepy elepy() {
+        return elepy;
+    }
+    public CrudProvider setElepy(Elepy elepy){
+        this.elepy = elepy;
+        return this;
+    }
+
+    public abstract Crud<T> crudFor(Class<T> type);
 }

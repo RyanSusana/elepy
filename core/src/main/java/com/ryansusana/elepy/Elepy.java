@@ -140,7 +140,7 @@ public class Elepy {
                 List<ObjectEvaluator> evaluators = getObjectEvaluators(restModel);
                 descriptors.add(getPojoDescriptor(restModel, clazz));
 
-                final Crud<?> dao = restModel.crudProvider().newInstance().crudFor(clazz, this);
+                final Crud<?> dao = restModel.crudProvider().newInstance().setElepy(this).crudFor(clazz);
 
                 setupFilters(restModel, clazz);
                 if (!restModel.create().equals(RestModelAccessType.DISABLED))

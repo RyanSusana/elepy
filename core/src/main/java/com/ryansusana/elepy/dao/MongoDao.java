@@ -25,7 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class MongoDao<T> implements Crud<T>, CrudProvider<T> {
+public class MongoDao<T> implements Crud<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDao.class);
     private final Jongo jongo;
     private final Class<? extends T> classType;
@@ -192,9 +192,5 @@ public class MongoDao<T> implements Crud<T>, CrudProvider<T> {
         return this.collectionName;
     }
 
-    @Override
-    public Crud<T> crudFor(Class<T> type, Elepy elepy) {
-        final RestModel model = type.getAnnotation(RestModel.class);
-        return new MongoDao<>(elepy.getSingleton(DB.class), model.slug().replaceAll("/", ""), type);
-    }
+
 }
