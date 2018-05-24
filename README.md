@@ -46,7 +46,7 @@ It features:
 ## Guide to creating a RestResource
 For a comprehensive guide to creating a RestResource, take a look at [the User-resource located in the admin module](https://github.com/RyanSusana/elepy/blob/master/admin/src/main/java/com/ryansusana/elepy/admin/User.java). This is an immutable POJO class that uses Elepy's annotations to its maximum potential!
 
-''' java
+``` java
     @RestModel(name = "Users", slug = "/users")  
     public class User {  
     
@@ -74,6 +74,6 @@ For a comprehensive guide to creating a RestResource, take a look at [the User-r
   
         //Getters and setters, Immutable classes are allowed! :)  
     }
-'''
+```
   
 
