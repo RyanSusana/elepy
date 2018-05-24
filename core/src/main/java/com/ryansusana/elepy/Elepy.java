@@ -436,6 +436,7 @@ public class Elepy {
         return this.objectMapper;
     }
 
+    @Deprecated
     public DB getDb() {
         return getSingleton(DB.class);
     }
