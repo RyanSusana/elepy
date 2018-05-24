@@ -45,5 +45,35 @@ It features:
 
 ## Guide to creating a RestResource
 For a comprehensive guide to creating a RestResource, take a look at [the User-resource located in the admin module](https://github.com/RyanSusana/elepy/blob/master/admin/src/main/java/com/ryansusana/elepy/admin/User.java). This is an immutable POJO class that uses Elepy's annotations to its maximum potential!
+
+''' java
+    @RestModel(name = "Users", slug = "/users")  
+    public class User {  
+    
+        @MongoId  
+        @PrettyName("UserID")  
+        private String id;  
+  
+        @Unique  
+        @RequiredField @PrettyName("Username")  
+        @JsonProperty("username")  
+        @Searchable  
+        private String username;  
+  
+        @Unique  
+        @RequiredField @PrettyName("E-mail adress")  
+        @JsonProperty("email")  
+        @Searchable  
+        private String email;  
+  
+        @PrettyName("User password (encrypted)")  
+        @JsonProperty("password")  
+        @RequiredField  
+        private String password;  
+  
+  
+        //Getters and setters, Immutable classes are allowed! :)  
+    }
+'''
   
 
