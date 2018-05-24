@@ -46,7 +46,7 @@ It features:
 public class Main {
 
     public static void main(String[] args) {
-        final Elepy elepy =
+         Elepy elepy =
                 new Elepy()
                     //Adds a package to scan for
                     .addPackage("com.ryansusana.elepy.gallery")
@@ -54,7 +54,7 @@ public class Main {
                     .attachSingleton(new MongoClient().getDB("elepy-db"))
                     //Adds the Admin Panel module to elepy, yay!
                     .addModule(new ElepyAdminPanel())
-                    //The route where Elepy stores it's
+                    //The route where Elepy stores its config json
                     .setConfigSlug("/hidden-config/location/here");
 
 
