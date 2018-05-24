@@ -54,7 +54,7 @@ public class Main {
                     .attachSingleton(new MongoClient().getDB("elepy-db"))
                     //Adds the Admin Panel module to elepy, yay!
                     .addModule(new ElepyAdminPanel())
-                    //The route where Elepy stores its config json
+                    //The route where Elepy stores its config json(config defines the structure of the rest resources)
                     .setConfigSlug("/hidden-config/location/here");
 
 
