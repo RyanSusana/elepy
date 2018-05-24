@@ -1,7 +1,7 @@
 package com.ryansusana.elepy.dao;
 
 
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 import com.ryansusana.elepy.utils.ClassUtils;
 
 import java.util.Optional;

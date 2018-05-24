@@ -2,7 +2,7 @@ package com.ryansusana.elepy.concepts;
 
 import com.ryansusana.elepy.annotations.Unique;
 import com.ryansusana.elepy.dao.Crud;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 import com.ryansusana.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Field;

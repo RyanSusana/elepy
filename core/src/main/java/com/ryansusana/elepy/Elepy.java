@@ -8,7 +8,7 @@ import com.ryansusana.elepy.concepts.FieldDescriber;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.concepts.ObjectEvaluatorImpl;
 import com.ryansusana.elepy.dao.Crud;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 import com.ryansusana.elepy.models.RestModelAccessType;
 import com.ryansusana.elepy.models.Schema;
 import com.ryansusana.elepy.modules.EleHTML;

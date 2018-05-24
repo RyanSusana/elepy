@@ -1,6 +1,6 @@
 package com.ryansusana.elepy.concepts;
 
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 
 import java.lang.reflect.Field;
 

@@ -3,11 +3,10 @@ package com.ryansusana.elepy.dao;
 
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
-import com.ryansusana.elepy.Elepy;
 import com.ryansusana.elepy.annotations.RestModel;
 import com.ryansusana.elepy.annotations.Searchable;
 import com.ryansusana.elepy.annotations.Unique;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 import com.ryansusana.elepy.utils.ClassUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jongo.Find;

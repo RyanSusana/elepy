@@ -3,7 +3,7 @@ package com.ryansusana.elepy.concepts;
 import com.ryansusana.elepy.annotations.Number;
 import com.ryansusana.elepy.annotations.Text;
 import com.ryansusana.elepy.models.FieldType;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 
 import java.lang.reflect.Field;
 import java.util.Date;

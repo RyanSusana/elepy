@@ -4,7 +4,6 @@ package com.ryansusana.elepy.annotations;
 import com.ryansusana.elepy.concepts.IdProvider;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
 import com.ryansusana.elepy.dao.CrudProvider;
-import com.ryansusana.elepy.dao.MongoDao;
 import com.ryansusana.elepy.dao.MongoProvider;
 import com.ryansusana.elepy.dao.SortOption;
 import com.ryansusana.elepy.id.HexIdProvider;
