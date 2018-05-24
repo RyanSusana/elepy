@@ -1,15 +1,15 @@
 package com.elepy;
 
+import com.elepy.annotations.RestModel;
+import com.elepy.concepts.FieldDescriber;
+import com.elepy.concepts.ObjectEvaluator;
+import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.RestModelAccessType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
-import com.elepy.annotations.RestModel;
-import com.elepy.concepts.FieldDescriber;
-import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.concepts.ObjectEvaluatorImpl;
 import org.jongo.Mapper;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.jongo.marshall.jackson.oid.MongoId;
@@ -38,6 +38,7 @@ public class Elepy {
 
     private final List<ElepyModule> modules;
     private final List<String> packages;
+    private final List<Class<?>> models;
     private final String name;
 
     private final Map<String, Object> singletons;
@@ -56,6 +57,7 @@ public class Elepy {
 
         this.baseSlug = "/";
 
+        this.models = new ArrayList<>();
         this.basePublicFilter = (request, response) -> {
 
         };
@@ -66,7 +68,7 @@ public class Elepy {
 
     }
 
-    public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service,  String... packages) {
+    public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, String... packages) {
         this.objectMapper = objectMapper;
         //this.db = db;
         this.adminFilters = adminFilters;
@@ -82,7 +84,7 @@ public class Elepy {
         this.singletons = new TreeMap<>();
         this.modules = new ArrayList<>();
         this.name = name;
-
+        this.models = new ArrayList<>();
         this.attachSingleton(db);
 
         final JacksonMapper.Builder builder = new JacksonMapper.Builder();
@@ -108,6 +110,12 @@ public class Elepy {
 
         annotated.forEach(claszz -> classes.put(claszz.getAnnotation(RestModel.class), claszz));
 
+        for (Class<?> model : models) {
+            if (!model.isAnnotationPresent(RestModel.class)) {
+                throw new IllegalArgumentException(model.getName() + " is not annotated with RestModel");
+            }
+            classes.put(model.getAnnotation(RestModel.class), model);
+        }
         final List<Map<String, Object>> maps = setupPojos(classes);
 
 
@@ -357,6 +365,17 @@ public class Elepy {
 
         throw new NoSuchElementException(String.format("No singleton for %s available", cls.getName()));
 
+    }
+
+    public Elepy addModel(Class<?> cls) {
+        return addModels(cls);
+    }
+
+    public Elepy addModels(Class<?>... classes) {
+        for (Class<?> aClass : classes) {
+            models.add(aClass);
+        }
+        return this;
     }
 
     public Elepy attachSingleton(Object object) {
