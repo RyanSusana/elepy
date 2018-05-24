@@ -41,13 +41,35 @@ It features:
  -Skinnable: The Elepy Admin Panel supports the use of overridable CSS4 Variables. This allows you to change the colors and fonts used by Elepy.
 
 
+## Getting started
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        final Elepy elepy =
+                new Elepy()
+                    //Adds a package to scan for
+                    .addPackage("com.ryansusana.elepy.gallery")
+                    //This is the DB object elepy should work with
+                    .attachSingleton(new MongoClient().getDB("elepy-db"))
+                    //Adds the Admin Panel module to elepy, yay!
+                    .addModule(new ElepyAdminPanel())
+                    //The route where Elepy stores it's
+                    .setConfigSlug("/hidden-config/location/here");
 
 
+        //Start her up :)
+        elepy.init();
+
+    }
+}
+
+```
 ## Guide to creating a RestResource
-
+Here is an example of a User resource. 
 ``` java
     @RestModel(
-     //The only 2 required properties in RestModels are are slug and name
+     //The only 2 required properties in RestModels  are slug and name
         slug = "/users",
         name = "Users",
 
