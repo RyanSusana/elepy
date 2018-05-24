@@ -46,7 +46,40 @@ It features:
 ## Guide to creating a RestResource
 
 ``` java
-    @RestModel(name = "Users", slug = "/users")  
+    @RestModel(
+     //The only 2 required properties in RestModels are are slug and name
+        slug = "/users",
+        name = "Users",
+
+        //Fontawesome icon from the free cdn
+        icon = "users",
+
+        description = "",
+
+        //Custom route classes these must have an empty constructor and implement one of the Crud Operations: Create, FindOne, Find, Update or Delete.
+        deleteRoute = UserDelete.class,
+        createRoute = UserCreate.class,
+        updateRoute = UserUpdate.class,
+
+        //Access type on each of the setup, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
+        //If admin it will run through all the hooked admin filters
+        findAll = RestModelAccessType.ADMIN,
+        findOne = RestModelAccessType.ADMIN,
+        create = RestModelAccessType.ADMIN,
+
+        //Sort
+        //The default sorted mongo field. default is "_id"
+        defaultSortField = "username",
+        //Ascending sort or descending sort
+        defaultSortDirection = SortOption.ASCENDING,
+
+
+        //Specifies the class that will handle ID creation for this resource
+        idProvider = HexIdProvider.class,
+
+        //Array of ObjectEvaluators that evaluates an object on Create and Update operations
+        objectEvaluators = {UserEvaluator.class}
+    )  
     public class User {  
     
         @MongoId  
