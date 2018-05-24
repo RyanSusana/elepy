@@ -2,7 +2,7 @@ package com.ryansusana.elepy.admin.services;
 
 import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.concepts.ObjectEvaluator;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

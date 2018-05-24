@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryansusana.elepy.admin.ElepyAdminPanel;
 import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.dao.Crud;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 import com.ryansusana.elepy.routes.Delete;
 import spark.Request;
 import spark.Response;

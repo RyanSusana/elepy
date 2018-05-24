@@ -11,7 +11,7 @@ import com.ryansusana.elepy.admin.models.User;
 import com.ryansusana.elepy.admin.models.UserType;
 import com.ryansusana.elepy.admin.services.BCrypt;
 import com.ryansusana.elepy.admin.services.UserService;
-import com.ryansusana.elepy.models.RestErrorMessage;
+import com.ryansusana.elepy.exceptions.RestErrorMessage;
 import com.ryansusana.elepy.utils.ClassUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
