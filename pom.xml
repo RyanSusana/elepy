@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ryansusana</groupId>
+    <groupId>com.elepy</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>0.7.2</version>
+    <version>0.7.3</version>
     <modules>
         <module>admin</module>
         <module>core</module>

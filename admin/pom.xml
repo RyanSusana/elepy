@@ -4,11 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>elepy</artifactId>
-        <groupId>com.ryansusana</groupId>
-        <version>0.7.2</version>
+        <groupId>com.elepy</groupId>
+        <version>0.7.3</version>
 
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>elepy-admin</artifactId>
     <build>
 
         <resources>
@@ -31,7 +32,6 @@
             </plugin>
         </plugins>
     </build>
-    <artifactId>elepy-admin</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.sparkjava</groupId>
@@ -44,9 +44,9 @@
             <version>2.7.1</version>
         </dependency>
         <dependency>
-            <groupId>com.ryansusana</groupId>
+            <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
-            <version>0.7.2</version>
+            <version>0.7.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
