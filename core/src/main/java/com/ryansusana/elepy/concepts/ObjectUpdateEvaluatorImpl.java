@@ -4,9 +4,9 @@ import com.ryansusana.elepy.exceptions.RestErrorMessage;
 
 import java.lang.reflect.Field;
 
-public class ObjectUpdateEvaluatorImpl<T> implements ObjectUpdateEvaluator {
+public class ObjectUpdateEvaluatorImpl<T> implements ObjectUpdateEvaluator<T> {
     @Override
-    public void evaluate(Object before, Object updated) throws IllegalAccessException {
+    public void evaluate(T before, T updated) throws IllegalAccessException {
         for (Field field : before.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             FieldDescriber describer = new FieldDescriber(field);
