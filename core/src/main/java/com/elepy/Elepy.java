@@ -3,8 +3,6 @@ package com.elepy;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.RestModelAccessType;
-import com.elepy.models.Schema;
-import com.elepy.modules.EleHTML;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -39,7 +37,6 @@ public class Elepy {
     private List<Object> descriptors;
 
     private final List<ElepyModule> modules;
-    private final List<Schema> schemas;
     private final List<String> packages;
     private final String name;
 
@@ -50,7 +47,6 @@ public class Elepy {
 
     public Elepy(String name, Service http) {
         this.modules = new ArrayList<>();
-        this.schemas = new ArrayList<>();
         this.packages = new ArrayList<>();
         this.name = name;
         this.singletons = new TreeMap<>();
@@ -70,7 +66,7 @@ public class Elepy {
 
     }
 
-    public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, List<Schema> schemas, String... packages) {
+    public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service,  String... packages) {
         this.objectMapper = objectMapper;
         //this.db = db;
         this.adminFilters = adminFilters;
@@ -82,7 +78,6 @@ public class Elepy {
         this.http = service;
         this.packages = new ArrayList<>();
         this.packages.addAll(Arrays.asList(packages));
-        this.schemas = schemas;
         this.descriptors = new ArrayList<>();
         this.singletons = new TreeMap<>();
         this.modules = new ArrayList<>();
@@ -175,7 +170,6 @@ public class Elepy {
                     http.get(baseSlug + restModel.slug() + "/:id", (request, response) -> {
                         final Optional<Object> set = restModel.findOneRoute().newInstance().findOne(request, response, dao, objectMapper);
                         if (set.isPresent()) {
-                            System.out.println(EleHTML.eleToHtml(set.get()).render());
                             return objectMapper.writeValueAsString(set.get());
                         }
                         response.status(404);
