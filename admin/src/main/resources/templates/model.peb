@@ -379,6 +379,9 @@
 <script src="/admin-resources/js/vue-truncate.js"></script>
 <script src="https://unpkg.com/marked@0.3.6"></script>
 <script src="https://unpkg.com/vuejs-datepicker"></script>
+{% if customView is null %}
 <script src="/admin-resources/js/model.js"></script>
+        {% endif %}
+
 
 {% endblock %}
