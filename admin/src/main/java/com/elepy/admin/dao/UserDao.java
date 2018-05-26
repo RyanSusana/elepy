@@ -1,8 +1,8 @@
 package com.elepy.admin.dao;
 
+import com.elepy.admin.models.User;
 import com.elepy.dao.MongoDao;
 import com.mongodb.DB;
-import com.elepy.admin.models.User;
 import org.jongo.Mapper;
 
 import java.util.Optional;

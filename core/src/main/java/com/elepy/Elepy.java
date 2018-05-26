@@ -26,23 +26,19 @@ public class Elepy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Elepy.class);
     private final Service http;
-    private ObjectMapper objectMapper;
-    private String baseSlug;
-    private String configSlug;
-    private ObjectEvaluator<Object> baseObjectEvaluator;
-
-    private Mapper mapper;
-    private List<Filter> adminFilters;
-    private Filter basePublicFilter;
-    private List<Object> descriptors;
-
     private final List<ElepyModule> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
     private final String name;
-
     private final Map<String, Object> singletons;
-
+    private ObjectMapper objectMapper;
+    private String baseSlug;
+    private String configSlug;
+    private ObjectEvaluator<Object> baseObjectEvaluator;
+    private Mapper mapper;
+    private List<Filter> adminFilters;
+    private Filter basePublicFilter;
+    private List<Object> descriptors;
     private boolean initialized = false;
 
 
@@ -408,45 +404,14 @@ public class Elepy {
         }
     }
 
+    public ObjectMapper getObjectMapper() {
+        return this.objectMapper;
+    }
+
     public Elepy setObjectMapper(ObjectMapper objectMapper) {
         checkConfig();
         this.objectMapper = objectMapper;
         return this;
-    }
-
-
-    public Elepy setBaseSlug(String baseSlug) {
-        checkConfig();
-        this.baseSlug = baseSlug;
-        return this;
-    }
-
-    public Elepy setConfigSlug(String configSlug) {
-        checkConfig();
-        this.configSlug = configSlug;
-        return this;
-    }
-
-    public Elepy setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
-        checkConfig();
-        this.baseObjectEvaluator = baseObjectEvaluator;
-        return this;
-    }
-
-    public Elepy setMapper(Mapper mapper) {
-        checkConfig();
-        this.mapper = mapper;
-        return this;
-    }
-
-    public Elepy setBasePublicFilter(Filter basePublicFilter) {
-        checkConfig();
-        this.basePublicFilter = basePublicFilter;
-        return this;
-    }
-
-    public ObjectMapper getObjectMapper() {
-        return this.objectMapper;
     }
 
     @Deprecated
@@ -458,15 +423,31 @@ public class Elepy {
         return this.baseSlug;
     }
 
+    public Elepy setBaseSlug(String baseSlug) {
+        checkConfig();
+        this.baseSlug = baseSlug;
+        return this;
+    }
+
     public String getConfigSlug() {
         return this.configSlug;
     }
 
+    public Elepy setConfigSlug(String configSlug) {
+        checkConfig();
+        this.configSlug = configSlug;
+        return this;
+    }
 
     public Filter getBasePublicFilter() {
         return this.basePublicFilter;
     }
 
+    public Elepy setBasePublicFilter(Filter basePublicFilter) {
+        checkConfig();
+        this.basePublicFilter = basePublicFilter;
+        return this;
+    }
 
     public Service http() {
         return http;
@@ -476,8 +457,20 @@ public class Elepy {
         return this.baseObjectEvaluator;
     }
 
+    public Elepy setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
+        checkConfig();
+        this.baseObjectEvaluator = baseObjectEvaluator;
+        return this;
+    }
+
     public Mapper getMapper() {
         return this.mapper;
+    }
+
+    public Elepy setMapper(Mapper mapper) {
+        checkConfig();
+        this.mapper = mapper;
+        return this;
     }
 
     public List<Object> getDescriptors() {

@@ -1,7 +1,7 @@
 package com.elepy.admin.services;
 
-import com.elepy.admin.models.User;
 import com.elepy.admin.dao.UserDao;
+import com.elepy.admin.models.User;
 
 import java.util.Optional;
 

@@ -1,9 +1,9 @@
 package com.elepy.concepts;
 
-import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.models.FieldType;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
+import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.models.FieldType;
 
 import java.lang.reflect.Field;
 import java.util.Date;

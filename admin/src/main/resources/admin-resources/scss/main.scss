@@ -10,7 +10,7 @@ $dark-grey: #212121;
   --navbar-hover-bg: var(--primary-hover-color);
   --sidebar-color: white;
   --sidebar-bg: #111;
-  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55),url(/admin-resources/images/admin-bg-pattern.png);
+  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55), url(/admin-resources/images/admin-bg-pattern.png);
   --hover-bg: #99999933;
   --text-color: #{$dark-grey};
   --navbar-color: var(--sidebar-color);
@@ -47,7 +47,6 @@ $raleway: 'Raleway', sans-serif;
 
 $quicksand: 'Quicksand', sans-serif;
 $roboto-slab: 'Roboto Slab', serif;
-
 
 .edit-modal-body {
   min-height: 65vh !important;
@@ -88,9 +87,10 @@ $roboto-slab: 'Roboto Slab', serif;
 
 @import "uikit/variables-theme.scss";
 @import "uikit/mixins-theme.scss";
-@mixin hook-pagination-item-active(){
+@mixin hook-pagination-item-active() {
   font-weight: bold;
 }
+
 @import "uikit/uikit-theme.scss";
 @import "components/sidebar";
 @import "components/nav";
@@ -113,6 +113,7 @@ pre {
   white-space: -o-pre-wrap; /* Opera 7 */
   word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
-[v-cloak]{
+
+[v-cloak] {
   visibility: hidden;
 }

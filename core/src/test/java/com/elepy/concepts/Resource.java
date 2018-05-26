@@ -3,7 +3,6 @@ package com.elepy.concepts;
 import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
 import com.elepy.models.TextType;
-import com.elepy.annotations.*;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.math.BigDecimal;
@@ -55,6 +54,10 @@ public class Resource {
         return innerObject;
     }
 
+    public void setInnerObject(Resource innerObject) {
+        this.innerObject = innerObject;
+    }
+
     public void setInnerObject(Object innerObject) {
         this.innerObject = innerObject;
     }
@@ -67,100 +70,96 @@ public class Resource {
         this.nonEditable = nonEditable;
     }
 
-    public void setInnerObject(Resource innerObject) {
-        this.innerObject = innerObject;
-    }
-
     public String getId() {
         return this.id;
-    }
-
-    public String getTextField() {
-        return this.textField;
-    }
-
-    public String getTextArea() {
-        return this.textArea;
-    }
-
-    public String getWysiwyg() {
-        return this.wysiwyg;
-    }
-
-    public String getUnique() {
-        return this.unique;
-    }
-
-    public String getRequired() {
-        return this.required;
-    }
-
-    public String getMinLen20() {
-        return this.minLen20;
-    }
-
-    public String getMaxLen40() {
-        return this.maxLen40;
-    }
-
-    public String getMinLen10MaxLen50() {
-        return this.minLen10MaxLen50;
-    }
-
-    public BigDecimal getNumberMin20() {
-        return this.numberMin20;
-    }
-
-    public BigDecimal getNumberMax40() {
-        return this.numberMax40;
-    }
-
-    public BigDecimal getNumberMin10Max50() {
-        return this.numberMin10Max50;
     }
 
     public void setId(String id) {
         this.id = id;
     }
 
+    public String getTextField() {
+        return this.textField;
+    }
+
     public void setTextField(String textField) {
         this.textField = textField;
+    }
+
+    public String getTextArea() {
+        return this.textArea;
     }
 
     public void setTextArea(String textArea) {
         this.textArea = textArea;
     }
 
+    public String getWysiwyg() {
+        return this.wysiwyg;
+    }
+
     public void setWysiwyg(String wysiwyg) {
         this.wysiwyg = wysiwyg;
+    }
+
+    public String getUnique() {
+        return this.unique;
     }
 
     public void setUnique(String unique) {
         this.unique = unique;
     }
 
+    public String getRequired() {
+        return this.required;
+    }
+
     public void setRequired(String required) {
         this.required = required;
+    }
+
+    public String getMinLen20() {
+        return this.minLen20;
     }
 
     public void setMinLen20(String minLen20) {
         this.minLen20 = minLen20;
     }
 
+    public String getMaxLen40() {
+        return this.maxLen40;
+    }
+
     public void setMaxLen40(String maxLen40) {
         this.maxLen40 = maxLen40;
+    }
+
+    public String getMinLen10MaxLen50() {
+        return this.minLen10MaxLen50;
     }
 
     public void setMinLen10MaxLen50(String minLen10MaxLen50) {
         this.minLen10MaxLen50 = minLen10MaxLen50;
     }
 
+    public BigDecimal getNumberMin20() {
+        return this.numberMin20;
+    }
+
     public void setNumberMin20(BigDecimal numberMin20) {
         this.numberMin20 = numberMin20;
     }
 
+    public BigDecimal getNumberMax40() {
+        return this.numberMax40;
+    }
+
     public void setNumberMax40(BigDecimal numberMax40) {
         this.numberMax40 = numberMax40;
+    }
+
+    public BigDecimal getNumberMin10Max50() {
+        return this.numberMin10Max50;
     }
 
     public void setNumberMin10Max50(BigDecimal numberMin10Max50) {

@@ -1,6 +1,8 @@
 package com.elepy.dao;
 
 
+import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.concepts.IdProvider;
 import com.elepy.exceptions.RestErrorMessage;
@@ -8,8 +10,6 @@ import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
-import com.elepy.annotations.RestModel;
-import com.elepy.annotations.Searchable;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.Mapper;

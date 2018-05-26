@@ -9,7 +9,8 @@ public abstract class CrudProvider<T> {
     public Elepy elepy() {
         return elepy;
     }
-    public CrudProvider setElepy(Elepy elepy){
+
+    public CrudProvider setElepy(Elepy elepy) {
         this.elepy = elepy;
         return this;
     }

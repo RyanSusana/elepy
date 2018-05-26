@@ -26,6 +26,15 @@ public class HexIdProvider extends IdProvider {
         }
     }
 
+    public static String getRandomHexString(int numchars) {
+        Random r = new Random();
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < numchars) {
+            sb.append(Integer.toHexString(r.nextInt()));
+        }
+        return sb.toString().substring(0, numchars);
+    }
+
     @Override
     public String getId(Object item, Crud dao) {
         String id = generateOne();
@@ -42,14 +51,5 @@ public class HexIdProvider extends IdProvider {
             generation = generation.toUpperCase();
         }
         return generation;
-    }
-
-    public static String getRandomHexString(int numchars) {
-        Random r = new Random();
-        StringBuilder sb = new StringBuilder();
-        while (sb.length() < numchars) {
-            sb.append(Integer.toHexString(r.nextInt()));
-        }
-        return sb.toString().substring(0, numchars);
     }
 }

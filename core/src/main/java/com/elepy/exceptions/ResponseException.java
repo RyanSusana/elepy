@@ -1,14 +1,14 @@
 package com.elepy.exceptions;
 
+import com.elepy.concepts.ResponseType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.elepy.concepts.ResponseType;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ResponseException extends RuntimeException {
 
     private final String message;

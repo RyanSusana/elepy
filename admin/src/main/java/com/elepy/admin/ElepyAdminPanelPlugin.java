@@ -43,7 +43,7 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
     }
 
     @Override
-    public int compareTo( ElepyAdminPanelPlugin o) {
+    public int compareTo(ElepyAdminPanelPlugin o) {
         return name.compareTo(o.name);
     }
 }

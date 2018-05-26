@@ -3,16 +3,16 @@ package com.elepy.admin;
 import com.elepy.Elepy;
 import com.elepy.ElepyModule;
 import com.elepy.admin.annotations.View;
-import com.elepy.admin.models.Attachment;
-import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.utils.ClassUtils;
 import com.elepy.admin.concepts.ResourceView;
 import com.elepy.admin.dao.UserDao;
+import com.elepy.admin.models.Attachment;
 import com.elepy.admin.models.AttachmentType;
 import com.elepy.admin.models.User;
 import com.elepy.admin.models.UserType;
 import com.elepy.admin.services.BCrypt;
 import com.elepy.admin.services.UserService;
+import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.utils.ClassUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
@@ -38,12 +38,11 @@ import java.util.jar.JarFile;
 public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
+    private final Set<ElepyAdminPanelPlugin> plugins;
+    private final Set<Attachment> attachments;
     private UserDao userDao;
     private UserService userService;
     private boolean initiated = false;
-
-    private final Set<ElepyAdminPanelPlugin> plugins;
-    private final Set<Attachment> attachments;
 
 
     public ElepyAdminPanel(Elepy elepy, Service service) {

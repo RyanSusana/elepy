@@ -1,6 +1,7 @@
 package com.elepy.admin.services;
 
 import com.elepy.admin.ElepyAdminPanel;
+import com.elepy.admin.models.User;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
@@ -8,7 +9,6 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.routes.Update;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.elepy.admin.models.User;
 import spark.Request;
 import spark.Response;
 

@@ -8,9 +8,10 @@ public abstract class ElepyModule {
     private Elepy elepy;
     private Service http;
 
-    public ElepyModule(){
+    public ElepyModule() {
 
     }
+
     public ElepyModule(Elepy inst, Service http) {
         this.elepy = inst;
         this.http = http;

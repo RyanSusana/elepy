@@ -381,7 +381,7 @@
 <script src="https://unpkg.com/vuejs-datepicker"></script>
 {% if customView is null %}
 <script src="/admin-resources/js/model.js"></script>
-        {% endif %}
+{% endif %}
 
 
 {% endblock %}

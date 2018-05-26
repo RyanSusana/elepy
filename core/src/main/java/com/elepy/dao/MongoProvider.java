@@ -1,7 +1,7 @@
 package com.elepy.dao;
 
-import com.mongodb.DB;
 import com.elepy.annotations.RestModel;
+import com.mongodb.DB;
 
 public class MongoProvider<T> extends CrudProvider<T> {
 

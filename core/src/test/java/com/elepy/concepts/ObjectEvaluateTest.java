@@ -22,7 +22,6 @@ public class ObjectEvaluateTest extends BaseTest {
     }
 
 
-
     @Test
     public void testValidObject() throws Exception {
         resourceObjectEvaluator.evaluate(validObject());

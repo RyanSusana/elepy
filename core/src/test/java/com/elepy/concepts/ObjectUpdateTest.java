@@ -30,7 +30,7 @@ public class ObjectUpdateTest extends BaseTest {
             resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable);
 
             Assert.fail("Should not be able to update nonEditable");
-        }catch (RestErrorMessage e){
+        } catch (RestErrorMessage e) {
 
         }
     }

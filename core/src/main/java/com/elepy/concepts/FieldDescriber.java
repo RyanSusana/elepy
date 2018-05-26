@@ -6,7 +6,6 @@ import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.elepy.annotations.*;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.lang.reflect.Field;
@@ -117,7 +116,7 @@ public class FieldDescriber {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             fieldMap.put("availableValues", array.getEnumConstants());
         }
-        if(type.equals(FieldType.PRIMITIVE_ARRAY)){
+        if (type.equals(FieldType.PRIMITIVE_ARRAY)) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             fieldMap.put("primitiveType", FieldType.getUnannotatedFieldType(array));
         }
