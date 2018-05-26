@@ -60,7 +60,7 @@ public class Elepy {
         setBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
         this.objectMapper = new ObjectMapper();
-        this.mapper = JacksonMapper.Builder.jacksonMapper().build();
+        this.mapper = new JacksonMapper.Builder().enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE).enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT).build();
 
     }
 
