@@ -14,7 +14,9 @@ const app = new Vue({
         searchTimeout: null,
         searchQuery: "",
         lastSelectedPageNum: 1,
-        curPage: {}
+        curPage: {
+            currentPageNumber:1
+        }
 
     },
     computed: {
@@ -78,7 +80,7 @@ const app = new Vue({
                 //console.log(response.data)
                 //ref.modelData = response.data
                 UIkit.modal(document.getElementById("edit-modal")).hide();
-                ref.getModelData();
+                ref.page(ref.curPage.currentPageNumber);
                 UIkit.notification("Successfully updated the item!", {status: 'success'})
 
             })
@@ -90,16 +92,8 @@ const app = new Vue({
 
         },
         getModelData: function () {
-            var ref = this;
-            axios.get(ref.selectedModel.slug + "?pageSize=10&q=" + ref.searchQuery)
-                .then(function (response) {
+            this.page(this.curPage.currentPageNumber);
 
-                    ref.modelData = response.data.values;
-                    ref.curPage = response.data;
-                })
-                .catch(function (error) {
-                    UIkit.notification(error.response.status, {status: 'danger'})
-                });
         },
         page: function (pageNumber) {
             var ref = this;
