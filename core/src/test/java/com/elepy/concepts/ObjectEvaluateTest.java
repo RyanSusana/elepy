@@ -1,5 +1,6 @@
 package com.elepy.concepts;
 
+import com.elepy.BaseTest;
 import com.elepy.exceptions.RestErrorMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.fail;
 
 
-public class ObjectEvaluateTest extends  BaseTest{
+public class ObjectEvaluateTest extends BaseTest {
 
     private ObjectEvaluator<Resource> resourceObjectEvaluator;
 

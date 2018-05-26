@@ -1,5 +1,6 @@
 package com.elepy.concepts;
 
+import com.elepy.BaseTest;
 import com.elepy.exceptions.RestErrorMessage;
 import org.junit.Assert;
 import org.junit.Test;
