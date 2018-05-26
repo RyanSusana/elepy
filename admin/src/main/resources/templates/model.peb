@@ -40,7 +40,7 @@
         <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
         <div class="data-section">
 
-            <table id="table-data" class="uk-table uk-table-hover uk-table-divider">
+            <table id="table-data" class="uk-table uk-table-hover uk-table-divider uk-table-middle">
                 <thead>
                 <tr>
                     <th v-for="field in selectedModel.fields" v-if="field.type != 'OBJECT' ">
@@ -51,7 +51,7 @@
 
                 <tbody>
                 <tr v-for="data in modelData" v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editModal()">
-                    <td v-for="field in selectedModel.fields"
+                    <td :uk-tooltip="'title:'+ field.pretty_name+'; pos: top-left'" v-for="field in selectedModel.fields"
 
                         v-if="field.type != 'OBJECT' ">(( (field.type == 'DATE'? toDate(data[field.name])
                         : data[field.name]) | truncate(90) ))
@@ -59,7 +59,6 @@
 
                 </tr>
                 </tbody>
-
 
             </table>
         </div>
