@@ -41,9 +41,95 @@ It features:
  -Skinnable: The Elepy Admin Panel supports the use of overridable CSS4 Variables. This allows you to change the colors and fonts used by Elepy.
 
 
+## Getting started
+```java
+public class Main {
+
+    public static void main(String[] args) {
+         Elepy elepy =
+                new Elepy()
+                    //Adds a package to scan for
+                    .addPackage("com.ryansusana.elepy.gallery")
+                    //This is the DB object elepy should work with
+                    .attachSingleton(new MongoClient().getDB("elepy-db"))
+                    //Adds the Admin Panel module to elepy, yay!
+                    .addModule(new ElepyAdminPanel())
+                    //The route where Elepy stores its config json(config defines the structure of the rest resources)
+                    .setConfigSlug("/hidden-config/location/here");
 
 
+        //Start her up :)
+        elepy.init();
+
+    }
+}
+
+```
 ## Guide to creating a RestResource
-For a comprehensive guide to creating a RestResource, take a look at [the User-resource located in the admin module](https://github.com/RyanSusana/elepy/blob/master/admin/src/main/java/com/ryansusana/elepy/admin/User.java). This is an immutable POJO class that uses Elepy's annotations to its maximum potential!
+Here is an example of a User resource. 
+``` java
+    @RestModel(
+     //The only 2 required properties in RestModels  are slug and name
+        slug = "/users",
+        name = "Users",
+
+        //Fontawesome icon from the free cdn
+        icon = "users",
+
+        description = "",
+
+        //Custom route classes these must have an empty constructor and implement one of the Crud Operations: Create, FindOne, Find, Update or Delete.
+        deleteRoute = UserDelete.class,
+        createRoute = UserCreate.class,
+        updateRoute = UserUpdate.class,
+
+        //Access type on each of the setup, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
+        //If admin it will run through all the hooked admin filters
+        findAll = RestModelAccessType.ADMIN,
+        findOne = RestModelAccessType.ADMIN,
+        create = RestModelAccessType.ADMIN,
+
+        //Sort
+        //The default sorted mongo field. default is "_id"
+        defaultSortField = "username",
+        //Ascending sort or descending sort
+        defaultSortDirection = SortOption.ASCENDING,
+
+
+        //Specifies the class that will handle ID creation for this resource
+        idProvider = HexIdProvider.class,
+
+        //Array of ObjectEvaluators that evaluates an object on Create and Update operations
+        objectEvaluators = {UserEvaluator.class}
+    )  
+    public class User {  
+    
+        @MongoId  
+        @PrettyName("UserID")  
+        private String id;  
+  
+        @Unique  
+        @RequiredField 
+        @PrettyName("Username")  
+        @JsonProperty("username")  
+        @Searchable  
+        private String username;  
+  
+        @Unique  
+        @RequiredField 
+        @PrettyName("E-mail adress")  
+        @JsonProperty("email")  
+        @Searchable  
+        private String email;  
+  
+        @PrettyName("User password (encrypted)")  
+        @JsonProperty("password")  
+        @RequiredField  
+        private String password;  
+  
+  
+        //Getters and setters, Immutable classes are allowed! :)  
+    }
+```
   
 
