@@ -14,26 +14,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.j2html</groupId>
-            <artifactId>j2html</artifactId>
-            <version>1.2.2</version>
-            <scope>compile</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
         </dependency>
-        <dependency>
-            <groupId>org.jsonschema2pojo</groupId>
-            <artifactId>jsonschema2pojo-core</artifactId>
-            <version>0.5.1</version>
-        </dependency>
+
         <dependency>
             <groupId>com.github.slugify</groupId>
             <artifactId>slugify</artifactId>
             <version>2.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
         </dependency>
         <dependency>
             <groupId>org.jongo</groupId>
@@ -83,6 +72,11 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.fakemongo</groupId>
+            <artifactId>fongo</artifactId>
+            <version>2.1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
