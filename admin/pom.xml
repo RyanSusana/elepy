@@ -5,22 +5,22 @@
     <parent>
         <artifactId>elepy</artifactId>
         <groupId>com.elepy</groupId>
-        <version>0.7.3</version>
+        <version>0.7.4</version>
 
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>elepy-admin</artifactId>
     <build>
 
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/.sass-cache/**</exclude>
-                    <exclude>**/scss/**</exclude>
-                </excludes>
-            </resource>
-        </resources>
+        <!--<resources>-->
+            <!--<resource>-->
+                <!--<directory>src/main/resources</directory>-->
+                <!--<excludes>-->
+                    <!--<exclude>**/.sass-cache/**</exclude>-->
+                    <!--<exclude>**/scss/**</exclude>-->
+                <!--</excludes>-->
+            <!--</resource>-->
+        <!--</resources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
