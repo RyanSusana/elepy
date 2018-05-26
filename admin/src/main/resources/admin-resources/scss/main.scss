@@ -1,16 +1,16 @@
 //@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
 
-$primary-color: #FF7700;
+$primary-color: #39f;
 
 $dark-grey: #212121;
 :root {
   --primary-color: #{$primary-color};
-  --primary-hover-color: #{lighten($primary-color,5%)};
+  --primary-hover-color: #{darken($primary-color,5%)};
   --navbar-bg: var(--primary-color);
   --navbar-hover-bg: var(--primary-hover-color);
   --sidebar-color: white;
   --sidebar-bg: #111;
-  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55), url(/admin-resources/images/admin-bg-pattern.png);
+  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55);
   --hover-bg: #99999933;
   --text-color: #{$dark-grey};
   --navbar-color: var(--sidebar-color);
@@ -99,11 +99,11 @@ $roboto-slab: 'Roboto Slab', serif;
 @import "components/login";
 
 .uk-button {
-  border-radius: $button-line-height;
+  border-radius: $button-line-height/17;
 }
 
 .uk-button-large {
-  border-radius: $button-large-line-height;
+  border-radius: $button-large-line-height/17;
 }
 
 pre {
@@ -116,4 +116,20 @@ pre {
 
 [v-cloak] {
   visibility: hidden;
+}
+
+@keyframes fadeInUpSmall {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInUpSmall {
+  animation-name: fadeInUpSmall;
 }
