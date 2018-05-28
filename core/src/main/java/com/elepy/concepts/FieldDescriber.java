@@ -64,13 +64,10 @@ public class FieldDescriber {
     }
 
     private void mapFieldAnnotations(Field field, Map<String, Object> fieldMap) {
-        RequiredField requiredField = field.getAnnotation(RequiredField.class);
-        if (requiredField != null) {
-            fieldMap.put("required", true);
-        } else {
-            fieldMap.put("required", false);
-        }
+
+        fieldMap.put("required", field.getAnnotation(RequiredField.class) != null);
         fieldMap.put("editable", field.getAnnotation(NonEditable.class) == null);
+
     }
 
     private void mapFieldTypeInformation(Field field, Map<String, Object> fieldMap) {

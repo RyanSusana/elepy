@@ -1,5 +1,6 @@
 package com.elepy;
 
+import com.elepy.annotations.Hidden;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.FieldDescriber;
 import com.elepy.concepts.ObjectEvaluator;
@@ -256,7 +257,8 @@ public class Elepy {
         model.put("javaClass", clazz.getName());
         List<Map<String, Object>> fields = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
-            fields.add(new FieldDescriber(field).getFieldMap());
+            if (field.getAnnotation(Hidden.class) == null)
+                fields.add(new FieldDescriber(field).getFieldMap());
         }
 
         model.put("actions", getActions(restModel));
