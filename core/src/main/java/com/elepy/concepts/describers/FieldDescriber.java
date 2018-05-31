@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.concepts.describers;
 
 import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
@@ -42,6 +42,7 @@ public class FieldDescriber {
         type = (FieldType) fieldMap.get("type");
     }
 
+
     private String prettyName() {
         final PrettyName prettyName = field.getAnnotation(PrettyName.class);
         if (prettyName != null) {
@@ -81,13 +82,7 @@ public class FieldDescriber {
         if (type.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", field.getType().getSimpleName());
 
-
-            List<Map<String, Object>> innerFields = new ArrayList<>();
-            for (Field innerField : field.getType().getDeclaredFields()) {
-
-                innerFields.add(new FieldDescriber(innerField).getFieldMap());
-            }
-            fieldMap.put("fields", innerFields);
+            fieldMap.put("fields", new StructureDescriber(field.getType()).getStructure());
         }
         if (type.equals(FieldType.TEXT)) {
             fieldMap.put("textType", field.getAnnotation(Text.class) != null ? field.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
@@ -99,13 +94,7 @@ public class FieldDescriber {
 
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 
-
-            List<Map<String, Object>> innerFields = new ArrayList<>();
-            for (Field innerField : array.getDeclaredFields()) {
-
-                innerFields.add(new FieldDescriber(innerField).getFieldMap());
-            }
-            fieldMap.put("fields", innerFields);
+            fieldMap.put("fields", new StructureDescriber(array));
             fieldMap.put("arrayType", array.getSimpleName());
 
         }

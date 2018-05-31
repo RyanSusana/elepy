@@ -2,6 +2,7 @@ package com.elepy.concepts;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
+import com.elepy.concepts.describers.FieldDescriber;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.FieldType;
 

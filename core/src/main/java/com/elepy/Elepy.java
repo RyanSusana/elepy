@@ -1,10 +1,9 @@
 package com.elepy;
 
-import com.elepy.annotations.Hidden;
 import com.elepy.annotations.RestModel;
-import com.elepy.concepts.FieldDescriber;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
+import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.RestModelAccessType;
@@ -65,7 +64,7 @@ public class Elepy {
 
         builder.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
         builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-
+        builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.mapper = builder.build();
     }
 
@@ -92,7 +91,7 @@ public class Elepy {
 
         builder.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
         builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-
+        builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.mapper = builder.build();
     }
 
@@ -255,14 +254,9 @@ public class Elepy {
         model.put("name", restModel.name());
 
         model.put("javaClass", clazz.getName());
-        List<Map<String, Object>> fields = new ArrayList<>();
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.getAnnotation(Hidden.class) == null)
-                fields.add(new FieldDescriber(field).getFieldMap());
-        }
 
         model.put("actions", getActions(restModel));
-        model.put("fields", fields);
+        model.put("fields", new StructureDescriber(clazz).getStructure());
         return model;
     }
 

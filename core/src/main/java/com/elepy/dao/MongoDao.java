@@ -7,14 +7,20 @@ import com.elepy.annotations.Unique;
 import com.elepy.concepts.IdProvider;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
+import de.undercouch.bson4jackson.BsonModule;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.Mapper;
 import org.jongo.MongoCollection;
 import org.jongo.marshall.jackson.JacksonMapper;
+import org.jongo.marshall.jackson.bson4jackson.MongoBsonFactory;
+import org.jongo.marshall.jackson.configuration.AnnotationModifier;
+import org.jongo.marshall.jackson.configuration.PropertyModifier;
 import org.jongo.marshall.jackson.oid.MongoId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +37,25 @@ public class MongoDao<T> implements Crud<T> {
     private final Class<? extends T> classType;
     private final String collectionName;
     private final ObjectMapper objectMapper;
-
+    private final SimpleModule module = new SimpleModule("jongo-custom-module");
 
     public MongoDao(final DB db, final String collectionName, final Class<? extends T> classType) {
-        this(db, collectionName, JacksonMapper.Builder.jacksonMapper().build(), classType);
+
+        final JacksonMapper.Builder builder = new JacksonMapper.Builder();
+
+        builder.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
+        builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+
+        builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        Mapper mapper = builder.build();
+
+        this.jongo = new Jongo(db, mapper);
+
+
+        this.objectMapper = new ObjectMapper();
+        this.classType = classType;
+        this.collectionName = collectionName.replaceAll("/", "");
     }
 
     public MongoDao(final DB db, final String collectionName, Mapper objectMapper, final Class<? extends T> classType) {

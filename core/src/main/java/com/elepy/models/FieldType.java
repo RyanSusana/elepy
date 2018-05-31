@@ -5,6 +5,7 @@ import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
 import org.apache.commons.lang3.ClassUtils;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +20,30 @@ public enum FieldType {
         this.baseClass = baseClass;
     }
 
+
+    public static FieldType getByRepresentation(Method field) {
+
+
+        if (field.getAnnotation(Text.class) != null) {
+            return TEXT;
+        }
+        if (field.getAnnotation(Number.class) != null) {
+            return NUMBER;
+        }
+
+        return getByClass(field.getReturnType());
+
+
+    }
+
+    private static FieldType getByClass(Class<?> type) {
+        if (type.isEnum()) {
+            return ENUM;
+        }
+
+        return getUnannotatedFieldType(type);
+    }
+
     public static FieldType getByRepresentation(java.lang.reflect.Field field) {
 
 
@@ -28,9 +53,7 @@ public enum FieldType {
         if (field.getAnnotation(Number.class) != null) {
             return NUMBER;
         }
-        if (field.getType().isEnum()) {
-            return ENUM;
-        }
+
         if (isCollection(field.getType())) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             if (isPrimitive(array)) {
@@ -41,9 +64,7 @@ public enum FieldType {
                 return OBJECT_ARRAY;
             }
         }
-
-
-        return getUnannotatedFieldType(field.getType());
+        return getByClass(field.getType());
 
     }
 

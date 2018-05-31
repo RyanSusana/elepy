@@ -1,6 +1,7 @@
 package com.elepy.models;
 
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -16,10 +17,14 @@ public enum NumberType {
         this.availableClasses = Arrays.asList(availableClasses);
     }
 
-    public static NumberType guessType(java.lang.reflect.Field field) {
+    public static NumberType guessType(Field field) {
+        return guessType(field.getType());
+    }
+
+    public static NumberType guessType(Class<?> field) {
         for (NumberType numberType : NumberType.values()) {
             for (Class<? extends Number> availableClass : numberType.availableClasses) {
-                if (field.getType().equals(availableClass)) {
+                if (field.equals(availableClass)) {
                     return numberType;
                 }
             }

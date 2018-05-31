@@ -1,5 +1,6 @@
 package com.elepy.concepts;
 
+import com.elepy.concepts.describers.FieldDescriber;
 import com.elepy.exceptions.RestErrorMessage;
 
 import java.lang.reflect.Field;
