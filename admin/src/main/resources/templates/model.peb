@@ -13,19 +13,33 @@
 
 {% block main %}
 {% if customView is null %}
-<div v-if="selectedModel!=null" class="uk-container uk-position-relative placeholder" v-cloak>
+<div v-if="selectedModel!=null" class="uk-container uk-container-expand uk-position-relative placeholder uk-margin-large-top" v-cloak>
 
     <div class="content">
-        <h3 class="uk-card-title">{{currentDescriptor.name}}</h3>
+        <div class="header">
 
 
-        <div class="uk-clearfix uk-margin-medium-bottom">
-            <input class="uk-search-input uk-width-2-3 uk-float-left" type="search" v-model="searchQuery"
-                   v-on:keyup="search()" placeholder="Search {{currentDescriptor.name}}...">
-            <button v-on:click="createModal()" class="uk-button uk-button-primary uk-float-right"><i
+
+            <div class="uk-clearfix">
+                <div class="uk-flex">
+
+                    <h3 class="uk-card-title">{{currentDescriptor.name}}</h3>
+
+                </div>
+
+
+            </div>
+        </div>
+        <div class="uk-flex uk-margin-small-top">
+            <button v-on:click="createModal()" class="uk-button uk-button-primary"><i
                     class="fas fa-plus"></i>Add
                 to {{currentDescriptor.name}}</button>
+
+
+            <input class="uk-search-input " type="search" v-model="searchQuery"
+                   v-on:keyup="search()" placeholder="Search {{currentDescriptor.name}}...">
         </div>
+
         <ul class="uk-pagination uk-flex-center" uk-margin>
             <li>
                 <button v-on:click="previous()" class="uk-link uk-link-reset"><span uk-pagination-previous></span>
@@ -38,6 +52,8 @@
             </li>
         </ul>
         <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
+
+
         <div class="data-section">
 
             <table id="table-data" class="uk-table uk-table-hover uk-table-divider uk-table-middle">

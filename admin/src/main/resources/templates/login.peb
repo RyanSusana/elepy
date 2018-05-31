@@ -29,8 +29,11 @@
             <div class="uk-width-2-5">
                 <div class="login-card animated fadeInUpSmall">
                     <div class="login-header">
-                        <h2>Elepy Admin Panel</h2>
-                        <h5>version: SHAPES</h5>
+                        <div class="uk-flex uk-flex-center uk-width-1-1">
+
+                            <img class="uk-width-2-3" src="/admin-resources/images/logo-dark.svg" alt="logo">
+                        </div>
+                        <h4>Admin Panel</h4>
                     </div>
 
                     <div class="login-content">

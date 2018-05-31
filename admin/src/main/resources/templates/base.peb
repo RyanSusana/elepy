@@ -39,7 +39,7 @@
 <body>
 <div id="app">
 
-{% include "components/nav.peb" %}
+{#{% include "components/nav.peb" %}#}
 
 {% include "components/sidebar.peb"%}
 

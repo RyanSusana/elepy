@@ -3,36 +3,55 @@ $sidebar-width: 22rem;
 #sidebar {
   position: fixed;
   box-sizing: border-box;
-  top: $navbar-nav-item-height;
+  //top: $navbar-nav-item-height;
   width: $sidebar-width;
 
   background-color: $global-secondary-background;
   background-color: var(--sidebar-bg);
 
-  height: calc(100vh - #{$navbar-nav-item-height});
+  top: 0;
+  overflow-y: auto;
+  height: 100vh;
   .models {
-    height: 95%;
+    padding: 20px;
     color: $sidebar-color;
     color: var(--sidebar-color);
 
-    p {
+    p,a{
 
-      color: $sidebar-color;
-      color: var(--sidebar-color);
+      color: $global-muted-color;
+      text-decoration: none;
+
+      &:hover{
+
+        color: lighten($global-muted-color,15%);
+      }
+      &.active{
+        color: lighten($global-muted-color,20%);
+      }
     }
-    a {
+  }
+  .link-list{
+    padding-left: 5px;
+    li{
 
-      color: $sidebar-color;
-      color: var(--sidebar-color);
+      padding-bottom: 3px;
     }
-    h3 {
-
-      color: $sidebar-color;
-      color: var(--sidebar-color);
+  }
+  .sidebar-header {
+    background-color: darken($primary-color,10%);
+    transition: .3s all;
+    padding: 1.5vh 0;
+    &:hover{
+      background-color: darken($primary-color, 5%);
+    }
+    .banner-image{
+      width: 60%;
     }
   }
   .sidebar-footer {
-    height: 50%;
+    position: absolute;
+    bottom: 20px;
     p {
       font-size: 0.8em;
 

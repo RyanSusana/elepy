@@ -1,22 +1,33 @@
-<div id="sidebar" class="uk-padding">
-    <div class="models">
-        <h3>Resources</h3>
+<div id="sidebar" class="">
+    <a href="/admin" class="sidebar-header uk-flex uk-flex-center">
+
+        <img class="banner-image" src="/admin-resources/images/logo-base.svg" alt="logo">
+    </a>
+    <div class="models uk-light">
+        <h4 class="uk-heading-bullet">Resources</h4>
+        <ul class="link-list uk-list">
         {% for descriptor in descriptors %}
-            <p>
-                <a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a>
-            </p>
+
+                <li><a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a></li>
+
         {% endfor %}
 
+        </ul>
+
+
         {% if  plugins.size>0%}
-            <h4>Plugins</h4>
-        {% endif %}
+            <h4 class = "uk-heading-bullet">Plugins</h4>
+        <ul class="link-list uk-list">
         {% for plugin in plugins %}
-            <p>
-                <a href="/plugins{{plugin.slug}}">{{plugin.name}}</a>
-            </p>
+
+                <li><a href="/plugins{{plugin.slug}}">{{plugin.name}}</a></li>
+
         {% endfor %}
+        </ul>
+       {% endif %}
+
     </div>
-    <div class="sidebar-footer">
+    <div class="sidebar-footer uk-padding">
 
 
         <p>Designed &amp; Developed by
