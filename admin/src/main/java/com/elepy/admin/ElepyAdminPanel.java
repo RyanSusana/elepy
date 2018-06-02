@@ -7,10 +7,7 @@ import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
 import com.elepy.admin.concepts.PluginHandler;
 import com.elepy.admin.concepts.ResourceView;
 import com.elepy.admin.dao.UserDao;
-import com.elepy.admin.models.Attachment;
-import com.elepy.admin.models.AttachmentType;
-import com.elepy.admin.models.User;
-import com.elepy.admin.models.UserType;
+import com.elepy.admin.models.*;
 import com.elepy.admin.services.BCrypt;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.RestErrorMessage;
@@ -34,7 +31,6 @@ import java.util.*;
 public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
-    private final Set<Attachment> attachments;
     private UserDao userDao;
     private UserService userService;
     private boolean initiated = false;
@@ -43,15 +39,17 @@ public class ElepyAdminPanel extends ElepyModule {
 
     private final List<Map<String, Object>> descriptors;
 
+    private final List<Link> links;
+
 
     public ElepyAdminPanel() {
-        this.attachments = new TreeSet<>();
 
         this.attachmentHandler = new AttachmentHandler(this);
         this.pluginHandler = new PluginHandler(this);
 
         this.descriptors = new ArrayList<>();
 
+        this.links = new ArrayList<>();
     }
 
 
@@ -90,7 +88,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
             model.put("plugins", pluginHandler.getPlugins());
             model.put("currentDescriptor", descriptor);
-            return renderWithDefaults(request,model, "templates/model.peb");
+            return renderWithDefaults(request, model, "templates/model.peb");
         });
     }
 
@@ -229,8 +227,11 @@ public class ElepyAdminPanel extends ElepyModule {
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
         model.put("descriptors", descriptors);
         model.put("plugins", pluginHandler.getPlugins());
+        model.put("user", request.session().attribute(ADMIN_USER));
+        model.put("links", links);
         return render(model, templatePath);
     }
+
 
     public String render(Map<String, Object> model, String templatePath) {
 
@@ -264,6 +265,22 @@ public class ElepyAdminPanel extends ElepyModule {
 
     public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
         attachmentHandler.attachSrcDirectory(classLoader, directory);
+    }
+
+    public void addLink(Link link) {
+        links.add(link);
+    }
+
+    public void addLink(String to) {
+        addLink(new Link(to, to));
+    }
+
+    public void addLink(String to, String text) {
+        addLink(new Link(to, text));
+    }
+
+    public void addLink(String to, String text, String fontAwesomeClass) {
+        addLink(new Link(to, text, fontAwesomeClass));
     }
 
     public boolean isInitiated() {
