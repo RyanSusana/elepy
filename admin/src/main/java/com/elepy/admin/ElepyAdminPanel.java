@@ -88,7 +88,7 @@ public class ElepyAdminPanel extends ElepyModule {
     @Override
     public void setup() {
 
-        this.userDao = new UserDao(elepy().getDb(), elepy().getMapper());
+        this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
         this.userService = new UserService(userDao);
         elepy().addPackage(User.class.getPackage().getName());
 
