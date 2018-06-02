@@ -31,15 +31,13 @@ import java.util.*;
 public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
+    private final AttachmentHandler attachmentHandler;
+    private final PluginHandler pluginHandler;
+    private final List<Map<String, Object>> descriptors;
+    private final List<Link> links;
     private UserDao userDao;
     private UserService userService;
     private boolean initiated = false;
-    private final AttachmentHandler attachmentHandler;
-    private final PluginHandler pluginHandler;
-
-    private final List<Map<String, Object>> descriptors;
-
-    private final List<Link> links;
 
 
     public ElepyAdminPanel() {
@@ -130,7 +128,7 @@ public class ElepyAdminPanel extends ElepyModule {
                         model.put("plugins", pluginHandler.getPlugins());
 
                         model.put("currentDescriptor", descriptor);
-                        return renderWithDefaults(request,model, "templates/model.peb");
+                        return renderWithDefaults(request, model, "templates/model.peb");
                     });
                 } else {
                     defaultDecriptorPanel(descriptor, descriptors);
@@ -154,7 +152,7 @@ public class ElepyAdminPanel extends ElepyModule {
             Map<String, Object> model = new HashMap<>();
             model.put("descriptors", descriptors);
             model.put("plugins", pluginHandler.getPlugins());
-            return renderWithDefaults(request,model, "templates/base.peb");
+            return renderWithDefaults(request, model, "templates/base.peb");
         });
         http().get("/admin-logout", (request, response) -> {
 
@@ -188,7 +186,7 @@ public class ElepyAdminPanel extends ElepyModule {
         http().get("/login", (request, response) -> {
 
 
-            return renderWithDefaults(request,new HashMap<>(), "templates/login.peb");
+            return renderWithDefaults(request, new HashMap<>(), "templates/login.peb");
         });
         http().post("/login", (request, response) -> {
 

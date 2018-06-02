@@ -1,7 +1,5 @@
 package com.elepy.admin.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

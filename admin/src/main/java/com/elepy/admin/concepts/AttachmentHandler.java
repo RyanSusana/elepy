@@ -25,7 +25,7 @@ public class AttachmentHandler {
     private final ElepyAdminPanel adminPanel;
 
     public AttachmentHandler(ElepyAdminPanel adminPanel) {
-        this.adminPanel= adminPanel;
+        this.adminPanel = adminPanel;
     }
 
 
@@ -44,9 +44,10 @@ public class AttachmentHandler {
             });
         }
     }
+
     public void attachSrc(Attachment attachment) {
 
-        if(adminPanel.isInitiated()){
+        if (adminPanel.isInitiated()) {
             throw new IllegalStateException("Can't attach a source after setup() has been called.");
         }
         attachments.add(attachment);

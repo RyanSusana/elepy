@@ -15,7 +15,7 @@ public class NotificationDao extends MongoDao<Notification> {
         this.userDao = new UserDao(db);
     }
 
-    public List<Notification> getNotSeenBy(){
+    public List<Notification> getNotSeenBy() {
         collection().find().as(Notification.class);
         return null;
     }
