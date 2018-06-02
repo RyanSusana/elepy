@@ -8,7 +8,7 @@
         <ul class="link-list uk-list">
         {% for descriptor in descriptors %}
 
-                <li><a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a></li>
+                <li class = "{{ currentDescriptor == null ? "" : (currentDescriptor.slug equals descriptor.slug ? "uk-active": "") }}"><a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a></li>
 
         {% endfor %}
 

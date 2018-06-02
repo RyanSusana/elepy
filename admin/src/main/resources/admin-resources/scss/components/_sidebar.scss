@@ -33,9 +33,17 @@ $sidebar-width: 22rem;
   }
   .link-list{
     padding-left: 5px;
+    .uk-active{
+      a{
+
+        color: white !important;
+        font-weight: 500 !important;
+      }
+    }
     li{
 
       padding-bottom: 3px;
+
     }
   }
   .sidebar-header {

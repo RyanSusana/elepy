@@ -12019,6 +12019,9 @@ iframe.uk-cover {
         color: #cccccc; }
   #sidebar .link-list {
     padding-left: 5px; }
+    #sidebar .link-list .uk-active a {
+      color: white !important;
+      font-weight: 500 !important; }
     #sidebar .link-list li {
       padding-bottom: 3px; }
   #sidebar .sidebar-header {
