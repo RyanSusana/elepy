@@ -243,44 +243,51 @@ public class ElepyAdminPanel extends ElepyModule {
     }
 
 
-    public void attachSrc(Attachment attachment) {
+    public ElepyAdminPanel attachSrc(Attachment attachment) {
         attachmentHandler.attachSrc(attachment);
+        return this;
     }
 
-    public void attachSrc(String fileName, String contentType, byte[] src, AttachmentType type, boolean isFromDirectory, String directory) {
+    public ElepyAdminPanel attachSrc(String fileName, String contentType, byte[] src, AttachmentType type, boolean isFromDirectory, String directory) {
         attachmentHandler.attachSrc(fileName, contentType, src, type, isFromDirectory, directory);
+        return this;
     }
 
-    public void attachSrc(ClassLoader classLoader, String file, boolean isFromDirectory, String directory) throws IOException {
+    public ElepyAdminPanel attachSrc(ClassLoader classLoader, String file, boolean isFromDirectory, String directory) throws IOException {
         attachmentHandler.attachSrc(classLoader, file, isFromDirectory, directory);
+        return this;
     }
 
-    public void attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory, String directory) throws IOException {
+    public ElepyAdminPanel attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory, String directory) throws IOException {
         attachmentHandler.attachSrc(fileName, inputStream, isFromDirectory, directory);
+        return this;
     }
 
-    public void attachSrc(File file, boolean isFromDirectory, String directory) throws IOException {
+    public ElepyAdminPanel attachSrc(File file, boolean isFromDirectory, String directory) throws IOException {
         attachmentHandler.attachSrc(file, isFromDirectory, directory);
+        return this;
     }
 
-    public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
+    public ElepyAdminPanel attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
         attachmentHandler.attachSrcDirectory(classLoader, directory);
+        return this;
     }
 
-    public void addLink(Link link) {
+    public ElepyAdminPanel addLink(Link link) {
         links.add(link);
+        return this;
     }
 
-    public void addLink(String to) {
-        addLink(new Link(to, to));
+    public ElepyAdminPanel addLink(String to) {
+        return addLink(new Link(to, to));
     }
 
-    public void addLink(String to, String text) {
-        addLink(new Link(to, text));
+    public ElepyAdminPanel addLink(String to, String text) {
+        return addLink(new Link(to, text));
     }
 
-    public void addLink(String to, String text, String fontAwesomeClass) {
-        addLink(new Link(to, text, fontAwesomeClass));
+    public ElepyAdminPanel addLink(String to, String text, String fontAwesomeClass) {
+        return addLink(new Link(to, text, fontAwesomeClass));
     }
 
     public boolean isInitiated() {
