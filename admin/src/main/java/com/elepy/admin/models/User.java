@@ -1,10 +1,7 @@
 package com.elepy.admin.models;
 
 import com.elepy.admin.services.*;
-import com.elepy.annotations.PrettyName;
-import com.elepy.annotations.RestModel;
-import com.elepy.annotations.Searchable;
-import com.elepy.annotations.Unique;
+import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
 import com.elepy.id.HexIdProvider;
 import com.elepy.models.RestModelAccessType;
@@ -61,6 +58,7 @@ public class User {
     @JsonProperty("username")
     //A nice looking name for the admin UI :)
     @PrettyName("Username")
+    @Text(maximumLength = 30)
     private final String username;
 
     @PrettyName("Password")
