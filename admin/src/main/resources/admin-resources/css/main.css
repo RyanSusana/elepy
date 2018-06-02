@@ -12095,7 +12095,7 @@ iframe.uk-cover {
     background-color: #000;
     padding: 3rem; }
     .login-card .login-header h5 {
-      margin-top: 12px; }
+      margin-top: 0; }
     .login-card .login-header * {
       margin: 0;
       color: white;
@@ -12113,6 +12113,23 @@ iframe.uk-cover {
       background-color: #0066cc;
       background-color: whitesmoke;
       color: #000; }
+
+.icon-login {
+  width: 70px;
+  transition: .3s all; }
+  .icon-login:hover {
+    transform: scale(1.03); }
+
+.login-caption {
+  width: 60%; }
+  .login-caption .inner {
+    border-left: 5px solid #aaa;
+    width: fit-content;
+    padding: 0 0 10px 10px; }
+    .login-caption .inner h5, .login-caption .inner h3 {
+      text-align: left; }
+    .login-caption .inner h5 {
+      color: #eee; }
 
 .uk-button {
   border-radius: 2.2352941176px; }

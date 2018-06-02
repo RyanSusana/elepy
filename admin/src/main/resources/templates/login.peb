@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
           integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-
+    <link rel="SHORTCUT ICON" href="/admin-resources/images/favicon.png"/>
     <link rel="stylesheet" href="/admin-resources/css/main.css">
     <title>Elepy Admin Login</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
@@ -29,11 +29,22 @@
             <div class="uk-width-2-5">
                 <div class="login-card animated fadeInUpSmall">
                     <div class="login-header">
-                        <div class="uk-flex uk-flex-center uk-width-1-1">
+                        <div class="uk-flex uk-flex-center uk-flex-middle uk-width-1-1">
 
-                            <img class="uk-width-2-3" src="/admin-resources/images/logo-dark.svg" alt="logo">
+                            <a target="_blank" href="https://elepy.com" class="icon-login"><img class="icon-login"
+                                                                                src="/admin-resources/images/icon-light.svg"
+                                                                                alt="logo"></a>
+
+                            <div class="login-caption uk-flex uk-flex-center">
+
+                                <div class="inner">
+                                    <h3>Admin Panel</h3>
+                                    <h5>Login</h5>
+                                </div>
+
+                            </div>
                         </div>
-                        <h4>Admin Panel</h4>
+
                     </div>
 
                     <div class="login-content">

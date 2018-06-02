@@ -27,7 +27,7 @@
 
     padding: 3rem;
     h5 {
-      margin-top: 12px;
+      margin-top: 0;
     }
     * {
       margin: 0;
@@ -54,5 +54,28 @@
       color: #000;
     }
 
+  }
+}
+
+.icon-login{
+  width: 70px;
+  transition: .3s all;
+  &:hover{
+    transform: scale(1.03);
+  }
+}
+.login-caption{
+  width: 60%;
+
+  .inner{
+    border-left: 5px solid #aaa;
+    width: fit-content;
+    padding: 0 0 10px 10px;
+    h5,h3{
+      text-align: left;
+    }
+    h5{
+      color: #eee;
+    }
   }
 }
