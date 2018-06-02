@@ -13,11 +13,11 @@
 
 {% block main %}
 {% if customView is null %}
-<div v-if="selectedModel!=null" class="uk-container uk-container-expand uk-position-relative placeholder uk-margin-large-top" v-cloak>
+<div v-if="selectedModel!=null"
+     class="uk-container uk-container-expand uk-position-relative placeholder uk-margin-large-top" v-cloak>
 
     <div class="content">
         <div class="header">
-
 
 
             <div class="uk-clearfix">
@@ -67,7 +67,8 @@
 
                 <tbody>
                 <tr v-for="data in modelData" v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editModal()">
-                    <td :uk-tooltip="'title:'+ field.pretty_name+'; pos: top-left'" v-for="field in selectedModel.fields"
+                    <td :uk-tooltip="'title:'+ field.pretty_name+'; pos: top-left'"
+                        v-for="field in selectedModel.fields"
 
                         v-if="field.type != 'OBJECT' ">(( (field.type == 'DATE'? toDate(data[field.name])
                         : data[field.name]) | truncate(90) ))

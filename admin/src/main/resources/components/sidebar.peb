@@ -8,7 +8,9 @@
         <ul class="link-list uk-list">
         {% for descriptor in descriptors %}
 
-                <li class = "{{ currentDescriptor == null ? "" : (currentDescriptor.slug equals descriptor.slug ? "uk-active": "") }}"><a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a></li>
+            <li class="{{ currentDescriptor == null ? "" : (currentDescriptor.slug equals descriptor.slug ? "uk-active": "") }}">
+                <a href="/admin{{descriptor.slug}}"><i class="fas fa-{{ descriptor.icon }}"></i>{{descriptor.name}}</a>
+            </li>
 
         {% endfor %}
 
@@ -16,17 +18,17 @@
 
 
         {% if  plugins.size>0%}
-            <h4 class = "uk-heading-bullet">Plugins</h4>
-        <ul class="link-list uk-list">
-        {% for plugin in plugins %}
+            <h4 class="uk-heading-bullet">Plugins</h4>
+            <ul class="link-list uk-list">
+            {% for plugin in plugins %}
 
                 <li><a href="/plugins{{plugin.slug}}">{{plugin.name}}</a></li>
 
-        {% endfor %}
-        </ul>
-       {% endif %}
+            {% endfor %}
+            </ul>
+        {% endif %}
 
-        <h4 class = "uk-heading-bullet">More Links</h4>
+        <h4 class="uk-heading-bullet">More Links</h4>
 
         <ul class="link-list uk-list">
 
@@ -34,7 +36,8 @@
 
 
             {% for link in links %}
-                <li><a href="{{ link.href }}" target="_blank"><i class="{{ link.fontAwesomeClass }}"></i>{{ link.text }}</a></li>
+                <li><a href="{{ link.href }}" target="_blank"><i class="{{ link.fontAwesomeClass }}"></i>{{ link.text }}
+                </a></li>
             {% endfor %}
             <li><a href="/admin-logout"><i class="fas fa-sign-out-alt"></i>Log out: {{user.username}}</a></li>
 
@@ -44,7 +47,7 @@
 
 
         <p>
-            Proudly powered by  <a href="https://elepy.com" target="_blank">Elepy </a>
+            Proudly powered by <a href="https://elepy.com" target="_blank">Elepy </a>
         </p>
     </div>
 
