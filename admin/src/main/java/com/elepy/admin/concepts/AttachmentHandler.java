@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import spark.utils.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -28,6 +29,21 @@ public class AttachmentHandler {
     }
 
 
+    public void setupAttachments() {
+        for (Attachment attachment : attachments) {
+            adminPanel.http().get(attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
+                response.type(attachment.getContentType());
+                HttpServletResponse raw = response.raw();
+
+                raw.getOutputStream().write(attachment.getSrc());
+                raw.getOutputStream().flush();
+                raw.getOutputStream().close();
+
+                response.raw().getOutputStream();
+                return response.raw();
+            });
+        }
+    }
     public void attachSrc(Attachment attachment) {
 
         if(adminPanel.isInitiated()){

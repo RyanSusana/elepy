@@ -3,6 +3,8 @@ package com.elepy.admin;
 import com.elepy.ElepyModule;
 import com.elepy.admin.annotations.View;
 import com.elepy.admin.concepts.AttachmentHandler;
+import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
+import com.elepy.admin.concepts.PluginHandler;
 import com.elepy.admin.concepts.ResourceView;
 import com.elepy.admin.dao.UserDao;
 import com.elepy.admin.models.Attachment;
@@ -17,9 +19,9 @@ import com.mongodb.DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
+import spark.Request;
 import spark.template.pebble.PebbleTemplateEngine;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,20 +34,24 @@ import java.util.*;
 public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
-    private final Set<ElepyAdminPanelPlugin> plugins;
     private final Set<Attachment> attachments;
     private UserDao userDao;
     private UserService userService;
     private boolean initiated = false;
     private final AttachmentHandler attachmentHandler;
+    private final PluginHandler pluginHandler;
+
+    private final List<Map<String, Object>> descriptors;
 
 
     public ElepyAdminPanel() {
-        this.plugins = new TreeSet<>();
         this.attachments = new TreeSet<>();
-        this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
-        this.userService = new UserService(userDao);
+
         this.attachmentHandler = new AttachmentHandler(this);
+        this.pluginHandler = new PluginHandler(this);
+
+        this.descriptors = new ArrayList<>();
+
     }
 
 
@@ -56,7 +62,7 @@ public class ElepyAdminPanel extends ElepyModule {
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin();
             setupAdmin();
-            setupAttachments();
+            attachmentHandler.setupAttachments();
             initiated = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,26 +73,11 @@ public class ElepyAdminPanel extends ElepyModule {
 
     @Override
     public void setup() {
-
+        this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
+        this.userService = new UserService(userDao);
 
         elepy().addPackage(User.class.getPackage().getName());
 
-    }
-
-    public void setupAttachments() {
-        for (Attachment attachment : attachments) {
-            http().get(attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
-                response.type(attachment.getContentType());
-                HttpServletResponse raw = response.raw();
-
-                raw.getOutputStream().write(attachment.getSrc());
-                raw.getOutputStream().flush();
-                raw.getOutputStream().close();
-
-                response.raw().getOutputStream();
-                return response.raw();
-            });
-        }
     }
 
     private void defaultDecriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
@@ -96,15 +87,14 @@ public class ElepyAdminPanel extends ElepyModule {
             Map<String, Object> model = new HashMap<>();
 
             model.put("descriptors", descriptors);
-            model.put("plugins", plugins);
 
+            model.put("plugins", pluginHandler.getPlugins());
             model.put("currentDescriptor", descriptor);
-            return render(model, "templates/model.peb");
+            return renderWithDefaults(request,model, "templates/model.peb");
         });
     }
 
     private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        List<Map<String, Object>> descriptors = new ArrayList<>();
         for (Object o : elepy().getDescriptors()) {
             if (o instanceof Map) {
                 descriptors.add((Map<String, Object>) o);
@@ -139,7 +129,7 @@ public class ElepyAdminPanel extends ElepyModule {
                         model.put("customView", resourceView.renderView(descriptor));
                         model.put("customHeaders", resourceView.renderExtraHeaders());
                         model.put("descriptors", descriptors);
-                        model.put("plugins", plugins);
+                        model.put("plugins", pluginHandler.getPlugins());
 
                         model.put("currentDescriptor", descriptor);
                         return render(model, "templates/model.peb");
@@ -154,10 +144,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
         }
 
-
         http().before("/admin/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
-        http().before("/plugins/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
-        http().before("/plugins/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
         http().before("/admin/*", (request, response) -> {
             elepy().allAdminFilters().handle(request, response);
         });
@@ -168,7 +155,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
             Map<String, Object> model = new HashMap<>();
             model.put("descriptors", descriptors);
-            model.put("plugins", plugins);
+            model.put("plugins", pluginHandler.getPlugins());
             return render(model, "templates/base.peb");
         });
         http().get("/admin-logout", (request, response) -> {
@@ -178,18 +165,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
             return "";
         });
-        for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(http(), elepy().getDb(), elepy().getObjectMapper());
-            http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
-                String content = plugin.renderContent(null);
-                model.put("descriptors", descriptors);
-                model.put("content", content);
-                model.put("plugin", plugin);
-                model.put("plugins", plugins);
-                return render(model, "templates/plugin.peb");
-            });
-        }
+        pluginHandler.setupRoutes();
     }
 
     private Map<String, Object> getDescriptor(String slug, List<Map<String, Object>> descriptors) {
@@ -250,17 +226,19 @@ public class ElepyAdminPanel extends ElepyModule {
 
     }
 
-    private String render(Map<String, Object> model, String templatePath) {
+    public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
+        model.put("descriptors", descriptors);
+        model.put("plugins", pluginHandler.getPlugins());
+        return render(model, templatePath);
+    }
+
+    public String render(Map<String, Object> model, String templatePath) {
+
         return new PebbleTemplateEngine().render(new ModelAndView(model, templatePath));
     }
 
     public ElepyAdminPanel addPlugin(ElepyAdminPanelPlugin plugin) {
-        if (initiated) {
-            throw new IllegalStateException("Can't add plugins after setup() has been called!");
-        }
-        plugin.setAdminPanel(this);
-        this.plugins.add(plugin);
-        return this;
+        return pluginHandler.addPlugin(plugin);
     }
 
 

@@ -1,5 +1,6 @@
-package com.elepy.admin;
+package com.elepy.admin.concepts;
 
+import com.elepy.admin.ElepyAdminPanel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import spark.Service;
