@@ -54,11 +54,11 @@ public class Resource {
         return innerObject;
     }
 
-    public void setInnerObject(Resource innerObject) {
+    public void setInnerObject(Object innerObject) {
         this.innerObject = innerObject;
     }
 
-    public void setInnerObject(Object innerObject) {
+    public void setInnerObject(Resource innerObject) {
         this.innerObject = innerObject;
     }
 

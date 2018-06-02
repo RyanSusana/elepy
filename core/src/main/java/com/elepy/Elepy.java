@@ -70,7 +70,6 @@ public class Elepy {
 
     public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, String... packages) {
         this.objectMapper = objectMapper;
-        //this.db = db;
         this.adminFilters = adminFilters;
         this.basePublicFilter = basePublicFilter;
         this.baseSlug = baseSlug;

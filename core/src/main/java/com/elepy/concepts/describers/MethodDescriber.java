@@ -1,14 +1,15 @@
 package com.elepy.concepts.describers;
 
-import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
+import com.elepy.annotations.PrettyName;
+import com.elepy.annotations.RequiredField;
+import com.elepy.annotations.Text;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class MethodDescriber {
     private final FieldType type;
 
     private final Map<String, Object> fieldMap;
+
     public MethodDescriber(Method method) {
         this.method = method;
         name = name();
@@ -39,7 +41,7 @@ public class MethodDescriber {
         type = (FieldType) fieldMap.get("type");
     }
 
-    private void mapFieldTypeInformation(Method method, Map<String, Object> fieldMap) {
+    private void mapMethodTypeInfo(Method method, Map<String, Object> fieldMap) {
 
         FieldType type = FieldType.getByRepresentation(method);
 
@@ -61,6 +63,7 @@ public class MethodDescriber {
 
 
     }
+
     public Map<String, Object> mapField() {
         Map<String, Object> fieldMap = new HashMap<>();
 
@@ -68,8 +71,8 @@ public class MethodDescriber {
         fieldMap.put("name", getName());
 
         fieldMap.put("pretty_name", getPrettyName());
-        mapFieldAnnotations(method, fieldMap);
-        mapFieldTypeInformation(method, fieldMap);
+        mapMethodAnnotations(method, fieldMap);
+        mapMethodTypeInfo(method, fieldMap);
 
         return fieldMap;
     }
@@ -95,7 +98,7 @@ public class MethodDescriber {
         }
     }
 
-    private void mapFieldAnnotations(Method field, Map<String, Object> fieldMap) {
+    private void mapMethodAnnotations(Method field, Map<String, Object> fieldMap) {
 
         fieldMap.put("required", method.getAnnotation(RequiredField.class) != null);
         fieldMap.put("editable", false);

@@ -6,7 +6,6 @@ import com.elepy.annotations.Hidden;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public class StructureDescriber {
 
     public StructureDescriber(Class cls) {
         this.cls = cls;
-        this.structure = describe ();
+        this.structure = describe();
     }
 
     private List<Map<String, Object>> describe() {
