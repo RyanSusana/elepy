@@ -12009,7 +12009,8 @@ iframe.uk-cover {
   #sidebar .models {
     padding: 20px;
     color: #39f;
-    color: var(--sidebar-color); }
+    color: var(--sidebar-color);
+    min-height: 70vh; }
     #sidebar .models p, #sidebar .models a {
       color: #999;
       text-decoration: none; }
@@ -12033,8 +12034,8 @@ iframe.uk-cover {
     #sidebar .sidebar-header .banner-image {
       width: 60%; }
   #sidebar .sidebar-footer {
-    position: absolute;
-    bottom: 20px; }
+    position: relative;
+    padding: 10px 20px 0 20px; }
     #sidebar .sidebar-footer p {
       font-size: 0.8em;
       color: var(--sidebar-color); }

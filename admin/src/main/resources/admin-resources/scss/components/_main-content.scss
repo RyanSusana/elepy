@@ -5,19 +5,22 @@
 body {
 
 }
-.header{
-  .uk-card-title{
+
+.header {
+  .uk-card-title {
     padding-right: 10px;
     margin: 0;
   }
 
 }
-.uk-search-input{
+
+.uk-search-input {
   background-color: #eee;
   margin-left: 10px;
   width: auto;
   flex-grow: 1;
 }
+
 .main-content {
   padding-top: 0px;
   margin-left: $sidebar-width;

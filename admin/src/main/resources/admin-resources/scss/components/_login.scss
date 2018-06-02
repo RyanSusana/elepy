@@ -6,8 +6,7 @@
   //@include background-gradient($gradient: linear-gradient(to top right, rgba(#ff512f, 0.25), rgba(#f09819, 0.25)), $behind: url('/admin-resources/images/bg1.jpg'));
   //background-size: cover;
 
-
-  background: url(/admin-resources/images/section-background.svg) 50% ,$primary-color;
+  background: url(/admin-resources/images/section-background.svg) 50%, $primary-color;
 }
 
 .login-card {

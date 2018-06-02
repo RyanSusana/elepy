@@ -15,7 +15,7 @@ const app = new Vue({
         searchQuery: "",
         lastSelectedPageNum: 1,
         curPage: {
-            currentPageNumber:1
+            currentPageNumber: 1
         }
 
     },

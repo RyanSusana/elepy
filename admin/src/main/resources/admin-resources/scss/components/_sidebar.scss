@@ -18,43 +18,43 @@ $sidebar-width: 22rem;
     color: var(--sidebar-color);
 
     min-height: 70vh;
-    p,a{
+    p, a {
 
       color: $global-muted-color;
       text-decoration: none;
 
-      &:hover{
+      &:hover {
 
-        color: lighten($global-muted-color,15%);
+        color: lighten($global-muted-color, 15%);
       }
-      &.active{
-        color: lighten($global-muted-color,20%);
+      &.active {
+        color: lighten($global-muted-color, 20%);
       }
     }
   }
-  .link-list{
+  .link-list {
     padding-left: 5px;
-    .uk-active{
-      a{
+    .uk-active {
+      a {
 
         color: white !important;
         font-weight: 500 !important;
       }
     }
-    li{
+    li {
 
       padding-bottom: 3px;
 
     }
   }
   .sidebar-header {
-    background-color: darken($primary-color,10%);
+    background-color: darken($primary-color, 10%);
     transition: .3s all;
     padding: 1.5vh 0;
-    &:hover{
+    &:hover {
       background-color: darken($primary-color, 5%);
     }
-    .banner-image{
+    .banner-image {
       width: 60%;
     }
   }
