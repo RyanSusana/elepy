@@ -111,6 +111,7 @@ public class ElepyAdminPanel extends ElepyModule {
     }
 
     private void defaultDecriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
+
         http().get("/admin" + descriptor.get("slug"), (request, response) -> {
 
             Map<String, Object> model = new HashMap<>();
