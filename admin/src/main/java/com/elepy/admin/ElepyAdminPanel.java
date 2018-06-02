@@ -130,7 +130,7 @@ public class ElepyAdminPanel extends ElepyModule {
                         model.put("plugins", pluginHandler.getPlugins());
 
                         model.put("currentDescriptor", descriptor);
-                        return render(model, "templates/model.peb");
+                        return renderWithDefaults(request,model, "templates/model.peb");
                     });
                 } else {
                     defaultDecriptorPanel(descriptor, descriptors);
@@ -154,7 +154,7 @@ public class ElepyAdminPanel extends ElepyModule {
             Map<String, Object> model = new HashMap<>();
             model.put("descriptors", descriptors);
             model.put("plugins", pluginHandler.getPlugins());
-            return render(model, "templates/base.peb");
+            return renderWithDefaults(request,model, "templates/base.peb");
         });
         http().get("/admin-logout", (request, response) -> {
 
@@ -188,7 +188,7 @@ public class ElepyAdminPanel extends ElepyModule {
         http().get("/login", (request, response) -> {
 
 
-            return render(new HashMap<>(), "templates/login.peb");
+            return renderWithDefaults(request,new HashMap<>(), "templates/login.peb");
         });
         http().post("/login", (request, response) -> {
 

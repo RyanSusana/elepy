@@ -17,6 +17,7 @@ $sidebar-width: 22rem;
     color: $sidebar-color;
     color: var(--sidebar-color);
 
+    min-height: 70vh;
     p,a{
 
       color: $global-muted-color;
@@ -58,8 +59,8 @@ $sidebar-width: 22rem;
     }
   }
   .sidebar-footer {
-    position: absolute;
-    bottom: 20px;
+    position: relative;
+    padding: 10px 20px 0 20px;
     p {
       font-size: 0.8em;
 
