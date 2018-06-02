@@ -13,6 +13,7 @@ import com.elepy.admin.services.BCrypt;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
+import com.mongodb.DB;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
@@ -56,7 +57,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
     public ElepyAdminPanel(Elepy elepy) {
         super(elepy);
-        this.userDao = new UserDao(elepy.getDb(), elepy.getMapper());
+        this.userDao = new UserDao(elepy.getSingleton(DB.class), elepy.getMapper());
         this.userService = new UserService(userDao);
         this.plugins = new TreeSet<>();
         this.attachments = new TreeSet<>();
