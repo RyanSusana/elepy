@@ -42,6 +42,10 @@ public class Elepy {
     private boolean initialized = false;
 
 
+    public Elepy(String name) {
+        this(name, Service.ignite().port(1337));
+    }
+
     public Elepy(String name, Service http) {
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
@@ -435,6 +439,12 @@ public class Elepy {
     public Elepy setConfigSlug(String configSlug) {
         checkConfig();
         this.configSlug = configSlug;
+        return this;
+    }
+
+    public Elepy onPort(int port) {
+        checkConfig();
+        http.port(port);
         return this;
     }
 
