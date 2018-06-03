@@ -53,7 +53,7 @@ const app = new Vue({
             }, 500);
         },
         compileMarkdown: function (item) {
-            return marked(item, {sanitize: true})
+            return marked(item, {sanitize: false})
         },
 
         fromDate: function (field, index) {
