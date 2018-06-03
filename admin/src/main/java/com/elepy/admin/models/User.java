@@ -63,6 +63,7 @@ public class User {
 
     @PrettyName("Password")
     @JsonProperty("password")
+    @Importance(-1)
     private final String password;
 
     @Searchable

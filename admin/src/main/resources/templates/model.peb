@@ -59,7 +59,7 @@
             <table id="table-data" class="uk-table uk-table-hover uk-table-divider uk-table-middle">
                 <thead>
                 <tr>
-                    <th v-for="field in selectedModel.fields" v-if="field.type != 'OBJECT' ">
+                    <th v-for="field in selectedModel.fields" v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">
                         ((field.pretty_name))
                     </th>
                 </tr>
@@ -70,7 +70,7 @@
                     <td :uk-tooltip="'title:'+ field.pretty_name+'; pos: top-left'"
                         v-for="field in selectedModel.fields"
 
-                        v-if="field.type != 'OBJECT' ">(( (field.type == 'DATE'? toDate(data[field.name])
+                        v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">(( (field.type == 'DATE'? toDate(data[field.name])
                         : data[field.name]) | truncate(90) ))
                     </td>
 
