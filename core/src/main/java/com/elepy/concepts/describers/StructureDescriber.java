@@ -25,6 +25,14 @@ public class StructureDescriber {
 
         fields.addAll(describeFields());
         fields.addAll(describeMethods());
+
+        fields.sort((a, b) -> {
+            final Integer importanceA = (Integer) a.getOrDefault("importance", 0);
+            final Integer importanceB = (Integer) b.getOrDefault("importance", 0);
+
+
+            return importanceB.compareTo(importanceA);
+        });
         return fields;
     }
 

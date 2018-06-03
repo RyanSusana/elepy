@@ -1,9 +1,7 @@
 package com.elepy.concepts.describers;
 
+import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
-import com.elepy.annotations.PrettyName;
-import com.elepy.annotations.RequiredField;
-import com.elepy.annotations.Text;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
@@ -102,6 +100,9 @@ public class MethodDescriber {
 
         fieldMap.put("required", method.getAnnotation(RequiredField.class) != null);
         fieldMap.put("editable", false);
+
+        Importance importance = field.getAnnotation(Importance.class);
+        fieldMap.put("importance", importance == null ? 0 : importance.value());
 
     }
 
