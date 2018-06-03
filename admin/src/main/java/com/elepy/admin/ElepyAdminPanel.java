@@ -179,7 +179,7 @@ public class ElepyAdminPanel extends ElepyModule {
         elepy().addAdminFilter((request, response) -> {
             final User adminUser = request.session().attribute(ADMIN_USER);
             if (adminUser == null) {
-                request.session().attribute("redirectUrl", request.uri());
+                request.session().attribute("redirectUrl", request.contextPath());
                 response.redirect("/login");
             }
         });
