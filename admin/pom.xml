@@ -44,11 +44,6 @@
             <version>2.7.1</version>
         </dependency>
         <dependency>
-            <groupId>com.elepy</groupId>
-            <artifactId>elepy-core</artifactId>
-            <version>0.7.3</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>1.18</version>
@@ -58,6 +53,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-core</artifactId>
+            <version>0.7.4</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
