@@ -20,7 +20,12 @@ public class UserDao extends MongoDao<User> {
     }
 
     public Optional<User> getByUsernameOrEmail(String usernameOrEmail) {
-        return Optional.ofNullable(collection().findOne("{$or:[{username: #}, {email: #}]}", Pattern.compile(usernameOrEmail, Pattern.CASE_INSENSITIVE), Pattern.compile(usernameOrEmail, Pattern.CASE_INSENSITIVE)).as(getClassType()));
+        if (!usernameOrEmail.contains("@")) {
+            return Optional.ofNullable(collection().findOne("{username: #}", Pattern.compile(usernameOrEmail, Pattern.CASE_INSENSITIVE)).as(User.class));
+        } else {
+            return Optional.ofNullable(collection().findOne("{email: #}", Pattern.compile(usernameOrEmail, Pattern.CASE_INSENSITIVE)).as(User.class));
+        }
+
     }
 
     public long count() {
