@@ -179,7 +179,7 @@ public class ElepyAdminPanel extends ElepyModule {
         elepy().addAdminFilter((request, response) -> {
             final User adminUser = request.session().attribute(ADMIN_USER);
             if (adminUser == null) {
-                request.session().attribute("redirectUrl", request.contextPath());
+                request.session().attribute("redirectUrl", request.uri());
                 response.redirect("/login");
             }
         });
@@ -204,6 +204,7 @@ public class ElepyAdminPanel extends ElepyModule {
                 request.session().removeAttribute("redirectUrl");
                 return redirectUrl;
             }
+
 
             response.status(401);
             return "Invalid login credentials";
