@@ -23,6 +23,7 @@ $sidebar-color: $primary-color;
 $global-link-color: $primary-color;
 
 $notification-message-background: lighten($dark-grey, 3%);
+$notification-message-color: #ccc;
 $global-primary-background: $primary-color;
 $main-gradient: linear-gradient(to top left, #ff512f, #f09819);
 $dark-grey: #212121;
@@ -85,11 +86,25 @@ $roboto-slab: 'Roboto Slab', serif;
 }
 
 @import "animate/animate";
-
+@import "elepy-font/import";
 @import "uikit/variables-theme.scss";
 @import "uikit/mixins-theme.scss";
 @mixin hook-pagination-item-active() {
   font-weight: bold;
+}
+
+@mixin hook-button-primary(){
+
+}
+
+
+.alternative-primary {
+  transition: .3s all !important;
+  background: $primary-color !important;
+  &:hover{
+    background: $primary-color !important;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
 }
 
 @import "uikit/uikit-theme.scss";

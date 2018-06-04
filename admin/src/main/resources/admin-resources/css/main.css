@@ -2371,6 +2371,23 @@
   -webkit-animation-name: slideOutUp;
   animation-name: slideOutUp; }
 
+@font-face {
+  font-family: 'elepy';
+  src: url("/admin-resources/fonts/elepy.eot?4rkbfq");
+  src: url("/admin-resources/fonts/elepy.eot?4rkbfq#iefix") format("embedded-opentype"), url("/admin-resources/fonts/elepy.ttf?4rkbfq") format("truetype"), url("/admin-resources/fonts/elepy.woff?4rkbfq") format("woff"), url("/admin-resources/fonts/elepy.svg?4rkbfq#elepy") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+.fa-elepy:before {
+  font-family: 'elepy' !important;
+  content: "\e900"; }
+
+.alternative-primary {
+  transition: .3s all !important;
+  background: #39f !important; }
+  .alternative-primary:hover {
+    background: #39f !important;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+
 /* ========================================================================
    Component: Base
  ========================================================================== */
@@ -4230,8 +4247,7 @@ select.uk-form-width-xsmall {
 .uk-button-primary {
   background-color: #39f;
   background-color: var(--primary-color);
-  color: #fff;
-  border: 1px solid transparent; }
+  color: #fff; }
 
 /* Hover + Focus */
 .uk-button-primary:hover,
@@ -7971,7 +7987,7 @@ ul.uk-nav-sub {
   margin-bottom: 10px;
   padding: 15px;
   background: #292929;
-  color: #666;
+  color: #ccc;
   font-size: 1.25rem;
   line-height: 1.4;
   cursor: pointer; }
