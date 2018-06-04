@@ -12,15 +12,15 @@
     <artifactId>elepy-admin</artifactId>
     <build>
 
-        <!--<resources>-->
-        <!--<resource>-->
-        <!--<directory>src/main/resources</directory>-->
-        <!--<excludes>-->
-        <!--<exclude>**/.sass-cache/**</exclude>-->
-        <!--<exclude>**/scss/**</exclude>-->
-        <!--</excludes>-->
-        <!--</resource>-->
-        <!--</resources>-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/.sass-cache/**</exclude>
+                    <exclude>**/scss/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
