@@ -55,10 +55,12 @@ public class ElepyAdminPanel extends ElepyModule {
     public void routes() {
 
         try {
+
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin();
             setupAdmin();
             attachmentHandler.setupAttachments();
+            checkSetup();
             initiated = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -221,6 +223,12 @@ public class ElepyAdminPanel extends ElepyModule {
         });
 
 
+    }
+    private void checkSetup(){
+        if (userDao.count() == 0) {
+            User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
+            userDao.create(user);
+        }
     }
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
