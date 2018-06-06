@@ -1,0 +1,29 @@
+.elepy-load {
+  width: 135px;
+  height: 135px;
+  background: url('/admin-resources/images/BlueCircle80.png') ;
+  animation: play-1 1.5s steps(80) infinite;
+}
+
+.elepy-load-white {
+  width: 120px;
+  height: 120px;
+  background: url('/admin-resources/images/White79.png') ;
+  animation: play-2 1.5s steps(79) infinite;
+}
+.elepy-load-black {
+  width: 120px;
+  height: 120px;
+  background: url('/admin-resources/images/Black79.png') ;
+  animation: play-2 1.5s steps(79) infinite;
+}
+
+
+@keyframes play-1 {
+  to { background-position: -10800px;}
+}
+@keyframes play-2 {
+  to { background-position: -9480px;}
+}
+
+
