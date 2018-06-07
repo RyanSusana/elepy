@@ -30,12 +30,12 @@ import java.util.regex.Pattern;
 public class MongoDao<T> implements Crud<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDao.class);
     private final Jongo jongo;
-    private final Class<? extends T> classType;
+    private final Class<T> classType;
     private final String collectionName;
     private final ObjectMapper objectMapper;
     private final SimpleModule module = new SimpleModule("jongo-custom-module");
 
-    public MongoDao(final DB db, final String collectionName, final Class<? extends T> classType) {
+    public MongoDao(final DB db, final String collectionName, final Class<T> classType) {
 
         final JacksonMapper.Builder builder = new JacksonMapper.Builder();
 
@@ -54,7 +54,7 @@ public class MongoDao<T> implements Crud<T> {
         this.collectionName = collectionName.replaceAll("/", "");
     }
 
-    public MongoDao(final DB db, final String collectionName, Mapper objectMapper, final Class<? extends T> classType) {
+    public MongoDao(final DB db, final String collectionName, Mapper objectMapper, final Class<T> classType) {
         this.jongo = new Jongo(db, objectMapper);
         this.objectMapper = new ObjectMapper();
         this.classType = classType;
@@ -95,6 +95,11 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public long count(String query, Object... parameters) {
         return collection().count(query, parameters);
+    }
+
+    @Override
+    public Class<T> getType() {
+        return classType;
     }
 
 

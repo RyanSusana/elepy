@@ -65,4 +65,6 @@ public interface Crud<T> {
 
     long count(String query, Object... parameters);
 
+    Class<T> getType();
+
 }
