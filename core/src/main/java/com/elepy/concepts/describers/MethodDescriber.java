@@ -1,5 +1,6 @@
 package com.elepy.concepts.describers;
 
+import com.elepy.annotations.Boolean;
 import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
 import com.elepy.models.FieldType;
@@ -45,7 +46,11 @@ public class MethodDescriber {
 
         fieldMap.put("type", type);
 
-        if (type.equals(FieldType.ENUM)) {
+        if (type.equals(FieldType.BOOLEAN)) {
+            final Boolean annotation = method.getAnnotation(Boolean.class);
+            fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
+            fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
+        } else if (type.equals(FieldType.ENUM)) {
             fieldMap.put("availableValues", method.getReturnType().getEnumConstants());
         } else if (type.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", method.getReturnType().getSimpleName());

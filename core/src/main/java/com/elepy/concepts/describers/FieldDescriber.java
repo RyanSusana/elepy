@@ -1,5 +1,6 @@
 package com.elepy.concepts.describers;
 
+import com.elepy.annotations.Boolean;
 import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
 import com.elepy.models.FieldType;
@@ -89,6 +90,11 @@ public class FieldDescriber {
         }
         if (type.equals(FieldType.NUMBER)) {
             fieldMap.put("numberType", field.getAnnotation(Number.class) != null ? field.getAnnotation(Number.class).value() : NumberType.guessType(field));
+        }
+        if (type.equals(FieldType.BOOLEAN)) {
+            final Boolean annotation = field.getAnnotation(Boolean.class);
+            fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
+            fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
         }
         if (type.equals(FieldType.OBJECT_ARRAY)) {
 
