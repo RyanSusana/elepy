@@ -163,27 +163,44 @@ public class MongoDao<T> implements Crud<T> {
     }
 
     @Override
+    public void create(Iterable<T> items) {
+        try {
+
+            for (T item : items) {
+                evaluateId(item);
+            }
+
+            collection().insert(items);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RestErrorMessage(e.getMessage());
+        }
+    }
+
+    @Override
     public void create(T item) {
         try {
-            final Field idField = ClassUtils.getIdField(item.getClass());
-            final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
-            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.idProvider());
-            if (!o.isPresent()) {
-                throw new IllegalStateException(annotation.idProvider() + " has no empty constructor.");
-            }
-            final IdProvider<T> provider = ((Constructor<IdProvider<T>>) o.get()).newInstance();
-
-            assert idField != null;
-            idField.setAccessible(true);
-            idField.set(item, provider.getId(item, this));
-
-
+            evaluateId(item);
             collection().insert(item);
-        } catch (IllegalAccessException e) {
-            LOGGER.error("Illegal access on Item creation", e);
-        } catch (InvocationTargetException | InstantiationException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            throw new RestErrorMessage(e.getMessage());
         }
+    }
+
+    private void evaluateId(T item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        final Field idField = ClassUtils.getIdField(item.getClass());
+        final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
+        final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.idProvider());
+        if (!o.isPresent()) {
+            throw new IllegalStateException(annotation.idProvider() + " has no empty constructor.");
+        }
+        final IdProvider<T> provider = ((Constructor<IdProvider<T>>) o.get()).newInstance();
+
+        assert idField != null;
+        idField.setAccessible(true);
+        idField.set(item, provider.getId(item, this));
+
 
     }
 
