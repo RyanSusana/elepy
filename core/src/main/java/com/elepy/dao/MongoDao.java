@@ -10,6 +10,7 @@ import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import org.jongo.Find;
@@ -174,8 +175,11 @@ public class MongoDao<T> implements Crud<T> {
             for (T item : items) {
                 evaluateId(item);
             }
+            ;
+            final T[] ts = Iterables.toArray(items, getType());
 
-            collection().insert(items);
+
+            collection().insert((Object[]) ts);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());

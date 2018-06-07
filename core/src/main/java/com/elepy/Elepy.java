@@ -151,12 +151,9 @@ public class Elepy {
                 setupFilters(restModel, clazz);
                 if (!restModel.create().equals(RestModelAccessType.DISABLED))
                     http.post(baseSlug + restModel.slug(), (request, response) -> {
-                        final Optional optional = restModel.createRoute().newInstance().create(request, response, dao, clazz, objectMapper, evaluators);
-                        if (optional.isPresent()) {
-                            return objectMapper.writeValueAsString(optional.get());
-                        } else {
-                            return response.body();
-                        }
+                        final boolean optional = restModel.createRoute().newInstance().create(request, response, dao, objectMapper, evaluators);
+
+                        return "";
                     });
                 if (!restModel.update().equals(RestModelAccessType.DISABLED))
                     http.put(baseSlug + restModel.slug(), (request, response) -> {
