@@ -16,9 +16,9 @@ import java.util.Optional;
 
 public class UserCreate implements Create<User> {
     @Override
-    public Optional<User> create(Request request, Response response, Crud<User> dao, Class<? extends User> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
+    public boolean create(Request request, Response response, Crud<User> dao,  ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
         String body = request.body();
-        User user = objectMapper.readValue(body, clazz);
+        User user = objectMapper.readValue(body, dao.getType());
         User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);
 
 
@@ -34,6 +34,6 @@ public class UserCreate implements Create<User> {
         user = user.hashWord();
         dao.create(user);
         response.body(request.body());
-        return Optional.ofNullable(user);
+        return true;
     }
 }
