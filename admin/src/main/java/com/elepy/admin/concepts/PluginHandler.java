@@ -1,6 +1,8 @@
 package com.elepy.admin.concepts;
 
 import com.elepy.admin.ElepyAdminPanel;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DB;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,13 @@ public class PluginHandler {
     public PluginHandler(ElepyAdminPanel adminPanel) {
         this.adminPanel = adminPanel;
         this.plugins = new ArrayList<>();
+    }
+
+    public void setupPlugins() {
+        for (ElepyAdminPanelPlugin plugin : this.plugins) {
+            plugin.setup(adminPanel.http(), adminPanel.elepy().getSingleton(DB.class), new ObjectMapper());
+        }
+
     }
 
 

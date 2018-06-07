@@ -74,6 +74,8 @@ public class ElepyAdminPanel extends ElepyModule {
         this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
         this.userService = new UserService(userDao);
 
+        this.pluginHandler.setupPlugins();
+
         elepy().addPackage(User.class.getPackage().getName());
 
     }
@@ -224,7 +226,8 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
     }
-    private void checkSetup(){
+
+    private void checkSetup() {
         if (userDao.count() == 0) {
             User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
             userDao.create(user);
