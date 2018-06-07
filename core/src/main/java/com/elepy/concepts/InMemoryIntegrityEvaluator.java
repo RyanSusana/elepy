@@ -1,0 +1,69 @@
+package com.elepy.concepts;
+
+import com.elepy.annotations.Unique;
+import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.utils.ClassUtils;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class InMemoryIntegrityEvaluator<T> {
+    public void evaluate(List<T> items) throws IllegalAccessException {
+
+        for (T item : items) {
+
+            List<T> theRest = new ArrayList<>(items);
+
+            theRest.remove(item);
+
+            checkUniqueness(item, theRest);
+        }
+    }
+
+    private void checkUniqueness(T item, List<T> theRest) throws IllegalAccessException {
+        List<Field> uniqueFields = ClassUtils.searchForFieldsWithAnnotation(item.getClass(), Unique.class);
+
+
+        Optional<String> id = ClassUtils.getId(item);
+
+        for (Field field : uniqueFields) {
+
+            field.setAccessible(true);
+            Object prop = field.get(item);
+
+
+            final List<T> foundItems = theRest.stream().filter(t -> {
+
+                try {
+                    return field.get(t).equals(prop);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }).collect(Collectors.toList());
+            if (foundItems.size() > 0) {
+
+
+                if (foundItems.size() > 1) {
+                    throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                }
+
+                T foundRecord = foundItems.get(0);
+
+                if (id.isPresent()) {
+                    if (!id.equals(ClassUtils.getId(foundRecord))) {
+                        throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                    }
+                }else{
+                    throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+
+                }
+            }
+        }
+
+
+    }
+}

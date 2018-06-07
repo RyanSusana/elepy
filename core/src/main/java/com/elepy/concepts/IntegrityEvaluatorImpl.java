@@ -40,6 +40,9 @@ public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
                     if (!id.equals(ClassUtils.getId(foundRecord))) {
                         throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
                     }
+                }else{
+                    throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+
                 }
             }
         }

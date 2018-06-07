@@ -1,12 +1,14 @@
 package com.elepy.routes;
 
+import com.elepy.concepts.InMemoryIntegrityEvaluator;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import spark.Request;
 import spark.Response;
 
@@ -41,13 +43,13 @@ public class DefaultCreate<T> implements Create<T> {
     }
 
     protected boolean multipleCreate(Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+        new InMemoryIntegrityEvaluator<>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         for (T item : items) {
             for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
                 objectEvaluator.evaluate(item);
             }
             new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
         }
-        System.out.println("creating now!");
         dao.create(items);
         return true;
 
