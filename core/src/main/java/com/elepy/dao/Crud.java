@@ -4,6 +4,8 @@ package com.elepy.dao;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface Crud<T> {
@@ -27,6 +29,7 @@ public interface Crud<T> {
 
     void create(final T item);
 
+
     default String getId(final T item) {
         Optional<String> id = ClassUtils.getId(item);
 
@@ -46,6 +49,26 @@ public interface Crud<T> {
 
         return get(pageSetup);
 
+    }
+
+    default void update(final Collection<T> items) {
+        for (T item : items) {
+            update(item);
+        }
+    }
+
+    default void update(final T[] items) {
+        update(Arrays.asList(items));
+    }
+
+    default void create(final Collection<T> items) {
+        for (T item : items) {
+            create(items);
+        }
+    }
+
+    default void create(final T[] items) {
+        create(Arrays.asList(items));
     }
 
     long count(String query, Object... parameters);
