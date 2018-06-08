@@ -1,17 +1,15 @@
 package com.elepy.admin;
 
 import com.elepy.ElepyModule;
-import com.elepy.admin.annotations.View;
 import com.elepy.admin.concepts.AttachmentHandler;
 import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
 import com.elepy.admin.concepts.PluginHandler;
-import com.elepy.admin.concepts.ResourceView;
+import com.elepy.admin.concepts.ViewHandler;
 import com.elepy.admin.dao.UserDao;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.BCrypt;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.utils.ClassUtils;
 import com.mongodb.DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,6 @@ import spark.template.pebble.PebbleTemplateEngine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -33,7 +30,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
-    private final List<Map<String, Object>> descriptors;
+    private final ViewHandler viewHandler;
     private final List<Link> links;
     private UserDao userDao;
     private UserService userService;
@@ -45,7 +42,9 @@ public class ElepyAdminPanel extends ElepyModule {
         this.attachmentHandler = new AttachmentHandler(this);
         this.pluginHandler = new PluginHandler(this);
 
-        this.descriptors = new ArrayList<>();
+
+        this.viewHandler = new ViewHandler(this);
+
 
         this.links = new ArrayList<>();
     }
@@ -59,90 +58,31 @@ public class ElepyAdminPanel extends ElepyModule {
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin();
             setupAdmin();
+
             attachmentHandler.setupAttachments();
             checkSetup();
             initiated = true;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
+            throw new RuntimeException(e);
         }
     }
 
 
     @Override
     public void setup() {
-        this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
-        this.userService = new UserService(userDao);
 
-        this.pluginHandler.setupPlugins();
+            this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
+            this.userService = new UserService(userDao);
 
-        elepy().addPackage(User.class.getPackage().getName());
+            this.pluginHandler.setupPlugins();
 
+            elepy().addPackage(User.class.getPackage().getName());
     }
 
-    private void defaultDecriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
 
-        http().get("/admin" + descriptor.get("slug"), (request, response) -> {
-
-            Map<String, Object> model = new HashMap<>();
-
-            model.put("descriptors", descriptors);
-
-            model.put("plugins", pluginHandler.getPlugins());
-            model.put("currentDescriptor", descriptor);
-            return renderWithDefaults(request, model, "templates/model.peb");
-        });
-    }
 
     private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        for (Object o : elepy().getDescriptors()) {
-            if (o instanceof Map) {
-                descriptors.add((Map<String, Object>) o);
-            }
-        }
-        for (Map<String, Object> descriptor : descriptors) {
-            http().get("/admin/config" + descriptor.get("slug"), (request, response) -> {
-                response.type("application/json");
-                return elepy().getObjectMapper().writeValueAsString(
-                        descriptor
-                );
-            });
 
-            if (descriptor.containsKey("javaClass")) {
-                final Class<?> javaClass = Class.forName((String) descriptor.get("javaClass"));
-
-                if (javaClass.isAnnotationPresent(View.class)) {
-
-                    final View annotation = javaClass.getAnnotation(View.class);
-
-                    final Optional<Constructor<?>> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
-
-                    if (!emptyConstructor.isPresent()) {
-                        throw new IllegalAccessException("Resource View Class must contain an empty constructor");
-                    }
-                    final ResourceView resourceView = (ResourceView) emptyConstructor.get().newInstance();
-                    resourceView.setup(this);
-                    http().get("/admin" + descriptor.get("slug"), (request, response) -> {
-
-                        Map<String, Object> model = new HashMap<>();
-
-                        model.put("customView", resourceView.renderView(descriptor));
-                        model.put("customHeaders", resourceView.renderExtraHeaders());
-                        model.put("descriptors", descriptors);
-                        model.put("plugins", pluginHandler.getPlugins());
-
-                        model.put("currentDescriptor", descriptor);
-                        return renderWithDefaults(request, model, "templates/model.peb");
-                    });
-                } else {
-                    defaultDecriptorPanel(descriptor, descriptors);
-                }
-            } else {
-                defaultDecriptorPanel(descriptor, descriptors);
-            }
-
-
-        }
 
         http().before("/admin/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
         http().before("/admin/*", (request, response) -> {
@@ -154,7 +94,6 @@ public class ElepyAdminPanel extends ElepyModule {
         http().get("/admin", (request, response) -> {
 
             Map<String, Object> model = new HashMap<>();
-            model.put("descriptors", descriptors);
             model.put("plugins", pluginHandler.getPlugins());
             return renderWithDefaults(request, model, "templates/base.peb");
         });
@@ -165,17 +104,12 @@ public class ElepyAdminPanel extends ElepyModule {
 
             return "";
         });
+        viewHandler.setup();
+        viewHandler.routes();
         pluginHandler.setupRoutes();
     }
 
-    private Map<String, Object> getDescriptor(String slug, List<Map<String, Object>> descriptors) {
-        for (Map<String, Object> descriptor : descriptors) {
-            if (descriptor.get("slug").equals(slug)) {
-                return descriptor;
-            }
-        }
-        return null;
-    }
+
 
     private void setupLogin() {
 
@@ -235,7 +169,7 @@ public class ElepyAdminPanel extends ElepyModule {
     }
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
-        model.put("descriptors", descriptors);
+        model.put("descriptors", viewHandler.getDescriptors());
         model.put("plugins", pluginHandler.getPlugins());
         model.put("user", request.session().attribute(ADMIN_USER));
         model.put("links", links);
