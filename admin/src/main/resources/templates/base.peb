@@ -39,7 +39,7 @@
 </head>
 
 <body>
-<div id="app">
+
 
 {#{% include "components/nav.peb" %}#}
 
@@ -86,7 +86,7 @@
         </div>
     {% endblock %}
     </div>
-</div>
+
 
 
 
