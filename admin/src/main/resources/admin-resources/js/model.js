@@ -2,7 +2,8 @@ const app = new Vue({
     el: '#app',
     delimiters: ['((', '))'],
     components: {
-        'vuejs-datepicker': vuejsDatepicker
+        'vuejs-datepicker': vuejsDatepicker,
+        'vuejs-colorpicker': VueColor.Sketch
     },
     data: {
         bufData: {},
@@ -27,6 +28,9 @@ const app = new Vue({
     },
 
     methods: {
+        log: function(s){
+            console.log(s);
+        },
         next: function () {
             if (this.curPage.currentPageNumber < this.curPage.lastPageNumber) {
                 this.page(this.curPage.currentPageNumber + 1);

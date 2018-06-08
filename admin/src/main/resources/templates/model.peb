@@ -102,11 +102,16 @@
                                            :disabled="field.name == 'id' || field.editable == false"
                                            placeholder="">
                                     <!-- DATE -->
-
                                     <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[field.name]"
                                                       :disabled="field.name == 'id' || (field.editable == false)"
                                                       placeholder="Click to select a date" input-class="uk-input"
                                                       calendar-class="uk-dark"></vuejs-datepicker>
+                                    <!-- COLOR -->
+                                    <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
+                                                       :disabled="field.name == 'id' || (field.editable == false)"
+                                                       v-bind:value="selectedData[field.name]"
+                                                       v-on:input="selectedData[field.name] = $event.hex"
+                                    ></vuejs-colorpicker>
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
                                            :disabled="field.name == 'id' || (field.editable == false)"
@@ -170,6 +175,13 @@
                                                               placeholder="Click to select a date"
                                                               input-class="uk-input"
                                                               calendar-class="uk-dark"></vuejs-datepicker>
+
+                                            <!-- COLOR -->
+                                            <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
+                                                               :disabled="field.name == 'id' || (field.editable == false)"
+                                                               v-bind:value="selectedData[fieldOuter.name][field.name]"
+                                                               v-on:input="selectedData[fieldOuter.name][field.name] = $event.hex"
+                                            ></vuejs-colorpicker>
 
                                             <!-- NUMBER -->
                                             <input class="uk-input" v-if="field.type == 'NUMBER'"
@@ -262,6 +274,13 @@
                                                       placeholder="Click to select a date" input-class="uk-input"
                                                       calendar-class="uk-dark"></vuejs-datepicker>
 
+                                    <!-- COLOR -->
+                                    <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'" v-model="newData[field.name]"
+                                                      :disabled="field.name == 'id' || (field.editable == false)"
+                                                       v-bind:value="newData[field.name]"
+                                                       v-on:input="newData[field.name] = $event.hex"
+                                    ></vuejs-colorpicker>
+
                                     <!-- NUMBER -->
                                     <input class="uk-input" v-if="field.type == 'NUMBER'"
                                            step="any"
@@ -316,12 +335,18 @@
                                                    :disabled="field.name == 'id' || field.editable == false"
                                                    placeholder="">
                                             <!-- DATE -->
-                                            <input :id="'date-form2-field-'+index" class="uk-input"
-                                                   v-if="field.type == 'DATE'"
 
-                                                   v-on:blur="fromDate(field.name, index)"
-                                                   v-bind:value="toDate(newData[fieldOuter.name][field.name])"
-                                                   type="date">
+                                            <vuejs-datepicker v-if="field.type == 'DATE'" v-model="newData[fieldOuter.name][field.name]"
+                                                              :disabled="field.name == 'id' || (field.editable == false)"
+                                                              placeholder="Click to select a date" input-class="uk-input"
+                                                              calendar-class="uk-dark"></vuejs-datepicker>
+
+                                            <!-- COLOR -->
+                                            <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
+                                                               :disabled="field.name == 'id' || (field.editable == false)"
+                                                               v-bind:value="newData[fieldOuter.name][field.name]"
+                                                               v-on:input="newData[fieldOuter.name][field.name] = $event.hex"
+                                            ></vuejs-colorpicker>
                                             <!-- NUMBER -->
                                             <input class="uk-input" v-if="field.type == 'NUMBER'"
 
@@ -338,6 +363,9 @@
                                                       placeholder=""
                                                       rows="5"></textarea>
 
+                                            <!-- COLOR -->
+                                            <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'" v-model="newData[fieldOuter.name][field.name]"
+                                                               :disabled="field.name == 'id' || (field.editable == false)"></vuejs-colorpicker>
                                             <!-- ENUM -->
                                             <div class="uk-form-controls">
                                                 <select class="uk-select"
@@ -386,6 +414,8 @@
 {% endblock %}
 
 {% block scripts %}
+
+{% if customView is null %}
 <script
         src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
@@ -395,7 +425,7 @@
 <script src="/admin-resources/js/vue-truncate.js"></script>
 <script src="https://unpkg.com/marked@0.3.6"></script>
 <script src="https://unpkg.com/vuejs-datepicker"></script>
-{% if customView is null %}
+<script src="/admin-resources/js/vue-color.js"></script>
 <script src="/admin-resources/js/model.js"></script>
 {% endif %}
 
