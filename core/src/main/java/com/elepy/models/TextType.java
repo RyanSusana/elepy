@@ -1,5 +1,5 @@
 package com.elepy.models;
 
 public enum TextType {
-    TEXTFIELD, TEXTAREA, WYSIWYG, COLOR
+    TEXTFIELD, TEXTAREA, WYSIWYG, PASSWORD, COLOR
 }
