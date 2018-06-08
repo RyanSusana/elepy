@@ -74,7 +74,7 @@ public class ElepyAdminPanel extends ElepyModule {
             this.userDao = new UserDao(elepy().getSingleton(DB.class), elepy().getMapper());
             this.userService = new UserService(userDao);
 
-            this.pluginHandler.setupPlugins();
+
 
             elepy().addPackage(User.class.getPackage().getName());
     }
@@ -105,6 +105,7 @@ public class ElepyAdminPanel extends ElepyModule {
             return "";
         });
         viewHandler.setup();
+        pluginHandler.setupPlugins();
         viewHandler.routes();
         pluginHandler.setupRoutes();
     }
