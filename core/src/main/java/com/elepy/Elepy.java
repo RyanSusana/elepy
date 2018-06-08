@@ -38,7 +38,7 @@ public class Elepy {
     private Mapper mapper;
     private List<Filter> adminFilters;
     private Filter basePublicFilter;
-    private List<Object> descriptors;
+    private List<Map<String, Object>> descriptors;
     private boolean initialized = false;
 
 
@@ -234,7 +234,7 @@ public class Elepy {
 
     }
 
-    private void setupDescriptors(List<Object> descriptors) {
+    private void setupDescriptors(List<Map<String, Object>> descriptors) {
         http.before(configSlug, allAdminFilters());
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
@@ -479,7 +479,7 @@ public class Elepy {
         return this;
     }
 
-    public List<Object> getDescriptors() {
+    public List<Map<String, Object>> getDescriptors() {
         return this.descriptors;
     }
 
