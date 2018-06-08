@@ -336,6 +336,13 @@ public class Elepy {
         }
     }
 
+    public Elepy connectDB(DB db){
+        this.attachSingleton(db);
+        return this;
+    }
+    public void start(){
+        this.init();
+    }
     public Elepy addAdminFilter(Filter filter) {
         adminFilters.add(filter);
         return this;
