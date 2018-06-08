@@ -22,9 +22,7 @@ import org.jongo.marshall.jackson.oid.MongoId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -45,6 +43,7 @@ public class MongoDao<T> implements Crud<T> {
 
         builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
+        builder.withObjectIdUpdater(new ElepyIdUpdater(this));
         Mapper mapper = builder.build();
 
         this.jongo = new Jongo(db, mapper);
@@ -55,13 +54,6 @@ public class MongoDao<T> implements Crud<T> {
         this.collectionName = collectionName.replaceAll("/", "");
     }
 
-    public MongoDao(final DB db, final String collectionName, Mapper objectMapper, final Class<T> classType) {
-        this.jongo = new Jongo(db, objectMapper);
-        this.objectMapper = new ObjectMapper();
-        this.classType = classType;
-        this.collectionName = collectionName.replaceAll("/", "");
-
-    }
 
     protected MongoCollection collection() {
         return jongo.getCollection(collectionName);
@@ -89,7 +81,7 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final String id) {
-        return Optional.ofNullable(collection().findOne("{_id: #}", id).as(classType));
+        return Optional.ofNullable(collection().findOne("{$or: [{_id: #}, {id: #}]}", id, id).as(classType));
     }
 
 
@@ -158,13 +150,13 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public void delete(String id) {
-        collection().remove("{_id: #}", id);
+        collection().remove("{$or: [{_id: #}, {id: #}]}", id, id);
     }
 
     @Override
     public void update(T item) {
-
-        collection().update("{_id: #}", getId(item)).with(item);
+        final String id = getId(item);
+        collection().update("{$or: [{_id: #}, {id: #}]}", id, id).with(item);
 
     }
 
@@ -172,10 +164,7 @@ public class MongoDao<T> implements Crud<T> {
     public void create(Iterable<T> items) {
         try {
 
-            for (T item : items) {
-                evaluateId(item);
-            }
-            ;
+
             final T[] ts = Iterables.toArray(items, getType());
 
 
@@ -189,7 +178,6 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public void create(T item) {
         try {
-            evaluateId(item);
             collection().insert(item);
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,21 +185,7 @@ public class MongoDao<T> implements Crud<T> {
         }
     }
 
-    private void evaluateId(T item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Field idField = ClassUtils.getIdField(item.getClass());
-        final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
-        final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.idProvider());
-        if (!o.isPresent()) {
-            throw new IllegalStateException(annotation.idProvider() + " has no empty constructor.");
-        }
-        final IdProvider<T> provider = ((Constructor<IdProvider<T>>) o.get()).newInstance();
 
-        assert idField != null;
-        idField.setAccessible(true);
-        idField.set(item, provider.getId(item, this));
-
-
-    }
 
     @Override
     public String getId(T item) {

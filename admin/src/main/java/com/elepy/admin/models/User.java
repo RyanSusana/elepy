@@ -46,8 +46,8 @@ import org.jongo.marshall.jackson.oid.MongoId;
 )
 public class User {
 
-    //The only MUST-HAVE annotation is atleast one @MongoId used by Elepy and Jongo to generate ID's for resources
-    @MongoId
+    //The only MUST-HAVE annotation is atleast one @Identifier used by Elepy to generate ID's for resources
+    @Identifier
     private final String id;
 
     //This specifies that the property must be unique

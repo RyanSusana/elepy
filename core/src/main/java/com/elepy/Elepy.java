@@ -1,5 +1,6 @@
 package com.elepy;
 
+import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
@@ -336,13 +337,15 @@ public class Elepy {
         }
     }
 
-    public Elepy connectDB(DB db){
+    public Elepy connectDB(DB db) {
         this.attachSingleton(db);
         return this;
     }
-    public void start(){
+
+    public void start() {
         this.init();
     }
+
     public Elepy addAdminFilter(Filter filter) {
         adminFilters.add(filter);
         return this;
@@ -392,7 +395,7 @@ public class Elepy {
 
     private void evaluateHasIdField(Class cls) {
         for (Field field : cls.getDeclaredFields()) {
-            if (field.isAnnotationPresent(MongoId.class)) {
+            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
                 return;
             }
         }

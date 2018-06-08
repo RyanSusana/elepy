@@ -11,13 +11,10 @@ import java.util.regex.Pattern;
 import static org.jongo.marshall.jackson.JacksonMapper.Builder.jacksonMapper;
 
 public class UserDao extends MongoDao<User> {
-    public UserDao(DB db, Mapper objectMapper) {
-        super(db, "users", objectMapper, User.class);
+    public UserDao(DB db) {
+        super(db, "users",  User.class);
     }
 
-    public UserDao(DB db) {
-        this(db, jacksonMapper().build());
-    }
 
     public Optional<User> getByUsernameOrEmail(String usernameOrEmail) {
         if (!usernameOrEmail.contains("@")) {

@@ -5,7 +5,7 @@ import com.elepy.dao.Crud;
 
 import java.util.Random;
 
-public class HexIdProvider extends IdProvider {
+public class HexIdProvider<T> extends IdProvider<T> {
 
 
     private final boolean allCaps;

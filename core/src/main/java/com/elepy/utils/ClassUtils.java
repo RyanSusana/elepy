@@ -1,5 +1,6 @@
 package com.elepy.utils;
 
+import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
@@ -51,7 +52,7 @@ public class ClassUtils {
 
         for (Field field : object.getClass().getDeclaredFields()) {
 
-            if (field.getAnnotation(MongoId.class) != null) {
+            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
                 field.setAccessible(true);
 
                 try {
@@ -59,11 +60,7 @@ public class ClassUtils {
                 } catch (IllegalAccessException | ClassCastException e) {
                     throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
                 }
-            }
-        }
-        for (Field field : object.getClass().getDeclaredFields()) {
-
-            if (field.getName().equals("id") && field.getType().equals(String.class)) {
+            } else if (field.getName().equals("id") && field.getType().equals(String.class)) {
                 try {
                     return Optional.ofNullable((String) field.get(object));
                 } catch (IllegalAccessException | ClassCastException e) {
@@ -78,7 +75,7 @@ public class ClassUtils {
     public static Field getIdField(Class cls) {
         for (Field field : cls.getDeclaredFields()) {
 
-            if (field.getAnnotation(MongoId.class) != null) {
+            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
                 field.setAccessible(true);
 
                 try {

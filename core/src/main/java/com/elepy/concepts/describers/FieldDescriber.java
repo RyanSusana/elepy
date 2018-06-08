@@ -54,9 +54,10 @@ public class FieldDescriber {
     private String name() {
         JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
         MongoId mongoId = field.getAnnotation(MongoId.class);
+        final Identifier identifier = field.getAnnotation(Identifier.class);
         if (jsonProperty != null) {
             return jsonProperty.value();
-        } else if (mongoId != null) {
+        } else if (mongoId != null || identifier != null) {
             return "id";
         } else {
             return field.getName();
