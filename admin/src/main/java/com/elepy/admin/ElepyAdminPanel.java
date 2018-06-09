@@ -1,10 +1,7 @@
 package com.elepy.admin;
 
 import com.elepy.ElepyModule;
-import com.elepy.admin.concepts.AttachmentHandler;
-import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
-import com.elepy.admin.concepts.PluginHandler;
-import com.elepy.admin.concepts.ViewHandler;
+import com.elepy.admin.concepts.*;
 import com.elepy.admin.dao.UserDao;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.BCrypt;
@@ -30,6 +27,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
+    private SetupHandler setupHandler;
     private final ViewHandler viewHandler;
     private final List<Link> links;
     private UserDao userDao;
@@ -47,6 +45,9 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
         this.links = new ArrayList<>();
+        this.setupHandler = (elepy) -> {
+            System.out.println("You have setup the first admin user");
+        };
     }
 
 
@@ -71,14 +72,12 @@ public class ElepyAdminPanel extends ElepyModule {
     @Override
     public void setup() {
 
-            this.userDao = new UserDao(elepy().getSingleton(DB.class));
-            this.userService = new UserService(userDao);
+        this.userDao = new UserDao(elepy().getSingleton(DB.class));
+        this.userService = new UserService(userDao);
 
 
-
-            elepy().addPackage(User.class.getPackage().getName());
+        elepy().addPackage(User.class.getPackage().getName());
     }
-
 
 
     private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -109,7 +108,6 @@ public class ElepyAdminPanel extends ElepyModule {
         viewHandler.routes();
         pluginHandler.setupRoutes();
     }
-
 
 
     private void setupLogin() {
@@ -166,6 +164,9 @@ public class ElepyAdminPanel extends ElepyModule {
         if (userDao.count() == 0) {
             User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
             userDao.create(user);
+
+            setupHandler.handle(elepy());
+
         }
     }
 
@@ -215,6 +216,12 @@ public class ElepyAdminPanel extends ElepyModule {
 
     public ElepyAdminPanel attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
         attachmentHandler.attachSrcDirectory(classLoader, directory);
+        return this;
+    }
+
+
+    public ElepyAdminPanel onFirstTime(SetupHandler setupHandler) {
+        this.setupHandler = setupHandler;
         return this;
     }
 
