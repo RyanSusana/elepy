@@ -1,7 +1,8 @@
-package com.elepy.dao;
+package com.elepy.dao.jongo;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.IdProvider;
+import com.elepy.dao.Crud;
 import com.elepy.id.HexIdProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
