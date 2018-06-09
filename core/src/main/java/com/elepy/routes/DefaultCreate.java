@@ -1,9 +1,10 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.InMemoryIntegrityEvaluator;
+import com.elepy.concepts.AtomicIntegrityEvaluator;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
+import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +44,10 @@ public class DefaultCreate<T> implements Create<T> {
     }
 
     protected Optional<Iterable<T>> multipleCreate(Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
-        new InMemoryIntegrityEvaluator<>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
+        if (ClassUtils.hasIntegrityRules(dao.getType())) {
+            new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
+        }
+
         for (T item : items) {
             for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
                 objectEvaluator.evaluate(item);
@@ -51,7 +55,7 @@ public class DefaultCreate<T> implements Create<T> {
             new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
         }
         dao.create(items);
-        return Optional.ofNullable(items);
+        return Optional.of(items);
 
     }
 }

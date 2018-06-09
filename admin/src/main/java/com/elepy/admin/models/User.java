@@ -7,7 +7,6 @@ import com.elepy.id.HexIdProvider;
 import com.elepy.models.RestModelAccessType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jongo.marshall.jackson.oid.MongoId;
 
 
 @RestModel(

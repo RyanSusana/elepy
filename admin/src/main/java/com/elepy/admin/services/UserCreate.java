@@ -12,11 +12,10 @@ import spark.Request;
 import spark.Response;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UserCreate implements Create<User> {
     @Override
-    public boolean create(Request request, Response response, Crud<User> dao,  ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
+    public boolean create(Request request, Response response, Crud<User> dao, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
         String body = request.body();
         User user = objectMapper.readValue(body, dao.getType());
         User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);

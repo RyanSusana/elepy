@@ -93,15 +93,14 @@ $roboto-slab: 'Roboto Slab', serif;
   font-weight: bold;
 }
 
-@mixin hook-button-primary(){
+@mixin hook-button-primary() {
 
 }
-
 
 .alternative-primary {
   transition: .3s all !important;
   background: $primary-color !important;
-  &:hover{
+  &:hover {
     background: $primary-color !important;
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }

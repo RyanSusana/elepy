@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ViewHandler {
-    private  List<Map<String, Object>> descriptors;
+    private List<Map<String, Object>> descriptors;
     private Map<Class<?>, Map<String, Object>> descriptorMap;
     private Map<ResourceView, Map<String, Object>> customViews;
     private ElepyAdminPanel adminPanel;

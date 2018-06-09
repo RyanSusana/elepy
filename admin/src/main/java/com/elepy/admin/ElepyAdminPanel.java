@@ -27,9 +27,9 @@ public class ElepyAdminPanel extends ElepyModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
-    private SetupHandler setupHandler;
     private final ViewHandler viewHandler;
     private final List<Link> links;
+    private SetupHandler setupHandler;
     private UserDao userDao;
     private UserService userService;
     private boolean initiated = false;

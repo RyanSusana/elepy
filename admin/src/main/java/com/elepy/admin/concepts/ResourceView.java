@@ -7,9 +7,11 @@ import java.util.Map;
 public abstract class ResourceView {
 
     private Map<String, Object> descriptor;
-    public ResourceView(){
+
+    public ResourceView() {
 
     }
+
     public String renderHeaders() {
         return "";
     }

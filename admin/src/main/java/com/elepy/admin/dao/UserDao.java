@@ -3,16 +3,13 @@ package com.elepy.admin.dao;
 import com.elepy.admin.models.User;
 import com.elepy.dao.MongoDao;
 import com.mongodb.DB;
-import org.jongo.Mapper;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.jongo.marshall.jackson.JacksonMapper.Builder.jacksonMapper;
-
 public class UserDao extends MongoDao<User> {
     public UserDao(DB db) {
-        super(db, "users",  User.class);
+        super(db, "users", User.class);
     }
 
 

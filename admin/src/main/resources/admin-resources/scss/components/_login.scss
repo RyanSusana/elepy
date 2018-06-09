@@ -57,24 +57,25 @@
   }
 }
 
-.icon-login{
+.icon-login {
   width: 70px;
   transition: .3s all;
-  &:hover{
+  &:hover {
     transform: scale(1.03);
   }
 }
-.login-caption{
+
+.login-caption {
   width: 60%;
 
-  .inner{
+  .inner {
     border-left: 5px solid #aaa;
     width: fit-content;
     padding: 0 0 10px 10px;
-    h5,h3{
+    h5, h3 {
       text-align: left;
     }
-    h5{
+    h5 {
       color: #eee;
     }
   }

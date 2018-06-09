@@ -2,6 +2,7 @@ package com.elepy.utils;
 
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
+import com.elepy.annotations.Unique;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -96,6 +97,12 @@ public class ClassUtils {
         }
 
         return Optional.empty();
+    }
+
+    public static boolean hasIntegrityRules(Class<?> cls) {
+        final List<Field> fields = searchForFieldsWithAnnotation(cls, Unique.class);
+
+        return !fields.isEmpty();
     }
 
 }

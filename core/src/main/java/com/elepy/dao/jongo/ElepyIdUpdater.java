@@ -6,7 +6,6 @@ import com.elepy.dao.Crud;
 import com.elepy.id.HexIdProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
-import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

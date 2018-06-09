@@ -4,5 +4,5 @@ import com.elepy.Elepy;
 
 public interface SetupHandler {
 
-     void handle(Elepy elepy);
+    void handle(Elepy elepy);
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class InMemoryIntegrityEvaluator<T> {
+public class AtomicIntegrityEvaluator<T> {
     public void evaluate(List<T> items) throws IllegalAccessException {
 
         for (T item : items) {

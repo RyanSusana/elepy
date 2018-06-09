@@ -28,7 +28,7 @@ const app = new Vue({
     },
 
     methods: {
-        log: function(s){
+        log: function (s) {
             console.log(s);
         },
         next: function () {
