@@ -1,5 +1,6 @@
 package com.elepy.dao.jongo;
 
+import com.elepy.concepts.IdProvider;
 import com.elepy.dao.Crud;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,8 +23,8 @@ public class ElepyMapper implements Mapper {
     private final Mapper defaultMapper;
     private final ElepyIdUpdater elepyIdUpdater;
 
-    public ElepyMapper(Crud crud) {
-        this.elepyIdUpdater = new ElepyIdUpdater(crud);
+    public ElepyMapper(Crud crud, IdProvider idProvider) {
+        this.elepyIdUpdater = new ElepyIdUpdater(crud, idProvider);
 
         final ObjectMapper mapper = new ObjectMapper(MongoBsonFactory.createFactory())
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)

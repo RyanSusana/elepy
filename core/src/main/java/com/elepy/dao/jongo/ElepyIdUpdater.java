@@ -7,6 +7,7 @@ import com.elepy.id.HexIdProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -16,8 +17,12 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     private final Crud crud;
 
-    public ElepyIdUpdater(Crud crud) {
+    @Nullable
+    private final IdProvider idProvider;
+
+    public ElepyIdUpdater(Crud crud, IdProvider idProvider) {
         this.crud = crud;
+        this.idProvider = idProvider;
     }
 
 
@@ -48,6 +53,9 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     private IdProvider provider(Object item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
+        if (idProvider != null) {
+            return idProvider;
+        }
         final Field idField = ClassUtils.getIdField(item.getClass());
         final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
 
