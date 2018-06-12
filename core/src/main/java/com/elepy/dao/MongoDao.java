@@ -147,6 +147,11 @@ public class MongoDao<T> implements Crud<T> {
     }
 
     @Override
+    public void deleteQuery(String pattern, Object... params) {
+        collection().remove(pattern, params);
+    }
+
+    @Override
     public void update(T item) {
         final String id = getId(item);
         collection().update("{$or: [{_id: #}, {id: #}]}", id, id).with(item);
