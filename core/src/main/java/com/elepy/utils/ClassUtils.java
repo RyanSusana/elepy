@@ -52,9 +52,9 @@ public class ClassUtils {
     public static Optional<String> getId(Object object) {
 
         for (Field field : object.getClass().getDeclaredFields()) {
-
+            field.setAccessible(true);
             if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
-                field.setAccessible(true);
+
 
                 try {
                     return Optional.ofNullable((String) field.get(object));
