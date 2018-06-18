@@ -22,7 +22,6 @@ public interface Crud<T> {
     Page<T> search(final String query, Object... params);
 
 
-
     void update(final T item);
 
     void create(final T item);
@@ -68,8 +67,10 @@ public interface Crud<T> {
     Class<T> getType();
 
     void delete(final String id);
+
     void deleteQuery(String pattern, Object... params);
-    default void deleteAll(){
+
+    default void deleteAll() {
         deleteQuery("{}");
     }
 }

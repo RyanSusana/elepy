@@ -29,7 +29,6 @@ public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
             final List<T> foundItems = dao.search(String.format("{%s: #}", ClassUtils.getPropertyName(field)), prop).getValues();
             if (foundItems.size() > 0) {
 
-
                 if (foundItems.size() > 1) {
                     throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
                 }
