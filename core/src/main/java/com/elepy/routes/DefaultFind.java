@@ -26,7 +26,7 @@ public class DefaultFind<T> implements Find<T> {
 
         PageSetup pageSetup = new PageSetup(pageSize, pageNumber);
 
-        if (q != null || fieldSort != null || fieldDirection != null) {
+        if ((q != null && !q.trim().isEmpty()) || fieldSort != null || fieldDirection != null) {
             return dao.search(new SearchSetup(q, fieldSort, (fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageSetup);
         }
         return dao.get(pageSetup);
