@@ -35,7 +35,7 @@ public class ClassUtils {
     public static String getPropertyName(Field field) {
         if (field.isAnnotationPresent(JsonProperty.class)) {
             return field.getAnnotation(JsonProperty.class).value();
-        } else if (field.isAnnotationPresent(MongoId.class)) {
+        } else if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
             return "_id";
         } else {
             return field.getName();
