@@ -1,6 +1,7 @@
 package com.elepy.dao;
 
 
+import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
@@ -137,7 +138,7 @@ public class MongoDao<T> implements Crud<T> {
 
 
     private List<Field> getSearchableFields() {
-        return ClassUtils.searchForFieldsWithAnnotation(classType, Searchable.class, MongoId.class, Unique.class);
+        return ClassUtils.searchForFieldsWithAnnotation(classType, Identifier.class, Searchable.class, MongoId.class, Unique.class);
     }
 
 
