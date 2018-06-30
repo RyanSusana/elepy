@@ -87,7 +87,11 @@ public enum FieldType {
             }
         }
 
+        if (type.getSuperclass() == null)
+            return OBJECT;
+
         return getUnannotatedFieldType(type.getSuperclass());
+
 
     }
 }
