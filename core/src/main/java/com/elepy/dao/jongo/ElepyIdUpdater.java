@@ -28,7 +28,7 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public boolean mustGenerateObjectId(Object pojo) {
-        return ClassUtils.getId(pojo) != null;
+        return ClassUtils.getId(pojo) == null;
     }
 
     @Override
