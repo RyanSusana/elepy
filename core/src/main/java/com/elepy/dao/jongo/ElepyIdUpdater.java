@@ -28,12 +28,14 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public boolean mustGenerateObjectId(Object pojo) {
-        return ClassUtils.getId(pojo) == null;
+        final Optional<String> id = ClassUtils.getId(pojo);
+
+        return id.map(s -> s.trim().equals("")).orElse(true);
     }
 
     @Override
     public Object getId(Object pojo) {
-        return ClassUtils.getId(pojo);
+        return ClassUtils.getId(pojo).get();
     }
 
     @Override
