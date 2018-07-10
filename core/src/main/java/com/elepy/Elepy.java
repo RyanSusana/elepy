@@ -107,18 +107,15 @@ public class Elepy {
         }
         setupLogs();
 
-        Map<RestModel, Class<?>> classes = new HashMap<>();
+        Map<ResourceDescriber, Class<?>> classes = new HashMap<>();
 
         Reflections reflections = new Reflections(packages);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
 
-        annotated.forEach(claszz -> classes.put(claszz.getAnnotation(RestModel.class), claszz));
+        annotated.forEach(claszz -> classes.put(new ResourceDescriber<>(this, claszz), claszz));
 
         for (Class<?> model : models) {
-            if (!model.isAnnotationPresent(RestModel.class)) {
-                throw new IllegalArgumentException(model.getName() + " is not annotated with RestModel");
-            }
-            classes.put(model.getAnnotation(RestModel.class), model);
+            classes.put(new ResourceDescriber<>(this, model), model);
         }
         final List<Map<String, Object>> maps = setupPojos(classes);
 
@@ -138,34 +135,34 @@ public class Elepy {
 
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> setupPojos(Map<RestModel, Class<?>> classes) {
+    private List<Map<String, Object>> setupPojos(Map<ResourceDescriber, Class<?>> classes) {
         List<Map<String, Object>> descriptors = new ArrayList<>();
 
         classes.forEach((restModel, clazz) -> {
             evaluateHasIdField(clazz);
             try {
-                List<ObjectEvaluator> evaluators = getObjectEvaluators(restModel);
+                List<ObjectEvaluator<?>> evaluators = restModel.getObjectEvaluators();
                 descriptors.add(getPojoDescriptor(restModel, clazz));
 
-                final Crud<?> dao = restModel.crudProvider().newInstance().setElepy(this).crudFor(clazz);
+                final Crud<?> dao = restModel.getCrudProvider().crudFor(clazz);
 
                 setupFilters(restModel, clazz);
-                if (!restModel.create().equals(RestModelAccessType.DISABLED))
-                    http.post(baseSlug + restModel.slug(), (request, response) -> {
-                        final boolean optional = restModel.createRoute().newInstance().create(request, response, dao, objectMapper, evaluators);
+                if (!restModel.getCreateAccessLevel().equals(RestModelAccessType.DISABLED))
+                    http.post(baseSlug + restModel.getSlug(), (request, response) -> {
+                        final boolean optional = restModel.getCreateImplementation().create(request, response, dao, objectMapper, evaluators);
 
                         return "";
                     });
-                if (!restModel.update().equals(RestModelAccessType.DISABLED))
-                    http.put(baseSlug + restModel.slug(), (request, response) -> {
-                        restModel.updateRoute().newInstance().update(request, response, dao, clazz, objectMapper, evaluators);
+                if (!restModel.getUpdateAccessLevel().equals(RestModelAccessType.DISABLED))
+                    http.put(baseSlug + restModel.getSlug(), (request, response) -> {
+                        restModel.getUpdateImplementation().update(request, response, dao, clazz, objectMapper, evaluators);
 
                         return response.body();
                     });
-                if (!restModel.delete().equals(RestModelAccessType.DISABLED))
-                    http.delete(baseSlug + restModel.slug() + "/:id", ((request, response) -> {
-                        Optional delete = restModel.deleteRoute().newInstance().delete(request, response, dao, objectMapper);
-                        if (delete.isPresent()) {
+                if (!restModel.getDeleteAccessLevel().equals(RestModelAccessType.DISABLED))
+                    http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
+                        boolean delete = restModel.getDeleteImplementation().delete(request, response, dao, objectMapper);
+                        if (delete) {
                             response.status(200);
                             return "Successfully deleted item!";
                         } else {
@@ -173,11 +170,13 @@ public class Elepy {
                             return "Failed to delete item.";
                         }
                     }));
-                if (!restModel.findAll().equals(RestModelAccessType.DISABLED))
-                    http.get(baseSlug + restModel.slug(), (request, response) -> objectMapper.writeValueAsString(restModel.findRoute().newInstance().find(request, response, dao, objectMapper)));
-                if (!restModel.findOne().equals(RestModelAccessType.DISABLED))
-                    http.get(baseSlug + restModel.slug() + "/:id", (request, response) -> {
-                        final Optional<Object> set = restModel.findOneRoute().newInstance().findOne(request, response, dao, objectMapper);
+                if (!restModel.getFindAccessLevel().equals(RestModelAccessType.DISABLED))
+                    http.get(baseSlug + restModel.getSlug(), (request, response) -> objectMapper.writeValueAsString(restModel.getFindImplementation().find(request, response, dao, objectMapper)));
+
+
+                if (!restModel.getFindAccessLevel().equals(RestModelAccessType.DISABLED))
+                    http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
+                        final Optional<Object> set = restModel.getFindImplementation().findOne(request, response, dao, objectMapper);
                         if (set.isPresent()) {
                             return objectMapper.writeValueAsString(set.get());
                         }
@@ -194,18 +193,6 @@ public class Elepy {
         });
 
         return descriptors;
-    }
-
-    private List<ObjectEvaluator> getObjectEvaluators(RestModel restModel) throws IllegalAccessException, InstantiationException {
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        evaluators.add(baseObjectEvaluator);
-
-        for (Class<? extends ObjectEvaluator> clazz : restModel.objectEvaluators()) {
-            if (clazz != null) {
-                evaluators.add(clazz.newInstance());
-            }
-        }
-        return evaluators;
     }
 
 
@@ -243,16 +230,16 @@ public class Elepy {
         });
     }
 
-    private Map<String, Object> getPojoDescriptor(RestModel restModel, Class<?> clazz) {
+    private Map<String, Object> getPojoDescriptor(ResourceDescriber restModel, Class<?> clazz) {
         Map<String, Object> model = new HashMap<>();
         if (baseSlug.equals("/")) {
-            model.put("slug", restModel.slug());
+            model.put("slug", restModel.getSlug());
 
         } else {
-            model.put("slug", baseSlug + restModel.slug());
+            model.put("slug", baseSlug + restModel.getSlug());
         }
-        model.put("icon", restModel.icon());
-        model.put("name", restModel.name());
+        //model.put("icon", restModel.icon()); //TODO
+        model.put("name", restModel.getName());
 
         model.put("javaClass", clazz.getName());
 
@@ -261,13 +248,13 @@ public class Elepy {
         return model;
     }
 
-    private Map<String, RestModelAccessType> getActions(RestModel restModel) {
+    private Map<String, RestModelAccessType> getActions(ResourceDescriber restModel) {
         Map<String, RestModelAccessType> actions = new HashMap<>();
-        actions.put("findOne", restModel.findOne());
-        actions.put("findAll", restModel.findAll());
-        actions.put("update", restModel.update());
-        actions.put("delete", restModel.delete());
-        actions.put("create", restModel.create());
+        actions.put("findOne", restModel.getFindAccessLevel());
+        actions.put("findAll", restModel.getFindAccessLevel());
+        actions.put("update", restModel.getUpdateAccessLevel());
+        actions.put("delete", restModel.getDeleteAccessLevel());
+        actions.put("create", restModel.getCreateAccessLevel());
         return actions;
     }
 
@@ -281,31 +268,31 @@ public class Elepy {
     }
 
 
-    private void setupFilters(RestModel restModel, Class<?> clazz) throws ClassCastException {
+    private void setupFilters(ResourceDescriber restModel, Class<?> clazz) throws ClassCastException {
 
 
         final Filter adminFilter = allAdminFilters();
 
         if (adminFilter != null) {
-            http.before(baseSlug + restModel.slug(), (request, response) -> {
+            http.before(baseSlug + restModel.getSlug(), (request, response) -> {
                 switch (request.requestMethod().toUpperCase()) {
                     case "GET":
-                        if (restModel.findAll() == RestModelAccessType.ADMIN) {
+                        if (restModel.getFindAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "POST":
-                        if (restModel.create() == RestModelAccessType.ADMIN) {
+                        if (restModel.getCreateAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "UPDATE":
-                        if (restModel.update() == RestModelAccessType.ADMIN) {
+                        if (restModel.getUpdateAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "DELETE":
-                        if (restModel.delete() == RestModelAccessType.ADMIN) {
+                        if (restModel.getDeleteAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
@@ -313,20 +300,20 @@ public class Elepy {
                         break;
                 }
             });
-            http.before(baseSlug + restModel.slug() + "/*", (request, response) -> {
+            http.before(baseSlug + restModel.getSlug() + "/*", (request, response) -> {
                 switch (request.requestMethod().toUpperCase()) {
                     case "GET":
-                        if (restModel.findOne() == RestModelAccessType.ADMIN) {
+                        if (restModel.getFindAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "UPDATE":
-                        if (restModel.update() == RestModelAccessType.ADMIN) {
+                        if (restModel.getUpdateAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "DELETE":
-                        if (restModel.delete() == RestModelAccessType.ADMIN) {
+                        if (restModel.getDeleteAccessLevel() == RestModelAccessType.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
+import java.util.Optional;
+
 public class DefaultFind<T> implements Find<T> {
 
 
@@ -30,5 +32,12 @@ public class DefaultFind<T> implements Find<T> {
             return dao.search(new SearchSetup(q, fieldSort, (fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageSetup);
         }
         return dao.get(pageSetup);
+    }
+
+    @Override
+    public Optional<T> findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) {
+        response.type("application/json");
+
+        return dao.getById(request.params("id"));
     }
 }

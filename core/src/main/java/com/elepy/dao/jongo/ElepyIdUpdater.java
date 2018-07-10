@@ -59,7 +59,7 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
             return idProvider;
         }
         final Field idField = ClassUtils.getIdField(item.getClass());
-        final RestModel annotation = item.getClass().getAnnotation(RestModel.class);
+        final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
         if (annotation != null) {
             final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.idProvider());

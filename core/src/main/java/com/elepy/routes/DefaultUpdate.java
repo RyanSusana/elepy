@@ -17,7 +17,7 @@ public class DefaultUpdate<T> implements Update<T> {
     private T before;
 
     @Override
-    public Optional<T> update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public boolean update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
         String body = request.body();
 
         T updated = objectMapper.readValue(body, clazz);
@@ -45,7 +45,7 @@ public class DefaultUpdate<T> implements Update<T> {
         dao.update(updated);
         response.status(200);
         response.body("The item is updated");
-        return Optional.of(updated);
+        return true;
     }
 
     public T before() {

@@ -6,6 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
+import java.util.Optional;
+
 public interface Find<T> {
     Page<T> find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
+
+    Optional<T> findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
+
 }

@@ -9,5 +9,5 @@ import java.util.Optional;
 
 
 public interface Delete<T> {
-    Optional<T> delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
+    boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
 }
