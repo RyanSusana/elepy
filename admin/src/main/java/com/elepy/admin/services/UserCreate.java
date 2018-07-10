@@ -6,14 +6,14 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.routes.Create;
+import com.elepy.routes.CreateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
 import java.util.List;
 
-public class UserCreate implements Create<User> {
+public class UserCreate implements CreateHandler<User> {
     @Override
     public boolean create(Request request, Response response, Crud<User> dao, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
         String body = request.body();

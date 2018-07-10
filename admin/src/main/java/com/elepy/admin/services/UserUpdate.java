@@ -7,7 +7,7 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.routes.Update;
+import com.elepy.routes.UpdateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
@@ -15,9 +15,9 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-public class UserUpdate implements Update<User> {
+public class UserUpdate implements UpdateHandler<User> {
     @Override
-    public Optional<User> update(Request request, Response response, Crud<User> dao, Class<? extends User> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
+    public boolean update(Request request, Response response, Crud<User> dao, Class<? extends User> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
         String body = request.body();
         User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);
         User updated = objectMapper.readValue(body, clazz);
@@ -60,6 +60,6 @@ public class UserUpdate implements Update<User> {
         dao.update(updated);
         response.status(200);
         response.body("The item is updated");
-        return Optional.of(updated);
+        return true;
     }
 }

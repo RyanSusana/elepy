@@ -3,12 +3,16 @@ package com.elepy.admin.models;
 import com.elepy.admin.services.*;
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
-import com.elepy.id.HexIdProvider;
-import com.elepy.models.RestModelAccessType;
+import com.elepy.models.AccessLevel;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
+@Delete(handler = UserDelete.class)
+@Find(accessLevel = AccessLevel.ADMIN)
+@Create(accessLevel = AccessLevel.ADMIN, handler = UserCreate.class)
+@Update(handler = UserUpdate.class)
+@Evaluators({UserEvaluator.class})
 @RestModel(
         //The only 2 required properties in RestModels are are slug and name
         slug = "/users",
@@ -19,29 +23,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
         description = "",
 
-        //Custom route classes these must have an empty constructor and implement one of the Crud Operations: Create, FindOne, Find, Update or Delete.
-        deleteRoute = UserDelete.class,
-        createRoute = UserCreate.class,
-        updateRoute = UserUpdate.class,
-
-        //Access type on each of the setup, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
-        //If admin it will run through all the hooked admin filters
-        findAll = RestModelAccessType.ADMIN,
-        findOne = RestModelAccessType.ADMIN,
-        create = RestModelAccessType.ADMIN,
-
         //Sort
         //The default sorted mongo field. default is "_id"
         defaultSortField = "username",
         //Ascending sort or descending sort
-        defaultSortDirection = SortOption.ASCENDING,
-
-
-        //Specifies the class that will handle ID creation for this resource
-        idProvider = HexIdProvider.class,
-
-        //Array of ObjectEvaluators that evaluates an object on Create and Update operations
-        objectEvaluators = {UserEvaluator.class}
+        defaultSortDirection = SortOption.ASCENDING
 )
 public class User {
 

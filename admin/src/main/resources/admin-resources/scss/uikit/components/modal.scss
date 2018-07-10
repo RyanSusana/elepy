@@ -141,7 +141,7 @@ $modal-close-outside-hover-color: $global-inverse-color !default;
  ========================================================================== */
 
 /*
- * 1. Create position context for spinner and close button
+ * 1. CreateHandler position context for spinner and close button
  * 2. Dimensions
  * 3. Fix `max-width: 100%` not working in combination with flex and responsive images in IE11
  *    `!important` needed to overwrite `uk-width-auto`. See `#modal-media-image` in tests

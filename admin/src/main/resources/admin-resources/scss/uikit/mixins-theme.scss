@@ -627,7 +627,7 @@
   }
 
   /*
-     * Create position context to superimpose the successor elements border
+     * CreateHandler position context to superimpose the successor elements border
      * Known issue: If you use an `a` element as button and an icon inside,
      * the active state will not work if you click the icon inside the button
      * Workaround: Just use a `button` or `input` element as button

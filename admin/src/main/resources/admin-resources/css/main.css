@@ -5093,7 +5093,7 @@ select.uk-form-width-xsmall {
  ========================================================================== */
 /*
  * 1. Container fits its content
- * 2. Create position context
+ * 2. CreateHandler position context
  * 3. Prevent content overflow
  * 4. Behave like most inline-block elements
  */
@@ -5519,7 +5519,7 @@ select.uk-form-width-xsmall {
 /*
  * 1. Using `flex` instead of `inline-block` to prevent whitespace betweent child elements
  * 2. Behave like button
- * 3. Create position context
+ * 3. CreateHandler position context
  */
 .uk-button-group {
     /* 1 */
@@ -5541,7 +5541,7 @@ select.uk-form-width-xsmall {
 }
 
 /*
-   * Create position context to superimpose the successor elements border
+   * CreateHandler position context to superimpose the successor elements border
    * Known issue: If you use an `a` element as button and an icon inside,
    * the active state will not work if you click the icon inside the button
    * Workaround: Just use a `button` or `input` element as button
@@ -7013,7 +7013,7 @@ select.uk-form-width-xsmall {
  ========================================================================== */
 /*
  * 1. Container fits its content
- * 2. Create position context
+ * 2. CreateHandler position context
  * 3. Prevent content overflow
  * 4. Reset `form`
  */
@@ -7468,7 +7468,7 @@ ul.uk-nav-sub {
    Component: Navbar
  ========================================================================== */
 /*
- * 1. Create position context to center navbar group
+ * 1. CreateHandler position context to center navbar group
  */
 .uk-navbar {
     display: flex;
@@ -7510,7 +7510,7 @@ ul.uk-nav-sub {
 
 /*
  * Horizontal alignment
- * 1. Create position context for centered navbar with sub groups (left/right)
+ * 1. CreateHandler position context for centered navbar with sub groups (left/right)
  * 2. Needed for dropdowns because a new position context is created
  *    `z-index` must be smaller than off-canvas
  * 3. Fix text wrapping if the centered section is larger than 50% of the navbar
@@ -7910,7 +7910,7 @@ ul.uk-nav-sub {
 /*
  * 1. Space is allocated solely based on content dimensions: 0 0 auto
  * 2. Gutter
- * 3. Create position context for dropdowns
+ * 3. CreateHandler position context for dropdowns
  */
 .uk-subnav > * {
     /* 1 */
@@ -8087,7 +8087,7 @@ ul.uk-nav-sub {
 /*
  * 1. Space is allocated solely based on content dimensions: 0 0 auto
  * 2. Gutter
- * 3. Create position context for dropdowns
+ * 3. CreateHandler position context for dropdowns
  */
 .uk-pagination > * {
     /* 1 */
@@ -8162,7 +8162,7 @@ ul.uk-nav-sub {
 /*
  * 1. Space is allocated solely based on content dimensions: 0 0 auto
  * 2. Gutter
- * 3. Create position context for dropdowns
+ * 3. CreateHandler position context for dropdowns
  */
 .uk-tab > * {
     /* 1 */
@@ -8793,7 +8793,7 @@ ul.uk-nav-sub {
 /* Dialog
  ========================================================================== */
 /*
- * 1. Create position context for spinner and close button
+ * 1. CreateHandler position context for spinner and close button
  * 2. Dimensions
  * 3. Fix `max-width: 100%` not working in combination with flex and responsive images in IE11
  *    `!important` needed to overwrite `uk-width-auto`. See `#modal-media-image` in tests
@@ -9131,7 +9131,7 @@ ul.uk-nav-sub {
 /* Items
  ========================================================================== */
 /*
- * 1. Create position and stacking context
+ * 1. CreateHandler position and stacking context
  * 2. Reset list
  * 3. Clip child elements
  * 4. Prevent displaying the callout information on iOS.
@@ -9207,7 +9207,7 @@ ul.uk-nav-sub {
  ========================================================================== */
 /*
  * 1. Optimize animation
- * 2. Create a containing block. In Safari it's neither created by `transform` nor `will-change`.
+ * 2. CreateHandler a containing block. In Safari it's neither created by `transform` nor `will-change`.
  */
 .uk-slider-items {
     /* 1 */
@@ -9238,7 +9238,7 @@ ul.uk-nav-sub {
  ========================================================================== */
 /*
  * 1. Let items take content dimensions (0 0 auto)
- * 2. Create position context
+ * 2. CreateHandler position context
  * 3. Disable horizontal panning gestures in IE11 and Edge
  */
 .uk-slider-items > * {
@@ -11924,7 +11924,7 @@ iframe.uk-cover {
  ========================================================================== */
 /*
  * 1. Container fits its content
- * 2. Create position context
+ * 2. CreateHandler position context
  * 3. Prevent content overflow
  * 4. Behave like most inline-block elements
  * 5. Force hardware acceleration without creating a new stacking context
@@ -12265,7 +12265,7 @@ iframe.uk-cover {
 /* Dragover State
  ========================================================================== */
 /*
- * Create a box-shadow when dragging a file over the upload area
+ * CreateHandler a box-shadow when dragging a file over the upload area
  */
 .uk-dragover {
     box-shadow: 0 0 20px rgba(100, 100, 100, 0.3);

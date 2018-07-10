@@ -97,7 +97,7 @@ Here is an example of a User resource.
 
 
         //Specifies the class that will handle ID creation for this resource
-        idProvider = HexIdProvider.class,
+        identityProvider = HexIdProvider.class,
 
         //Array of ObjectEvaluators that evaluates an object on Create and Update operations
         objectEvaluators = {UserEvaluator.class}

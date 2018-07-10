@@ -43,7 +43,7 @@
 
 /*
  * 1. Optimize animation
- * 2. Create a containing block. In Safari it's neither created by `transform` nor `will-change`.
+ * 2. CreateHandler a containing block. In Safari it's neither created by `transform` nor `will-change`.
  */
 
 .uk-slider-items {
@@ -77,7 +77,7 @@
 
 /*
  * 1. Let items take content dimensions (0 0 auto)
- * 2. Create position context
+ * 2. CreateHandler position context
  * 3. Disable horizontal panning gestures in IE11 and Edge
  */
 
