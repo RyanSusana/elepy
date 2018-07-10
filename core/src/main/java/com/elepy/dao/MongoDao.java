@@ -5,7 +5,7 @@ import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
-import com.elepy.concepts.IdProvider;
+import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.jongo.ElepyMapper;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
@@ -37,10 +37,10 @@ public class MongoDao<T> implements Crud<T> {
         this(db, collectionName, classType, null);
     }
 
-    public MongoDao(final DB db, final String collectionName, final Class<T> classType, IdProvider<T> idProvider) {
+    public MongoDao(final DB db, final String collectionName, final Class<T> classType, IdentityProvider<T> identityProvider) {
 
 
-        this.jongo = new Jongo(db, new ElepyMapper(this, idProvider));
+        this.jongo = new Jongo(db, new ElepyMapper(this, identityProvider));
 
 
         this.objectMapper = new ObjectMapper();

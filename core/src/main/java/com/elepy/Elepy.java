@@ -7,7 +7,7 @@ import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.models.RestModelAccessType;
+import com.elepy.models.AccessLevel;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -147,19 +147,19 @@ public class Elepy {
                 final Crud<?> dao = restModel.getCrudProvider().crudFor(clazz);
 
                 setupFilters(restModel, clazz);
-                if (!restModel.getCreateAccessLevel().equals(RestModelAccessType.DISABLED))
+                if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED))
                     http.post(baseSlug + restModel.getSlug(), (request, response) -> {
                         final boolean optional = restModel.getCreateImplementation().create(request, response, dao, objectMapper, evaluators);
 
                         return "";
                     });
-                if (!restModel.getUpdateAccessLevel().equals(RestModelAccessType.DISABLED))
+                if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED))
                     http.put(baseSlug + restModel.getSlug(), (request, response) -> {
                         restModel.getUpdateImplementation().update(request, response, dao, clazz, objectMapper, evaluators);
 
                         return response.body();
                     });
-                if (!restModel.getDeleteAccessLevel().equals(RestModelAccessType.DISABLED))
+                if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED))
                     http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
                         boolean delete = restModel.getDeleteImplementation().delete(request, response, dao, objectMapper);
                         if (delete) {
@@ -170,11 +170,11 @@ public class Elepy {
                             return "Failed to delete item.";
                         }
                     }));
-                if (!restModel.getFindAccessLevel().equals(RestModelAccessType.DISABLED))
+                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
                     http.get(baseSlug + restModel.getSlug(), (request, response) -> objectMapper.writeValueAsString(restModel.getFindImplementation().find(request, response, dao, objectMapper)));
 
 
-                if (!restModel.getFindAccessLevel().equals(RestModelAccessType.DISABLED))
+                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
                     http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
                         final Optional<Object> set = restModel.getFindImplementation().findOne(request, response, dao, objectMapper);
                         if (set.isPresent()) {
@@ -248,8 +248,8 @@ public class Elepy {
         return model;
     }
 
-    private Map<String, RestModelAccessType> getActions(ResourceDescriber restModel) {
-        Map<String, RestModelAccessType> actions = new HashMap<>();
+    private Map<String, AccessLevel> getActions(ResourceDescriber restModel) {
+        Map<String, AccessLevel> actions = new HashMap<>();
         actions.put("findOne", restModel.getFindAccessLevel());
         actions.put("findAll", restModel.getFindAccessLevel());
         actions.put("update", restModel.getUpdateAccessLevel());
@@ -277,22 +277,22 @@ public class Elepy {
             http.before(baseSlug + restModel.getSlug(), (request, response) -> {
                 switch (request.requestMethod().toUpperCase()) {
                     case "GET":
-                        if (restModel.getFindAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getFindAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "POST":
-                        if (restModel.getCreateAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getCreateAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "UPDATE":
-                        if (restModel.getUpdateAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "DELETE":
-                        if (restModel.getDeleteAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getDeleteAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
@@ -303,17 +303,17 @@ public class Elepy {
             http.before(baseSlug + restModel.getSlug() + "/*", (request, response) -> {
                 switch (request.requestMethod().toUpperCase()) {
                     case "GET":
-                        if (restModel.getFindAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getFindAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "UPDATE":
-                        if (restModel.getUpdateAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;
                     case "DELETE":
-                        if (restModel.getDeleteAccessLevel() == RestModelAccessType.ADMIN) {
+                        if (restModel.getDeleteAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
                         break;

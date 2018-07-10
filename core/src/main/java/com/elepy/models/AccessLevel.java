@@ -1,5 +1,5 @@
 package com.elepy.models;
 
-public enum RestModelAccessType {
+public enum AccessLevel {
     ADMIN, PUBLIC, DISABLED
 }

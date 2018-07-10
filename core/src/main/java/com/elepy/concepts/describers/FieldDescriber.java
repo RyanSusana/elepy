@@ -66,8 +66,8 @@ public class FieldDescriber {
 
     private void mapFieldAnnotations(Field field, Map<String, Object> fieldMap) {
 
-        fieldMap.put("required", field.getAnnotation(RequiredField.class) != null);
-        fieldMap.put("editable", field.getAnnotation(NonEditable.class) == null);
+        fieldMap.put("required", field.getAnnotation(Required.class) != null);
+        fieldMap.put("editable", field.getAnnotation(Uneditable.class) == null);
 
         Importance importance = field.getAnnotation(Importance.class);
         fieldMap.put("importance", importance == null ? 0 : importance.value());

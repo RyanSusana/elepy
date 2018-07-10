@@ -1,9 +1,8 @@
 package com.elepy.dao.jongo;
 
-import com.elepy.annotations.RestModel;
-import com.elepy.concepts.IdProvider;
+import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
-import com.elepy.id.HexIdProvider;
+import com.elepy.id.HexIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
 
@@ -18,11 +17,11 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
     private final Crud crud;
 
     @Nullable
-    private final IdProvider idProvider;
+    private final IdentityProvider identityProvider;
 
-    public ElepyIdUpdater(Crud crud, IdProvider idProvider) {
+    public ElepyIdUpdater(Crud crud, IdentityProvider identityProvider) {
         this.crud = crud;
-        this.idProvider = idProvider;
+        this.identityProvider = identityProvider;
     }
 
 
@@ -53,23 +52,23 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
         }
     }
 
-    private IdProvider provider(Object item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private IdentityProvider provider(Object item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
-        if (idProvider != null) {
-            return idProvider;
+        if (identityProvider != null) {
+            return identityProvider;
         }
         final Field idField = ClassUtils.getIdField(item.getClass());
         final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
         if (annotation != null) {
-            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.idProvider());
+            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.value());
             if (!o.isPresent()) {
-                throw new IllegalStateException(annotation.idProvider() + " has no empty constructor.");
+                throw new IllegalStateException(annotation.value() + " has no empty constructor.");
             }
-            return ((Constructor<IdProvider>) o.get()).newInstance();
+            return ((Constructor<IdentityProvider>) o.get()).newInstance();
 
         } else {
-            return new HexIdProvider<>();
+            return new HexIdentityProvider<>();
         }
 
     }

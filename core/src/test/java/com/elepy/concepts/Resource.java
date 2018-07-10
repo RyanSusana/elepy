@@ -24,7 +24,7 @@ public class Resource {
     @Unique
     private String unique;
 
-    @RequiredField
+    @Required
     private String required;
 
     @Text(minimumLength = 20)
@@ -47,7 +47,7 @@ public class Resource {
 
     private Object innerObject;
 
-    @NonEditable
+    @Uneditable
     private String nonEditable;
 
     public Object getInnerObject() {

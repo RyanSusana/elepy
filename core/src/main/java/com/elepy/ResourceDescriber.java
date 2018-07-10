@@ -2,14 +2,14 @@ package com.elepy;
 
 
 import com.elepy.annotations.Crud;
-import com.elepy.annotations.ObjectEvaluators;
+import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.RestModel;
-import com.elepy.concepts.IdProvider;
+import com.elepy.concepts.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.MongoProvider;
-import com.elepy.models.RestModelAccessType;
+import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
 
@@ -30,14 +30,14 @@ public class ResourceDescriber<T> {
     private FindHandler<T> findImplementation;
     private CreateHandler<T> createImplementation;
 
-    private IdProvider<T> idProvider;
+    private IdentityProvider<T> identityProvider;
 
     private CrudProvider<T> crudProvider;
 
-    private RestModelAccessType deleteAccessLevel;
-    private RestModelAccessType findAccessLevel;
-    private RestModelAccessType updateAccessLevel;
-    private RestModelAccessType createAccessLevel;
+    private AccessLevel deleteAccessLevel;
+    private AccessLevel findAccessLevel;
+    private AccessLevel updateAccessLevel;
+    private AccessLevel createAccessLevel;
 
     private List<ObjectEvaluator<T>> objectEvaluators;
     private String slug;
@@ -80,7 +80,7 @@ public class ResourceDescriber<T> {
     private void setupEvaluators() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         objectEvaluators = new ArrayList<>();
 
-        final ObjectEvaluators annotation = clazz.getAnnotation(ObjectEvaluators.class);
+        final Evaluators annotation = clazz.getAnnotation(Evaluators.class);
         objectEvaluators.add(new ObjectEvaluatorImpl<>());
 
         if (annotation != null) {
@@ -114,7 +114,7 @@ public class ResourceDescriber<T> {
 
         if (deleteAnnotation == null) {
             deleteImplementation = new DefaultDelete<>();
-            deleteAccessLevel = RestModelAccessType.ADMIN;
+            deleteAccessLevel = AccessLevel.ADMIN;
         } else {
             final Constructor<? extends DeleteHandler> constructor = ClassUtils.emptyConstructor(deleteAnnotation.handler());
             deleteImplementation = constructor.newInstance();
@@ -122,7 +122,7 @@ public class ResourceDescriber<T> {
         }
 
         if (updateAnnotation == null) {
-            updateAccessLevel = RestModelAccessType.ADMIN;
+            updateAccessLevel = AccessLevel.ADMIN;
             updateImplementation = new DefaultUpdate<>();
         } else {
             final Constructor<? extends UpdateHandler> constructor = ClassUtils.emptyConstructor(updateAnnotation.handler());
@@ -131,7 +131,7 @@ public class ResourceDescriber<T> {
         }
 
         if (findAnnotation == null) {
-            findAccessLevel = RestModelAccessType.PUBLIC;
+            findAccessLevel = AccessLevel.PUBLIC;
             findImplementation = new DefaultFind<>();
         } else {
             final Constructor<? extends FindHandler> constructor = ClassUtils.emptyConstructor(findAnnotation.handler());
@@ -140,7 +140,7 @@ public class ResourceDescriber<T> {
         }
 
         if (createAnnotation == null) {
-            createAccessLevel = RestModelAccessType.PUBLIC;
+            createAccessLevel = AccessLevel.PUBLIC;
             createImplementation = new DefaultCreate<>();
         } else {
             final Constructor<? extends CreateHandler> constructor = ClassUtils.emptyConstructor(createAnnotation.handler());
@@ -174,19 +174,19 @@ public class ResourceDescriber<T> {
         return createImplementation;
     }
 
-    public RestModelAccessType getDeleteAccessLevel() {
+    public AccessLevel getDeleteAccessLevel() {
         return deleteAccessLevel;
     }
 
-    public RestModelAccessType getFindAccessLevel() {
+    public AccessLevel getFindAccessLevel() {
         return findAccessLevel;
     }
 
-    public RestModelAccessType getUpdateAccessLevel() {
+    public AccessLevel getUpdateAccessLevel() {
         return updateAccessLevel;
     }
 
-    public RestModelAccessType getCreateAccessLevel() {
+    public AccessLevel getCreateAccessLevel() {
         return createAccessLevel;
     }
 
@@ -214,8 +214,8 @@ public class ResourceDescriber<T> {
         return Objects.equals(slug, that.slug);
     }
 
-    public IdProvider<T> getIdProvider() {
-        return idProvider;
+    public IdentityProvider<T> getIdentityProvider() {
+        return identityProvider;
     }
 
     @Override

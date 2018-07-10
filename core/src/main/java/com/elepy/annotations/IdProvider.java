@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.id.HexIdProvider;
+import com.elepy.concepts.IdentityProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface IdProvider {
 
-    Class<? extends com.elepy.concepts.IdProvider> idProvider() default HexIdProvider.class;
+    Class<? extends IdentityProvider> value();
 }

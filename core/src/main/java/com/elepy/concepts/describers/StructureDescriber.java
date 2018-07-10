@@ -1,6 +1,6 @@
 package com.elepy.concepts.describers;
 
-import com.elepy.annotations.GeneratedField;
+import com.elepy.annotations.Generated;
 import com.elepy.annotations.Hidden;
 
 import java.lang.reflect.Field;
@@ -50,7 +50,7 @@ public class StructureDescriber {
     private List<Map<String, Object>> describeMethods() {
         List<Map<String, Object>> fields = new ArrayList<>();
         for (Method field : cls.getMethods()) {
-            if (field.isAnnotationPresent(GeneratedField.class))
+            if (field.isAnnotationPresent(Generated.class))
                 fields.add(new MethodDescriber(field).getFieldMap());
         }
 

@@ -1,11 +1,11 @@
 package com.elepy.id;
 
-import com.elepy.concepts.IdProvider;
+import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 
 import java.util.Random;
 
-public class HexIdProvider<T> implements IdProvider<T> {
+public class HexIdentityProvider<T> implements IdentityProvider<T> {
 
 
     private final boolean allCaps;
@@ -13,16 +13,16 @@ public class HexIdProvider<T> implements IdProvider<T> {
     private final int length;
     private final String prefix;
 
-    public HexIdProvider() {
+    public HexIdentityProvider() {
         this("", false, 10);
     }
 
-    public HexIdProvider(String prefix, boolean allCaps, int length) {
+    public HexIdentityProvider(String prefix, boolean allCaps, int length) {
         this.allCaps = allCaps;
         this.length = length;
         this.prefix = prefix == null ? "" : prefix;
         if (length < 2) {
-            throw new IllegalStateException("Can't create a HexIdProvider with a minimum length of less than 2");
+            throw new IllegalStateException("Can't create a HexIdentityProvider with a minimum length of less than 2");
         }
     }
 

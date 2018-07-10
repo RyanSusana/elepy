@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
 
-import com.elepy.models.RestModelAccessType;
+import com.elepy.models.AccessLevel;
 import com.elepy.routes.CreateHandler;
 import com.elepy.routes.DefaultCreate;
 
@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Create {
-    RestModelAccessType accessLevel() default RestModelAccessType.ADMIN;
+    AccessLevel accessLevel() default AccessLevel.ADMIN;
     Class<? extends CreateHandler> handler() default DefaultCreate.class;
 }

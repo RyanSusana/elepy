@@ -103,7 +103,7 @@ public class MethodDescriber {
 
     private void mapMethodAnnotations(Method field, Map<String, Object> fieldMap) {
 
-        fieldMap.put("required", method.getAnnotation(RequiredField.class) != null);
+        fieldMap.put("required", method.getAnnotation(Required.class) != null);
         fieldMap.put("editable", false);
 
         Importance importance = field.getAnnotation(Importance.class);
