@@ -21,10 +21,8 @@ import java.util.Objects;
 
 public class ResourceDescriber<T> {
 
-    public Class<T> clazz;
-
-
     private final Elepy elepy;
+    public Class<T> clazz;
     private DeleteHandler<T> deleteImplementation;
     private UpdateHandler<T> updateImplementation;
     private FindHandler<T> findImplementation;

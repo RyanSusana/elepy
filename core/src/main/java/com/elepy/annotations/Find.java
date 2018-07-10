@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Find {
     AccessLevel accessLevel() default AccessLevel.ADMIN;
+
     Class<? extends FindHandler> handler() default DefaultFind.class;
 }

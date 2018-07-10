@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Create {
     AccessLevel accessLevel() default AccessLevel.ADMIN;
+
     Class<? extends CreateHandler> handler() default DefaultCreate.class;
 }

@@ -89,16 +89,17 @@ public class ClassUtils {
         return null;
     }
 
-    public static<T> Constructor<T> emptyConstructor(Class<T> cls){
+    public static <T> Constructor<T> emptyConstructor(Class<T> cls) {
         final Optional<Constructor<?>> emptyConstructor = getEmptyConstructor(cls);
 
-        if(emptyConstructor.isPresent()){
+        if (emptyConstructor.isPresent()) {
 
             return (Constructor<T>) emptyConstructor.get();
         }
         throw new IllegalArgumentException("Elepy Object Constructor must be empty, with no parameters.");
 
     }
+
     public static Optional<Constructor<?>> getEmptyConstructor(Class<?> cls) {
         for (Constructor<?> constructor : cls.getConstructors()) {
             if (constructor.getParameterCount() == 0) {

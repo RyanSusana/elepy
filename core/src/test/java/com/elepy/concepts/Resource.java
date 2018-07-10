@@ -1,7 +1,7 @@
 package com.elepy.concepts;
 
-import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
+import com.elepy.annotations.*;
 import com.elepy.models.TextType;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -54,11 +54,11 @@ public class Resource {
         return innerObject;
     }
 
-    public void setInnerObject(Resource innerObject) {
+    public void setInnerObject(Object innerObject) {
         this.innerObject = innerObject;
     }
 
-    public void setInnerObject(Object innerObject) {
+    public void setInnerObject(Resource innerObject) {
         this.innerObject = innerObject;
     }
 

@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Delete {
     AccessLevel accessLevel() default AccessLevel.ADMIN;
+
     Class<? extends DeleteHandler> handler() default DefaultDelete.class;
 }
