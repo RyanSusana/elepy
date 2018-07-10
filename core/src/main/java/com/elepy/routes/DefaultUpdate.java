@@ -12,7 +12,7 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultUpdate<T> implements Update<T> {
+public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     private T before;
 

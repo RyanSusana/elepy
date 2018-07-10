@@ -7,7 +7,7 @@ import spark.Response;
 
 import java.util.Optional;
 
-public class DefaultFind<T> implements Find<T> {
+public class DefaultFind<T> implements FindHandler<T> {
 
 
     @Override

@@ -2,8 +2,8 @@ package com.elepy.annotations;
 
 
 import com.elepy.models.RestModelAccessType;
-import com.elepy.routes.DefaultDelete;
 import com.elepy.routes.DefaultFind;
+import com.elepy.routes.FindHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Find {
     RestModelAccessType accessLevel() default RestModelAccessType.ADMIN;
-    Class<? extends com.elepy.routes.Find> implementation() default DefaultFind.class;
+    Class<? extends FindHandler> handler() default DefaultFind.class;
 }

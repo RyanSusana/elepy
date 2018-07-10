@@ -3,6 +3,7 @@ package com.elepy.annotations;
 
 import com.elepy.models.RestModelAccessType;
 import com.elepy.routes.DefaultUpdate;
+import com.elepy.routes.UpdateHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,5 +14,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Update {
     RestModelAccessType accessLevel() default RestModelAccessType.ADMIN;
-    Class<? extends com.elepy.routes.Update> implementation() default DefaultUpdate.class;
+
+    Class<? extends UpdateHandler> handler() default DefaultUpdate.class;
 }

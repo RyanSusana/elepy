@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface Update<T> {
+public interface UpdateHandler<T> {
     boolean update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception;
 
 

@@ -25,10 +25,10 @@ public class ResourceDescriber<T> {
 
 
     private final Elepy elepy;
-    private Delete<T> deleteImplementation;
-    private Update<T> updateImplementation;
-    private Find<T> findImplementation;
-    private Create<T> createImplementation;
+    private DeleteHandler<T> deleteImplementation;
+    private UpdateHandler<T> updateImplementation;
+    private FindHandler<T> findImplementation;
+    private CreateHandler<T> createImplementation;
 
     private IdProvider<T> idProvider;
 
@@ -116,7 +116,7 @@ public class ResourceDescriber<T> {
             deleteImplementation = new DefaultDelete<>();
             deleteAccessLevel = RestModelAccessType.ADMIN;
         } else {
-            final Constructor<? extends Delete> constructor = ClassUtils.emptyConstructor(deleteAnnotation.implementation());
+            final Constructor<? extends DeleteHandler> constructor = ClassUtils.emptyConstructor(deleteAnnotation.handler());
             deleteImplementation = constructor.newInstance();
             deleteAccessLevel = deleteAnnotation.accessLevel();
         }
@@ -125,7 +125,7 @@ public class ResourceDescriber<T> {
             updateAccessLevel = RestModelAccessType.ADMIN;
             updateImplementation = new DefaultUpdate<>();
         } else {
-            final Constructor<? extends Update> constructor = ClassUtils.emptyConstructor(updateAnnotation.implementation());
+            final Constructor<? extends UpdateHandler> constructor = ClassUtils.emptyConstructor(updateAnnotation.handler());
             updateImplementation = constructor.newInstance();
             updateAccessLevel = updateAnnotation.accessLevel();
         }
@@ -134,7 +134,7 @@ public class ResourceDescriber<T> {
             findAccessLevel = RestModelAccessType.PUBLIC;
             findImplementation = new DefaultFind<>();
         } else {
-            final Constructor<? extends Find> constructor = ClassUtils.emptyConstructor(findAnnotation.implementation());
+            final Constructor<? extends FindHandler> constructor = ClassUtils.emptyConstructor(findAnnotation.handler());
             findImplementation = constructor.newInstance();
             findAccessLevel = findAnnotation.accessLevel();
         }
@@ -143,7 +143,7 @@ public class ResourceDescriber<T> {
             createAccessLevel = RestModelAccessType.PUBLIC;
             createImplementation = new DefaultCreate<>();
         } else {
-            final Constructor<? extends Create> constructor = ClassUtils.emptyConstructor(createAnnotation.implementation());
+            final Constructor<? extends CreateHandler> constructor = ClassUtils.emptyConstructor(createAnnotation.handler());
             createImplementation = constructor.newInstance();
             createAccessLevel = createAnnotation.accessLevel();
         }
@@ -158,19 +158,19 @@ public class ResourceDescriber<T> {
         return clazz;
     }
 
-    public Delete<T> getDeleteImplementation() {
+    public DeleteHandler<T> getDeleteImplementation() {
         return deleteImplementation;
     }
 
-    public Update<T> getUpdateImplementation() {
+    public UpdateHandler<T> getUpdateImplementation() {
         return updateImplementation;
     }
 
-    public Find<T> getFindImplementation() {
+    public FindHandler<T> getFindImplementation() {
         return findImplementation;
     }
 
-    public Create<T> getCreateImplementation() {
+    public CreateHandler<T> getCreateImplementation() {
         return createImplementation;
     }
 

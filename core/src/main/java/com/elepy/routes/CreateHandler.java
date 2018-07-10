@@ -8,7 +8,7 @@ import spark.Response;
 
 import java.util.List;
 
-public interface Create<T> {
+public interface CreateHandler<T> {
 
     boolean create(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception;
 

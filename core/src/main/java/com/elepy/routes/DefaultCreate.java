@@ -16,7 +16,7 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultCreate<T> implements Create<T> {
+public class DefaultCreate<T> implements CreateHandler<T> {
 
     @Override
     public boolean create(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {

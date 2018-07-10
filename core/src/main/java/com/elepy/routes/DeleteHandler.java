@@ -8,6 +8,6 @@ import spark.Response;
 import java.util.Optional;
 
 
-public interface Delete<T> {
+public interface DeleteHandler<T> {
     boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
 }
