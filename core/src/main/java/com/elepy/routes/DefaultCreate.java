@@ -19,7 +19,7 @@ import java.util.List;
 public class DefaultCreate<T> implements RouteHandler<T> {
 
 
-    private void defaultCreate(Response response, T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public T create(Response response, T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             objectEvaluator.evaluate(product);
         }
@@ -27,9 +27,10 @@ public class DefaultCreate<T> implements RouteHandler<T> {
         dao.create(product);
         response.status(200);
         response.body("OK");
+        return product;
     }
 
-    private void multipleCreate(Response response, Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public void multipleCreate(Response response, Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
         if (ClassUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
@@ -59,7 +60,7 @@ public class DefaultCreate<T> implements RouteHandler<T> {
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            defaultCreate(response, item, dao, objectMapper, objectEvaluators);
+            create(response, item, dao, objectMapper, objectEvaluators);
         }
     }
 }
