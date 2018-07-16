@@ -149,39 +149,35 @@ public class Elepy {
                 setupFilters(restModel, clazz);
                 if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED))
                     http.post(baseSlug + restModel.getSlug(), (request, response) -> {
-                        final boolean optional = restModel.getCreateImplementation().create(request, response, dao, objectMapper, evaluators);
+                        restModel.getCreateImplementation().handle(request, response, dao, this, evaluators, clazz);
 
-                        return "";
+                        return response.body();
                     });
                 if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED))
                     http.put(baseSlug + restModel.getSlug(), (request, response) -> {
-                        restModel.getUpdateImplementation().update(request, response, dao, clazz, objectMapper, evaluators);
+                        restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     });
                 if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED))
                     http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
-                        boolean delete = restModel.getDeleteImplementation().delete(request, response, dao, objectMapper);
-                        if (delete) {
-                            response.status(200);
-                            return "Successfully deleted item!";
-                        } else {
-                            response.status(403);
-                            return "Failed to delete item.";
-                        }
+                        restModel.getDeleteImplementation().handle(request, response, dao, this, evaluators, clazz);
+
+                        return response.body();
                     }));
                 if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
-                    http.get(baseSlug + restModel.getSlug(), (request, response) -> objectMapper.writeValueAsString(restModel.getFindImplementation().find(request, response, dao, objectMapper)));
+                    http.get(baseSlug + restModel.getSlug(), (request, response) -> {
+                        restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
+
+                        return response.body();
+                    });
 
 
                 if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
-                    http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                        final Optional<Object> set = restModel.getFindImplementation().findOne(request, response, dao, objectMapper);
-                        if (set.isPresent()) {
-                            return objectMapper.writeValueAsString(set.get());
-                        }
-                        response.status(404);
-                        return "";
+                    http.get(baseSlug + restModel.getSlug(), (request, response) -> {
+                        restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
+
+                        return response.body();
                     });
 
 

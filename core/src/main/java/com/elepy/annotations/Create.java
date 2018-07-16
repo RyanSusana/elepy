@@ -4,6 +4,7 @@ package com.elepy.annotations;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.CreateHandler;
 import com.elepy.routes.DefaultCreate;
+import com.elepy.routes.RouteHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,5 +16,5 @@ import java.lang.annotation.Target;
 public @interface Create {
     AccessLevel accessLevel() default AccessLevel.ADMIN;
 
-    Class<? extends CreateHandler> handler() default DefaultCreate.class;
+    Class<? extends RouteHandler> handler() default DefaultCreate.class;
 }

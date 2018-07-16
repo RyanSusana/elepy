@@ -1,5 +1,6 @@
 package com.elepy.routes;
 
+import com.elepy.Elepy;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
@@ -12,15 +13,22 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultUpdate<T> implements UpdateHandler<T> {
+public class DefaultUpdate<T> implements RouteHandler<T> {
 
     private T before;
 
+    public T before() {
+        if (before == null) {
+            throw new IllegalStateException("Before not yet set!");
+        }
+        return before;
+    }
+
     @Override
-    public boolean update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
-        T updated = objectMapper.readValue(body, clazz);
+        T updated = elepy.getObjectMapper().readValue(body, clazz);
 
         Optional<T> before = dao.getById(dao.getId(updated));
 
@@ -44,14 +52,6 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         new IntegrityEvaluatorImpl<T>().evaluate(updated, dao);
         dao.update(updated);
         response.status(200);
-        response.body("The item is updated");
-        return true;
-    }
-
-    public T before() {
-        if (before == null) {
-            throw new IllegalStateException("Before not yet set!");
-        }
-        return before;
+        response.body("OK");
     }
 }

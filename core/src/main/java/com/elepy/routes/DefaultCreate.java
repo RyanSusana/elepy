@@ -1,5 +1,6 @@
 package com.elepy.routes;
 
+import com.elepy.Elepy;
 import com.elepy.concepts.AtomicIntegrityEvaluator;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
@@ -14,36 +15,21 @@ import spark.Request;
 import spark.Response;
 
 import java.util.List;
-import java.util.Optional;
 
-public class DefaultCreate<T> implements CreateHandler<T> {
+public class DefaultCreate<T> implements RouteHandler<T> {
 
-    @Override
-    public boolean create(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
-        String body = request.body();
 
-        try {
-            JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
-
-            final List<T> ts = objectMapper.readValue(body, type);
-            return multipleCreate(ts, dao, objectEvaluators).isPresent();
-        } catch (JsonMappingException e) {
-
-            T item = objectMapper.readValue(body, dao.getType());
-            return defaultCreate(item, dao, objectMapper, objectEvaluators).isPresent();
-        }
-    }
-
-    protected Optional<T> defaultCreate(T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    private void defaultCreate(Response response, T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             objectEvaluator.evaluate(product);
         }
         new IntegrityEvaluatorImpl<T>().evaluate(product, dao);
         dao.create(product);
-        return Optional.ofNullable(product);
+        response.status(200);
+        response.body("OK");
     }
 
-    protected Optional<Iterable<T>> multipleCreate(Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    private void multipleCreate(Response response, Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
         if (ClassUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
@@ -55,7 +41,25 @@ public class DefaultCreate<T> implements CreateHandler<T> {
             new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
         }
         dao.create(items);
-        return Optional.of(items);
+        response.status(200);
+        response.body("OK");
 
+    }
+
+    @Override
+    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+        String body = request.body();
+
+        ObjectMapper objectMapper = elepy.getObjectMapper();
+        try {
+            JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
+
+            final List<T> ts = objectMapper.readValue(body, type);
+            multipleCreate(response, ts, dao, objectEvaluators);
+        } catch (JsonMappingException e) {
+
+            T item = objectMapper.readValue(body, dao.getType());
+            defaultCreate(response, item, dao, objectMapper, objectEvaluators);
+        }
     }
 }

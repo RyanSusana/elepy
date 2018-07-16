@@ -3,6 +3,7 @@ package com.elepy.annotations;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.DefaultDelete;
 import com.elepy.routes.DeleteHandler;
+import com.elepy.routes.RouteHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface Delete {
     AccessLevel accessLevel() default AccessLevel.ADMIN;
 
-    Class<? extends DeleteHandler> handler() default DefaultDelete.class;
+    Class<? extends RouteHandler> handler() default DefaultDelete.class;
 }
