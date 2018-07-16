@@ -24,8 +24,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         return before;
     }
 
-    @Override
-    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public T update(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception{
         String body = request.body();
 
         T updated = elepy.getObjectMapper().readValue(body, clazz);
@@ -53,5 +52,10 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         dao.update(updated);
         response.status(200);
         response.body("OK");
+        return updated;
+    }
+    @Override
+    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+        this.update(request, response, dao, elepy, objectEvaluators, clazz);
     }
 }
