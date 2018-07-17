@@ -31,7 +31,7 @@ public class AttachmentHandler {
 
     public void setupAttachments() {
         for (Attachment attachment : attachments) {
-            adminPanel.http().get(attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
+            adminPanel.http().get(adminPanel.elepy().getBaseSlug()+attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
                 response.type(attachment.getContentType());
                 HttpServletResponse raw = response.raw();
 
