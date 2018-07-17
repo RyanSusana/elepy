@@ -59,7 +59,7 @@ public class DefaultFind<T> implements RouteHandler<T> {
 
     @Override
     public void handle(Request request, Response response, Crud<T> crud, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws JsonProcessingException {
-        if (request.params("id") != null) {
+        if (request.params("id") != null && !request.params("id").isEmpty()) {
             findOne(request, response, crud, elepy.getObjectMapper());
         } else {
             find(request, response, crud, elepy.getObjectMapper());

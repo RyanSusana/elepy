@@ -19,7 +19,7 @@ public interface FindHandler<T> extends RouteHandler<T> {
 
     @Override
     default void handle(Request request, Response response, Crud<T> crud, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        if (request.params("id") != null) {
+        if (request.params("id") != null && !request.params("id").isEmpty()) {
             findOne(request, response, crud, elepy.getObjectMapper());
         } else {
             find(request, response, crud, elepy.getObjectMapper());
