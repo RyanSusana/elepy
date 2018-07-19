@@ -7,7 +7,6 @@ import spark.Request;
 
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TokenHandler {
 
@@ -17,6 +16,13 @@ public class TokenHandler {
     public TokenHandler(UserService userService) {
         this.tokens = new TreeSet<>();
         this.userService = userService;
+    }
+
+    public boolean isValid(String id) {
+        removeOverdueTokens();
+
+        return tokens.contains(new Token().setId(id));
+
     }
 
     public Optional<Token> createToken(Request request) {
@@ -40,22 +46,19 @@ public class TokenHandler {
             return Optional.empty();
         }
 
-        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 24 * 7).setUser(login.get());
+        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 24 * 2).setUser(login.get());
 
         tokens.add(token);
         return Optional.of(token);
     }
 
-    public void flushTokens() {
+    private void removeOverdueTokens() {
         final long currentTime = System.currentTimeMillis();
-        tokens = tokens.stream().filter(token -> {
-
+        tokens.removeIf(token -> {
             final long maxTime = token.getCreationTime() + token.getDuration();
 
-            return currentTime < maxTime;
-        }).collect(Collectors.toSet());
-
-
+            return currentTime > maxTime;
+        });
     }
 
     private Optional<String[]> basicCredentials(Request request) {
