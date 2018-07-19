@@ -10,6 +10,7 @@ import com.elepy.exceptions.RestErrorMessage;
 import com.mongodb.DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Filter;
 import spark.ModelAndView;
 import spark.Request;
 import spark.template.pebble.PebbleTemplateEngine;
@@ -28,6 +29,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;
+    private Filter baseAdminAuthenticationFilter;
     private final List<Link> links;
     private SetupHandler setupHandler;
     private UserDao userDao;
@@ -44,10 +46,18 @@ public class ElepyAdminPanel extends ElepyModule {
         this.viewHandler = new ViewHandler(this);
 
 
-        this.links = new ArrayList<>();
-        this.setupHandler = (elepy) -> {
-            System.out.println("You have setup the first admin user");
+        this.baseAdminAuthenticationFilter = (request, response) -> {
+            final User adminUser = request.session().attribute(ADMIN_USER);
+            if (adminUser == null) {
+                request.session().attribute("redirectUrl", request.uri());
+                response.redirect("/login");
+            }
         };
+        this.setupHandler = (elepy) -> {
+        };
+
+        this.links = new ArrayList<>();
+
     }
 
 
@@ -113,13 +123,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private void setupLogin() {
 
 
-        elepy().addAdminFilter((request, response) -> {
-            final User adminUser = request.session().attribute(ADMIN_USER);
-            if (adminUser == null) {
-                request.session().attribute("redirectUrl", request.uri());
-                response.redirect("/login");
-            }
-        });
+        elepy().addAdminFilter(baseAdminAuthenticationFilter);
         http().get("/login", (request, response) -> {
 
 
@@ -227,6 +231,11 @@ public class ElepyAdminPanel extends ElepyModule {
 
     public ElepyAdminPanel addLink(Link link) {
         links.add(link);
+        return this;
+    }
+
+    public ElepyAdminPanel baseAdminFilter(Filter filter){
+        this.baseAdminAuthenticationFilter = filter;
         return this;
     }
 
