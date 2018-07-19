@@ -52,6 +52,9 @@ public class Token implements Comparable<Token> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if(o instanceof String){
+            return o.equals(this.id);
+        }
         if (o == null || getClass() != o.getClass()) return false;
         Token token = (Token) o;
         return Objects.equals(id, token.id);
