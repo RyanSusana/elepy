@@ -1,4 +1,4 @@
-package com.elepy.admin.concepts;
+package com.elepy.admin.concepts.auth;
 
 import com.elepy.admin.models.Token;
 import com.elepy.admin.models.User;
@@ -20,8 +20,13 @@ public class TokenHandler {
 
     public boolean isValid(String id) {
         removeOverdueTokens();
-
-        return tokens.contains(new Token().setId(id));
+        for (Token token : tokens) {
+            System.out.println(token.getId());
+            if (token.getId().trim().equals(id)) {
+                return true;
+            }
+        }
+        return false;
 
     }
 
@@ -46,7 +51,7 @@ public class TokenHandler {
             return Optional.empty();
         }
 
-        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 24 * 2).setUser(login.get());
+        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 3).setUser(login.get());
 
         tokens.add(token);
         return Optional.of(token);

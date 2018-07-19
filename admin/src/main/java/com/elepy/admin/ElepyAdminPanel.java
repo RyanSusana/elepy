@@ -2,6 +2,7 @@ package com.elepy.admin;
 
 import com.elepy.ElepyModule;
 import com.elepy.admin.concepts.*;
+import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.dao.UserDao;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.BCrypt;
@@ -22,6 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import static spark.Spark.halt;
+
 
 public class ElepyAdminPanel extends ElepyModule {
     public static final String ADMIN_USER = "adminUser";
@@ -29,6 +32,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;
+    private TokenHandler tokenHandler;
     private Filter baseAdminAuthenticationFilter;
     private final List<Link> links;
     private SetupHandler setupHandler;
@@ -47,11 +51,25 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
         this.baseAdminAuthenticationFilter = (request, response) -> {
+
+            final String elepyToken = request.headers("ELEPY_TOKEN");
+
+            if (elepyToken != null) {
+                if (tokenHandler.isValid(elepyToken)) {
+                    return;
+                } else {
+                    halt(403, "Your token is invalid!");
+                }
+            }
             final User adminUser = request.session().attribute(ADMIN_USER);
             if (adminUser == null) {
                 request.session().attribute("redirectUrl", request.uri());
                 response.redirect("/login");
+                halt();
+            } else {
+                return;
             }
+
         };
         this.setupHandler = (elepy) -> {
         };
@@ -84,6 +102,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
         this.userDao = new UserDao(elepy().getSingleton(DB.class));
         this.userService = new UserService(userDao);
+        this.tokenHandler = new TokenHandler(this.userService);
 
 
         elepy().addPackage(User.class.getPackage().getName());
@@ -99,6 +118,16 @@ public class ElepyAdminPanel extends ElepyModule {
         });
         http().before("/admin", (request, response) -> {
             elepy().allAdminFilters().handle(request, response);
+        });
+        http().post("/retrieve-token", (request, response) -> {
+            final Optional<Token> token = tokenHandler.createToken(request);
+
+            if (token.isPresent()) {
+                return elepy().getObjectMapper().writeValueAsString(token.get());
+            } else {
+                response.status(401);
+                return "NO TOKEN FOR U!";
+            }
         });
         http().get("/admin", (request, response) -> {
 
@@ -234,7 +263,7 @@ public class ElepyAdminPanel extends ElepyModule {
         return this;
     }
 
-    public ElepyAdminPanel baseAdminFilter(Filter filter){
+    public ElepyAdminPanel baseAdminFilter(Filter filter) {
         this.baseAdminAuthenticationFilter = filter;
         return this;
     }
