@@ -5,10 +5,12 @@ import com.elepy.admin.models.User;
 import com.elepy.admin.services.UserService;
 import spark.Request;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.*;
 
-public class TokenHandler {
+
+public class TokenHandler implements AuthHandler{
 
     private Set<Token> tokens;
     private final UserService userService;
@@ -20,12 +22,7 @@ public class TokenHandler {
 
     public boolean isValid(String id) {
         removeOverdueTokens();
-        for (Token token : tokens) {
-            System.out.println(token.getId());
-            if (token.getId().trim().equals(id)) {
-                return true;
-            }
-        }
+
         return false;
 
     }
@@ -66,27 +63,22 @@ public class TokenHandler {
         });
     }
 
-    private Optional<String[]> basicCredentials(Request request) {
-        String header = request.headers("Authorization");
 
-        if (header == null || !(header = header.trim()).startsWith("Basic")) {
-            return Optional.empty();
+
+    @Nullable
+    @Override
+    public User login(Request request) {
+        final String elepyToken = request.headers("ELEPY_TOKEN");
+
+        if (elepyToken != null) {
+            if (isValid(elepyToken)) {
+                for (Token token : tokens) {
+                    if (token.getId().trim().equals(elepyToken)) {
+                        return token.getUser();
+                    }
+                }
+            }
         }
-
-        header = header.replaceAll("Basic", "").trim();
-        final String[] strings = readBasicUsernamePassword(header);
-
-        if (strings.length != 2) {
-            return Optional.empty();
-        }
-        return Optional.of(strings);
-
+        return null;
     }
-
-    private String[] readBasicUsernamePassword(String base64) {
-        String credentials = new String(Base64.getDecoder().decode(base64),
-                Charset.forName("UTF-8"));
-        return credentials.split(":", 2);
-    }
-
 }

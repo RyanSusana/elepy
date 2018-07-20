@@ -2,6 +2,8 @@ package com.elepy.admin;
 
 import com.elepy.ElepyModule;
 import com.elepy.admin.concepts.*;
+import com.elepy.admin.concepts.auth.Authenticator;
+import com.elepy.admin.concepts.auth.BasicHandler;
 import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.dao.UserDao;
 import com.elepy.admin.models.*;
@@ -37,6 +39,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private final List<Link> links;
     private SetupHandler setupHandler;
     private UserDao userDao;
+    private Authenticator authenticator ;
     private UserService userService;
     private boolean initiated = false;
 
@@ -47,27 +50,24 @@ public class ElepyAdminPanel extends ElepyModule {
         this.pluginHandler = new PluginHandler(this);
 
 
+        this.authenticator = new Authenticator();
         this.viewHandler = new ViewHandler(this);
 
 
         this.baseAdminAuthenticationFilter = (request, response) -> {
 
-            final String elepyToken = request.headers("ELEPY_TOKEN");
+            final User user = authenticator.authenticate(request);
 
-            if (elepyToken != null) {
-                if (tokenHandler.isValid(elepyToken)) {
-                    return;
-                } else {
-                    halt(403, "Your token is invalid!");
-                }
-            }
-            final User adminUser = request.session().attribute(ADMIN_USER);
-            if (adminUser == null) {
-                request.session().attribute("redirectUrl", request.uri());
-                response.redirect("/login");
-                halt();
+            if (user != null) {
+                request.attribute(ADMIN_USER, user);
+                request.session().attribute(ADMIN_USER, user);
             } else {
-                return;
+                final User adminUser = request.session().attribute(ADMIN_USER);
+                if (adminUser == null) {
+                    request.session().attribute("redirectUrl", request.uri());
+                    response.redirect("/login");
+                    halt();
+                }
             }
 
         };
@@ -102,7 +102,8 @@ public class ElepyAdminPanel extends ElepyModule {
 
         this.userDao = new UserDao(elepy().getSingleton(DB.class));
         this.userService = new UserService(userDao);
-        this.tokenHandler = new TokenHandler(this.userService);
+        tokenHandler = new TokenHandler(this.userService);
+        authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
 
         elepy().addPackage(User.class.getPackage().getName());
@@ -125,8 +126,7 @@ public class ElepyAdminPanel extends ElepyModule {
             if (token.isPresent()) {
                 return elepy().getObjectMapper().writeValueAsString(token.get());
             } else {
-                response.status(401);
-                return "NO TOKEN FOR U!";
+                throw new RestErrorMessage("Invalid username/password");
             }
         });
         http().get("/admin", (request, response) -> {
