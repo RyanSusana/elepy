@@ -8,6 +8,9 @@ public interface IdentityProvider<T> {
     String getId(T item, Crud<T> dao);
 
     default  String getRandomHexString(int numchars) {
+        if(numchars <= 0){
+            return "";
+        }
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
         while (sb.length() < numchars) {
