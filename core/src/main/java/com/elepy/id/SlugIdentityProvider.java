@@ -3,6 +3,7 @@ package com.elepy.id;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
+import com.github.slugify.Slugify;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,33 +14,47 @@ import java.util.Optional;
 public class SlugIdentityProvider implements IdentityProvider {
     private final String[] slugFieldNames;
 
-    private final int prefixLength;
+    private final int prefixLength, maxLength;
+    private final Slugify slugify;
 
-    public SlugIdentityProvider(){
-        this(5, "name","title","slug");
+    public SlugIdentityProvider() {
+        this(5, 33, "name", "title", "slug");
     }
-    public SlugIdentityProvider(int prefixLength, String... slugFieldNames) {
+
+    public SlugIdentityProvider(int prefixLength, int maxLength, String... slugFieldNames) {
         this.prefixLength = prefixLength;
+        this.maxLength = maxLength;
+        this.slugify = new Slugify();
         this.slugFieldNames = slugFieldNames;
     }
 
     private Optional<String> getSlug(Object obj, List<String> slugFieldNames) {
-        List<Field> fields = new ArrayList<>();
+        final List<Field> fields = new ArrayList<>();
+
 
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-
+            final Object value;
             try {
-                Object value = field.get(obj);
+                value = field.get(obj);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 continue;
             }
-            if (slugFieldNames.contains(field.getName()) && (obj instanceof String)) {
-                return Optional.of(field.getName());
+            if (slugFieldNames.contains(field.getName()) && (value instanceof String)) {
+                return Optional.of(slugify.slugify(getSubStrVersion((String) value, maxLength)));
             }
         }
         return Optional.empty();
+    }
+
+    private String getSubStrVersion(String s, int maxLen) {
+        if (s.length() < maxLen) {
+            return s;
+        }
+
+        return s.substring(0, maxLen);
+
     }
 
     @Override
@@ -56,7 +71,7 @@ public class SlugIdentityProvider implements IdentityProvider {
 
     private String getSlug(String slug, Crud crud) {
 
-        String generatedId = getRandomHexString(prefixLength) + "-" + slug;
+        final String generatedId = getRandomHexString(prefixLength) + "-" + slug;
 
         if (crud.getById(generatedId).isPresent()) {
             return getSlug(slug, crud);
