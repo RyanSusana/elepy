@@ -10,16 +10,9 @@ import java.util.Optional;
 
 public interface Crud<T> {
 
-    default Page<T> get() {
-        return get(new PageSetup(Integer.MAX_VALUE, 1));
-    }
-
-    Page<T> get(PageSetup pageSetup);
-
+    Page<T> search(QuerySetup querySetup);
 
     Optional<T> getById(final String id);
-
-    Page<T> search(final SearchSetup search, PageSetup pageSetup);
 
     List<T> searchInField(Field field, String qry);
 
@@ -39,16 +32,16 @@ public interface Crud<T> {
 
     }
 
-    default Page<T> getNextPage(Page<T> page) {
-
-        if (page.getCurrentPageNumber() == page.getLastPageNumber()) {
-            throw new RestErrorMessage("No more results");
-        }
-        PageSetup pageSetup = new PageSetup(page.getOriginalSize(), page.getCurrentPageNumber() + 1);
-
-        return get(pageSetup);
-
-    }
+//    default Page<T> getNextPage(Page<T> page) {
+//
+//        if (page.getCurrentPageNumber() == page.getLastPageNumber()) {
+//            throw new RestErrorMessage("No more results");
+//        }
+//        PageSetup pageSetup = new PageSetup(page.getOriginalSize(), page.getCurrentPageNumber() + 1);
+//
+//        return get(pageSetup);
+//
+//    }
 
     default void update(final Iterable<T> items) {
         for (T item : items) {

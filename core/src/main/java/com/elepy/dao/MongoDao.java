@@ -9,6 +9,7 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.jongo.ElepyMapper;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.Iterables;
@@ -55,13 +56,9 @@ public class MongoDao<T> implements Crud<T> {
 
 
     @Override
-    public Page<T> get(PageSetup pageSearch) {
-        return toPage(addDefaultSort(collection().find()), pageSearch, (int) collection().count());
-    }
-    @Override
     public List<T> searchInField(Field field, String qry) {
         final String propertyName = ClassUtils.getPropertyName(field);
-        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new PageSetup(Integer.MAX_VALUE, 1), (int) collection().count("{#: #}", propertyName, qry)).getValues();
+        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new QuerySetup(null, null, null, 1, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
     }
 
     private Find addDefaultSort(Find find) {
@@ -89,7 +86,7 @@ public class MongoDao<T> implements Crud<T> {
     }
 
 
-    private Page<T> toPage(Find find, PageSetup pageSearch, int amountOfResultsWithThatQuery) {
+    private Page<T> toPage(Find find, QuerySetup pageSearch, int amountOfResultsWithThatQuery) {
 
 
         final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(classType).iterator());
@@ -101,15 +98,19 @@ public class MongoDao<T> implements Crud<T> {
     }
 
     @Override
-    public Page<T> search(SearchSetup query, PageSetup pageSetup) {
+    public Page<T> search(QuerySetup querySetup) {
 
         final List<Field> searchableFields = getSearchableFields();
+
         List<Map<String, String>> expressions = new ArrayList<>();
         Map<String, Object> qmap = new HashMap<>();
-        Pattern[] hashs = new Pattern[searchableFields.size()];
-        final Pattern pattern = Pattern.compile(".*" + query.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
-        for (int i = 0; i < hashs.length; i++) {
-            hashs[i] = pattern;
+
+
+        Pattern[] patterns = new Pattern[searchableFields.size()];
+
+        final Pattern pattern = Pattern.compile(".*" + querySetup.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
+        for (int i = 0; i < patterns.length; i++) {
+            patterns[i] = pattern;
         }
         for (Field field : searchableFields) {
             Map<String, String> keyValue = new HashMap<>();
@@ -119,15 +120,15 @@ public class MongoDao<T> implements Crud<T> {
         qmap.put("$or", expressions);
         try {
 
-            Find find = query.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().find();
+            Find find = querySetup.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
 
-            long amountResultsTotal = query.getQuery() != null ? collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) hashs) : collection().count();
-            if (query.getSortBy() != null && query.getSortOption() != null) {
-                find.sort(String.format("{%s: %d}", query.getSortBy(), query.getSortOption().getVal()));
+            long amountResultsTotal = querySetup.getQuery() != null ? collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().count();
+            if (querySetup.getSortBy() != null && querySetup.getSortOption() != null) {
+                find.sort(String.format("{%s: %d}", querySetup.getSortBy(), querySetup.getSortOption().getVal()));
             } else {
                 addDefaultSort(find);
             }
-            return toPage(find, pageSetup, (int) amountResultsTotal);
+            return toPage(find, querySetup, (int) amountResultsTotal);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());
@@ -135,7 +136,40 @@ public class MongoDao<T> implements Crud<T> {
 
     }
 
+    public Page<T> lol(QuerySetup querySetup) throws JsonProcessingException {
+        final Find find;
+        final long amountResultsTotal;
+        if (querySetup.getQuery() != null) {
+            final List<Field> searchableFields = getSearchableFields();
 
+            List<Map<String, String>> expressions = new ArrayList<>();
+            Map<String, Object> qmap = new HashMap<>();
+
+
+            Pattern[] patterns = new Pattern[searchableFields.size()];
+
+            final Pattern pattern = Pattern.compile(".*" + querySetup.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
+            for (int i = 0; i < patterns.length; i++) {
+                patterns[i] = pattern;
+            }
+            for (Field field : searchableFields) {
+                Map<String, String> keyValue = new HashMap<>();
+                keyValue.put(ClassUtils.getPropertyName(field), "#");
+                expressions.add(keyValue);
+            }
+            qmap.put("$or", expressions);
+            find = querySetup.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
+
+            amountResultsTotal = collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
+        } else {
+            find = collection().find();
+            amountResultsTotal = collection().count();
+        }
+
+        find.sort(String.format("{%s: %d}", querySetup.getSortBy(), querySetup.getSortOption().getVal()));
+        return toPage(find, querySetup, (int) amountResultsTotal);
+
+    }
 
 
     private List<Field> getSearchableFields() {
