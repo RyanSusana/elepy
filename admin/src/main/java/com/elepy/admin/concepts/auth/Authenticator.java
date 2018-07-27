@@ -19,7 +19,6 @@ public class Authenticator {
     }
 
     public User authenticate(Request request) {
-        System.out.println("yes");
         for (AuthHandler authenticationMethod : authenticationMethods) {
             final User login = authenticationMethod.login(request);
 
