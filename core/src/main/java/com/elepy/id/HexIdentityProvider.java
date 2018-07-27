@@ -26,14 +26,6 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
         }
     }
 
-    private String getRandomHexString(int numchars) {
-        Random r = new Random();
-        StringBuilder sb = new StringBuilder();
-        while (sb.length() < numchars) {
-            sb.append(Integer.toHexString(r.nextInt()));
-        }
-        return sb.toString().substring(0, numchars);
-    }
 
     @Override
     public String getId(Object item, Crud dao) {
