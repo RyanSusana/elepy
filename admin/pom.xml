@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
-            <version>1.4</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
