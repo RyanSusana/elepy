@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Find {
-    AccessLevel accessLevel() default AccessLevel.ADMIN;
+    AccessLevel accessLevel() default AccessLevel.PUBLIC;
 
     Class<? extends RouteHandler> handler() default DefaultFind.class;
 }
