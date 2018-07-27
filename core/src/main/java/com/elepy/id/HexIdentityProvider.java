@@ -26,7 +26,7 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
         }
     }
 
-    public static String getRandomHexString(int numchars) {
+    private String getRandomHexString(int numchars) {
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
         while (sb.length() < numchars) {
