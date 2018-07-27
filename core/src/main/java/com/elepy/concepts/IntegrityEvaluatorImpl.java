@@ -26,7 +26,7 @@ public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
         for (Field field : uniqueFields) {
 
             Object prop = field.get(item);
-            final List<T> foundItems = dao.search(String.format("{%s: #}", ClassUtils.getPropertyName(field)), prop).getValues();
+            final List<T> foundItems = dao.searchInField(field, prop.toString());
             if (foundItems.size() > 0) {
 
                 if (foundItems.size() > 1) {

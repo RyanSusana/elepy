@@ -4,6 +4,8 @@ package com.elepy.dao;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 
 public interface Crud<T> {
@@ -19,7 +21,7 @@ public interface Crud<T> {
 
     Page<T> search(final SearchSetup search, PageSetup pageSetup);
 
-    Page<T> search(final String query, Object... params);
+    List<T> searchInField(Field field, String qry);
 
 
     void update(final T item);
@@ -60,6 +62,7 @@ public interface Crud<T> {
             create(items);
         }
     }
+
 
 
     long count(String query, Object... parameters);

@@ -58,11 +58,10 @@ public class MongoDao<T> implements Crud<T> {
     public Page<T> get(PageSetup pageSearch) {
         return toPage(addDefaultSort(collection().find()), pageSearch, (int) collection().count());
     }
-
     @Override
-    public Page<T> search(String query, Object... params) {
-
-        return toPage(addDefaultSort(collection().find(query, params)), new PageSetup(Integer.MAX_VALUE, 1), (int) collection().count(query, params));
+    public List<T> searchInField(Field field, String qry) {
+        final String propertyName = ClassUtils.getPropertyName(field);
+        return toPage(addDefaultSort(collection().find("{#, #}", propertyName, qry)), new PageSetup(Integer.MAX_VALUE, 1), (int) collection().count("{#, #}", propertyName, qry)).getValues();
     }
 
     private Find addDefaultSort(Find find) {
@@ -135,6 +134,8 @@ public class MongoDao<T> implements Crud<T> {
         }
 
     }
+
+
 
 
     private List<Field> getSearchableFields() {
