@@ -32,17 +32,6 @@ public interface Crud<T> {
 
     }
 
-//    default Page<T> getNextPage(Page<T> page) {
-//
-//        if (page.getCurrentPageNumber() == page.getLastPageNumber()) {
-//            throw new RestErrorMessage("No more results");
-//        }
-//        PageSetup pageSetup = new PageSetup(page.getOriginalSize(), page.getCurrentPageNumber() + 1);
-//
-//        return get(pageSetup);
-//
-//    }
-
     default void update(final Iterable<T> items) {
         for (T item : items) {
             update(item);
