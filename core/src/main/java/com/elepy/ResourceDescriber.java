@@ -7,6 +7,7 @@ import com.elepy.annotations.RestModel;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
+import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
@@ -40,9 +41,12 @@ public class ResourceDescriber<T> {
     private String description;
     private String name;
 
+    private final StructureDescriber structureDescriber;
+
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.clazz = clazz;
         this.elepy = elepy;
+        this.structureDescriber = new StructureDescriber(this.clazz);
         try {
             setupAnnotations();
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
@@ -54,12 +58,10 @@ public class ResourceDescriber<T> {
 
     private void setupAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
-
         setupDao();
         routeAnnotations();
         baseAnnotations();
         setupEvaluators();
-
 
     }
 
@@ -199,6 +201,10 @@ public class ResourceDescriber<T> {
 
     public com.elepy.dao.CrudProvider getCrudProvider() {
         return crudProvider;
+    }
+
+    public StructureDescriber getStructureDescriber() {
+        return structureDescriber;
     }
 
     @Override

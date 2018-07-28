@@ -9,6 +9,7 @@ import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
+import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
@@ -67,7 +68,10 @@ public class FieldDescriber {
     private void mapFieldAnnotations(Field field, Map<String, Object> fieldMap) {
 
         fieldMap.put("required", field.getAnnotation(Required.class) != null);
-        fieldMap.put("editable", field.getAnnotation(Uneditable.class) == null);
+
+        final Column column = field.getAnnotation(Column.class);
+
+        fieldMap.put("editable", field.isAnnotationPresent(Uneditable.class) || (column!=null && !column.updatable()));
 
         Importance importance = field.getAnnotation(Importance.class);
         fieldMap.put("importance", importance == null ? 0 : importance.value());

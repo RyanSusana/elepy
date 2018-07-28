@@ -1,6 +1,5 @@
 package com.elepy.concepts;
 
-import com.elepy.annotations.Unique;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 
@@ -24,9 +23,7 @@ public class AtomicIntegrityEvaluator<T> {
     }
 
     private void checkUniqueness(T item, List<T> theRest) throws IllegalAccessException {
-        List<Field> uniqueFields = ClassUtils.searchForFieldsWithAnnotation(item.getClass(), Unique.class);
-
-
+        List<Field> uniqueFields = ClassUtils.getUniqueFields(item.getClass());
         Optional<String> id = ClassUtils.getId(item);
 
         for (Field field : uniqueFields) {

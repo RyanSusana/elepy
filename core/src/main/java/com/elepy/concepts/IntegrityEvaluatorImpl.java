@@ -5,9 +5,11 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 
+import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
     @Override
@@ -18,7 +20,8 @@ public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
     }
 
     private void checkUniqueness(T item, Crud<T> dao) throws IllegalAccessException {
-        List<Field> uniqueFields = ClassUtils.searchForFieldsWithAnnotation(item.getClass(), Unique.class);
+
+        List<Field> uniqueFields = ClassUtils.getUniqueFields(item.getClass());
 
 
         Optional<String> id = ClassUtils.getId(item);

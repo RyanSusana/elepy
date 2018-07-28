@@ -6,12 +6,15 @@ import com.elepy.annotations.Unique;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ClassUtils {
 
@@ -35,7 +38,7 @@ public class ClassUtils {
     public static String getPropertyName(Field field) {
         if (field.isAnnotationPresent(JsonProperty.class)) {
             return field.getAnnotation(JsonProperty.class).value();
-        } else if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
+        } else if (hasId(field)) {
             return "_id";
         } else {
             return field.getName();
@@ -49,11 +52,14 @@ public class ClassUtils {
         return getPropertyName(field);
     }
 
+    private static boolean hasId(Field field){
+        return field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
+    }
     public static Optional<String> getId(Object object) {
 
         for (Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
+            if (hasId(field)) {
 
 
                 try {
@@ -113,7 +119,33 @@ public class ClassUtils {
     public static boolean hasIntegrityRules(Class<?> cls) {
         final List<Field> fields = searchForFieldsWithAnnotation(cls, Unique.class);
 
-        return !fields.isEmpty();
+
+
+        return !fields.isEmpty() || hasJPAIntegrityRules(cls);
+    }
+
+    private static boolean hasJPAIntegrityRules(Class<?> cls){
+        final List<Field> fields = searchForFieldsWithAnnotation(cls, Column.class);
+
+        for (Field field : fields) {
+
+            final Column unique = field.getAnnotation(Column.class);
+
+            if(unique.unique()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<Field> getUniqueFields(Class cls){
+        List<Field> uniqueFields = searchForFieldsWithAnnotation(cls, Unique.class);
+        uniqueFields.addAll(searchForFieldsWithAnnotation(cls, Column.class).stream().filter(field -> {
+            final Column column = field.getAnnotation(Column.class);
+            return column.unique();
+        }).collect(Collectors.toList()));
+
+        return uniqueFields;
     }
 
 }
