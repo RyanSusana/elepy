@@ -1,7 +1,5 @@
 package com.elepy.dao;
 
-
-import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Field;
@@ -47,7 +45,10 @@ public interface Crud<T> {
 
 
 
-    long count(String query, Object... parameters);
+    long count(String query);
+    default long count(){
+        return count("");
+    }
 
     Class<T> getType();
 

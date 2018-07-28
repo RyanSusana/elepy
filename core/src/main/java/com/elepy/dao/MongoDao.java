@@ -21,6 +21,7 @@ import org.jongo.MongoCollection;
 import org.jongo.marshall.jackson.oid.MongoId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.utils.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -76,8 +77,40 @@ public class MongoDao<T> implements Crud<T> {
 
 
     @Override
-    public long count(String query, Object... parameters) {
-        return collection().count(query, parameters);
+    public long count(String query) {
+        if(StringUtils.isEmpty(query)){
+            return collection().count();
+        }
+        if(query.startsWith("{") && query.endsWith("}")) {
+            return collection().count(query);
+        }else{
+            final List<Field> searchableFields = getSearchableFields();
+
+            List<Map<String, String>> expressions = new ArrayList<>();
+            Map<String, Object> qmap = new HashMap<>();
+
+
+            Pattern[] patterns = new Pattern[searchableFields.size()];
+
+            final Pattern pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+            for (int i = 0; i < patterns.length; i++) {
+                patterns[i] = pattern;
+            }
+            for (Field field : searchableFields) {
+                Map<String, String> keyValue = new HashMap<>();
+                keyValue.put(ClassUtils.getPropertyName(field), "#");
+                expressions.add(keyValue);
+            }
+            qmap.put("$or", expressions);
+
+            try {
+                return collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                throw new RestErrorMessage(e.getMessage());
+            }
+        }
+
     }
 
     @Override
