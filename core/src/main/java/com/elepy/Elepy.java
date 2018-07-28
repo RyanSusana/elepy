@@ -6,6 +6,8 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
+import com.elepy.dao.CrudProvider;
+import com.elepy.dao.MongoProvider;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.AccessLevel;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -42,6 +44,8 @@ public class Elepy {
     private List<Map<String, Object>> descriptors;
     private boolean initialized = false;
 
+    private Class<? extends CrudProvider> defaultCrudProvider;
+
 
     public Elepy(String name) {
         this(name, Service.ignite().port(1337));
@@ -56,6 +60,7 @@ public class Elepy {
         this.adminFilters = new ArrayList<>();
         this.http = http;
 
+        this.defaultCrudProvider = MongoProvider.class;
         this.baseSlug = "/";
 
         this.models = new ArrayList<>();
@@ -373,6 +378,15 @@ public class Elepy {
         singletons.put(object.getClass().getName(), object);
         return this;
     }
+    public Elepy defaultProvider(Class<?extends CrudProvider> defaultCrudProvider) {
+        this.defaultCrudProvider = defaultCrudProvider;
+        return this;
+    }
+
+    public Class<? extends CrudProvider> getDefaultCrudProvider() {
+        return defaultCrudProvider;
+    }
+
     public Elepy attachSingleton(Class<?> cls, Object object) {
         singletons.put(cls.getName(), object);
         return this;

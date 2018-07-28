@@ -67,7 +67,7 @@ public class ResourceDescriber<T> {
     private void setupDao() throws IllegalAccessException, InvocationTargetException, InstantiationException {
         final DaoProvider annotation = clazz.getAnnotation(DaoProvider.class);
         if (annotation == null) {
-            crudProvider = new MongoProvider<>();
+            crudProvider = ClassUtils.emptyConstructor(elepy.getDefaultCrudProvider()).newInstance();
         } else {
             crudProvider = ClassUtils.emptyConstructor(annotation.value()).newInstance();
         }
