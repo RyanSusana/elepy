@@ -23,8 +23,6 @@ public class BasicHandler implements AuthHandler {
         final String[] authorization = authorizationOpt.get();
         final Optional<User> login = userService.login(authorization[0], authorization[1]);
 
-        System.out.println(authorization[0] + ":" + authorization[1]);
-        //weird right?
         return login.orElse(null);
 
     }

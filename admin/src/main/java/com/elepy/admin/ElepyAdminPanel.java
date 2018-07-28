@@ -1,11 +1,11 @@
 package com.elepy.admin;
 
 import com.elepy.ElepyModule;
+import com.elepy.ResourceDescriber;
 import com.elepy.admin.concepts.*;
 import com.elepy.admin.concepts.auth.Authenticator;
 import com.elepy.admin.concepts.auth.BasicHandler;
 import com.elepy.admin.concepts.auth.TokenHandler;
-import com.elepy.admin.dao.UserDao;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.BCrypt;
 import com.elepy.admin.services.UserService;
@@ -38,7 +38,6 @@ public class ElepyAdminPanel extends ElepyModule {
     private Filter baseAdminAuthenticationFilter;
     private final List<Link> links;
     private SetupHandler setupHandler;
-    private UserDao userDao;
     private Authenticator authenticator ;
     private UserService userService;
     private boolean initiated = false;
@@ -89,7 +88,6 @@ public class ElepyAdminPanel extends ElepyModule {
             setupAdmin();
 
             attachmentHandler.setupAttachments();
-            checkSetup();
             initiated = true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -100,8 +98,7 @@ public class ElepyAdminPanel extends ElepyModule {
     @Override
     public void setup() {
 
-        this.userDao = new UserDao(elepy().getSingleton(DB.class));
-        this.userService = new UserService(userDao);
+        this.userService = new UserService(new ResourceDescriber<>(elepy(), User.class).getCrudProvider().crudFor(User.class, elepy()));
         tokenHandler = new TokenHandler(this.userService);
         authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
@@ -179,29 +176,12 @@ public class ElepyAdminPanel extends ElepyModule {
             response.status(401);
             return "Invalid login credentials";
         });
-        http().get("/setup", (request, response) -> {
 
-            if (userDao.count() == 0) {
-                User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
-                userDao.create(user);
-                return "Generated first admin account";
-            }
-            response.redirect("/admin");
-            return "templates/base.peb";
-        });
 
 
     }
 
-    private void checkSetup() {
-        if (userDao.count() == 0) {
-            User user = new User(null, "admin", BCrypt.hashpw("admin", BCrypt.gensalt()), "", UserType.SUPER_ADMIN);
-            userDao.create(user);
 
-            setupHandler.handle(elepy());
-
-        }
-    }
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
         model.put("descriptors", viewHandler.getDescriptors());
