@@ -71,7 +71,7 @@ public class FieldDescriber {
 
         final Column column = field.getAnnotation(Column.class);
 
-        fieldMap.put("editable", field.isAnnotationPresent(Uneditable.class) || (column!=null && !column.updatable()));
+        fieldMap.put("editable", !field.isAnnotationPresent(Uneditable.class) || (column!=null && !column.updatable()));
 
         Importance importance = field.getAnnotation(Importance.class);
         fieldMap.put("importance", importance == null ? 0 : importance.value());
