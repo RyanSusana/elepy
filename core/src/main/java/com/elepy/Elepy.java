@@ -345,14 +345,16 @@ public class Elepy {
     }
 
 
-    public <T> T getSingleton(Class<T> cls) {
-        final T t = (T) singletons.get(cls.getName());
-
+    public <T> T getSingleton(String s, Class<T> cls){
+        final T t = (T) singletons.get(s);
         if (t != null) {
             return t;
         }
 
         throw new NoSuchElementException(String.format("No singleton for %s available", cls.getName()));
+    }
+    public <T> T getSingleton(Class<T> cls) {
+        return getSingleton(cls.getName(), cls);
 
     }
 
@@ -371,6 +373,15 @@ public class Elepy {
         singletons.put(object.getClass().getName(), object);
         return this;
     }
+    public Elepy attachSingleton(Class<?> cls, Object object) {
+        singletons.put(cls.getName(), object);
+        return this;
+    }
+    public Elepy attachSingleton(String singletonName, Object object) {
+        singletons.put(singletonName, object);
+        return this;
+    }
+
 
     public Elepy addModule(ElepyModule module) {
         return addModule(module, this.http);
