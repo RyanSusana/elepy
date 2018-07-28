@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Crud {
+public @interface DaoProvider {
 
-    Class<? extends CrudProvider> crudProvider() default MongoProvider.class;
+    Class<? extends com.elepy.dao.CrudProvider> value() default MongoProvider.class;
 }

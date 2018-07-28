@@ -1,13 +1,12 @@
 package com.elepy;
 
 
-import com.elepy.annotations.Crud;
+import com.elepy.annotations.DaoProvider;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
-import com.elepy.dao.CrudProvider;
 import com.elepy.dao.MongoProvider;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
@@ -30,7 +29,7 @@ public class ResourceDescriber<T> {
 
     private IdentityProvider<T> identityProvider;
 
-    private CrudProvider<T> crudProvider;
+    private com.elepy.dao.CrudProvider crudProvider;
 
     private AccessLevel deleteAccessLevel;
     private AccessLevel findAccessLevel;
@@ -66,11 +65,11 @@ public class ResourceDescriber<T> {
     }
 
     private void setupDao() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Crud annotation = clazz.getAnnotation(Crud.class);
+        final DaoProvider annotation = clazz.getAnnotation(DaoProvider.class);
         if (annotation == null) {
             crudProvider = new MongoProvider<>();
         } else {
-            crudProvider = ClassUtils.emptyConstructor(annotation.crudProvider()).newInstance();
+            crudProvider = ClassUtils.emptyConstructor(annotation.value()).newInstance();
         }
     }
 
@@ -199,7 +198,7 @@ public class ResourceDescriber<T> {
         return objectEvaluators;
     }
 
-    public CrudProvider<T> getCrudProvider() {
+    public com.elepy.dao.CrudProvider getCrudProvider() {
         return crudProvider;
     }
 
