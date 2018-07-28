@@ -1,7 +1,9 @@
-package com.elepy.dao;
+package com.elepy.dao.jongo;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.RestModel;
+import com.elepy.dao.Crud;
+import com.elepy.dao.CrudProvider;
 import com.mongodb.DB;
 
 public class MongoProvider<T> implements CrudProvider<T> {

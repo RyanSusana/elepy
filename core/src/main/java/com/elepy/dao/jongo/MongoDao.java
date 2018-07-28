@@ -1,4 +1,4 @@
-package com.elepy.dao;
+package com.elepy.dao.jongo;
 
 
 import com.elepy.annotations.Identifier;
@@ -6,7 +6,9 @@ import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.concepts.IdentityProvider;
-import com.elepy.dao.jongo.ElepyMapper;
+import com.elepy.dao.Crud;
+import com.elepy.dao.Page;
+import com.elepy.dao.QuerySetup;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
