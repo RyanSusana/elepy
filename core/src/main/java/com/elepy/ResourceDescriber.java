@@ -7,7 +7,6 @@ import com.elepy.annotations.RestModel;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
-import com.elepy.dao.MongoProvider;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;

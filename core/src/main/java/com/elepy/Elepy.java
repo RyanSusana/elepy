@@ -7,7 +7,7 @@ import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
-import com.elepy.dao.MongoProvider;
+import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.AccessLevel;
 import com.fasterxml.jackson.databind.DeserializationFeature;
