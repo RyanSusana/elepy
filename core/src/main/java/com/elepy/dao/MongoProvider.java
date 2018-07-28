@@ -4,7 +4,7 @@ import com.elepy.Elepy;
 import com.elepy.annotations.RestModel;
 import com.mongodb.DB;
 
-public class MongoProvider<T> extends CrudProvider<T> {
+public class MongoProvider<T> implements CrudProvider<T> {
 
     public MongoProvider() {
     }
