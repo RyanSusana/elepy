@@ -72,7 +72,6 @@ public class ResourceDescriber<T> {
         } else {
             crudProvider = ClassUtils.emptyConstructor(annotation.crudProvider()).newInstance();
         }
-        crudProvider.setElepy(elepy);
     }
 
     private void setupEvaluators() throws IllegalAccessException, InstantiationException, InvocationTargetException {
