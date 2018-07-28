@@ -1,7 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.dao.CrudProvider;
-import com.elepy.dao.MongoProvider;
+import com.elepy.dao.jongo.MongoProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
