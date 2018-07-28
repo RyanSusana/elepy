@@ -94,80 +94,50 @@ public class MongoDao<T> implements Crud<T> {
         final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
         if (remainder > 0) amountOfPages++;
+
+
         return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
     }
 
-    @Override
-    public Page<T> search(QuerySetup querySetup) {
-
-        final List<Field> searchableFields = getSearchableFields();
-
-        List<Map<String, String>> expressions = new ArrayList<>();
-        Map<String, Object> qmap = new HashMap<>();
 
 
-        Pattern[] patterns = new Pattern[searchableFields.size()];
-
-        final Pattern pattern = Pattern.compile(".*" + querySetup.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
-        for (int i = 0; i < patterns.length; i++) {
-            patterns[i] = pattern;
-        }
-        for (Field field : searchableFields) {
-            Map<String, String> keyValue = new HashMap<>();
-            keyValue.put(ClassUtils.getPropertyName(field), "#");
-            expressions.add(keyValue);
-        }
-        qmap.put("$or", expressions);
+    public Page<T> search(QuerySetup querySetup)  {
+        final Find find;
+        final long amountResultsTotal;
         try {
+            if (querySetup.getQuery() != null) {
+                final List<Field> searchableFields = getSearchableFields();
 
-            Find find = querySetup.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
+                List<Map<String, String>> expressions = new ArrayList<>();
+                Map<String, Object> qmap = new HashMap<>();
 
-            long amountResultsTotal = querySetup.getQuery() != null ? collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().count();
-            if (querySetup.getSortBy() != null && querySetup.getSortOption() != null) {
-                find.sort(String.format("{%s: %d}", querySetup.getSortBy(), querySetup.getSortOption().getVal()));
+
+                Pattern[] patterns = new Pattern[searchableFields.size()];
+
+                final Pattern pattern = Pattern.compile(".*" + querySetup.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
+                for (int i = 0; i < patterns.length; i++) {
+                    patterns[i] = pattern;
+                }
+                for (Field field : searchableFields) {
+                    Map<String, String> keyValue = new HashMap<>();
+                    keyValue.put(ClassUtils.getPropertyName(field), "#");
+                    expressions.add(keyValue);
+                }
+                qmap.put("$or", expressions);
+                find = querySetup.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
+
+                amountResultsTotal = collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
             } else {
-                addDefaultSort(find);
+                find = collection().find();
+                amountResultsTotal = collection().count();
             }
+
+            find.sort(String.format("{%s: %d}", querySetup.getSortBy(), querySetup.getSortOption().getVal()));
             return toPage(find, querySetup, (int) amountResultsTotal);
-        } catch (Exception e) {
+        }catch (JsonProcessingException e){
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());
         }
-
-    }
-
-    public Page<T> lol(QuerySetup querySetup) throws JsonProcessingException {
-        final Find find;
-        final long amountResultsTotal;
-        if (querySetup.getQuery() != null) {
-            final List<Field> searchableFields = getSearchableFields();
-
-            List<Map<String, String>> expressions = new ArrayList<>();
-            Map<String, Object> qmap = new HashMap<>();
-
-
-            Pattern[] patterns = new Pattern[searchableFields.size()];
-
-            final Pattern pattern = Pattern.compile(".*" + querySetup.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
-            for (int i = 0; i < patterns.length; i++) {
-                patterns[i] = pattern;
-            }
-            for (Field field : searchableFields) {
-                Map<String, String> keyValue = new HashMap<>();
-                keyValue.put(ClassUtils.getPropertyName(field), "#");
-                expressions.add(keyValue);
-            }
-            qmap.put("$or", expressions);
-            find = querySetup.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
-
-            amountResultsTotal = collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
-        } else {
-            find = collection().find();
-            amountResultsTotal = collection().count();
-        }
-
-        find.sort(String.format("{%s: %d}", querySetup.getSortBy(), querySetup.getSortOption().getVal()));
-        return toPage(find, querySetup, (int) amountResultsTotal);
 
     }
 

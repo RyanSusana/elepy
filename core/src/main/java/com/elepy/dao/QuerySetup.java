@@ -13,8 +13,18 @@ public class QuerySetup {
         this.query = query;
         this.sortBy = sortBy;
         this.sortOption = sortOption;
-        this.pageNumber = pageNumber;
-        this.pageSize = pageSize;
+        if (pageNumber == 0) {
+            this.pageNumber = 1;
+        } else {
+            this.pageNumber = pageNumber;
+        }
+        if (pageSize == 0) {
+            this.pageSize = Integer.MAX_VALUE;
+        } else {
+
+            this.pageSize = pageSize;
+        }
+
     }
 
     public String getQuery() {
