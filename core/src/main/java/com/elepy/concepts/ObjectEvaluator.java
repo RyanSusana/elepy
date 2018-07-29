@@ -1,5 +1,5 @@
 package com.elepy.concepts;
 
 public interface ObjectEvaluator<T> {
-    void evaluate(T object) throws Exception;
+    void evaluate(Object object, Class<T> cls) throws Exception;
 }

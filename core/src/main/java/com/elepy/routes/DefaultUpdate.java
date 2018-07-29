@@ -43,7 +43,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
 
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             if (updated != null) {
-                objectEvaluator.evaluate(updated);
+                objectEvaluator.evaluate(updated, clazz);
 
             }
         }

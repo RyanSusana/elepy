@@ -19,9 +19,9 @@ import java.util.List;
 public class DefaultCreate<T> implements RouteHandler<T> {
 
 
-    public T create(Response response, T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public T create(Response response, T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-            objectEvaluator.evaluate(product);
+            objectEvaluator.evaluate(product, clazz);
         }
         new IntegrityEvaluatorImpl<T>().evaluate(product, dao);
         dao.create(product);
@@ -30,14 +30,14 @@ public class DefaultCreate<T> implements RouteHandler<T> {
         return product;
     }
 
-    public void multipleCreate(Response response, Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators) throws Exception {
+    public void multipleCreate(Response response, Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         if (ClassUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
 
         for (T item : items) {
             for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-                objectEvaluator.evaluate(item);
+                objectEvaluator.evaluate(item, clazz);
             }
             new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
         }
@@ -56,11 +56,11 @@ public class DefaultCreate<T> implements RouteHandler<T> {
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(response, ts, dao, objectEvaluators);
+            multipleCreate(response, ts, dao, objectEvaluators, clazz);
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            create(response, item, dao, objectMapper, objectEvaluators);
+            create(response, item, dao, objectMapper, objectEvaluators, clazz);
         }
     }
 }
