@@ -1,5 +1,7 @@
 package com.elepy.dao;
 
+import spark.utils.StringUtils;
+
 public class QuerySetup {
 
     private final String query;
@@ -11,8 +13,18 @@ public class QuerySetup {
 
     public QuerySetup(String query, String sortBy, SortOption sortOption, long pageNumber, int pageSize) {
         this.query = query;
-        this.sortBy = sortBy;
-        this.sortOption = sortOption;
+        if (StringUtils.isEmpty(sortBy)) {
+            this.sortBy = "_id";
+        } else {
+
+            this.sortBy = sortBy;
+        }
+        if (sortOption == null) {
+            this.sortOption = SortOption.ASCENDING;
+        } else {
+
+            this.sortOption = sortOption;
+        }
         if (pageNumber == 0) {
             this.pageNumber = 1;
         } else {
