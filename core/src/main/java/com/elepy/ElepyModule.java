@@ -22,25 +22,9 @@ public abstract class ElepyModule {
         this.http = elepy.http();
     }
 
-    public void setElepy(Elepy elepy) {
-        this.elepy = elepy;
-    }
+    public abstract void setup(Service http, Elepy elepy);
 
-    public void setHttp(Service http) {
-        this.http = http;
-    }
-
-    public Elepy elepy() {
-        return elepy;
-    }
-
-    public Service http() {
-        return http;
-    }
-
-    public abstract void setup();
-
-    public abstract void routes();
+    public abstract void routes(Service http);
 
 
 }

@@ -108,7 +108,7 @@ public class Elepy {
 
 
         for (ElepyModule module : modules) {
-            module.setup();
+            module.setup(http,this);
         }
         setupLogs();
 
@@ -132,7 +132,7 @@ public class Elepy {
 
 
         for (ElepyModule module : modules) {
-            module.routes();
+            module.routes(http);
         }
         initialized = true;
 
@@ -343,8 +343,6 @@ public class Elepy {
         if (initialized) {
             throw new IllegalStateException("Elepy already initialized, you must add modules before calling init()");
         }
-        module.setElepy(this);
-        module.setHttp(http);
         modules.add(module);
         return this;
     }
