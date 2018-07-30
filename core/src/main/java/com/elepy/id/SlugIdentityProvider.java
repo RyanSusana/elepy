@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class SlugIdentityProvider implements IdentityProvider {
+public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     private final String[] slugFieldNames;
 
     private final int prefixLength, maxLength;
@@ -28,7 +28,7 @@ public class SlugIdentityProvider implements IdentityProvider {
         this.slugFieldNames = slugFieldNames;
     }
 
-    private Optional<String> getSlug(Object obj, List<String> slugFieldNames) {
+    private Optional<String> getSlug(T obj, List<String> slugFieldNames) {
         final List<Field> fields = new ArrayList<>();
 
 
@@ -58,7 +58,7 @@ public class SlugIdentityProvider implements IdentityProvider {
     }
 
     @Override
-    public String getId(Object item, Crud dao) {
+    public String getId(T item, Crud<T> dao) {
 
         final Optional<String> slug = getSlug(item, Arrays.asList(slugFieldNames));
 
