@@ -1,15 +1,16 @@
 package com.elepy.concepts;
 
-import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
+import com.elepy.annotations.Number;
 import com.elepy.models.TextType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.math.BigDecimal;
 
 @RestModel(name = "Test Resource", slug = "/resources")
 public class Resource {
-    @MongoId
+    @Identifier
     private String id;
 
     @Text(TextType.TEXTFIELD)
@@ -22,6 +23,7 @@ public class Resource {
     private String wysiwyg;
 
     @Unique
+    @JsonProperty("unique")
     private String unique;
 
     @Required
@@ -44,6 +46,9 @@ public class Resource {
 
     @Number(minimum = 10, maximum = 50)
     private BigDecimal numberMin10Max50;
+
+    @Searchable
+    private String searchableField;
 
     private Object innerObject;
 
@@ -164,5 +169,19 @@ public class Resource {
 
     public void setNumberMin10Max50(BigDecimal numberMin10Max50) {
         this.numberMin10Max50 = numberMin10Max50;
+    }
+
+    public String getSearchableField() {
+        return searchableField;
+    }
+
+    public void setSearchableField(String searchableField) {
+        this.searchableField = searchableField;
+    }
+
+    @JsonProperty("generated")
+    @Generated
+    public String generatedField() {
+        return "I am generated";
     }
 }

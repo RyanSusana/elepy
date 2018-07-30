@@ -15,7 +15,7 @@ public class ObjectEvaluateTest extends BaseTest {
     private ObjectEvaluator<Resource> resourceObjectEvaluator;
 
     @Before
-    public void setup() {
+    public void setUp() throws Exception {
 
         this.resourceObjectEvaluator = new ObjectEvaluatorImpl<>();
 
@@ -24,7 +24,7 @@ public class ObjectEvaluateTest extends BaseTest {
 
     @Test
     public void testValidObject() throws Exception {
-        resourceObjectEvaluator.evaluate(validObject());
+        resourceObjectEvaluator.evaluate(validObject(), Resource.class);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ObjectEvaluateTest extends BaseTest {
     private void exceptionTest(Resource resource) throws Exception {
         try {
 
-            resourceObjectEvaluator.evaluate(resource);
+            resourceObjectEvaluator.evaluate(resource, Resource.class);
             fail("This object should not be considered valid");
         } catch (RestErrorMessage ignored) {
         }
