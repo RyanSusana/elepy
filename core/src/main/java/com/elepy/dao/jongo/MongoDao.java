@@ -61,7 +61,6 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public List<T> searchInField(Field field, String qry) {
         final String propertyName = ClassUtils.getPropertyName(field);
-        System.out.println(propertyName+": "+qry);
         return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new QuerySetup(null, null, null, 1, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
     }
 

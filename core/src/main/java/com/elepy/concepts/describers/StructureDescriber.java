@@ -39,8 +39,6 @@ public class StructureDescriber {
     private List<Map<String, Object>> describeFields() {
         List<Map<String, Object>> fields = new ArrayList<>();
         for (Field field : cls.getDeclaredFields()) {
-            System.out.println(cls.getName());
-            System.out.println(field.getName()+": "+ field.getAnnotations().length);
             if (!field.isAnnotationPresent(Hidden.class))
                 fields.add(new FieldDescriber(field).getFieldMap());
         }
@@ -53,10 +51,7 @@ public class StructureDescriber {
         List<Map<String, Object>> methods = new ArrayList<>();
 
         for (Method method : cls.getDeclaredMethods()) {
-            System.out.println(cls.getName());
-            System.out.println(method.getName()+": "+ method.getAnnotations().length);
             if (method.isAnnotationPresent(Generated.class)) {
-                System.out.println("Method");
                 methods.add(new MethodDescriber(method).getFieldMap());
             }
         }
