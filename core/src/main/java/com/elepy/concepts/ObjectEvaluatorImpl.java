@@ -12,7 +12,7 @@ import java.util.Date;
 public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
 
 
-    public void evaluate(Object o, Class<T> clazz) throws Exception {
+    public void evaluate(T o, Class<T> clazz) throws Exception {
 
         Class c = o.getClass();
 
@@ -23,7 +23,7 @@ public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
 
             if (fieldDescriber.getType().equals(FieldType.OBJECT)) {
                 if (field.get(o) != null)
-                    evaluate(field.get(o), clazz);
+                    evaluate((T) field.get(o), clazz);
             } else {
                 checkAnnotations(field.get(o), fieldDescriber);
             }

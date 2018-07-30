@@ -46,7 +46,7 @@ public class UserUpdate implements UpdateHandler<User> {
         updateEvaluator.evaluate(before.get(), updated);
 
         for (ObjectEvaluator<User> objectEvaluator : objectEvaluators) {
-            objectEvaluator.evaluate(updated);
+            objectEvaluator.evaluate(updated, User.class);
         }
         new IntegrityEvaluatorImpl<User>().evaluate(updated, dao);
         if (!updated.getPassword().equals(before.get().getPassword())) {

@@ -22,7 +22,7 @@ public class UserCreate implements CreateHandler<User> {
 
 
         for (ObjectEvaluator<User> objectEvaluator : objectEvaluators) {
-            objectEvaluator.evaluate(user);
+            objectEvaluator.evaluate(user, User.class);
         }
         new IntegrityEvaluatorImpl<User>().evaluate(user, dao);
 

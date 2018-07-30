@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class UserEvaluator implements ObjectEvaluator<User> {
     @Override
-    public void evaluate(User user) {
+    public void evaluate(User user, Class<User> cls) {
         String username = user.getUsername();
 
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
