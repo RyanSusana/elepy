@@ -30,13 +30,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.3.3.Final</version>
         </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.11</version>
-        </dependency>
-
         <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
