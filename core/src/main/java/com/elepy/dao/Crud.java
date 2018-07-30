@@ -54,9 +54,5 @@ public interface Crud<T> {
 
     void delete(final String id);
 
-    void deleteQuery(String pattern, Object... params);
 
-    default void deleteAll() {
-        deleteQuery("{}");
-    }
 }
