@@ -132,7 +132,7 @@ public class Elepy {
 
 
         for (ElepyModule module : modules) {
-            module.routes(http);
+            module.routes(http, this);
         }
         initialized = true;
 

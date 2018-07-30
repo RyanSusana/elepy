@@ -1,5 +1,6 @@
 package com.elepy.admin;
 
+import com.elepy.Elepy;
 import com.elepy.ElepyModule;
 import com.elepy.ResourceDescriber;
 import com.elepy.admin.concepts.*;
@@ -7,15 +8,14 @@ import com.elepy.admin.concepts.auth.Authenticator;
 import com.elepy.admin.concepts.auth.BasicHandler;
 import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
-import com.elepy.admin.services.BCrypt;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.RestErrorMessage;
-import com.mongodb.DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.ModelAndView;
 import spark.Request;
+import spark.Service;
 import spark.template.pebble.PebbleTemplateEngine;
 
 import java.io.File;
@@ -38,9 +38,13 @@ public class ElepyAdminPanel extends ElepyModule {
     private Filter baseAdminAuthenticationFilter;
     private final List<Link> links;
     private SetupHandler setupHandler;
-    private Authenticator authenticator ;
+    private Authenticator authenticator;
     private UserService userService;
     private boolean initiated = false;
+
+    private Service http;
+
+    private Elepy elepy;
 
 
     public ElepyAdminPanel() {
@@ -79,7 +83,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
     @Override
-    public void routes() {
+    public void routes(Service http, Elepy elepy) {
 
         try {
 
@@ -96,43 +100,45 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
     @Override
-    public void setup() {
+    public void setup(Service http, Elepy elepy) {
 
-        this.userService = new UserService(new ResourceDescriber<>(elepy(), User.class).getCrudProvider().crudFor(User.class, elepy()));
+        this.http = http;
+        this.elepy = elepy;
+        this.userService = new UserService(new ResourceDescriber<>(elepy, User.class).getCrudProvider().crudFor(User.class, elepy));
         tokenHandler = new TokenHandler(this.userService);
         authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
 
-        elepy().addPackage(User.class.getPackage().getName());
+        elepy.addPackage(User.class.getPackage().getName());
     }
 
 
     private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
-        http().before("/admin/*/*", (request, response) -> elepy().allAdminFilters().handle(request, response));
-        http().before("/admin/*", (request, response) -> {
-            elepy().allAdminFilters().handle(request, response);
+        http.before("/admin/*/*", (request, response) -> elepy.allAdminFilters().handle(request, response));
+        http.before("/admin/*", (request, response) -> {
+            elepy.allAdminFilters().handle(request, response);
         });
-        http().before("/admin", (request, response) -> {
-            elepy().allAdminFilters().handle(request, response);
+        http.before("/admin", (request, response) -> {
+            elepy.allAdminFilters().handle(request, response);
         });
-        http().post("/retrieve-token", (request, response) -> {
+        http.post("/retrieve-token", (request, response) -> {
             final Optional<Token> token = tokenHandler.createToken(request);
 
             if (token.isPresent()) {
-                return elepy().getObjectMapper().writeValueAsString(token.get());
+                return elepy.getObjectMapper().writeValueAsString(token.get());
             } else {
                 throw new RestErrorMessage("Invalid username/password");
             }
         });
-        http().get("/admin", (request, response) -> {
+        http.get("/admin", (request, response) -> {
 
             Map<String, Object> model = new HashMap<>();
             model.put("plugins", pluginHandler.getPlugins());
             return renderWithDefaults(request, model, "templates/base.peb");
         });
-        http().get("/admin-logout", (request, response) -> {
+        http.get("/admin-logout", (request, response) -> {
 
             request.session().invalidate();
             response.redirect("/login");
@@ -149,13 +155,13 @@ public class ElepyAdminPanel extends ElepyModule {
     private void setupLogin() {
 
 
-        elepy().addAdminFilter(baseAdminAuthenticationFilter);
-        http().get("/login", (request, response) -> {
+        elepy.addAdminFilter(baseAdminAuthenticationFilter);
+        http.get("/login", (request, response) -> {
 
 
             return renderWithDefaults(request, new HashMap<>(), "templates/login.peb");
         });
-        http().post("/login", (request, response) -> {
+        http.post("/login", (request, response) -> {
 
             final Optional<User> user = userService.login(request.queryParamOrDefault("username", "invalid"), request.queryParamOrDefault("password", "invalid"));
 
@@ -178,9 +184,7 @@ public class ElepyAdminPanel extends ElepyModule {
         });
 
 
-
     }
-
 
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
