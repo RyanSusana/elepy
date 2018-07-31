@@ -44,6 +44,8 @@ public class ElepyAdminPanel extends ElepyModule {
 
     private Service http;
 
+
+
     private Elepy elepy;
 
 
@@ -263,7 +265,13 @@ public class ElepyAdminPanel extends ElepyModule {
     public ElepyAdminPanel addLink(String to, String text, String fontAwesomeClass) {
         return addLink(new Link(to, text, fontAwesomeClass));
     }
+    public Service http() {
+        return http;
+    }
 
+    public Elepy elepy() {
+        return elepy;
+    }
     public boolean isInitiated() {
         return initiated;
     }
