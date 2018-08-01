@@ -9,6 +9,7 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
+import com.elepy.dao.SortOption;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,7 +62,7 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public List<T> searchInField(Field field, String qry) {
         final String propertyName = ClassUtils.getPropertyName(field);
-        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new QuerySetup(null, null, null, 1, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
+        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new QuerySetup(null, null, null, 1L, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
     }
 
     private Find addDefaultSort(Find find) {
@@ -80,12 +81,12 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public long count(String query) {
-        if(StringUtils.isEmpty(query)){
+        if (StringUtils.isEmpty(query)) {
             return collection().count();
         }
-        if(query.startsWith("{") && query.endsWith("}")) {
+        if (query.startsWith("{") && query.endsWith("}")) {
             return collection().count(query);
-        }else{
+        } else {
             final List<Field> searchableFields = getSearchableFields();
 
             List<Map<String, String>> expressions = new ArrayList<>();
@@ -135,8 +136,7 @@ public class MongoDao<T> implements Crud<T> {
     }
 
 
-
-    public Page<T> search(QuerySetup querySetup)  {
+    public Page<T> search(QuerySetup querySetup) {
         final Find find;
         final long amountResultsTotal;
         try {
@@ -167,9 +167,13 @@ public class MongoDao<T> implements Crud<T> {
                 amountResultsTotal = collection().count();
             }
 
-            find.sort(String.format("{%s: %d}", querySetup.getSortBy(), querySetup.getSortOption().getVal()));
+            final AbstractMap.SimpleEntry<String, SortOption> defaultSort = defaultSort();
+
+            find.sort(String.format("{%s: %d}",
+                    querySetup.getSortBy() == null ? defaultSort.getKey() : querySetup.getSortBy(),
+                    querySetup.getSortOption() == null ? defaultSort.getValue().getVal() : querySetup.getSortOption().getVal()));
             return toPage(find, querySetup, (int) amountResultsTotal);
-        }catch (JsonProcessingException e){
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());
         }

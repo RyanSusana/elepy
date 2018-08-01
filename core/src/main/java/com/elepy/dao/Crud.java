@@ -1,8 +1,10 @@
 package com.elepy.dao;
 
+import com.elepy.annotations.RestModel;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Field;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,9 +46,9 @@ public interface Crud<T> {
     }
 
 
-
     long count(String query);
-    default long count(){
+
+    default long count() {
         return count("");
     }
 
@@ -55,4 +57,10 @@ public interface Crud<T> {
     void delete(final String id);
 
 
+    default AbstractMap.SimpleEntry<String, SortOption> defaultSort() {
+        final Class<T> type = getType();
+        final RestModel annotation = type.getAnnotation(RestModel.class);
+
+        return new AbstractMap.SimpleEntry<>(annotation.defaultSortField(), annotation.defaultSortDirection());
+    }
 }

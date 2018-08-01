@@ -1,41 +1,30 @@
 package com.elepy.dao;
 
-import spark.utils.StringUtils;
+import javax.annotation.Nullable;
+
 
 public class QuerySetup {
 
     private final String query;
+
+    @Nullable
     private final String sortBy;
+
+    @Nullable
     private final SortOption sortOption;
 
     private final long pageNumber;
     private final int pageSize;
 
-    public QuerySetup(String query, String sortBy, SortOption sortOption, long pageNumber, int pageSize) {
-        this.query = query;
-        if (StringUtils.isEmpty(sortBy)) {
-            this.sortBy = "_id";
-        } else {
+    public QuerySetup(@Nullable String query, @Nullable String sortBy, @Nullable SortOption sortOption, @Nullable Long pageNumber, @Nullable Integer pageSize) {
 
-            this.sortBy = sortBy;
-        }
-        if (sortOption == null) {
-            this.sortOption = SortOption.ASCENDING;
-        } else {
+        this.query = query == null ? "" : query;
+        this.pageNumber = pageNumber == null ? 1 : pageNumber;
+        this.pageSize = pageSize == null ? Integer.MAX_VALUE : pageSize;
 
-            this.sortOption = sortOption;
-        }
-        if (pageNumber == 0) {
-            this.pageNumber = 1;
-        } else {
-            this.pageNumber = pageNumber;
-        }
-        if (pageSize == 0) {
-            this.pageSize = Integer.MAX_VALUE;
-        } else {
+        this.sortBy = sortBy;
+        this.sortOption = sortOption;
 
-            this.pageSize = pageSize;
-        }
 
     }
 
