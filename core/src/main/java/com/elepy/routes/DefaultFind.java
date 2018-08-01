@@ -27,7 +27,7 @@ public class DefaultFind<T> implements RouteHandler<T> {
         String pn = request.queryParams("pageNumber");
 
         int pageSize = ps == null ? Integer.MAX_VALUE : Integer.parseInt(ps);
-        int pageNumber = pn == null ? 1 : Integer.parseInt(pn);
+       long pageNumber = pn == null ? 1 : Integer.parseInt(pn);
 
 
         response.status(200);
