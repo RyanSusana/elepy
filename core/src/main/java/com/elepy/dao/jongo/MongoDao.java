@@ -131,6 +131,7 @@ public class MongoDao<T> implements Crud<T> {
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
         if (remainder > 0) amountOfPages++;
 
+        System.out.println(values.size());
 
         return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
     }
@@ -140,7 +141,7 @@ public class MongoDao<T> implements Crud<T> {
         final Find find;
         final long amountResultsTotal;
         try {
-            if (querySetup.getQuery() != null) {
+            if (!StringUtils.isEmpty(querySetup.getQuery())) {
                 final List<Field> searchableFields = getSearchableFields();
 
                 List<Map<String, String>> expressions = new ArrayList<>();
@@ -170,6 +171,10 @@ public class MongoDao<T> implements Crud<T> {
             final AbstractMap.SimpleEntry<String, SortOption> defaultSort = defaultSort();
 
             find.sort(String.format("{%s: %d}",
+                    querySetup.getSortBy() == null ? defaultSort.getKey() : querySetup.getSortBy(),
+                    querySetup.getSortOption() == null ? defaultSort.getValue().getVal() : querySetup.getSortOption().getVal()));
+
+            System.out.println(String.format("{%s: %d}",
                     querySetup.getSortBy() == null ? defaultSort.getKey() : querySetup.getSortBy(),
                     querySetup.getSortOption() == null ? defaultSort.getValue().getVal() : querySetup.getSortOption().getVal()));
             return toPage(find, querySetup, (int) amountResultsTotal);

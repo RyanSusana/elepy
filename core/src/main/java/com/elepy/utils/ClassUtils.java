@@ -39,7 +39,7 @@ public class ClassUtils {
         if (field.isAnnotationPresent(JsonProperty.class)) {
             return field.getAnnotation(JsonProperty.class).value();
         } else if (hasId(field)) {
-            return "_id";
+            return "id";
         } else {
             return field.getName();
         }

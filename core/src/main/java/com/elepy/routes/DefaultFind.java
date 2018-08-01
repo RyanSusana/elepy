@@ -2,7 +2,9 @@ package com.elepy.routes;
 
 import com.elepy.Elepy;
 import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.dao.*;
+import com.elepy.dao.Crud;
+import com.elepy.dao.QuerySetup;
+import com.elepy.dao.SortOption;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
@@ -27,7 +29,7 @@ public class DefaultFind<T> implements RouteHandler<T> {
         String pn = request.queryParams("pageNumber");
 
         int pageSize = ps == null ? Integer.MAX_VALUE : Integer.parseInt(ps);
-       long pageNumber = pn == null ? 1 : Integer.parseInt(pn);
+        long pageNumber = pn == null ? 1 : Long.parseLong(pn);
 
 
         response.status(200);
