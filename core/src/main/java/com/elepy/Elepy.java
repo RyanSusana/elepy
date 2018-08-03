@@ -179,7 +179,7 @@ public class Elepy {
 
 
                 if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
-                    http.get(baseSlug + restModel.getSlug(), (request, response) -> {
+                    http.get(baseSlug + restModel.getSlug()+"/:id", (request, response) -> {
                         restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
