@@ -174,9 +174,6 @@ public class MongoDao<T> implements Crud<T> {
                     querySetup.getSortBy() == null ? defaultSort.getKey() : querySetup.getSortBy(),
                     querySetup.getSortOption() == null ? defaultSort.getValue().getVal() : querySetup.getSortOption().getVal()));
 
-            System.out.println(String.format("{%s: %d}",
-                    querySetup.getSortBy() == null ? defaultSort.getKey() : querySetup.getSortBy(),
-                    querySetup.getSortOption() == null ? defaultSort.getValue().getVal() : querySetup.getSortOption().getVal()));
             return toPage(find, querySetup, (int) amountResultsTotal);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
