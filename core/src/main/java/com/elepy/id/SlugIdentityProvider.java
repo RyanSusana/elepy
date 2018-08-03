@@ -18,7 +18,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     private final Slugify slugify;
 
     public SlugIdentityProvider() {
-        this(5, 33, "name", "title", "slug");
+        this(3, 70, "name", "title", "slug");
     }
 
     public SlugIdentityProvider(int prefixLength, int maxLength, String... slugFieldNames) {
