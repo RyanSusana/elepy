@@ -100,11 +100,17 @@
                                     <div class="uk-form-controls">
                                         <!-- TEXTFIELD -->
                                         <input class="uk-input"
-                                               v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD')"
+                                               v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') ||  (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
                                                :disabled="field.name == 'id' || (field.editable == false)"
                                                v-model="selectedData[field.name]" type="text"
                                                :disabled="field.name == 'id' || field.editable == false"
                                                placeholder="">
+
+                                        <!-- IMAGE -->
+                                        <div class="uk-padding">
+
+                                            <img :src="selectedData[field.name]" alt="">
+                                        </div>
                                         <!-- DATE -->
                                         <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selectedData[field.name]"
                                                           :disabled="field.name == 'id' || (field.editable == false)"
@@ -166,12 +172,19 @@
                                                 <label class="uk-form-label">((field.pretty_name))</label>
                                                 <!-- TEXTFIELD -->
                                                 <input class="uk-input"
-                                                       v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD')"
+                                                       v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
                                                        :disabled="field.name == 'id' || (field.editable == false)"
                                                        v-model="selectedData[fieldOuter.name][field.name]"
                                                        type="text"
                                                        :disabled="field.name == 'id' || field.editable == false"
                                                        placeholder="">
+
+                                                <!-- IMAGE -->
+
+                                                <div class="uk-padding">
+
+                                                    <img :src="selectedData[fieldOuter.name][field.name]" alt="">
+                                                </div>
                                                 <!-- DATE -->
                                                 <vuejs-datepicker v-if="field.type == 'DATE'"
                                                                   v-model="selectedData[fieldOuter.name][field.name]"
@@ -270,10 +283,16 @@
                                         <!-- TEXTFIELD -->
                                         <input class="uk-input"
                                                v-show="(field.name != 'id')"
-                                               v-if="(field.name != 'id') && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD'))"
+                                               v-if="(field.name != 'id') && (field.type == 'STRING' ||  (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK'))"
                                                :disabled="(field.name == 'id') "
                                                v-model="newData[field.name]" type="text"
                                                placeholder="">
+
+                                        <!-- IMAGE -->
+                                        <div class="uk-padding">
+
+                                            <img :src="newData[field.name]" alt="">
+                                        </div>
                                         <!-- DATE -->
 
                                         <vuejs-datepicker v-if="field.type == 'DATE'" v-model="newData[field.name]"
