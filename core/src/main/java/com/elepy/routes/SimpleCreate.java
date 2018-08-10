@@ -27,7 +27,6 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             super.handle(request, response, dao, elepy, objectEvaluators, clazz);
 
-
             onCreate(item, dao, elepy);
 
 
