@@ -131,7 +131,6 @@ public class MongoDao<T> implements Crud<T> {
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
         if (remainder > 0) amountOfPages++;
 
-        System.out.println(values.size());
 
         return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
     }
