@@ -36,7 +36,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
         }
     }
 
-    public abstract void beforeCreate(T objectForCreation, Crud<T> crud, Elepy elepy);
+    public abstract void beforeCreate(T objectForCreation, Crud<T> crud, Elepy elepy) throws Exception;
 
     public abstract void afterCreate(T createdObject, Crud<T> crud, Elepy elepy);
 }
