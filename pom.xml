@@ -12,6 +12,7 @@
         <module>admin</module>
         <module>core</module>
         <module>hibernate</module>
+        <module>gallery</module>
     </modules>
 
     <build>

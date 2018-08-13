@@ -1,0 +1,269 @@
+<div id="gallery" class="">
+    <div class="uk-container uk-margin-medium-top">
+
+        <h1>Elepy Gallery</h1>
+        <a class="uk-button uk-button-primary" href="#upload-modal" uk-toggle><i
+                class="fas fa-upload"></i> Upload an image</a>
+        <hr>
+    </div>
+
+
+    <div class="uk-background-primary" style="min-height: 80vh;">
+        <div class="uk-container uk-container-large">
+
+            <div class="uk-child-width-1-4@m uk-padding uk-flex" uk-grid>
+                <div v-for="image in images" class="">
+                    <div class="uk-card uk-card-secondary ">
+                        <div class="uk-clearfix">
+                            <a class="uk-float-right uk-text-danger" v-on:click="deleteImage(image)"><i
+                                    class="fas fa-times"></i></a>
+                        </div>
+                        <div class="uk-card-media-top uk-background-cover uk-height-small uk-position-relative"
+
+
+                             :style='{ backgroundImage: `url(${image.caption})` }'>
+
+                            <div uk-lightbox="animation: fade">
+                                <a :href="image.original" data-type="image" class="uk-position-cover uk-transition-toggle">
+
+                                    <div class="uk-transition-fade uk-position-cover uk-overlay uk-overlay-primary uk-flex uk-flex-center uk-flex-middle">
+                                    </div>
+                                    <div class="uk-position-center">
+                                        <i class="fa fa-expand uk-transition-fade" style="font-size: 3.5em;"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="uk-card-body uk-padding-small">
+
+                            <input class="uk-input uk-width-1-1 copy-input" readonly uk-tooltip="Click to copy link"
+                                   type="text"
+                                   placeholder="Input" :value="image.original">
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<div id="upload-modal" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title uk-text-center">Upload an Image</h2>
+        </div>
+        <div class="uk-modal-body">
+
+            <form action="/images/upload" class="uk-text-center modal-form">
+                <div class="uk-margin" uk-margin>
+                    <div class="uk-width-1-1" uk-form-custom="target: true">
+                        <input id="image-thumbail-input" name="image" type="file">
+                        <input class="uk-input uk-width-1-1" type="text" placeholder="Click here to upload your image"
+                               disabled>
+                    </div>
+                    <img id="image-thumbnail" class="uk-margin-top uk-width-3-4"
+                         src="https://www.marcswords.com/wp-content/themes/fearless/images/missing-image-640x360.png"
+                         alt="your image"/>
+
+
+                </div>
+                <button id = "uploading-button" class="uk-button uk-button-primary alternative-primary rubberBand" type="submit"><span id="upload-button-text">Upload</span></button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script>
+
+    $(document).on('click', '.copy-input', function (e) {
+
+        $(this).animateCss('jello');
+        var copy = $(this)[0];
+        copy.focus();
+        copy.select();
+        document.execCommand('copy');
+        UIkit.notification('Link copied!', {status: 'success', timeout: 1000});
+
+    })
+
+    $.fn.extend({
+        animateCss: function (animationName, callback) {
+            var animationEnd = (function (el) {
+                var animations = {
+                    animation: 'animationend',
+                    OAnimation: 'oAnimationEnd',
+                    MozAnimation: 'mozAnimationEnd',
+                    WebkitAnimation: 'webkitAnimationEnd',
+                };
+
+                for (var t in animations) {
+                    if (el.style[t] !== undefined) {
+                        return animations[t];
+                    }
+                }
+            })(document.createElement('div'));
+
+            this.addClass('animated ' + animationName).one(animationEnd, function () {
+                $(this).removeClass('animated ' + animationName);
+
+                if (typeof callback === 'function') callback();
+            });
+
+            return this;
+        },
+    });
+    $(document).on('submit', '.modal-form', function (e) {
+        e.preventDefault();
+
+
+        if( $('#image-thumbail-input').val() === ''){
+            UIkit.notification.closeAll();
+            UIkit.notification('Please select an image first!');
+            return;
+        }
+        var url = this.action;
+        var form = this;
+
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: new FormData(form),
+            cache: false,
+            contentType: false,
+            processData: false,
+
+
+            beforeSend: function () {
+                UIkit.notification.closeAll();
+                var loadingIcon = '<img id = "upload-loading-icon" style="width: 35px;" src="/admin-resources/images/LoadingPrimary.gif" alt="">';
+
+                UIkit.notification('Uploading image', {
+                    status: 'info', timeout:20000
+                });
+                $('#upload-button-text').text("Uploading");
+                $('#uploading-button').prepend(loadingIcon);
+            },
+
+            xhr: function () {
+
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    // For handling the progress of the upload
+                }
+                return myXhr;
+            },
+
+            success: function (data, ajaxOptions, response) {
+                app.getImages();
+
+                UIkit.notification.closeAll();
+                UIkit.notification(response.responseText, {
+                    status: 'success'
+                });
+                //UIkit.modal(document.getElementById("upload-modal")).hide();
+
+                $('#upload-button-text').text("Upload");
+                $('#upload-loading-icon').remove();
+                $('#image-thumbail-input').val('');
+
+                $('#image-thumbnail').attr('src', 'https://www.marcswords.com/wp-content/themes/fearless/images/missing-image-640x360.png');
+            },
+            error: function (response, ajaxOptions, thrownError) {
+
+                console.log(response)
+                UIkit.notification(response.responseText, {
+                    status: 'danger'
+                });
+                $('#upload-button-text').text("Upload");
+                $('#image-thumbnail').attr('src', 'https://www.marcswords.com/wp-content/themes/fearless/images/missing-image-640x360.png');
+                $('#image-thumbail-input').val('');
+                $('#upload-loading-icon').remove();
+            }
+        });
+
+    });
+
+
+    function readURL(input) {
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#image-thumbnail').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $(document).on('change', '#image-thumbail-input', function () {
+        readURL(this);
+    });
+    var app = new Vue({
+        el: '#gallery',
+        delimiters: ['((', '))'],
+        data: {
+            images: [],
+
+
+        },
+        computed: {},
+        methods: {
+            getImages: function () {
+                var ref = this;
+                axios.get('/images/gallery')
+                        .then(function (response) {
+                            ref.images = response.data
+                        })
+                        .catch(function (error) {
+                            UIkit.notification(error.response.status, {status: 'danger'})
+                        });
+            },
+            deleteImage: function (image) {
+                var ref = this;
+                UIkit.notification.closeAll();
+                UIkit.modal.confirm('Are you sure that you want to delete this image?', {
+                    labels: {
+                        ok: "Yes",
+                        cancel: "Cancel"
+                    }, stack: true
+                }).then(function () {
+                    axios({
+                        method: 'delete',
+                        url: '/images/' + image.id
+                    }).then(function (response) {
+                        UIkit.notification.closeAll();
+                        UIkit.notification(response.data, {status: 'success'});
+                        ref.getImages();
+                    })
+                            .catch(function (error) {
+                                UIkit.notification(error.response.data, {status: 'danger'})
+                            });
+                }, function () {
+
+                });
+            }
+        },
+
+
+        created: function () {
+            this.getImages();
+
+        }
+    });
+
+
+</script>
