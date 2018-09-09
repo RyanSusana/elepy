@@ -1,4 +1,4 @@
-{% extends "templates/base.peb" %}
+{% extends "admin-templates/base.peb" %}
 
 
 
@@ -18,5 +18,9 @@
 
 
 {% block headers %}
+{% autoescape false %}
+
         {{ headers }}
+{% endautoescape %}
+
     {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "templates/base.peb" %}
+{% extends "admin-templates/base.peb" %}
 
 {% block title %}
            {{currentDescriptor.name}}
