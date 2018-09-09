@@ -10,17 +10,15 @@ import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.RestErrorMessage;
+import com.mitchellbosecke.pebble.PebbleEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Service;
-import spark.template.pebble.PebbleTemplateEngine;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -43,7 +41,7 @@ public class ElepyAdminPanel extends ElepyModule {
     private boolean initiated = false;
 
     private Service http;
-
+    private PebbleEngine engine;
 
 
     private Elepy elepy;
@@ -81,6 +79,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
         this.links = new ArrayList<>();
 
+        engine = new PebbleEngine.Builder().build();
     }
 
 
@@ -189,7 +188,7 @@ public class ElepyAdminPanel extends ElepyModule {
     }
 
 
-    public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) {
+    public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
         model.put("descriptors", viewHandler.getDescriptors());
         model.put("plugins", pluginHandler.getPlugins());
         model.put("user", request.session().attribute(ADMIN_USER));
@@ -198,9 +197,11 @@ public class ElepyAdminPanel extends ElepyModule {
     }
 
 
-    public String render(Map<String, Object> model, String templatePath) {
+    public String render(Map<String, Object> model, String templatePath) throws IOException {
 
-        return new PebbleTemplateEngine().render(new ModelAndView(model, templatePath));
+        Writer writer = new StringWriter();
+        engine.getTemplate(templatePath).evaluate(writer, model);
+        return writer.toString();
     }
 
     public ElepyAdminPanel addPlugin(ElepyAdminPanelPlugin plugin) {
@@ -265,6 +266,7 @@ public class ElepyAdminPanel extends ElepyModule {
     public ElepyAdminPanel addLink(String to, String text, String fontAwesomeClass) {
         return addLink(new Link(to, text, fontAwesomeClass));
     }
+
     public Service http() {
         return http;
     }
@@ -272,6 +274,7 @@ public class ElepyAdminPanel extends ElepyModule {
     public Elepy elepy() {
         return elepy;
     }
+
     public boolean isInitiated() {
         return initiated;
     }
