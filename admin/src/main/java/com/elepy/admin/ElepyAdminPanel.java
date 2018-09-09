@@ -14,7 +14,6 @@ import com.mitchellbosecke.pebble.PebbleEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Service;
 
@@ -137,7 +136,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
             Map<String, Object> model = new HashMap<>();
             model.put("plugins", pluginHandler.getPlugins());
-            return renderWithDefaults(request, model, "templates/base.peb");
+            return renderWithDefaults(request, model, "admin-templates/base.peb");
         });
         http.get("/admin-logout", (request, response) -> {
 
@@ -160,7 +159,7 @@ public class ElepyAdminPanel extends ElepyModule {
         http.get("/login", (request, response) -> {
 
 
-            return renderWithDefaults(request, new HashMap<>(), "templates/login.peb");
+            return renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb");
         });
         http.post("/login", (request, response) -> {
 

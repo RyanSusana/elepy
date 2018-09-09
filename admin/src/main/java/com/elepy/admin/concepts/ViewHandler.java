@@ -51,7 +51,7 @@ public class ViewHandler {
                 model.put("headers", resourceView.renderHeaders());
 
                 model.put("currentDescriptor", resourceView.getDescriptor());
-                return adminPanel.renderWithDefaults(request, model, "templates/custom-model.peb");
+                return adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb");
             });
         }
         for (Map<String, Object> descriptor : descriptors) {
@@ -102,7 +102,7 @@ public class ViewHandler {
 
             model.put("descriptors", descriptors);
             model.put("currentDescriptor", descriptor);
-            return adminPanel.renderWithDefaults(request, model, "templates/model.peb");
+            return adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb");
         });
     }
 

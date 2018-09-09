@@ -38,7 +38,7 @@ public class PluginHandler {
                 String content = plugin.renderContent(null);
                 model.put("content", content);
                 model.put("plugin", plugin);
-                return adminPanel.renderWithDefaults(request, model, "templates/plugin.peb");
+                return adminPanel.renderWithDefaults(request, model, "admin-templates/plugin.peb");
             });
         }
     }
