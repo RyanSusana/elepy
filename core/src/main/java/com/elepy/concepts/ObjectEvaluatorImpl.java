@@ -38,6 +38,9 @@ public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
             throw new RestErrorMessage(fieldDescriber.getPrettyName() + " is blank, please fill it in!");
         }
         if (fieldDescriber.getType().equals(FieldType.NUMBER)) {
+            if (obj == null) {
+                obj = 0;
+            }
             if (!(obj instanceof java.lang.Number)) {
                 throw new RestErrorMessage(fieldDescriber.getPrettyName() + " must be a number");
             }
@@ -51,6 +54,9 @@ public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
         }
         if (fieldDescriber.getType().equals(FieldType.TEXT)) {
             String text = (String) obj;
+            if (text == null) {
+                text = "";
+            }
             if (fieldDescriber.getField().isAnnotationPresent(Text.class)) {
                 Text textAnnotation = fieldDescriber.getField().getAnnotation(Text.class);
                 if (text.length() > textAnnotation.maximumLength() || text.length() < textAnnotation.minimumLength()) {
