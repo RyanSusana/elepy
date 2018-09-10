@@ -136,13 +136,13 @@
                                                   :disabled="field.name == 'id' || field.editable == false"
                                                   placeholder="" rows="5"></textarea>
 
-                                        <!-- WYSIWYG -->
+                                        <!-- MARKDOWN -->
                                         <div class="uk-padding uk-background-muted"
                                              v-html="compileMarkdown(selectedData[field.name])"
-                                             v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
+                                             v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN')">
                                         </div>
                                         <textarea class="uk-textarea"
-                                                  v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
+                                                  v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
                                                   :disabled="field.name == 'id' || (field.editable == false)"
                                                   v-model="selectedData[field.name]" type="text"
                                                   :disabled="field.name == 'id' || field.editable == false"
@@ -222,15 +222,15 @@
                                                           :disabled="field.name == 'id' || field.editable == false"
                                                           placeholder=""
                                                           rows="5"></textarea>
-                                                <!-- WYSIWYG -->
+                                                <!-- MARKDOWN -->
                                                 <div class="uk-padding uk-background-muted"
                                                      v-html="compileMarkdown(selectedData[fieldOuter.name][field.name])"
-                                                     v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
+                                                     v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN')">
                                                 </div>
 
 
                                                 <textarea class="uk-textarea"
-                                                          v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
+                                                          v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
                                                           :disabled="field.name == 'id' || (field.editable == false)"
                                                           v-model="selectedData[fieldOuter.name][field.name]"
                                                           type="text"
@@ -337,15 +337,15 @@
                                                   v-model="newData[field.name]" type="text"
 
                                                   placeholder="" rows="5"></textarea>
-                                        <!-- WYSIWYG -->
+                                        <!-- MARKDOWN -->
                                         <div class="uk-padding uk-background-muted"
                                              v-html="compileMarkdown(newData[field.name])"
-                                             v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
+                                             v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN')">
                                         </div>
 
 
                                         <textarea class="uk-textarea"
-                                                  v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
+                                                  v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
                                                   :disabled="field.name == 'id' || (field.editable == false)"
                                                   v-model="newData[field.name]" type="text"
                                                   :disabled="field.name == 'id' || field.editable == false"

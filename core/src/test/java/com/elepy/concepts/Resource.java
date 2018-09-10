@@ -19,8 +19,8 @@ public class Resource {
     @Text(TextType.TEXTAREA)
     private String textArea;
 
-    @Text(TextType.WYSIWYG)
-    private String wysiwyg;
+    @Text(TextType.MARKDOWN)
+    private String MARKDOWN;
 
     @Unique
     @JsonProperty("unique")
@@ -99,12 +99,12 @@ public class Resource {
         this.textArea = textArea;
     }
 
-    public String getWysiwyg() {
-        return this.wysiwyg;
+    public String getMARKDOWN() {
+        return this.MARKDOWN;
     }
 
-    public void setWysiwyg(String wysiwyg) {
-        this.wysiwyg = wysiwyg;
+    public void setMARKDOWN(String MARKDOWN) {
+        this.MARKDOWN = MARKDOWN;
     }
 
     public String getUnique() {

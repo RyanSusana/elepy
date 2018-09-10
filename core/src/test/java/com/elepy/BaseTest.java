@@ -17,7 +17,7 @@ public class BaseTest {
         resource.setNumberMin20(BigDecimal.valueOf(20));
         resource.setNumberMin10Max50(BigDecimal.valueOf(15));
         resource.setUnique("unique");
-        resource.setWysiwyg("wysiwyg");
+        resource.setMARKDOWN("MARKDOWN");
         resource.setTextArea("textarea");
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
