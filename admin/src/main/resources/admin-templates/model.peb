@@ -149,6 +149,12 @@
                                                   placeholder="" rows="13"></textarea>
 
 
+                                        <!-- HTML -->
+                                        <trumbowyg v-model="selectedData[field.name]"
+                                                   v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
+                                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
+                                                   ></trumbowyg>
+
                                         <!-- ENUM -->
                                         <div class="uk-form-controls">
                                             <select class="uk-select" v-model="selectedData[field.name]"
@@ -221,6 +227,8 @@
                                                      v-html="compileMarkdown(selectedData[fieldOuter.name][field.name])"
                                                      v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
                                                 </div>
+
+
                                                 <textarea class="uk-textarea"
                                                           v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
                                                           :disabled="field.name == 'id' || (field.editable == false)"
@@ -228,6 +236,14 @@
                                                           type="text"
                                                           :disabled="field.name == 'id' || field.editable == false"
                                                           placeholder="" rows="13"></textarea>
+
+
+                                                <!-- HTML -->
+                                                <trumbowyg v-model="selectedData[fieldOuter.name][field.name]"
+                                                           v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
+                                                           svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
+                                                           ></trumbowyg>
+
                                                 <!-- ENUM -->
                                                 <div class="uk-form-controls">
                                                     <select class="uk-select"
@@ -326,12 +342,21 @@
                                              v-html="compileMarkdown(newData[field.name])"
                                              v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG')">
                                         </div>
+
+
                                         <textarea class="uk-textarea"
                                                   v-if="(field.type == 'TEXT' && field.textType == 'WYSIWYG') && (field.editable === true)"
                                                   :disabled="field.name == 'id' || (field.editable == false)"
                                                   v-model="newData[field.name]" type="text"
                                                   :disabled="field.name == 'id' || field.editable == false"
                                                   placeholder="" rows="13"></textarea>
+
+
+                                        <!-- HTML -->
+                                        <trumbowyg v-model="newData[field.name]"
+                                                   v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
+                                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
+                                                   ></trumbowyg>
                                         <!-- ENUM -->
                                         <div class="uk-form-controls">
                                             <select class="uk-select" v-model="newData[field.name]"
@@ -450,10 +475,16 @@
 {% block scripts %}
 
 {% if customView is null %}
-<script
-        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
-        crossorigin="anonymous"></script>
+
+<!-- Editor dependency-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.3"></script>
+
+<!-- Editor itself -->
+<script src="https://cdn.jsdelivr.net/npm/trumbowyg@2"></script>
+
+
+<!-- Lastly add this package -->
+<script src="https://cdn.jsdelivr.net/npm/vue-trumbowyg@3"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
 <script src="/admin-resources/js/vue-truncate.js"></script>

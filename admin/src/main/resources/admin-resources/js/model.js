@@ -1,3 +1,4 @@
+Vue.component('Trumbowyg', VueTrumbowyg.default);
 const app = new Vue({
     el: '#app',
     delimiters: ['((', '))'],
