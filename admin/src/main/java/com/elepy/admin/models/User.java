@@ -4,6 +4,7 @@ import com.elepy.admin.services.*;
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
 import com.elepy.models.AccessLevel;
+import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -44,6 +45,7 @@ public class User {
     @PrettyName("Password")
     @JsonProperty("password")
     @Importance(-1)
+    @Text(TextType.PASSWORD)
     private String password;
 
     @Searchable
