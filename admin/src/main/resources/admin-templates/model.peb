@@ -105,7 +105,14 @@
                                                v-model="selectedData[field.name]" type="text"
                                                :disabled="field.name == 'id' || field.editable == false"
                                                placeholder="">
-
+                                        <!-- PASSWORD -->
+                                        <input class="uk-input"
+                                               v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
+                                               :disabled="field.name == 'id' || (field.editable == false)"
+                                               v-model="selectedData[field.name]"
+                                               type="password"
+                                               :disabled="field.name == 'id' || field.editable == false"
+                                               placeholder="">
                                         <!-- IMAGE -->
                                         <div v-if  = "(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')" class="uk-padding">
 
