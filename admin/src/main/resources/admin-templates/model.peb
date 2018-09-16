@@ -184,6 +184,14 @@
                                                        type="text"
                                                        :disabled="field.name == 'id' || field.editable == false"
                                                        placeholder="">
+                                                <!-- PASSWORD -->
+                                                <input class="uk-input"
+                                                       v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
+                                                       :disabled="field.name == 'id' || (field.editable == false)"
+                                                       v-model="selectedData[fieldOuter.name][field.name]"
+                                                       type="password"
+                                                       :disabled="field.name == 'id' || field.editable == false"
+                                                       placeholder="">
 
                                                 <!-- IMAGE -->
 
@@ -303,7 +311,14 @@
                                                :disabled="(field.name == 'id') "
                                                v-model="newData[field.name]" type="text"
                                                placeholder="">
-
+                                        <!-- PASSWORD -->
+                                        <input class="uk-input"
+                                               v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
+                                               :disabled="field.name == 'id' || (field.editable == false)"
+                                               v-model="newData[field.name]"
+                                               type="password"
+                                               :disabled="field.name == 'id' || field.editable == false"
+                                               placeholder="">
                                         <!-- IMAGE -->
                                         <div v-if  = "(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')" class="uk-padding">
 
@@ -387,7 +402,14 @@
                                                        :disabled="field.name == 'id' || field.editable == false"
                                                        placeholder="">
 
-
+                                                <!-- PASSWORD -->
+                                                <input class="uk-input"
+                                                       v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
+                                                       :disabled="field.name == 'id' || (field.editable == false)"
+                                                       v-model="newData[fieldOuter.name][field.name]"
+                                                       type="password"
+                                                       :disabled="field.name == 'id' || field.editable == false"
+                                                       placeholder="">
                                                 <!-- DATE -->
 
                                                 <vuejs-datepicker v-if="field.type == 'DATE'"
