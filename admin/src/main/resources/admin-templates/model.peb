@@ -84,7 +84,7 @@
                 </table>
             </div>
 
-            <div id="edit-modal" class="uk-modal-container" uk-modal="stack: true;">
+            <div id="edit-modal" class="uk-modal-container" uk-modal="stack: true;,'bg-close': false">
                 <div class="uk-modal-dialog">
 
                     <div class="uk-modal-header">
@@ -296,7 +296,7 @@
             </div>
 
 
-            <div id="add-modal" class="uk-modal-container" uk-modal="stack: true;">
+            <div id="add-modal" class="uk-modal-container" uk-modal="stack: true;,'bg-close': false">
                 <div class="uk-modal-dialog">
 
                     <div class="uk-modal-header">

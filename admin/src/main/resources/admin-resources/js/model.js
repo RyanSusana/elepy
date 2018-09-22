@@ -73,7 +73,7 @@ const app = new Vue({
             return date.yyyymmdd();
         },
         editModal: function () {
-            UIkit.modal(document.getElementById("edit-modal"), {stack: true}).show();
+            UIkit.modal(document.getElementById("edit-modal"), {stack: true, 'bg-close': false}).show();
         },
         saveData: function () {
             var ref = this;
@@ -140,7 +140,7 @@ const app = new Vue({
                     url: ref.selectedModel.slug + '/' + ref.selectedData.id
                 }).then(function (response) {
 
-                    UIkit.modal(document.getElementById("edit-modal"), {stack: true}).hide();
+                    UIkit.modal(document.getElementById("edit-modal"), {stack: true,'bg-close': false}).hide();
                     UIkit.notification(response.data, {status: 'success'});
                     ref.getModelData();
                 })
