@@ -49,7 +49,7 @@
 
                     <div class="login-content">
 
-                        <form id="login-form" method="post" action="/login" class="uk-form-stacked">
+                        <form id="login-form" method="post" action="/elepy-login" class="uk-form-stacked">
 
                             <div class="uk-margin">
                                 <label class="uk-form-label" for="form-stacked-text">Username</label>

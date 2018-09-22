@@ -70,7 +70,7 @@ public class ElepyAdminPanel extends ElepyModule {
                 final User adminUser = request.session().attribute(ADMIN_USER);
                 if (adminUser == null) {
                     request.session().attribute("redirectUrl", request.uri());
-                    response.redirect("/login");
+                    response.redirect("/elepy-login");
                     halt();
                 }
             }
@@ -145,7 +145,7 @@ public class ElepyAdminPanel extends ElepyModule {
         http.get("/admin-logout", (request, response) -> {
 
             request.session().invalidate();
-            response.redirect("/login");
+            response.redirect("/elepy-login");
 
             return "";
         });
@@ -160,12 +160,12 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
         elepy.addAdminFilter(baseAdminAuthenticationFilter);
-        http.get("/login", (request, response) -> {
+        http.get("/elepy-login", (request, response) -> {
 
 
             return renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb");
         });
-        http.post("/login", (request, response) -> {
+        http.post("/elepy-login", (request, response) -> {
 
             final Optional<User> user = userService.login(request.queryParamOrDefault("username", "invalid"), request.queryParamOrDefault("password", "invalid"));
 
