@@ -186,6 +186,9 @@ public class MongoDao<T> implements Crud<T> {
         return ClassUtils.searchForFieldsWithAnnotation(classType, Identifier.class, Searchable.class, MongoId.class, Unique.class);
     }
 
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 
     @Override
     public void delete(String id) {
