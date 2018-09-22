@@ -45,8 +45,11 @@ public class ElepyAdminPanel extends ElepyModule {
 
     private Elepy elepy;
 
+    private Class<?> userClass;
 
     public ElepyAdminPanel() {
+
+        this.userClass = User.class;
 
         this.attachmentHandler = new AttachmentHandler(this);
         this.pluginHandler = new PluginHandler(this);
@@ -73,6 +76,7 @@ public class ElepyAdminPanel extends ElepyModule {
             }
 
         };
+
         this.setupHandler = (elepy) -> {
         };
 
@@ -109,7 +113,7 @@ public class ElepyAdminPanel extends ElepyModule {
         authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
 
-        elepy.addPackage(User.class.getPackage().getName());
+        elepy.addModel(this.userClass);
     }
 
 
@@ -210,6 +214,11 @@ public class ElepyAdminPanel extends ElepyModule {
 
     public ElepyAdminPanel attachSrc(Attachment attachment) {
         attachmentHandler.attachSrc(attachment);
+        return this;
+    }
+
+    public ElepyAdminPanel userClass(Class<?> userClass) {
+        this.userClass = userClass;
         return this;
     }
 
