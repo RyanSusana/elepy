@@ -22,6 +22,10 @@ public interface Crud<T> {
     void create(final T item);
 
 
+    default List<T> getAll() {
+        return search(new QuerySetup(null, null, null, null, null)).getValues();
+    }
+
     default String getId(final T item) {
         Optional<String> id = ClassUtils.getId(item);
 
@@ -61,7 +65,7 @@ public interface Crud<T> {
         final Class<T> type = getType();
         final RestModel annotation = type.getAnnotation(RestModel.class);
 
-        if(annotation == null){
+        if (annotation == null) {
             return new AbstractMap.SimpleEntry<>("_id", SortOption.ASCENDING);
         }
         return new AbstractMap.SimpleEntry<>(annotation.defaultSortField(), annotation.defaultSortDirection());
