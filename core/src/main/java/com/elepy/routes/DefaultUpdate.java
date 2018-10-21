@@ -15,10 +15,7 @@ import spark.Response;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class DefaultUpdate<T> implements RouteHandler<T> {
 
@@ -48,12 +45,15 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
                 updated = elepy.getObjectMapper().readValue(body, clazz);
 
             } else {
-                updated = setParamsOnObject(request, elepy.getObjectMapper(), before.get());
+                updated = objectFromMaps(new HashMap<>(), splitQuery(request.body()), elepy.getObjectMapper(), clazz);
             }
         } else {
             if (body.startsWith("{")) {
-                updated = elepy.getObjectMapper().readValue(body, clazz);
+                final Map<String, Object> beforeMap = elepy.getObjectMapper().convertValue(before.get(), Map.class);
+                final Map<String, Object> changesMap = elepy.getObjectMapper().readValue(request.body(), Map.class);
 
+                changesMap.put("id", ClassUtils.getId(before.get()).get());
+                updated = objectFromMaps(beforeMap, changesMap, elepy.getObjectMapper(), clazz);
             } else {
                 updated = setParamsOnObject(request, elepy.getObjectMapper(), before.get());
             }
@@ -78,8 +78,8 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         return updated;
     }
 
-    public static Map<String, String> splitQuery(String body) throws UnsupportedEncodingException {
-        Map<String, String> queryPairs = new LinkedHashMap<>();
+    public static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
+        Map<String, Object> queryPairs = new LinkedHashMap<>();
         String[] pairs = body.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf("=");
@@ -88,37 +88,31 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         return queryPairs;
     }
 
-    public T setParamsOnObject(Request request, ObjectMapper objectMapper, T object) throws UnsupportedEncodingException {
 
+    public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
+        for (String s : fieldsToAdd.keySet()) {
 
-        System.out.println("Params obj");
-        Map<String, Object> map = objectMapper.convertValue(object, Map.class);
-
-        System.out.println(request.body());
-
-        Map<String, String> splitQuery = splitQuery(request.body());
-        for (String s : splitQuery.keySet()) {
-            System.out.println(s);
-            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(object.getClass(), s);
+            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(cls, s);
 
             if (fieldWithName.isPresent()) {
-
-                System.out.println("FieldWithName is present");
                 Field field = fieldWithName.get();
-
                 FieldType fieldType = FieldType.guessType(field);
-
-                System.out.println("fieldType: " + fieldType.name());
                 if (fieldType.isPrimitive()) {
-
-                    System.out.println("Updating " + s + " to " + request.queryParams(s));
-                    map.put(s, splitQuery.get(s));
+                    objectAsMap.put(s, fieldsToAdd.get(s));
                 }
 
             }
         }
+        return (T) objectMapper.convertValue(objectAsMap, cls);
+    }
 
-        return (T) objectMapper.convertValue(map, object.getClass());
+
+    public T setParamsOnObject(Request request, ObjectMapper objectMapper, T object) throws UnsupportedEncodingException {
+
+        Map<String, Object> map = objectMapper.convertValue(object, Map.class);
+        Map<String, Object> splitQuery = splitQuery(request.body());
+
+        return (T) objectFromMaps(map, splitQuery, objectMapper, object.getClass());
     }
 
     @Override
