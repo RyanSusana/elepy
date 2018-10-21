@@ -152,45 +152,42 @@ public class Elepy {
                 final Crud<?> dao = restModel.getCrudProvider().crudFor(clazz, this);
 
                 setupFilters(restModel, clazz);
-                if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED))
+                if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.post(baseSlug + restModel.getSlug(), (request, response) -> {
                         restModel.getCreateImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     });
+                }
                 if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED)) {
-                    http.put(baseSlug + restModel.getSlug(), (request, response) -> {
-                        restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    });
                     http.put(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
                         restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     });
                 }
-                if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED))
+                if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
                         restModel.getDeleteImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     }));
-                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
+                }
+                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.get(baseSlug + restModel.getSlug(), (request, response) -> {
                         restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     });
 
-
-                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
+                }
+                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
                         restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     });
-
+                }
 
             } catch (Exception e) {
 
