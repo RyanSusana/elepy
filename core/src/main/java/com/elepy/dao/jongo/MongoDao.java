@@ -232,7 +232,7 @@ public class MongoDao<T> implements Crud<T> {
     public String getId(T item) {
         Optional<String> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
-            throw new IllegalStateException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
+            throw new RestErrorMessage("No Identifier provided to the object.");
         }
         return id.get();
     }
