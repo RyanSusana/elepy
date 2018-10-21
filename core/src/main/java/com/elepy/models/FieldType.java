@@ -23,11 +23,24 @@ public enum FieldType {
     }
 
 
-    public static FieldType getByRepresentation(Method field) {
+    public static FieldType guessType(Method field) {
         return getByAnnotation(field).orElse(getByClass(field.getReturnType()));
     }
 
-    public static FieldType getByRepresentation(java.lang.reflect.Field field) {
+
+    public boolean isPrimitive() {
+
+        FieldType[] primitiveConsideredTypes = {BOOLEAN, DATE, TEXT, NUMBER, ENUM};
+
+        for (FieldType primitiveConsideredType : primitiveConsideredTypes) {
+            if (this.equals(primitiveConsideredType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static FieldType guessType(java.lang.reflect.Field field) {
 
         if (isCollection(field.getType())) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
