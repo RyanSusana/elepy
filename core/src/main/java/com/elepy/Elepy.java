@@ -108,7 +108,7 @@ public class Elepy {
 
 
         for (ElepyModule module : modules) {
-            module.setup(http,this);
+            module.setup(http, this);
         }
         setupLogs();
 
@@ -158,12 +158,18 @@ public class Elepy {
 
                         return response.body();
                     });
-                if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED))
+                if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.put(baseSlug + restModel.getSlug(), (request, response) -> {
                         restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
                     });
+                    http.put(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
+                        restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
+
+                        return response.body();
+                    });
+                }
                 if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED))
                     http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
                         restModel.getDeleteImplementation().handle(request, response, dao, this, evaluators, clazz);
@@ -179,7 +185,7 @@ public class Elepy {
 
 
                 if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED))
-                    http.get(baseSlug + restModel.getSlug()+"/:id", (request, response) -> {
+                    http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
                         restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
 
                         return response.body();
@@ -348,7 +354,7 @@ public class Elepy {
     }
 
 
-    public <T> T getSingleton(String s, Class<T> cls){
+    public <T> T getSingleton(String s, Class<T> cls) {
         final T t = (T) singletons.get(s);
         if (t != null) {
             return t;
@@ -356,6 +362,7 @@ public class Elepy {
 
         throw new NoSuchElementException(String.format("No singleton for %s available", cls.getName()));
     }
+
     public <T> T getSingleton(Class<T> cls) {
         return getSingleton(cls.getName(), cls);
 
@@ -376,7 +383,8 @@ public class Elepy {
         singletons.put(object.getClass().getName(), object);
         return this;
     }
-    public Elepy defaultProvider(Class<?extends CrudProvider> defaultCrudProvider) {
+
+    public Elepy defaultProvider(Class<? extends CrudProvider> defaultCrudProvider) {
         this.defaultCrudProvider = defaultCrudProvider;
         return this;
     }
@@ -389,6 +397,7 @@ public class Elepy {
         singletons.put(cls.getName(), object);
         return this;
     }
+
     public Elepy attachSingleton(String singletonName, Object object) {
         singletons.put(singletonName, object);
         return this;

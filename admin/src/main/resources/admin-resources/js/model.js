@@ -79,7 +79,7 @@ const app = new Vue({
             var ref = this;
             axios({
                 method: 'put',
-                url: ref.selectedModel.slug,
+                url: ref.selectedModel.slug + "/" + ref.selectedData.id,
                 data: ref.selectedData
             }).then(function (response) {
                 //console.log(response.data)
@@ -140,7 +140,7 @@ const app = new Vue({
                     url: ref.selectedModel.slug + '/' + ref.selectedData.id
                 }).then(function (response) {
 
-                    UIkit.modal(document.getElementById("edit-modal"), {stack: true,'bg-close': false}).hide();
+                    UIkit.modal(document.getElementById("edit-modal"), {stack: true, 'bg-close': false}).hide();
                     UIkit.notification(response.data, {status: 'success'});
                     ref.getModelData();
                 })
