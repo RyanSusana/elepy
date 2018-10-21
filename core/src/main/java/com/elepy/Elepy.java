@@ -165,6 +165,12 @@ public class Elepy {
 
                         return response.body();
                     });
+
+                    http.patch(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
+                        restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
+
+                        return response.body();
+                    });
                 }
                 if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
@@ -291,6 +297,11 @@ public class Elepy {
                         }
                         break;
                     case "UPDATE":
+                        if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
+                            adminFilter.handle(request, response);
+                        }
+                        break;
+                    case "PATCH":
                         if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
                             adminFilter.handle(request, response);
                         }
