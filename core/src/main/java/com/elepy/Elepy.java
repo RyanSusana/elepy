@@ -240,6 +240,13 @@ public class Elepy {
         });
     }
 
+
+    public Elepy ipAddress(String ipAddress){
+        checkConfig();
+        http.ipAddress(ipAddress);
+        return this;
+    }
+
     private Map<String, Object> getPojoDescriptor(ResourceDescriber restModel, Class<?> clazz) {
         Map<String, Object> model = new HashMap<>();
         if (baseSlug.equals("/")) {
