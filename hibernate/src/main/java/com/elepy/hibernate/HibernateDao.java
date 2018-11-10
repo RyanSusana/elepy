@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class HibernateDao<T> implements Crud<T> {
-    private final SessionFactory sessionFactory;
-    private final IdentityProvider<T> identityProvider;
-    private final Class<T> aClass;
+    protected final SessionFactory sessionFactory;
+    protected final IdentityProvider<T> identityProvider;
+    protected final Class<T> aClass;
 
     private final ObjectMapper objectMapper;
 
