@@ -83,7 +83,7 @@ public class ClassUtils {
     public static Field getIdField(Class cls) {
         for (Field field : cls.getDeclaredFields()) {
 
-            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
+            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class)) {
                 field.setAccessible(true);
 
                 try {
