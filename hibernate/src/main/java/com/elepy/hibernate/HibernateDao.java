@@ -124,7 +124,9 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public void update(T item) {
         try (Session session = sessionFactory.openSession()) {
+            final Transaction transaction = session.beginTransaction();
             session.update(item);
+            transaction.commit();
         }
     }
 
