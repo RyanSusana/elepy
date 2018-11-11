@@ -130,28 +130,48 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
+    private void create(Session session, T item) throws IllegalAccessException {
+        final Optional<String> id = com.elepy.utils.ClassUtils.getId(item);
+        if (!id.isPresent()) {
+            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass);
+
+
+            idField.setAccessible(true);
+
+            idField.set(item, identityProvider.getId(item, this));
+        }
+        session.save(item);
+    }
+
     @Override
     public void create(T item) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
-            final Optional<String> id = com.elepy.utils.ClassUtils.getId(item);
-            if (!id.isPresent()) {
-                final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass);
 
-
-                idField.setAccessible(true);
-
-                idField.set(item, identityProvider.getId(item, this));
-            }
-            session.save(item);
+            create(session, item);
             transaction.commit();
 
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RestErrorMessage(e.getMessage());
         }
     }
 
+    @Override
+    public void create(Iterable<T> items) {
+        try (Session session = sessionFactory.openSession()) {
+            final Transaction transaction = session.beginTransaction();
+
+            for (T item : items) {
+                create(session, item);
+            }
+            transaction.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RestErrorMessage(e.getMessage());
+        }
+    }
 
     @Override
     public long count(String q) {
