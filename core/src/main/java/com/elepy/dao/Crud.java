@@ -45,7 +45,7 @@ public interface Crud<T> {
 
     default void create(final Iterable<T> items) {
         for (T item : items) {
-            create(items);
+            create(item);
         }
     }
 
