@@ -134,11 +134,15 @@ public class HibernateDao<T> implements Crud<T> {
     public void create(T item) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
-            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass);
-            idField.setAccessible(true);
+            final Optional<String> id = com.elepy.utils.ClassUtils.getId(item);
+            if (!id.isPresent()) {
+                final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass);
 
-            idField.set(item, identityProvider.getId(item, this));
 
+                idField.setAccessible(true);
+
+                idField.set(item, identityProvider.getId(item, this));
+            }
             session.save(item);
             transaction.commit();
 
