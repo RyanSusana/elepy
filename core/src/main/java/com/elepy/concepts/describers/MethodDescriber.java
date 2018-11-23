@@ -42,7 +42,7 @@ public class MethodDescriber {
 
     private void mapMethodTypeInfo(Method method, Map<String, Object> fieldMap) {
 
-        FieldType type = FieldType.getByRepresentation(method);
+        FieldType type = FieldType.guessType(method);
 
         fieldMap.put("type", type);
 

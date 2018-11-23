@@ -78,7 +78,7 @@ public class FieldDescriber {
     }
 
     private void mapFieldTypeInformation(Field field, Map<String, Object> fieldMap) {
-        FieldType type = FieldType.getByRepresentation(field);
+        FieldType type = FieldType.guessType(field);
 
         fieldMap.put("type", type);
 
