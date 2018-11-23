@@ -8,15 +8,11 @@ import org.jongo.Jongo;
 import java.io.IOException;
 
 public class BaseFongoTest extends BaseTest {
-    /**
-     * please store Starter or RuntimeConfig in a static final field
-     * if you want to use artifact store caching (or else disable caching)
-     */
 
 
     private MongoClient _mongo;
     private int port;
-    private Fongo fongo ;
+    private Fongo fongo;
 
     public void setUp() throws Exception {
 

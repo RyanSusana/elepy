@@ -5,6 +5,9 @@ import com.elepy.concepts.Resource;
 import com.elepy.dao.jongo.MongoDao;
 import org.jongo.Jongo;
 import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Arrays;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -21,6 +24,7 @@ public class MongoDaoTest extends BaseFongoTest {
         jongo = new Jongo(getDb());
     }
 
+    @Test
     public void testCreate() {
 
         mongoDao.create(validObject());
@@ -31,6 +35,7 @@ public class MongoDaoTest extends BaseFongoTest {
         assertEquals(2, resources);
     }
 
+    @Test
     public void testDelete() {
         final Resource resource = validObject();
         mongoDao.create(resource);
@@ -39,7 +44,40 @@ public class MongoDaoTest extends BaseFongoTest {
     }
 
 
+    @Test
     public void testSearch() {
+
+        final Resource resource = validObject();
+        mongoDao.create(resource);
+
+
+        final Page<Resource> searchable = mongoDao.search(new QuerySetup("searchable", null, null, 1L, 1));
+        assertEquals(1, searchable.getValues().size());
+
+    }
+
+    @Test
+    public void testCountSearch() {
+
+        final Resource resource = validObject();
+        mongoDao.create(resource);
+
+
+        final long searchable = mongoDao.count("searchable");
+        assertEquals(1, searchable);
+
+    }
+    @Test
+    public void testMultiCreate(){
+        final Resource resource = validObject();
+        final Resource resource2 = validObject();
+
+        resource2.setUnique("Unique2");
+
+        mongoDao.create(Arrays.asList(resource,resource2));
+
+        assertEquals(2, count());
+
 
     }
 
@@ -47,7 +85,7 @@ public class MongoDaoTest extends BaseFongoTest {
 
     }
 
-    private long count(){
+    private long count() {
         return jongo.getCollection("resources").count();
     }
 }
