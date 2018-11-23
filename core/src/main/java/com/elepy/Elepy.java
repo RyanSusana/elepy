@@ -47,6 +47,10 @@ public class Elepy {
     private Class<? extends CrudProvider> defaultCrudProvider;
 
 
+    public Elepy() {
+        this("elepy");
+    }
+
     public Elepy(String name) {
         this(name, Service.ignite().port(1337));
     }
@@ -241,7 +245,7 @@ public class Elepy {
     }
 
 
-    public Elepy ipAddress(String ipAddress){
+    public Elepy ipAddress(String ipAddress) {
         checkConfig();
         http.ipAddress(ipAddress);
         return this;
