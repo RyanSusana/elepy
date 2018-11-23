@@ -6,7 +6,6 @@ import com.elepy.id.HexIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,8 +14,6 @@ import java.util.Optional;
 public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     private final Crud crud;
-
-    @Nullable
     private final IdentityProvider identityProvider;
 
     public ElepyIdUpdater(Crud crud, IdentityProvider identityProvider) {
