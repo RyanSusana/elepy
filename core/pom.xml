@@ -69,12 +69,13 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>25.0-jre</version>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+            <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.github.slugify</groupId>
             <artifactId>slugify</artifactId>
