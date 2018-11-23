@@ -5,7 +5,6 @@ import com.elepy.admin.models.User;
 import com.elepy.admin.services.UserService;
 import spark.Request;
 
-import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -65,7 +64,6 @@ public class TokenHandler implements AuthHandler{
 
 
 
-    @Nullable
     @Override
     public User login(Request request) {
         final String elepyToken = request.headers("ELEPY_TOKEN");

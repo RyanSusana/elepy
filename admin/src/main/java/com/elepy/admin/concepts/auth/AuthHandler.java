@@ -3,13 +3,11 @@ package com.elepy.admin.concepts.auth;
 import com.elepy.admin.models.User;
 import spark.Request;
 
-import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
 
 public interface AuthHandler  {
-    @Nullable
     User login(Request request);
 
 
