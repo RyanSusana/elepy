@@ -245,6 +245,11 @@ public class Elepy {
     }
 
 
+    public void stop() {
+        http.stop();
+        http.awaitStop();
+    }
+
     public Elepy ipAddress(String ipAddress) {
         checkConfig();
         http.ipAddress(ipAddress);
