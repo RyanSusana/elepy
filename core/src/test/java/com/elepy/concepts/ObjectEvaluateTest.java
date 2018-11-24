@@ -2,19 +2,19 @@ package com.elepy.concepts;
 
 import com.elepy.BaseTest;
 import com.elepy.exceptions.RestErrorMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class ObjectEvaluateTest extends BaseTest {
 
     private ObjectEvaluator<Resource> resourceObjectEvaluator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         this.resourceObjectEvaluator = new ObjectEvaluatorImpl<>();

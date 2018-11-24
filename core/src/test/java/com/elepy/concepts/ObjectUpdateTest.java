@@ -2,11 +2,12 @@ package com.elepy.concepts;
 
 import com.elepy.BaseTest;
 import com.elepy.exceptions.RestErrorMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ObjectUpdateTest extends BaseTest {
 
@@ -29,7 +30,7 @@ public class ObjectUpdateTest extends BaseTest {
             updatedNonEditable.setNonEditable(UUID.randomUUID().toString());
             resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable);
 
-            Assert.fail("Should not be able to update nonEditable");
+            fail("Should not be able to update nonEditable");
         } catch (RestErrorMessage e) {
 
         }

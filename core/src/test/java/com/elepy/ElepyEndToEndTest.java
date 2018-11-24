@@ -3,32 +3,40 @@ package com.elepy;
 import com.elepy.concepts.Resource;
 import com.elepy.dao.Page;
 import com.elepy.dao.jongo.MongoDao;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.DB;
-import org.junit.Before;
-import org.junit.Test;
+import com.mongodb.FongoDB;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ElepyEndToEndTest extends BaseFongoTest {
 
-    private Elepy elepy;
-    private MongoDao<Resource> mongoDao;
+public class ElepyEndToEndTest extends BaseTest {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    private static Elepy elepy;
+    private static MongoDao<Resource> mongoDao;
+
+    @BeforeAll
+    public static void beforeAll() throws Exception {
+
 
         elepy = new Elepy();
+        Fongo fongo = new Fongo("test");
 
 
-        elepy.attachSingleton(DB.class, getDb());
+        final FongoDB db = fongo.getDB("test");
 
-        mongoDao = new MongoDao<>(getDb(), "resources", Resource.class);
+
+        elepy.attachSingleton(DB.class, db);
+
+        mongoDao = new MongoDao<>(db, "resources", Resource.class);
 
         elepy.addModel(Resource.class);
 
@@ -36,6 +44,7 @@ public class ElepyEndToEndTest extends BaseFongoTest {
 
         elepy.start();
     }
+
 
     @Test
     public void testFind() throws IOException, UnirestException {
@@ -48,8 +57,8 @@ public class ElepyEndToEndTest extends BaseFongoTest {
 
         Page resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), Page.class);
 
-        assertEquals(count+1, resourcePage.getValues().size());
-        elepy.stop();
+        assertEquals(count + 1, resourcePage.getValues().size());
+
     }
 
     @Test
@@ -63,7 +72,38 @@ public class ElepyEndToEndTest extends BaseFongoTest {
 
         Resource foundResource = elepy.getObjectMapper().readValue(getRequest.getBody(), Resource.class);
 
-        elepy.stop();
+        assertEquals(foundResource.getId(), resource.getId());
+
+
+    }
+
+    @Test
+    public void testCreate() throws UnirestException, JsonProcessingException {
+
+        final long count = mongoDao.count();
+        final Resource resource = validObject();
+        resource.setUnique("uniqueCreate");
+        final String s = elepy.getObjectMapper().writeValueAsString(resource);
+
+        final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
+
+        assertEquals(count + 1, mongoDao.count());
+    }
+
+    @Test
+    void testDelete() throws UnirestException {
+
+        final long beginningCount = mongoDao.count();
+        final Resource resource = validObject();
+
+        resource.setId("deleteId");
+
+        mongoDao.create(resource);
+
+        assertEquals(beginningCount + 1, mongoDao.count());
+        final HttpResponse<String> delete = Unirest.delete("http://localhost:7357/resources/deleteId").asString();
+
+        assertEquals(beginningCount, mongoDao.count());
 
     }
 }

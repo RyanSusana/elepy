@@ -4,19 +4,19 @@ import com.elepy.BaseFongoTest;
 import com.elepy.concepts.Resource;
 import com.elepy.dao.jongo.MongoDao;
 import org.jongo.Jongo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MongoDaoTest extends BaseFongoTest {
 
     private MongoDao<Resource> mongoDao;
     private Jongo jongo;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

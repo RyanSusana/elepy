@@ -2,12 +2,13 @@ package com.elepy.concepts;
 
 import com.elepy.BaseTest;
 import com.elepy.exceptions.RestErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 public class ObjectAtomicIntegrityTest extends BaseTest {
     @Test

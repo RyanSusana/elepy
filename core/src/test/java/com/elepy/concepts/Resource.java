@@ -2,6 +2,7 @@ package com.elepy.concepts;
 
 import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
+import com.elepy.models.AccessLevel;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +11,10 @@ import org.jongo.marshall.jackson.oid.MongoId;
 import java.math.BigDecimal;
 
 @RestModel(name = "Test Resource", slug = "/resources")
+@Create(accessLevel = AccessLevel.PUBLIC)
+@Find(accessLevel = AccessLevel.PUBLIC)
+@Delete(accessLevel = AccessLevel.PUBLIC)
+@Update(accessLevel = AccessLevel.PUBLIC)
 public class Resource {
     @Identifier
     private String id;

@@ -1,7 +1,6 @@
 package com.elepy;
 
 import com.elepy.concepts.Resource;
-import junit.framework.TestCase;
 
 import java.math.BigDecimal;
 import java.util.UUID;

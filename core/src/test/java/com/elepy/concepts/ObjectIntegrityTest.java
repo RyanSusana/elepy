@@ -3,11 +3,11 @@ package com.elepy.concepts;
 import com.elepy.BaseFongoTest;
 import com.elepy.dao.jongo.MongoDao;
 import com.elepy.exceptions.RestErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ObjectIntegrityTest extends BaseFongoTest {
 
@@ -22,7 +22,7 @@ public class ObjectIntegrityTest extends BaseFongoTest {
         mongoDao.create(validObject());
         try {
             evaluator.evaluate(validObject(), mongoDao);
-            fail();
+            fail("Was supposed to throw a rest error message");
         }catch(RestErrorMessage ignored){
 
         }
