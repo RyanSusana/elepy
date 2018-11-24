@@ -3,6 +3,7 @@ package com.elepy.concepts;
 import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
 import com.elepy.models.TextType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -60,10 +61,6 @@ public class Resource {
     }
 
     public void setInnerObject(Object innerObject) {
-        this.innerObject = innerObject;
-    }
-
-    public void setInnerObject(Resource innerObject) {
         this.innerObject = innerObject;
     }
 
@@ -180,6 +177,7 @@ public class Resource {
     }
 
     @JsonProperty("generated")
+    @JsonIgnore
     @Generated
     public String generatedField() {
         return "I am generated";
