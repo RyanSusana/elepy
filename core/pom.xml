@@ -11,6 +11,19 @@
 
     <artifactId>elepy-core</artifactId>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <printSummary>true</printSummary>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
 
     <dependencies>
         <dependency>
@@ -76,16 +89,13 @@
             <artifactId>slugify</artifactId>
             <version>2.2</version>
         </dependency>
+
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.3</version>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.3.1</version>
             <scope>test</scope>
-        </dependency><dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.12.0</version>
-        <scope>test</scope>
-    </dependency>
+        </dependency>
     </dependencies>
 </project>
