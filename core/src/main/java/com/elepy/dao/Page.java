@@ -1,5 +1,8 @@
 package com.elepy.dao;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class Page<T> {
@@ -11,7 +14,8 @@ public class Page<T> {
 
     private final int originalSize;
 
-    public Page(long currentPageNumber, long lastPageNumber, List<T> values) {
+    @JsonCreator
+    public Page(@JsonProperty("currentPageNumber") long currentPageNumber, @JsonProperty("lastPageNumber") long lastPageNumber, @JsonProperty("values") List<T> values) {
         this.currentPageNumber = currentPageNumber;
         this.lastPageNumber = lastPageNumber;
         this.values = values;
