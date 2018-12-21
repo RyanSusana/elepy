@@ -38,15 +38,13 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
     @Override
     public void setObjectId(Object target, ObjectId id) {
 
-        final Field idField = ClassUtils.getIdField(target.getClass());
+        final Field idField = ClassUtils.getIdField(target.getClass()).orElseThrow(() -> new RestErrorMessage("No ID field found"));
 
-        if (idField != null) {
-            idField.setAccessible(true);
-            try {
-                idField.set(target, provider(target).getId(target, crud));
-            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                throw new IllegalStateException(e);
-            }
+        idField.setAccessible(true);
+        try {
+            idField.set(target, provider(target).getId(target, crud));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -55,7 +53,7 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
         if (identityProvider != null) {
             return identityProvider;
         }
-        ClassUtils.getIdField(item.getClass());
+        ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new RestErrorMessage("No ID found"));
         final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
         if (annotation != null) {

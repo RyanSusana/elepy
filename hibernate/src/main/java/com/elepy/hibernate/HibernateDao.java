@@ -133,7 +133,7 @@ public class HibernateDao<T> implements Crud<T> {
     private void create(Session session, T item) throws IllegalAccessException {
         final Optional<String> id = com.elepy.utils.ClassUtils.getId(item);
         if (!id.isPresent()) {
-            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass);
+            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass).orElseThrow(() -> new RestErrorMessage("No ID field found"));
 
 
             idField.setAccessible(true);

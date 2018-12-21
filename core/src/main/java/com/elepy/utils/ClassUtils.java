@@ -3,6 +3,7 @@ package com.elepy.utils;
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.Unique;
+import com.elepy.exceptions.RestErrorMessage;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -37,6 +38,11 @@ public class ClassUtils {
         return fields;
     }
 
+    @SafeVarargs
+    public static Optional<Field> searchForFieldWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
+        return searchForFieldsWithAnnotation(cls, annotations).stream().findFirst();
+    }
+
     public static String getPropertyName(Field field) {
         if (field.isAnnotationPresent(JsonProperty.class)) {
             return field.getAnnotation(JsonProperty.class).value();
@@ -60,34 +66,24 @@ public class ClassUtils {
 
     public static Optional<String> getId(Object object) {
 
-        for (Field field : object.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            if (hasId(field) || (field.getName().equals("id") && field.getType().equals(String.class))) {
-                try {
-                    return Optional.ofNullable((String) field.get(object));
-                } catch (IllegalAccessException | ClassCastException e) {
-                    throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
-                }
-            }
+        try {
+            Field field = getIdField(object.getClass()).orElseThrow(() -> new RestErrorMessage("No ID field found"));
+            return Optional.ofNullable((String) field.get(object));
+        } catch (IllegalAccessException e) {
+            throw new RestErrorMessage("Illegally accessing id field");
         }
-        return Optional.empty();
 
     }
 
-    public static Field getIdField(Class cls) {
-        for (Field field : cls.getDeclaredFields()) {
 
-            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class)) {
-                field.setAccessible(true);
+    public static Optional<Field> getIdField(Class cls) {
 
-                try {
-                    return field;
-                } catch (ClassCastException e) {
-                    throw new IllegalStateException(cls.getName() + ": " + e.getMessage());
-                }
-            }
+        Optional<Field> annotated = searchForFieldWithAnnotation(cls, Identifier.class, MongoId.class, Id.class);
+        if (annotated.isPresent()) {
+            return annotated;
+        } else {
+            return findFieldWithName(cls, "id");
         }
-        return null;
     }
 
     public static <T> Constructor<T> emptyConstructor(Class<T> cls) {
