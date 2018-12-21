@@ -42,11 +42,11 @@ public class AtomicIntegrityEvaluator<T> {
                 }
             }).collect(Collectors.toList());
 
-            integrityCheck(foundItems, id, field);
+            integrityCheck(foundItems, id, field, prop);
         }
     }
 
-    private void integrityCheck(List<T> foundItems, Optional<String> id, Field field) {
+    private void integrityCheck(List<T> foundItems, Optional<String> id, Field field, Object prop) {
         if (!foundItems.isEmpty()) {
 
 
