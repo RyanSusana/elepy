@@ -80,7 +80,7 @@ public class ViewHandler {
 
                 final View annotation = cls.getAnnotation(View.class);
 
-                final Optional<Constructor<?>> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
+                final Optional<Constructor> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
 
                 final ResourceView resourceView = (ResourceView) emptyConstructor.get().newInstance();
                 resourceView.setDescriptor(descriptorMap.get(cls));
