@@ -1,6 +1,5 @@
 package com.elepy;
 
-import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
@@ -10,19 +9,18 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.models.AccessLevel;
+import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import org.jongo.Mapper;
 import org.jongo.marshall.jackson.JacksonMapper;
-import org.jongo.marshall.jackson.oid.MongoId;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Service;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class Elepy {
@@ -401,12 +399,9 @@ public class Elepy {
     }
 
     private void evaluateHasIdField(Class cls) {
-        for (Field field : cls.getDeclaredFields()) {
-            if (field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class)) {
-                return;
-            }
-        }
-        throw new IllegalStateException(cls.getSimpleName() + " doesn't have a field annotated with MongoId");
+
+        ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getSimpleName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier"));
+
     }
 
     public Elepy addPackage(String packageName) {
