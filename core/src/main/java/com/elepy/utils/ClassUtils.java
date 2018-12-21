@@ -68,6 +68,7 @@ public class ClassUtils {
 
         try {
             Field field = getIdField(object.getClass()).orElseThrow(() -> new RestErrorMessage("No ID field found"));
+            field.setAccessible(true);
             return Optional.ofNullable((String) field.get(object));
         } catch (IllegalAccessException e) {
             throw new RestErrorMessage("Illegally accessing id field");
