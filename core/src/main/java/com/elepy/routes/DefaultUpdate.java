@@ -19,13 +19,23 @@ import java.util.*;
 
 public class DefaultUpdate<T> implements RouteHandler<T> {
 
-    private T before;
+    private T beforeUpdate;
+
+    public static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
+        Map<String, Object> queryPairs = new LinkedHashMap<>();
+        String[] pairs = body.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf('=');
+            queryPairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+        }
+        return queryPairs;
+    }
 
     public T before() {
-        if (before == null) {
+        if (beforeUpdate == null) {
             throw new IllegalStateException("Before not yet set!");
         }
-        return before;
+        return beforeUpdate;
     }
 
     public T update(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
@@ -51,16 +61,15 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
             if (body.startsWith("{")) {
                 final Map<String, Object> beforeMap = elepy.getObjectMapper().convertValue(before.get(), Map.class);
                 final Map<String, Object> changesMap = elepy.getObjectMapper().readValue(request.body(), Map.class);
-
-                changesMap.put("id", ClassUtils.getId(before.get()).get());
+                ClassUtils.getId(before.get()).ifPresent(id -> changesMap.put("id", id));
                 updated = objectFromMaps(beforeMap, changesMap, elepy.getObjectMapper(), clazz);
             } else {
                 updated = setParamsOnObject(request, elepy.getObjectMapper(), before.get());
             }
         }
 
-        this.before = before.get();
-        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<T>();
+        this.beforeUpdate = before.get();
+        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
 
         updateEvaluator.evaluate(before.get(), updated);
 
@@ -78,31 +87,20 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         return updated;
     }
 
-    public static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
-        Map<String, Object> queryPairs = new LinkedHashMap<>();
-        String[] pairs = body.split("&");
-        for (String pair : pairs) {
-            int idx = pair.indexOf("=");
-            queryPairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-        }
-        return queryPairs;
-    }
-
-
     public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
-        for (String s : fieldsToAdd.keySet()) {
 
-            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(cls, s);
+        fieldsToAdd.forEach((key, value) -> {
+            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(cls, key);
 
             if (fieldWithName.isPresent()) {
                 Field field = fieldWithName.get();
                 FieldType fieldType = FieldType.guessType(field);
                 if (fieldType.isPrimitive()) {
-                    objectAsMap.put(s, fieldsToAdd.get(s));
+                    objectAsMap.put(key, value);
                 }
 
             }
-        }
+        });
         return (T) objectMapper.convertValue(objectAsMap, cls);
     }
 
@@ -112,7 +110,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         Map<String, Object> map = objectMapper.convertValue(object, Map.class);
         Map<String, Object> splitQuery = splitQuery(request.body());
 
-        return (T) objectFromMaps(map, splitQuery, objectMapper, object.getClass());
+        return objectFromMaps(map, splitQuery, objectMapper, object.getClass());
     }
 
     @Override

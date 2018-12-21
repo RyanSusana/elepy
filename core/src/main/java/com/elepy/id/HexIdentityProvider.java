@@ -3,8 +3,6 @@ package com.elepy.id;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 
-import java.util.Random;
-
 public class HexIdentityProvider<T> implements IdentityProvider<T> {
 
 

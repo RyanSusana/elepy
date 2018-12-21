@@ -11,7 +11,6 @@ import spark.utils.StringUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.JarURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -62,10 +61,8 @@ public class AttachmentHandler {
     }
 
     public void attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory, String directory) throws IOException {
-        final String[] fileNameParts = fileName.split("\\.");
 
 
-        final String extension = fileNameParts[fileNameParts.length - 1];
         final Tika tika = new Tika();
 
         final byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -77,10 +74,8 @@ public class AttachmentHandler {
     }
 
     public void attachSrc(File file, boolean isFromDirectory, String directory) throws IOException {
-        final String[] fileNameParts = file.getName().split("\\.");
 
 
-        final String extension = fileNameParts[fileNameParts.length - 1];
         final byte[] bytes = FileUtils.readFileToByteArray(file);
         final Tika tika = new Tika();
         final String contentType = tika.detect(new FileInputStream(file), file.getName());
@@ -90,10 +85,9 @@ public class AttachmentHandler {
 
     }
 
-    public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
+    public void attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException {
         Enumeration<URL> en = classLoader.getResources(
                 directory);
-        List<String> profiles = new ArrayList<>();
 
         if (en.hasMoreElements()) {
             URL url = en.nextElement();

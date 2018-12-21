@@ -2,6 +2,7 @@ package com.elepy.dao.jongo;
 
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
+import com.elepy.exceptions.RestErrorMessage;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
@@ -31,7 +32,7 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public Object getId(Object pojo) {
-        return ClassUtils.getId(pojo).get();
+        return ClassUtils.getId(pojo).orElseThrow(() -> new RestErrorMessage("No ID found"));
     }
 
     @Override
@@ -54,11 +55,11 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
         if (identityProvider != null) {
             return identityProvider;
         }
-        final Field idField = ClassUtils.getIdField(item.getClass());
+        ClassUtils.getIdField(item.getClass());
         final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
         if (annotation != null) {
-            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.value());
+            final Optional<Constructor> o = ClassUtils.getEmptyConstructor(annotation.value());
             if (!o.isPresent()) {
                 throw new IllegalStateException(annotation.value() + " has no empty constructor.");
             }

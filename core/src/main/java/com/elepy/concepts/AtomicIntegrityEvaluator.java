@@ -41,26 +41,29 @@ public class AtomicIntegrityEvaluator<T> {
                     return false;
                 }
             }).collect(Collectors.toList());
-            if (foundItems.size() > 0) {
+
+            integrityCheck(foundItems, id, field);
+        }
+    }
+
+    private void integrityCheck(List<T> foundItems, Optional<String> id, Field field) {
+        if (!foundItems.isEmpty()) {
 
 
-                if (foundItems.size() > 1) {
-                    throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+            if (foundItems.size() > 1) {
+                throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+            }
+
+            T foundRecord = foundItems.get(0);
+            final Optional<String> foundId = ClassUtils.getId(foundRecord);
+            if (id.isPresent() || foundId.isPresent()) {
+                if (!id.equals(foundId)) {
+                    throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
                 }
+            } else {
+                throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
 
-                T foundRecord = foundItems.get(0);
-                final Optional<String> foundId = ClassUtils.getId(foundRecord);
-                if (id.isPresent() || foundId.isPresent()) {
-                    if (!id.equals(foundId)) {
-                        throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
-                    }
-                } else {
-                    throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
-
-                }
             }
         }
-
-
     }
 }

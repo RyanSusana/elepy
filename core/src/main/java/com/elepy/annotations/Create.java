@@ -2,7 +2,6 @@ package com.elepy.annotations;
 
 
 import com.elepy.models.AccessLevel;
-import com.elepy.routes.CreateHandler;
 import com.elepy.routes.DefaultCreate;
 import com.elepy.routes.RouteHandler;
 

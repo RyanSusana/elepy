@@ -179,19 +179,18 @@ const app = new Vue({
             UIkit.modal(document.getElementById("add-modal"), {stack: true}).show();
         },
         initData: function (model, pre) {
-            var ref = this;
             for (var i = 0; i < model.fields.length; i++) {
                 var field = model.fields[i];
-                if (field.type == 'OBJECT') {
+                if (field.type === 'OBJECT') {
                     Vue.set(this.bufData, pre + field.name, {});
 
                     this.initData(field, field.name + '.');
-                } else if (field.type == 'ENUM') {
+                } else if (field.type === 'ENUM') {
                     Vue.set(this.bufData, pre + field.name, field.availableValues[0]);
-                } else if (field.type == 'DATE') {
+                } else if (field.type === 'DATE') {
                     Vue.set(this.bufData, pre + field.name, '2018-01-01');
 
-                } else if (field.type == 'NUMBER') {
+                } else if (field.type === 'NUMBER') {
                     Vue.set(this.bufData, pre + field.name, 0);
                 } else {
                     Vue.set(this.bufData, pre + field.name, '');
@@ -224,20 +223,3 @@ Date.prototype.yyyymmdd = function () {
     ].join('');
 };
 
-function transform(obj) {
-    let tmp = {};
-    Object.keys(obj).forEach(k => {
-        if (k.includes('.')) {
-            let path = k.split('.');
-            let x = path.pop();
-            path.reduce((cur, p) => {
-                if (!(p in cur)) cur[p] = {};
-                return cur[p]
-            }, tmp)[x] = obj[k]
-        }
-        else {
-            tmp[k] = obj[k]
-        }
-    });
-    return tmp
-}

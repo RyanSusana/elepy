@@ -1,8 +1,8 @@
 package com.elepy.concepts.describers;
 
 import com.elepy.annotations.Boolean;
-import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
+import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
@@ -44,9 +44,9 @@ public class FieldDescriber {
 
 
     private String prettyName() {
-        final PrettyName prettyName = field.getAnnotation(PrettyName.class);
-        if (prettyName != null) {
-            return prettyName.value();
+        final PrettyName prettyNameAnnotation = field.getAnnotation(PrettyName.class);
+        if (prettyNameAnnotation != null) {
+            return prettyNameAnnotation.value();
         } else {
             return getName();
         }
@@ -78,30 +78,30 @@ public class FieldDescriber {
     }
 
     private void mapFieldTypeInformation(Field field, Map<String, Object> fieldMap) {
-        FieldType type = FieldType.guessType(field);
+        FieldType fieldType = FieldType.guessType(field);
 
-        fieldMap.put("type", type);
+        fieldMap.put("type", fieldType);
 
-        if (type.equals(FieldType.ENUM)) {
+        if (fieldType.equals(FieldType.ENUM)) {
             fieldMap.put("availableValues", field.getType().getEnumConstants());
         }
-        if (type.equals(FieldType.OBJECT)) {
+        if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", field.getType().getSimpleName());
 
             fieldMap.put("fields", new StructureDescriber(field.getType()).getStructure());
         }
-        if (type.equals(FieldType.TEXT)) {
+        if (fieldType.equals(FieldType.TEXT)) {
             fieldMap.put("textType", field.getAnnotation(Text.class) != null ? field.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
         }
-        if (type.equals(FieldType.NUMBER)) {
+        if (fieldType.equals(FieldType.NUMBER)) {
             fieldMap.put("numberType", field.getAnnotation(Number.class) != null ? field.getAnnotation(Number.class).value() : NumberType.guessType(field));
         }
-        if (type.equals(FieldType.BOOLEAN)) {
+        if (fieldType.equals(FieldType.BOOLEAN)) {
             final Boolean annotation = field.getAnnotation(Boolean.class);
             fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
             fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
         }
-        if (type.equals(FieldType.OBJECT_ARRAY)) {
+        if (fieldType.equals(FieldType.OBJECT_ARRAY)) {
 
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 
@@ -109,11 +109,11 @@ public class FieldDescriber {
             fieldMap.put("arrayType", array.getSimpleName());
 
         }
-        if (type.equals(FieldType.ENUM_ARRAY)) {
+        if (fieldType.equals(FieldType.ENUM_ARRAY)) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             fieldMap.put("availableValues", array.getEnumConstants());
         }
-        if (type.equals(FieldType.PRIMITIVE_ARRAY)) {
+        if (fieldType.equals(FieldType.PRIMITIVE_ARRAY)) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             fieldMap.put("primitiveType", FieldType.getUnannotatedFieldType(array));
         }
@@ -135,16 +135,16 @@ public class FieldDescriber {
     }
 
     public Map<String, Object> mapField() {
-        Map<String, Object> fieldMap = new HashMap<>();
+        Map<String, Object> newFieldMap = new HashMap<>();
 
 
-        fieldMap.put("name", getName());
+        newFieldMap.put("name", getName());
 
-        fieldMap.put("pretty_name", getPrettyName());
-        mapFieldAnnotations(field, fieldMap);
-        mapFieldTypeInformation(field, fieldMap);
+        newFieldMap.put("pretty_name", getPrettyName());
+        mapFieldAnnotations(field, newFieldMap);
+        mapFieldTypeInformation(field, newFieldMap);
 
-        return fieldMap;
+        return newFieldMap;
     }
 
 

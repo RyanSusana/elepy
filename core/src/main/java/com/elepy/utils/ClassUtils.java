@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class ClassUtils {
 
+    private ClassUtils() {
+    }
 
     @SafeVarargs
     public static List<Field> searchForFieldsWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
@@ -60,15 +62,7 @@ public class ClassUtils {
 
         for (Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if (hasId(field)) {
-
-
-                try {
-                    return Optional.ofNullable((String) field.get(object));
-                } catch (IllegalAccessException | ClassCastException e) {
-                    throw new IllegalStateException(object.getClass().getName() + ": " + e.getMessage());
-                }
-            } else if (field.getName().equals("id") && field.getType().equals(String.class)) {
+            if (hasId(field) || (field.getName().equals("id") && field.getType().equals(String.class))) {
                 try {
                     return Optional.ofNullable((String) field.get(object));
                 } catch (IllegalAccessException | ClassCastException e) {
@@ -97,7 +91,7 @@ public class ClassUtils {
     }
 
     public static <T> Constructor<T> emptyConstructor(Class<T> cls) {
-        final Optional<Constructor<?>> emptyConstructor = getEmptyConstructor(cls);
+        final Optional<Constructor> emptyConstructor = getEmptyConstructor(cls);
 
         if (emptyConstructor.isPresent()) {
 
@@ -124,8 +118,8 @@ public class ClassUtils {
         return Optional.empty();
     }
 
-    public static Optional<Constructor<?>> getEmptyConstructor(Class<?> cls) {
-        for (Constructor<?> constructor : cls.getConstructors()) {
+    public static Optional<Constructor> getEmptyConstructor(Class<?> cls) {
+        for (Constructor constructor : cls.getConstructors()) {
             if (constructor.getParameterCount() == 0) {
                 return Optional.of(constructor);
             }

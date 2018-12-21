@@ -36,9 +36,9 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
                 request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
 
                 final Part part = request.raw().getPart("image");
-                final GridFSInputFile upload = imageDao.upload(part);
+                imageDao.upload(part);
                 return "You have succesfully uploaded an image";
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 response.status(401);
                 return e.getMessage();
             }
@@ -95,8 +95,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
 
             images.evaluate(writer, context);
 
-            String output = writer.toString();
-            return output;
+            return writer.toString();
         } catch (PebbleException | IOException e) {
             e.printStackTrace();
         }

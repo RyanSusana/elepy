@@ -82,32 +82,6 @@ public class Elepy {
         this.mapper = builder.build();
     }
 
-    public Elepy(String name, ObjectMapper objectMapper, DB db, List<Filter> adminFilters, Filter basePublicFilter, String baseSlug, String configSlug, ObjectEvaluator<Object> baseObjectEvaluator, Service service, String... packages) {
-        this.objectMapper = objectMapper;
-        this.adminFilters = adminFilters;
-        this.basePublicFilter = basePublicFilter;
-        this.baseSlug = baseSlug;
-        this.configSlug = configSlug;
-        this.baseObjectEvaluator = baseObjectEvaluator;
-
-        this.http = service;
-        this.packages = new ArrayList<>();
-        this.packages.addAll(Arrays.asList(packages));
-        this.descriptors = new ArrayList<>();
-        this.singletons = new TreeMap<>();
-        this.modules = new ArrayList<>();
-        this.name = name;
-        this.models = new ArrayList<>();
-        this.attachSingleton(db);
-
-        final JacksonMapper.Builder builder = new JacksonMapper.Builder();
-
-        builder.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
-        builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-        builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.mapper = builder.build();
-    }
-
     public void init() {
 
 
@@ -145,17 +119,17 @@ public class Elepy {
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> setupPojos(Map<ResourceDescriber, Class<?>> classes) {
-        List<Map<String, Object>> descriptors = new ArrayList<>();
+        List<Map<String, Object>> descriptorList = new ArrayList<>();
 
         classes.forEach((restModel, clazz) -> {
             evaluateHasIdField(clazz);
             try {
                 List<ObjectEvaluator<?>> evaluators = restModel.getObjectEvaluators();
-                descriptors.add(getPojoDescriptor(restModel, clazz));
+                descriptorList.add(getPojoDescriptor(restModel, clazz));
 
                 final Crud<?> dao = restModel.getCrudProvider().crudFor(clazz, this);
 
-                setupFilters(restModel, clazz);
+                setupFilters(restModel);
                 if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED)) {
                     http.post(baseSlug + restModel.getSlug(), (request, response) -> {
                         restModel.getCreateImplementation().handle(request, response, dao, this, evaluators, clazz);
@@ -206,7 +180,7 @@ public class Elepy {
             }
         });
 
-        return descriptors;
+        return descriptorList;
     }
 
 
@@ -217,22 +191,16 @@ public class Elepy {
             response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
-            if (!request.requestMethod().toUpperCase().equals("OPTIONS") && response.status() != 404)
+            if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
                 LOGGER.info(request.requestMethod() + " ['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
-        http.options("/*", (request, response) -> {
-
-                    return "";
-                }
-        );
+        http.options("/*", (request, response) -> "");
 
         http.exception(RestErrorMessage.class, (exception, request, response) -> {
             response.body(exception.getMessage());
             response.status(401);
         });
-        http.exception(Exception.class, (exception, request, response) -> {
-            exception.printStackTrace();
-        });
+        http.exception(Exception.class, (exception, request, response) -> exception.printStackTrace());
 
     }
 
@@ -294,7 +262,7 @@ public class Elepy {
     }
 
 
-    private void setupFilters(ResourceDescriber restModel, Class<?> clazz) throws ClassCastException {
+    private void setupFilters(ResourceDescriber restModel) {
 
 
         final Filter adminFilter = allAdminFilters();
@@ -463,6 +431,9 @@ public class Elepy {
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     @Deprecated
     public DB getDb() {
         return getSingleton(DB.class);

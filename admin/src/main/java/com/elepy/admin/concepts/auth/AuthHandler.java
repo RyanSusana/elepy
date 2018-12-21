@@ -7,14 +7,18 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
 
-public interface AuthHandler  {
+public interface AuthHandler {
     User login(Request request);
 
 
-   default Optional<String[]> basicCredentials(Request request) {
+    default Optional<String[]> basicCredentials(Request request) {
         String header = request.headers("Authorization");
 
-        if (header == null || !(header = header.trim()).startsWith("Basic")) {
+        if (header != null) {
+            header = header.trim();
+        }
+
+        if (header == null || !header.startsWith("Basic")) {
             return Optional.empty();
         }
 

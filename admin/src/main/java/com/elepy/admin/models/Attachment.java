@@ -1,5 +1,7 @@
 package com.elepy.admin.models;
 
+import java.util.Objects;
+
 public class Attachment implements Comparable<Attachment> {
     private final String fileName;
     private final String contentType;
@@ -48,5 +50,18 @@ public class Attachment implements Comparable<Attachment> {
     @Override
     public int compareTo(Attachment o) {
         return this.getFileName().compareTo(o.getFileName());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attachment that = (Attachment) o;
+        return fileName.equals(that.fileName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileName);
     }
 }

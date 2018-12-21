@@ -25,7 +25,7 @@ import java.util.*;
 import static spark.Spark.halt;
 
 
-public class ElepyAdminPanel extends ElepyModule {
+public class ElepyAdminPanel implements ElepyModule {
     public static final String ADMIN_USER = "adminUser";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final AttachmentHandler attachmentHandler;
@@ -77,7 +77,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
         };
 
-        this.setupHandler = (elepy) -> {
+        this.setupHandler = elepy -> {
         };
 
         this.links = new ArrayList<>();
@@ -121,12 +121,8 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
         http.before("/admin/*/*", (request, response) -> elepy.allAdminFilters().handle(request, response));
-        http.before("/admin/*", (request, response) -> {
-            elepy.allAdminFilters().handle(request, response);
-        });
-        http.before("/admin", (request, response) -> {
-            elepy.allAdminFilters().handle(request, response);
-        });
+        http.before("/admin/*", (request, response) -> elepy.allAdminFilters().handle(request, response));
+        http.before("/admin", (request, response) -> elepy.allAdminFilters().handle(request, response));
         http.post("/retrieve-token", (request, response) -> {
             final Optional<Token> token = tokenHandler.createToken(request);
 
@@ -160,11 +156,7 @@ public class ElepyAdminPanel extends ElepyModule {
 
 
         elepy.addAdminFilter(baseAdminAuthenticationFilter);
-        http.get("/elepy-login", (request, response) -> {
-
-
-            return renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb");
-        });
+        http.get("/elepy-login", (request, response) -> renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb"));
         http.post("/elepy-login", (request, response) -> {
 
             final Optional<User> user = userService.login(request.queryParamOrDefault("username", "invalid"), request.queryParamOrDefault("password", "invalid"));
