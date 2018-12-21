@@ -5,7 +5,7 @@ Elepy is a Rest API Generation Framework/Headless Content Management System for 
 Because it's backed by MongoDB, it's able to handle extremely complex objects with ease.
 
 ## Api Generator
-The API generator, Elepy, is the core of the framework. It's super fast, thanks to [spark-java](http://sparkjava.com/) and [jongo](http://jongo.org/).  Most API's (5-6 models) load within 1 second. The api is completely @Annotation based, meaning that you only need to annotate your POJO's and voilà you have a completely configurable REST API for that POJO. The only restriction is that your POJO has a field annotated with `@MongoId` from the Jongo library and your POJO class must also be annotated with `@RestModel` from the Elepy framework.
+The API generator, Elepy, is the core of the framework. It's super fast, thanks to [spark-java](http://sparkjava.com/) and [jongo](http://jongo.org/).  Most API's (5-6 models) load within 1 second. The api is completely @Annotation based, meaning that you only need to annotate your POJO's and voilà you have a completely configurable REST API for that POJO. The only restriction is that your POJO has a field annotated with `@Identifier` and your POJO class must also be annotated with `@RestModel` from the Elepy framework.
 
 The generator also comes with handy interfaces and annotations that allow you to add restrictions and specifications to your data models. Some annotations include:
 
