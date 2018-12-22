@@ -116,6 +116,7 @@ public class ElepyEndToEndTest extends BaseTest {
         final Resource resource = validObject();
 
         resource.setId("updatePartialId");
+        resource.setMARKDOWN("ryan");
 
 
         mongoDao.create(resource);
@@ -130,6 +131,7 @@ public class ElepyEndToEndTest extends BaseTest {
 
         assertTrue(updatePartialId.isPresent());
         assertEquals("uniqueUpdate", updatePartialId.get().getUnique());
+        assertEquals("ryan", updatePartialId.get().getMARKDOWN());
 
     }
 }
