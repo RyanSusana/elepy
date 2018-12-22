@@ -92,16 +92,17 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
 
     public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
 
-        fieldsToAdd.forEach((key, value) -> {
-            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(cls, key);
+        fieldsToAdd.forEach((fieldName, fieldObject) -> {
+            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(cls, fieldName);
 
             if (fieldWithName.isPresent()) {
                 Field field = fieldWithName.get();
                 FieldType fieldType = FieldType.guessType(field);
                 if (fieldType.isPrimitive()) {
-                    objectAsMap.put(key, value);
+                    objectAsMap.put(fieldName, fieldObject);
                 }
-
+            } else {
+                throw new RestErrorMessage(String.format("Unknown field: %s", fieldName));
             }
         });
         return (T) objectMapper.convertValue(objectAsMap, cls);
