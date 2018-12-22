@@ -38,7 +38,6 @@ public class Elepy {
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private Mapper mapper;
     private List<Filter> adminFilters;
-    private Filter basePublicFilter;
     private List<Map<String, Object>> descriptors;
     private boolean initialized = false;
 
@@ -66,9 +65,6 @@ public class Elepy {
         this.baseSlug = "/";
 
         this.models = new ArrayList<>();
-        this.basePublicFilter = (request, response) -> {
-
-        };
         setBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
         this.objectMapper = new ObjectMapper();
@@ -457,16 +453,6 @@ public class Elepy {
     public Elepy onPort(int port) {
         checkConfig();
         http.port(port);
-        return this;
-    }
-
-    public Filter getBasePublicFilter() {
-        return this.basePublicFilter;
-    }
-
-    public Elepy setBasePublicFilter(Filter basePublicFilter) {
-        checkConfig();
-        this.basePublicFilter = basePublicFilter;
         return this;
     }
 
