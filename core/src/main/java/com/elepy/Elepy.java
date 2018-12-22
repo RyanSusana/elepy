@@ -3,12 +3,9 @@ package com.elepy;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
-import com.elepy.concepts.describers.StructureDescriber;
-import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,62 +113,9 @@ public class Elepy {
         List<Map<String, Object>> descriptorList = new ArrayList<>();
 
         classes.forEach((restModel, clazz) -> {
-            evaluateHasIdField(clazz);
-            try {
-                List<ObjectEvaluator<?>> evaluators = restModel.getObjectEvaluators();
-                descriptorList.add(getPojoDescriptor(restModel, clazz));
+            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, clazz);
+            descriptorList.add(routeGenerator.setupPojo());
 
-                final Crud<?> dao = restModel.getCrudProvider().crudFor(clazz, this);
-
-                setupFilters(restModel);
-                if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED)) {
-                    http.post(baseSlug + restModel.getSlug(), (request, response) -> {
-                        restModel.getCreateImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    });
-                }
-                if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED)) {
-                    http.put(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                        restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    });
-
-                    http.patch(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                        restModel.getUpdateImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    });
-                }
-                if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED)) {
-                    http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
-                        restModel.getDeleteImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    }));
-                }
-                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
-                    http.get(baseSlug + restModel.getSlug(), (request, response) -> {
-                        restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    });
-
-                }
-                if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
-                    http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                        restModel.getFindImplementation().handle(request, response, dao, this, evaluators, clazz);
-
-                        return response.body();
-                    });
-                }
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-                System.exit(0);
-            }
         });
 
         return descriptorList;
@@ -186,7 +130,7 @@ public class Elepy {
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
             if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                LOGGER.info(request.requestMethod() + " ['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+                LOGGER.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> "");
 
@@ -218,103 +162,12 @@ public class Elepy {
         return this;
     }
 
-    private Map<String, Object> getPojoDescriptor(ResourceDescriber restModel, Class<?> clazz) {
-        Map<String, Object> model = new HashMap<>();
-        if (baseSlug.equals("/")) {
-            model.put("slug", restModel.getSlug());
-
-        } else {
-            model.put("slug", baseSlug + restModel.getSlug());
-        }
-        //model.put("icon", restModel.icon()); //TODO
-        model.put("name", restModel.getName());
-
-        model.put("javaClass", clazz.getName());
-
-        model.put("actions", getActions(restModel));
-        model.put("fields", new StructureDescriber(clazz).getStructure());
-        return model;
-    }
-
-    private Map<String, AccessLevel> getActions(ResourceDescriber restModel) {
-        Map<String, AccessLevel> actions = new HashMap<>();
-        actions.put("findOne", restModel.getFindAccessLevel());
-        actions.put("findAll", restModel.getFindAccessLevel());
-        actions.put("update", restModel.getUpdateAccessLevel());
-        actions.put("delete", restModel.getDeleteAccessLevel());
-        actions.put("create", restModel.getCreateAccessLevel());
-        return actions;
-    }
-
-
     public Filter allAdminFilters() {
         return (request, response) -> {
             for (Filter adminFilter : adminFilters) {
                 adminFilter.handle(request, response);
             }
         };
-    }
-
-
-    private void setupFilters(ResourceDescriber restModel) {
-
-
-        final Filter adminFilter = allAdminFilters();
-
-        if (adminFilter != null) {
-            http.before(baseSlug + restModel.getSlug(), (request, response) -> {
-                switch (request.requestMethod().toUpperCase()) {
-                    case "GET":
-                        if (restModel.getFindAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    case "POST":
-                        if (restModel.getCreateAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    case "UPDATE":
-                        if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    case "PATCH":
-                        if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    case "DELETE":
-                        if (restModel.getDeleteAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            });
-            http.before(baseSlug + restModel.getSlug() + "/*", (request, response) -> {
-                switch (request.requestMethod().toUpperCase()) {
-                    case "GET":
-                        if (restModel.getFindAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    case "UPDATE":
-                        if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    case "DELETE":
-                        if (restModel.getDeleteAccessLevel() == AccessLevel.ADMIN) {
-                            adminFilter.handle(request, response);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
     }
 
     public Elepy connectDB(DB db) {
