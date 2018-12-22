@@ -41,6 +41,9 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
     public T update(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
+        if (body == null || body.isEmpty()) {
+            throw new RestErrorMessage("No changes detected.");
+        }
 
         Optional<T> before = dao.getById(request.params("id"));
 
