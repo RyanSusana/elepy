@@ -15,7 +15,7 @@ $(document).on('submit', '#login-form', function (event) {
     })
         .catch(function (error) {
             console.log(error.response.status);
-            UIkit.notification(error.response.data, {status: 'danger'})
+            UIkit.notification(error.response.data.message, {status: 'danger'})
 
         });
 });

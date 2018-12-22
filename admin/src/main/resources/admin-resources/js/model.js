@@ -91,7 +91,7 @@ const app = new Vue({
             })
                 .catch(function (error) {
                     console.log(error.response.status);
-                    UIkit.notification(error.response.data, {status: 'danger'})
+                    UIkit.notification(error.response.data.message, {status: 'danger'})
 
                 });
 
@@ -145,7 +145,7 @@ const app = new Vue({
                     ref.getModelData();
                 })
                     .catch(function (error) {
-                        UIkit.notification(error.response.data, {status: 'danger'})
+                        UIkit.notification(error.response.data.message, {status: 'danger'})
                     });
             }, function () {
 
@@ -169,7 +169,7 @@ const app = new Vue({
             })
                 .catch(function (error) {
                     console.log(error.response.status);
-                    UIkit.notification(error.response.data, {status: 'danger'})
+                    UIkit.notification(error.response.data.message, {status: 'danger'})
 
                 });
 

@@ -10,6 +10,7 @@ import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.ErrorMessageBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +177,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
             response.status(401);
-            return "Invalid login credentials";
+            throw ErrorMessageBuilder.anElepyErrorMessage().withMessage("Invalid login credentials").withStatus(401).build();
         });
 
 
