@@ -14,8 +14,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ElepyEndToEndTest extends BaseTest {
@@ -104,6 +106,30 @@ public class ElepyEndToEndTest extends BaseTest {
         final HttpResponse<String> delete = Unirest.delete("http://localhost:7357/resources/deleteId").asString();
 
         assertEquals(beginningCount, mongoDao.count());
+
+    }
+
+    @Test
+    void testUpdatePartial() throws UnirestException {
+
+        final long beginningCount = mongoDao.count();
+        final Resource resource = validObject();
+
+        resource.setId("updatePartialId");
+
+
+        mongoDao.create(resource);
+
+        assertEquals(beginningCount + 1, mongoDao.count());
+        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/updatePartialId").field("unique", "uniqueUpdate").asString();
+
+        assertEquals(beginningCount + 1, mongoDao.count());
+
+
+        Optional<Resource> updatePartialId = mongoDao.getById("updatePartialId");
+
+        assertTrue(updatePartialId.isPresent());
+        assertEquals("uniqueUpdate", updatePartialId.get().getUnique());
 
     }
 }
