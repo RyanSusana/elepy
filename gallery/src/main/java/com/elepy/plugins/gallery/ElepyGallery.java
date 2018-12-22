@@ -1,17 +1,16 @@
 package com.elepy.plugins.gallery;
 
 
+import com.elepy.Elepy;
 import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteStreams;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import com.mongodb.DB;
 import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.gridfs.GridFSInputFile;
 import spark.Service;
 
 import javax.servlet.MultipartConfigElement;
@@ -28,8 +27,8 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
     }
 
     @Override
-    public void setup(Service http, DB db, ObjectMapper objectMapper) {
-        ImageDao imageDao = new ImageDao(db);
+    public void setup(Service http, Elepy elepy) {
+        ImageDao imageDao = new ImageDao(elepy.getSingleton(DB.class));
 
         http.post(getAdminPanel().elepy().getBaseSlug() + "/images/upload", (request, response) -> {
             try {
@@ -48,7 +47,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
         http.get(getAdminPanel().elepy().getBaseSlug() + "/images/gallery", (request, response) -> {
             List<Image> images = new ArrayList<>();
             images.addAll(imageDao.search(new QuerySetup("", "", SortOption.ASCENDING, 1L, Integer.MAX_VALUE)).getValues());
-            return objectMapper.writeValueAsString(images);
+            return elepy.getObjectMapper().writeValueAsString(images);
         });
         http.get(getAdminPanel().elepy().getBaseSlug() + "/images/:id", (request, response) -> {
             final Optional<GridFSDBFile> image = imageDao.getGridFile(request.params("id"));

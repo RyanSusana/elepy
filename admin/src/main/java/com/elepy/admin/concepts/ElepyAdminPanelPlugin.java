@@ -1,8 +1,7 @@
 package com.elepy.admin.concepts;
 
+import com.elepy.Elepy;
 import com.elepy.admin.ElepyAdminPanel;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DB;
 import spark.Service;
 
 import java.util.Map;
@@ -22,7 +21,7 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
     }
 
 
-    public abstract void setup(Service http, DB db, ObjectMapper objectMapper);
+    public abstract void setup(Service http, Elepy elepy);
 
     public abstract String renderContent(Map<String, Object> model);
 

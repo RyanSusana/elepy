@@ -1,8 +1,6 @@
 package com.elepy.admin.concepts;
 
 import com.elepy.admin.ElepyAdminPanel;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DB;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +19,7 @@ public class PluginHandler {
 
     public void setupPlugins() {
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(adminPanel.http(), adminPanel.elepy().getSingleton(DB.class), new ObjectMapper());
+            plugin.setup(adminPanel.http(), adminPanel.elepy());
         }
 
     }
@@ -32,7 +30,7 @@ public class PluginHandler {
         adminPanel.http().before("/plugins/*", (request, response) -> adminPanel.elepy().allAdminFilters().handle(request, response));
         adminPanel.http().before("/plugins/*/*", (request, response) -> adminPanel.elepy().allAdminFilters().handle(request, response));
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(adminPanel.http(), adminPanel.elepy().getSingleton(DB.class), adminPanel.elepy().getObjectMapper());
+            plugin.setup(adminPanel.http(), adminPanel.elepy());
             adminPanel.http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
                 Map<String, Object> model = new HashMap<>();
                 String content = plugin.renderContent(null);
