@@ -25,7 +25,6 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             beforeCreate(item, dao, elepy);
 
-            //Comment for jeff
             super.handle(request, response, dao, elepy, objectEvaluators, clazz);
 
             afterCreate(item, dao, elepy);
