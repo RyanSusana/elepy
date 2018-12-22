@@ -1,10 +1,9 @@
 package com.elepy.concepts;
 
 import com.elepy.BaseTest;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -21,7 +20,7 @@ public class ObjectAtomicIntegrityTest extends BaseTest {
         try {
             resourceAtomicIntegrityEvaluator.evaluate(Arrays.asList(resource, resource1));
 
-        }catch (RestErrorMessage errorMessage){
+        }catch (ElepyException errorMessage){
             if(errorMessage.getMessage().contains("duplicate")){
 
 

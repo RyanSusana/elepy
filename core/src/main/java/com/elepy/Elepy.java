@@ -5,7 +5,7 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -133,7 +133,7 @@ public class Elepy {
         });
         http.options("/*", (request, response) -> "");
 
-        http.exception(RestErrorMessage.class, (exception, request, response) -> {
+        http.exception(ElepyException.class, (exception, request, response) -> {
             response.body(exception.getMessage());
             response.status(401);
         });

@@ -10,7 +10,7 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -110,7 +110,7 @@ public class MongoDao<T> implements Crud<T> {
                 return collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
-                throw new RestErrorMessage(e.getMessage());
+                throw new ElepyException(e.getMessage());
             }
         }
 
@@ -176,7 +176,7 @@ public class MongoDao<T> implements Crud<T> {
             return toPage(find, querySetup, (int) amountResultsTotal);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            throw new RestErrorMessage(e.getMessage());
+            throw new ElepyException(e.getMessage());
         }
 
     }
@@ -213,7 +213,7 @@ public class MongoDao<T> implements Crud<T> {
             collection().insert((Object[]) ts);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RestErrorMessage(e.getMessage());
+            throw new ElepyException(e.getMessage());
         }
     }
 
@@ -223,7 +223,7 @@ public class MongoDao<T> implements Crud<T> {
             collection().insert(item);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RestErrorMessage(e.getMessage());
+            throw new ElepyException(e.getMessage());
         }
     }
 
@@ -232,7 +232,7 @@ public class MongoDao<T> implements Crud<T> {
     public String getId(T item) {
         Optional<String> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
-            throw new RestErrorMessage("No Identifier provided to the object.");
+            throw new ElepyException("No Identifier provided to the object.");
         }
         return id.get();
     }

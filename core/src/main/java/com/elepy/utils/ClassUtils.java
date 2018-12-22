@@ -3,7 +3,7 @@ package com.elepy.utils;
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.Unique;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -67,11 +67,11 @@ public class ClassUtils {
     public static Optional<String> getId(Object object) {
 
         try {
-            Field field = getIdField(object.getClass()).orElseThrow(() -> new RestErrorMessage("No ID field found"));
+            Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
             field.setAccessible(true);
             return Optional.ofNullable((String) field.get(object));
         } catch (IllegalAccessException e) {
-            throw new RestErrorMessage("Illegally accessing id field");
+            throw new ElepyException("Illegally accessing id field");
         }
 
     }

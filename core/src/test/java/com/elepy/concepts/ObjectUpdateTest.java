@@ -1,7 +1,7 @@
 package com.elepy.concepts;
 
 import com.elepy.BaseTest;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -31,7 +31,7 @@ public class ObjectUpdateTest extends BaseTest {
             resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable);
 
             fail("Should not be able to update nonEditable");
-        } catch (RestErrorMessage e) {
+        } catch (ElepyException e) {
 
         }
     }

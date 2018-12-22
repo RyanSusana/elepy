@@ -5,7 +5,7 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,14 +42,14 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         String body = request.body();
 
         if (body == null || body.isEmpty()) {
-            throw new RestErrorMessage("No changes detected.");
+            throw new ElepyException("No changes detected.");
         }
 
         Optional<T> before = dao.getById(request.params("id"));
 
         if (!before.isPresent()) {
             response.status(404);
-            throw new RestErrorMessage("No object found with this ID");
+            throw new ElepyException("No object found with this ID");
         }
         final T updated;
 
@@ -102,7 +102,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
                     objectAsMap.put(fieldName, fieldObject);
                 }
             } else {
-                throw new RestErrorMessage(String.format("Unknown field: %s", fieldName));
+                throw new ElepyException(String.format("Unknown field: %s", fieldName));
             }
         });
         return (T) objectMapper.convertValue(objectAsMap, cls);

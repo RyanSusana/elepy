@@ -2,7 +2,7 @@ package com.elepy.id;
 
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.github.slugify.Slugify;
 
 import java.lang.reflect.Field;
@@ -63,7 +63,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         final Optional<String> slug = getSlug(item, Arrays.asList(slugFieldNames));
 
         if (!slug.isPresent()) {
-            throw new RestErrorMessage("There is no available slug");
+            throw new ElepyException("There is no available slug");
         }
 
         return getSlug(slug.get(), dao);

@@ -3,7 +3,7 @@ package com.elepy.routes;
 import com.elepy.Elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 import spark.Request;
 import spark.Response;
@@ -21,13 +21,13 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
         final Optional<String> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
-            throw new RestErrorMessage("This item doesn't can't be identified.");
+            throw new ElepyException("This item doesn't can't be identified.");
         }
 
         final Optional<T> before = dao.getById(id.get());
 
         if (!before.isPresent()) {
-            throw new RestErrorMessage("This item doesn't exist and therefor can't be updated");
+            throw new ElepyException("This item doesn't exist and therefor can't be updated");
         }
 
         beforeUpdate(before.get(), dao, elepy);

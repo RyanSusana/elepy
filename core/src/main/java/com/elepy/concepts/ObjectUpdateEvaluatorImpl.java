@@ -1,7 +1,7 @@
 package com.elepy.concepts;
 
 import com.elepy.concepts.describers.FieldDescriber;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 
 import java.lang.reflect.Field;
 
@@ -13,7 +13,7 @@ public class ObjectUpdateEvaluatorImpl<T> implements ObjectUpdateEvaluator<T> {
             FieldDescriber describer = new FieldDescriber(field);
             if (!describer.isEditable()) {
                 if (!field.get(before).equals(field.get(updated))) {
-                    throw new RestErrorMessage("Not allowed to edit: " + describer.getPrettyName());
+                    throw new ElepyException("Not allowed to edit: " + describer.getPrettyName());
                 }
             }
         }

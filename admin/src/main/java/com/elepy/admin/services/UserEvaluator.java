@@ -2,7 +2,7 @@ package com.elepy.admin.services;
 
 import com.elepy.admin.models.User;
 import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,7 @@ public class UserEvaluator implements ObjectEvaluator<User> {
         Matcher m = p.matcher("I am a string");
 
         if (username.contains(" ") || m.find()) {
-            throw new RestErrorMessage("Usernames can not contain spaces or special characters!");
+            throw new ElepyException("Usernames can not contain spaces or special characters!");
         }
 
     }

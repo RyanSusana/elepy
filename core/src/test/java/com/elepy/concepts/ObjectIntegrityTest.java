@@ -2,10 +2,8 @@ package com.elepy.concepts;
 
 import com.elepy.BaseFongoTest;
 import com.elepy.dao.jongo.MongoDao;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -23,7 +21,7 @@ public class ObjectIntegrityTest extends BaseFongoTest {
         try {
             evaluator.evaluate(validObject(), mongoDao);
             fail("Was supposed to throw a rest error message");
-        }catch(RestErrorMessage ignored){
+        }catch(ElepyException ignored){
 
         }
     }

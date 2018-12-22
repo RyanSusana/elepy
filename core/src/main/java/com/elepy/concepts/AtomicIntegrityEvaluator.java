@@ -1,6 +1,6 @@
 package com.elepy.concepts;
 
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Field;
@@ -51,17 +51,17 @@ public class AtomicIntegrityEvaluator<T> {
 
 
             if (foundItems.size() > 1) {
-                throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
             }
 
             T foundRecord = foundItems.get(0);
             final Optional<String> foundId = ClassUtils.getId(foundRecord);
             if (id.isPresent() || foundId.isPresent()) {
                 if (!id.equals(foundId)) {
-                    throw new RestErrorMessage(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
                 }
             } else {
-                throw new RestErrorMessage(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
 
             }
         }

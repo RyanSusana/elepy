@@ -1,7 +1,7 @@
 package com.elepy.concepts;
 
 import com.elepy.BaseTest;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +66,7 @@ public class ObjectEvaluateTest extends BaseTest {
 
             resourceObjectEvaluator.evaluate(resource, Resource.class);
             fail("This object should not be considered valid");
-        } catch (RestErrorMessage ignored) {
+        } catch (ElepyException ignored) {
         }
     }
 }

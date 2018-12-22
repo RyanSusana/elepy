@@ -5,7 +5,7 @@ import com.elepy.admin.models.User;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.routes.CreateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
@@ -28,7 +28,7 @@ public class UserCreate implements CreateHandler<User> {
 
         if (!loggedInUser.getUserType().hasMoreRightsThan(user.getUserType())) {
 
-            throw new RestErrorMessage("You are not allowed to create users with an equal higher rank than you!");
+            throw new ElepyException("You are not allowed to create users with an equal higher rank than you!");
         }
         user = user.hashWord();
         dao.create(user);

@@ -3,7 +3,7 @@ package com.elepy.routes;
 import com.elepy.Elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
@@ -31,7 +31,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
 
         } catch (JsonMappingException e) {
-            throw new RestErrorMessage("MultipleCreate not supported with SimpleCreate");
+            throw new ElepyException("MultipleCreate not supported with SimpleCreate");
         }
     }
 

@@ -6,7 +6,7 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.routes.UpdateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
@@ -28,15 +28,15 @@ public class UserUpdate implements UpdateHandler<User> {
 
         if (!before.isPresent()) {
             response.status(404);
-            throw new RestErrorMessage("No object found with this ID");
+            throw new ElepyException("No object found with this ID");
         }
         if (!loggedInUser.getId().equals(updated.getId())) {
             if (!loggedInUser.getUserType().hasMoreRightsThan(updated.getUserType()) || !loggedInUser.getUserType().hasMoreRightsThan(before.get().getUserType())) {
-                throw new RestErrorMessage("You are not allowed to update users with an equal or higher rank than you!");
+                throw new ElepyException("You are not allowed to update users with an equal or higher rank than you!");
             }
         } else {
             if (!loggedInUser.getUserType().equals(updated.getUserType())) {
-                throw new RestErrorMessage("You can't promote/demote yourself!");
+                throw new ElepyException("You can't promote/demote yourself!");
 
             }
         }

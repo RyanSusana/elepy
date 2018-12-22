@@ -9,7 +9,7 @@ import com.elepy.admin.concepts.auth.BasicHandler;
 import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +129,7 @@ public class ElepyAdminPanel implements ElepyModule {
             if (token.isPresent()) {
                 return elepy.getObjectMapper().writeValueAsString(token.get());
             } else {
-                throw new RestErrorMessage("Invalid username/password");
+                throw new ElepyException("Invalid username/password");
             }
         });
         http.get("/admin", (request, response) -> {
@@ -166,7 +166,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
             if (user.isPresent()) {
                 if (user.get().getUserType().getLevel() < 0) {
-                    throw new RestErrorMessage("Your account has been suspended!");
+                    throw new ElepyException("Your account has been suspended!");
                 }
                 request.session().attribute(ADMIN_USER, user.get());
                 response.status(200);

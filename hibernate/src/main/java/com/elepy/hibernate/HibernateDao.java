@@ -5,7 +5,7 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
-import com.elepy.exceptions.RestErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -133,7 +133,7 @@ public class HibernateDao<T> implements Crud<T> {
     private void create(Session session, T item) throws IllegalAccessException {
         final Optional<String> id = com.elepy.utils.ClassUtils.getId(item);
         if (!id.isPresent()) {
-            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass).orElseThrow(() -> new RestErrorMessage("No ID field found"));
+            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyException("No ID field found"));
 
 
             idField.setAccessible(true);
@@ -153,7 +153,7 @@ public class HibernateDao<T> implements Crud<T> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RestErrorMessage(e.getMessage());
+            throw new ElepyException(e.getMessage());
         }
     }
 
@@ -169,7 +169,7 @@ public class HibernateDao<T> implements Crud<T> {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RestErrorMessage(e.getMessage());
+            throw new ElepyException(e.getMessage());
         }
     }
 
@@ -239,7 +239,7 @@ public class HibernateDao<T> implements Crud<T> {
             objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            throw new RestErrorMessage("Error loading object's collections.");
+            throw new ElepyException("Error loading object's collections.");
         }
     }
 
