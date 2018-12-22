@@ -7,6 +7,7 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -152,18 +153,24 @@ public class Elepy {
         });
 
         http.notFound((request, response) -> {
-            throw ErrorMessageBuilder
+
+            response.type("application/json");
+            return getObjectMapper().writeValueAsString(new ElepyMessage(ErrorMessageBuilder
                     .anElepyErrorMessage()
                     .withMessage("Not found")
-                    .withStatus(404).build();
+                    .withStatus(404).build()));
+
         });
+
         http.exception(ElepyErrorMessage.class, (exception, request, response) -> {
+            response.type("application/json");
+
             try {
-                response.body(getObjectMapper().writeValueAsString(exception));
+                response.body(getObjectMapper().writeValueAsString(new ElepyMessage(exception)));
             } catch (JsonProcessingException e) {
                 LOGGER.error("Error parsing error message", e);
             }
-            response.status(401);
+            response.status(exception.getStatus());
         });
     }
 
