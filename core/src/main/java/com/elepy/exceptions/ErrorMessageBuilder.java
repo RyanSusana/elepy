@@ -1,22 +1,22 @@
 package com.elepy.exceptions;
 
-public final class ErrorMessage {
+public final class ErrorMessageBuilder {
     private String message;
     private int status;
 
-    private ErrorMessage() {
+    private ErrorMessageBuilder() {
     }
 
-    public static ErrorMessage anElepyErrorMessage() {
-        return new ErrorMessage();
+    public static ErrorMessageBuilder anElepyErrorMessage() {
+        return new ErrorMessageBuilder();
     }
 
-    public ErrorMessage withMessage(String message) {
+    public ErrorMessageBuilder withMessage(String message) {
         this.message = message;
         return this;
     }
 
-    public ErrorMessage withStatus(int status) {
+    public ErrorMessageBuilder withStatus(int status) {
         this.status = status;
         return this;
     }

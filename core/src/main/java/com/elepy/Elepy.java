@@ -5,7 +5,10 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
+import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.ErrorMessageBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -78,7 +81,7 @@ public class Elepy {
         for (ElepyModule module : modules) {
             module.setup(http, this);
         }
-        setupLogs();
+        setupLoggingAndExceptions();
 
         Map<ResourceDescriber, Class<?>> classes = new HashMap<>();
 
@@ -121,7 +124,7 @@ public class Elepy {
     }
 
 
-    private void setupLogs() {
+    private void setupLoggingAndExceptions() {
         http.before((request, response) -> request.attribute("start", System.currentTimeMillis()));
         http.afterAfter((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
@@ -134,11 +137,34 @@ public class Elepy {
         http.options("/*", (request, response) -> "");
 
         http.exception(ElepyException.class, (exception, request, response) -> {
-            response.body(exception.getMessage());
+            throw ErrorMessageBuilder
+                    .anElepyErrorMessage()
+                    .withMessage(exception.getMessage())
+                    .withStatus(401).build();
+        });
+        http.exception(Exception.class, (exception, request, response) -> {
+            LOGGER.error(exception.getMessage(), exception);
+
+            throw ErrorMessageBuilder
+                    .anElepyErrorMessage()
+                    .withMessage(exception.getMessage())
+                    .withStatus(401).build();
+        });
+
+        http.notFound((request, response) -> {
+            throw ErrorMessageBuilder
+                    .anElepyErrorMessage()
+                    .withMessage("Not found")
+                    .withStatus(404).build();
+        });
+        http.exception(ElepyErrorMessage.class, (exception, request, response) -> {
+            try {
+                response.body(getObjectMapper().writeValueAsString(exception));
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Error parsing error message", e);
+            }
             response.status(401);
         });
-        http.exception(Exception.class, (exception, request, response) -> exception.printStackTrace());
-
     }
 
     private void setupDescriptors(List<Map<String, Object>> descriptors) {
