@@ -6,7 +6,6 @@ import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.exceptions.RestErrorMessage;
-import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -184,7 +183,7 @@ public class Elepy {
         return this;
     }
 
-    public Elepy addModule(ElepyModule module, Service http) {
+    public Elepy addExtension(ElepyModule module, Service http) {
         if (initialized) {
             throw new IllegalStateException("Elepy already initialized, you must add modules before calling start()");
         }
@@ -243,14 +242,8 @@ public class Elepy {
     }
 
 
-    public Elepy addModule(ElepyModule module) {
-        return addModule(module, this.http);
-    }
-
-    private void evaluateHasIdField(Class cls) {
-
-        ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getSimpleName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier"));
-
+    public Elepy addExtension(ElepyModule module) {
+        return addExtension(module, this.http);
     }
 
     public Elepy addPackage(String packageName) {
@@ -273,14 +266,6 @@ public class Elepy {
         checkConfig();
         this.objectMapper = objectMapper;
         return this;
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public DB getDb() {
-        return getSingleton(DB.class);
     }
 
     public String getBaseSlug() {

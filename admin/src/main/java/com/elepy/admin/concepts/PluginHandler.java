@@ -32,7 +32,7 @@ public class PluginHandler {
         adminPanel.http().before("/plugins/*", (request, response) -> adminPanel.elepy().allAdminFilters().handle(request, response));
         adminPanel.http().before("/plugins/*/*", (request, response) -> adminPanel.elepy().allAdminFilters().handle(request, response));
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(adminPanel.http(), adminPanel.elepy().getDb(), adminPanel.elepy().getObjectMapper());
+            plugin.setup(adminPanel.http(), adminPanel.elepy().getSingleton(DB.class), adminPanel.elepy().getObjectMapper());
             adminPanel.http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
                 Map<String, Object> model = new HashMap<>();
                 String content = plugin.renderContent(null);
