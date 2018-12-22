@@ -92,6 +92,43 @@ public class ElepyEndToEndTest extends BaseTest {
         assertEquals(count + 1, mongoDao.count());
     }
 
+
+    @Test
+    public void testMultiCreate_atomicCreateInsertsNone_OnIntegrityFailure() throws UnirestException, JsonProcessingException {
+
+        final long count = mongoDao.count();
+        final Resource resource = validObject();
+
+        resource.setUnique("uniqueMultiCreate");
+
+        final Resource resource1 = validObject();
+        resource1.setUnique("uniqueMultiCreate");
+
+        final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
+
+        final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
+
+        assertEquals(count, mongoDao.count());
+    }
+
+    @Test
+    public void testMultiCreate() throws UnirestException, JsonProcessingException {
+
+        final long count = mongoDao.count();
+        final Resource resource = validObject();
+
+        resource.setUnique("uniqueMultiCreate");
+
+        final Resource resource1 = validObject();
+        resource1.setUnique("uniqueMultiCreate1");
+
+        final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
+
+        final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
+
+        assertEquals(count + 2, mongoDao.count());
+    }
+
     @Test
     void testDelete() throws UnirestException {
 
