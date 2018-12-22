@@ -3,6 +3,7 @@ package com.elepy.models;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
+import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.AccessibleObject;
@@ -23,8 +24,8 @@ public enum FieldType {
     }
 
 
-    public static FieldType guessType(Method field) {
-        return getByAnnotation(field).orElse(getByClass(field.getReturnType()));
+    public static FieldType guessType(Method method) {
+        return getByAnnotation(method).orElse(getByClass(method.getReturnType()));
     }
 
 
@@ -41,7 +42,6 @@ public enum FieldType {
     }
 
     public static FieldType guessType(java.lang.reflect.Field field) {
-
         if (isCollection(field.getType())) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             if (isPrimitive(array)) {
@@ -94,6 +94,8 @@ public enum FieldType {
 
     public static FieldType getUnannotatedFieldType(Class<?> type) {
 
+        //int -> Integer
+        type = Primitives.wrap(type);
         for (FieldType fieldType : FieldType.values()) {
             if (type.equals(fieldType.baseClass)) {
                 return fieldType;
