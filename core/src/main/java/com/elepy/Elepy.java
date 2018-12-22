@@ -80,7 +80,7 @@ public class Elepy {
         this.mapper = builder.build();
     }
 
-    public void init() {
+    private void init() {
 
 
         for (ElepyModule module : modules) {
@@ -337,7 +337,7 @@ public class Elepy {
 
     public Elepy addModule(ElepyModule module, Service http) {
         if (initialized) {
-            throw new IllegalStateException("Elepy already initialized, you must add modules before calling init()");
+            throw new IllegalStateException("Elepy already initialized, you must add modules before calling start()");
         }
         modules.add(module);
         return this;
