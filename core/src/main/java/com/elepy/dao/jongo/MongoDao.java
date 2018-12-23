@@ -75,7 +75,7 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final String id) {
-        return Optional.ofNullable(collection().findOne("{$or: [{_id: #}, {id: #}]}", id, id).as(classType));
+        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {%s: #}]}", getIdFieldProp()), id, id).as(classType));
     }
 
 
@@ -192,14 +192,22 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public void delete(String id) {
-        collection().remove("{$or: [{_id: #}, {id: #}]}", id, id);
+        collection().remove(String.format("{$or: [{_id: #}, {%s: #}]}", getIdFieldProp()), id, id);
     }
 
     @Override
     public void update(T item) {
         final String id = getId(item);
-        collection().update("{$or: [{_id: #}, {id: #}]}", id, id).with(item);
+        collection().update(String.format("{$or: [{_id: #}, {%s: #}]}", getIdFieldProp()), id, id).with(item);
 
+    }
+
+    private String getIdFieldProp() {
+        Optional<Field> idField = ClassUtils.getIdField(classType);
+        if (idField.isPresent()) {
+            return ClassUtils.getPropertyName(idField.get());
+        }
+        return "id";
     }
 
     @Override
