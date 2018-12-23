@@ -79,7 +79,7 @@ const app = new Vue({
             var ref = this;
             axios({
                 method: 'put',
-                url: ref.selectedModel.slug + "/" + ref.selectedData.id,
+                url: ref.selectedModel.slug + "/" + ref.selectedData[ref.selectedModel.idField],
                 data: ref.selectedData
             }).then(function (response) {
                 //console.log(response.data)
@@ -134,10 +134,10 @@ const app = new Vue({
                     cancel: "Cancel"
                 }, stack: true
             }).then(function () {
-                console.log(ref.selectedModel.slug + '/' + ref.selectedData.id);
+                console.log(ref.selectedModel.slug + '/' + ref.selectedData[ref.selectedModel.idField]);
                 axios({
                     method: 'delete',
-                    url: ref.selectedModel.slug + '/' + ref.selectedData.id
+                    url: ref.selectedModel.slug + '/' + ref.selectedData[ref.selectedModel.idField]
                 }).then(function (response) {
 
                     UIkit.modal(document.getElementById("edit-modal"), {stack: true, 'bg-close': false}).hide();
