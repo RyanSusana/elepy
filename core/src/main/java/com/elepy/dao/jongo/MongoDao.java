@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class MongoDao<T> implements Crud<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(MongoDao.class);
     private final Jongo jongo;
     private final Class<T> classType;
     private final String collectionName;
@@ -75,7 +75,7 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final String id) {
-        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {%s: #}]}", getIdFieldProp()), id, id).as(classType));
+        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(classType));
     }
 
 
@@ -109,7 +109,7 @@ public class MongoDao<T> implements Crud<T> {
             try {
                 return collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 throw new ElepyException(e.getMessage());
             }
         }
@@ -175,7 +175,7 @@ public class MongoDao<T> implements Crud<T> {
 
             return toPage(find, querySetup, (int) amountResultsTotal);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
 
@@ -192,13 +192,13 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public void delete(String id) {
-        collection().remove(String.format("{$or: [{_id: #}, {%s: #}]}", getIdFieldProp()), id, id);
+        collection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
     }
 
     @Override
     public void update(T item) {
         final String id = getId(item);
-        collection().update(String.format("{$or: [{_id: #}, {%s: #}]}", getIdFieldProp()), id, id).with(item);
+        collection().update(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).with(item);
 
     }
 
@@ -220,7 +220,7 @@ public class MongoDao<T> implements Crud<T> {
 
             collection().insert((Object[]) ts);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
     }
@@ -230,7 +230,7 @@ public class MongoDao<T> implements Crud<T> {
         try {
             collection().insert(item);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
     }
