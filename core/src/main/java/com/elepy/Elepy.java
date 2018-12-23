@@ -25,7 +25,7 @@ import java.util.*;
 
 public class Elepy {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Elepy.class);
+    private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
     private final Service http;
     private final List<ElepyModule> modules;
     private final List<String> packages;
@@ -133,25 +133,9 @@ public class Elepy {
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
             if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                LOGGER.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+                logger.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> "");
-
-        http.exception(ElepyException.class, (exception, request, response) -> {
-            throw ErrorMessageBuilder
-                    .anElepyErrorMessage()
-                    .withMessage(exception.getMessage())
-                    .withStatus(401).build();
-        });
-        http.exception(Exception.class, (exception, request, response) -> {
-            LOGGER.error(exception.getMessage(), exception);
-
-            throw ErrorMessageBuilder
-                    .anElepyErrorMessage()
-                    .withMessage(exception.getMessage())
-                    .withStatus(401).build();
-        });
-
         http.notFound((request, response) -> {
 
             response.type("application/json");
@@ -162,15 +146,36 @@ public class Elepy {
 
         });
 
-        http.exception(ElepyErrorMessage.class, (exception, request, response) -> {
+
+        http.exception(Exception.class, (exception, request, response) -> {
+            logger.error(exception.getMessage(), exception);
+
+            final ElepyErrorMessage elepyErrorMessage;
+            if (exception instanceof ElepyErrorMessage) {
+                elepyErrorMessage = (ElepyErrorMessage) exception;
+            } else {
+                if (exception instanceof ElepyException) {
+                    elepyErrorMessage = ErrorMessageBuilder
+                            .anElepyErrorMessage()
+                            .withMessage(exception.getMessage())
+                            .withStatus(response.status()).build();
+                } else {
+                    logger.error(exception.getMessage(), exception);
+                    elepyErrorMessage = ErrorMessageBuilder
+                            .anElepyErrorMessage()
+                            .withMessage(exception.getMessage())
+                            .withStatus(500).build();
+                }
+            }
+
             response.type("application/json");
 
+            response.status(elepyErrorMessage.getStatus());
             try {
-                response.body(getObjectMapper().writeValueAsString(new ElepyMessage(exception)));
+                response.body(getObjectMapper().writeValueAsString(new ElepyMessage(elepyErrorMessage)));
             } catch (JsonProcessingException e) {
-                LOGGER.error("Error parsing error message", e);
+                logger.error(e.getMessage(), e);
             }
-            response.status(exception.getStatus());
         });
     }
 
