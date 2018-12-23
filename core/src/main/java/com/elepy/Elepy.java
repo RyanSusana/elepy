@@ -86,11 +86,12 @@ public class Elepy {
 
         Map<ResourceDescriber, Class<?>> classes = new HashMap<>();
 
-        Reflections reflections = new Reflections(packages);
-        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
+        if (!packages.isEmpty()) {
+            Reflections reflections = new Reflections(packages);
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
 
-        annotated.forEach(claszz -> classes.put(new ResourceDescriber<>(this, claszz), claszz));
-
+            annotated.forEach(claszz -> classes.put(new ResourceDescriber<>(this, claszz), claszz));
+        }
         for (Class<?> model : models) {
             classes.put(new ResourceDescriber<>(this, model), model);
         }
