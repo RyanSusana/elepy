@@ -36,7 +36,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     }
 
-    public abstract void beforeUpdate(T objectForCreation, Crud<T> crud, Elepy elepy) throws Exception;
+    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud, Elepy elepy) throws Exception;
 
     public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, Elepy elepy);
 }
