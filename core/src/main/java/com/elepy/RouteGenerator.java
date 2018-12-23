@@ -31,9 +31,9 @@ public class RouteGenerator<T> {
 
     }
 
-    private void evaluateHasIdField(Class cls) {
+    private String evaluateHasIdField(Class cls) {
 
-        ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getSimpleName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier"));
+        return ClassUtils.getPropertyName(ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getSimpleName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier")));
 
     }
 
@@ -110,6 +110,7 @@ public class RouteGenerator<T> {
         model.put("javaClass", clazz.getName());
 
         model.put("actions", getActions(restModel));
+        model.put("idField", evaluateHasIdField(clazz));
         model.put("fields", new StructureDescriber(clazz).getStructure());
         return model;
     }
