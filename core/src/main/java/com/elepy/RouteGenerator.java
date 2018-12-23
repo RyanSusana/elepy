@@ -105,7 +105,6 @@ public class RouteGenerator<T> {
         } else {
             model.put("slug", baseSlug + restModel.getSlug());
         }
-        //model.put("icon", restModel.icon()); //TODO
         model.put("name", restModel.getName());
 
         model.put("javaClass", clazz.getName());
