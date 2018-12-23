@@ -18,11 +18,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.9.5</version>
-        </dependency>
-        <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-admin</artifactId>
             <version>${project.version}</version>
