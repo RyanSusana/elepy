@@ -6,6 +6,7 @@ import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
+import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -31,15 +32,18 @@ public class FieldDescriber {
 
     private final FieldType type;
 
+    private final boolean generated;
+
     public FieldDescriber(Field field) {
         this.field = field;
         name = name();
         prettyName = prettyName();
-        this.fieldMap = mapField();
+        fieldMap = mapField();
 
         required = (boolean) fieldMap.getOrDefault("required", false);
         editable = (boolean) fieldMap.getOrDefault("editable", true);
         type = (FieldType) fieldMap.get("type");
+        generated = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.equals(field)).orElse(false);
     }
 
 
@@ -71,7 +75,7 @@ public class FieldDescriber {
 
         final Column column = field.getAnnotation(Column.class);
 
-        fieldMap.put("editable", !field.isAnnotationPresent(Uneditable.class) || (column!=null && !column.updatable()));
+        fieldMap.put("editable", !field.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable()));
 
         Importance importance = field.getAnnotation(Importance.class);
         fieldMap.put("importance", importance == null ? 0 : importance.value());
@@ -82,6 +86,7 @@ public class FieldDescriber {
 
         fieldMap.put("type", fieldType);
 
+        fieldMap.put("generated", generated);
         if (fieldType.equals(FieldType.ENUM)) {
             fieldMap.put("availableValues", field.getType().getEnumConstants());
         }

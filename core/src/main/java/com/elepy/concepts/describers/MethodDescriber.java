@@ -1,8 +1,8 @@
 package com.elepy.concepts.describers;
 
 import com.elepy.annotations.Boolean;
-import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
+import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
@@ -33,11 +33,13 @@ public class MethodDescriber {
         this.method = method;
         name = name();
         prettyName = prettyName();
-        this.fieldMap = mapField();
+        fieldMap = mapField();
 
         required = (boolean) fieldMap.getOrDefault("required", false);
         editable = false;
         type = (FieldType) fieldMap.get("type");
+
+
     }
 
     private void mapMethodTypeInfo(Method method, Map<String, Object> fieldMap) {
@@ -45,6 +47,7 @@ public class MethodDescriber {
         FieldType type = FieldType.guessType(method);
 
         fieldMap.put("type", type);
+        fieldMap.put("generated", true);
 
         if (type.equals(FieldType.BOOLEAN)) {
             final Boolean annotation = method.getAnnotation(Boolean.class);
