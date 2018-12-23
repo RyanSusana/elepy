@@ -36,14 +36,16 @@ public class FieldDescriber {
 
     public FieldDescriber(Field field) {
         this.field = field;
+        generated = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.getName().equals(field.getName())).orElse(false);
         name = name();
         prettyName = prettyName();
-        fieldMap = mapField();
+        this.fieldMap = mapField();
 
         required = (boolean) fieldMap.getOrDefault("required", false);
         editable = (boolean) fieldMap.getOrDefault("editable", true);
         type = (FieldType) fieldMap.get("type");
-        generated = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.equals(field)).orElse(false);
+
+
     }
 
 
@@ -122,21 +124,6 @@ public class FieldDescriber {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             fieldMap.put("primitiveType", FieldType.getUnannotatedFieldType(array));
         }
-    }
-
-
-    public NumberType getNumberType() {
-        if (!type.equals(FieldType.NUMBER)) {
-            throw new IllegalArgumentException("This field is not a number");
-        }
-        return (NumberType) fieldMap.get("numberType");
-    }
-
-    public NumberType getTextType() {
-        if (!type.equals(FieldType.NUMBER)) {
-            throw new IllegalArgumentException("This field is not a string");
-        }
-        return (NumberType) fieldMap.get("textType");
     }
 
     public Map<String, Object> mapField() {

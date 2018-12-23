@@ -308,18 +308,20 @@
 
                                 <div v-for="(field, index) in selectedModel.fields" v-if="field.type != 'OBJECT' "
                                      class="uk-margin">
-                                    <label v-show="(field.name != 'id')"
+                                    <label v-show="(field.generated === false)"
                                            class="uk-form-label">((field.pretty_name))</label>
                                     <div class="uk-form-controls">
                                         <!-- TEXTFIELD -->
                                         <input class="uk-input"
-                                               v-show="(field.name != 'id')"
-                                               v-if="(field.name != 'id') && (field.type == 'STRING' ||  (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK'))"
+                                               v-show="(field.generated === false)"
+                                               v-if="(field.generated === false) && (field.type == 'STRING' ||  (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK'))"
                                                :disabled="(field.name == 'id') "
                                                v-model="newData[field.name]" type="text"
                                                placeholder="">
                                         <!-- PASSWORD -->
                                         <input class="uk-input"
+                                               v-show="(field.generated === false)"
+
                                                v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
                                                :disabled="field.name == 'id' || (field.editable == false)"
                                                v-model="newData[field.name]"
@@ -327,34 +329,38 @@
                                                :disabled="field.name == 'id' || field.editable == false"
                                                placeholder="">
                                         <!-- IMAGE -->
-                                        <div v-if  = "(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')" class="uk-padding">
+                                        <div v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
+                                             class="uk-padding">
 
                                             <img  class = "" :src="newData[field.name]" alt="">
                                         </div>
                                         <!-- DATE -->
 
-                                        <vuejs-datepicker v-if="field.type == 'DATE'" v-model="newData[field.name]"
+                                        <vuejs-datepicker v-if="(field.generated === false) && field.type == 'DATE'"
+                                                          v-model="newData[field.name]"
                                                           :disabled="field.name == 'id' || (field.editable == false)"
                                                           placeholder="Click to select a date" input-class="uk-input"
                                                           calendar-class="uk-dark"></vuejs-datepicker>
 
                                         <!-- COLOR -->
-                                        <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
-                                                           v-model="newData[field.name]"
-                                                           :disabled="field.name == 'id' || (field.editable == false)"
-                                                           v-bind:value="newData[field.name]"
-                                                           v-on:input="newData[field.name] = $event.hex"
+                                        <vuejs-colorpicker
+                                                v-if="(field.generated === false) && field.type == 'TEXT' && field.textType == 'COLOR'"
+                                                v-model="newData[field.name]"
+                                                :disabled="field.name == 'id' || (field.editable == false)"
+                                                v-bind:value="newData[field.name]"
+                                                v-on:input="newData[field.name] = $event.hex"
                                         ></vuejs-colorpicker>
 
                                         <!-- NUMBER -->
-                                        <input class="uk-input" v-if="field.type == 'NUMBER'"
+                                        <input class="uk-input"
+                                               v-if="(field.generated === false) && field.type == 'NUMBER'"
                                                step="any"
                                                v-model="newData[field.name]"
                                                type="number">
                                         <!-- TEXTAREA -->
 
                                         <textarea class="uk-textarea"
-                                                  v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
+                                                  v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'TEXTAREA')"
 
                                                   v-model="newData[field.name]" type="text"
 
@@ -362,12 +368,12 @@
                                         <!-- MARKDOWN -->
                                         <div class="uk-padding uk-background-muted"
                                              v-html="compileMarkdown(newData[field.name])"
-                                             v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN')">
+                                             v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'MARKDOWN')">
                                         </div>
 
 
                                         <textarea class="uk-textarea"
-                                                  v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
+                                                  v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
                                                   :disabled="field.name == 'id' || (field.editable == false)"
                                                   v-model="newData[field.name]" type="text"
                                                   :disabled="field.name == 'id' || field.editable == false"
@@ -376,14 +382,14 @@
 
                                         <!-- HTML -->
                                         <trumbowyg v-model="newData[field.name]"
-                                                   v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
+                                                   v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
                                                    svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
                                                    ></trumbowyg>
                                         <!-- ENUM -->
                                         <div class="uk-form-controls">
                                             <select class="uk-select" v-model="newData[field.name]"
 
-                                                    v-if="field.type == 'ENUM' ">
+                                                    v-if="(field.generated === false) && field.type == 'ENUM' ">
                                                 <option v-for="value in field.availableValues">((value))</option>
 
                                             </select>
