@@ -158,7 +158,7 @@ public class Elepy {
                     elepyErrorMessage = ErrorMessageBuilder
                             .anElepyErrorMessage()
                             .withMessage(exception.getMessage())
-                            .withStatus(response.status()).build();
+                            .withStatus(400).build();
                 } else {
                     logger.error(exception.getMessage(), exception);
                     elepyErrorMessage = ErrorMessageBuilder
