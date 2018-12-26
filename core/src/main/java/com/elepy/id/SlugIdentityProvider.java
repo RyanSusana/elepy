@@ -5,9 +5,10 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +16,11 @@ import java.util.Optional;
 public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     private final String[] slugFieldNames;
 
-    private final int prefixLength, maxLength;
+    private static final Logger logger = LoggerFactory.getLogger(SlugIdentityProvider.class);
+    private final int prefixLength;
     private final Slugify slugify;
+    private final int maxLength;
+
 
     public SlugIdentityProvider() {
         this(3, 70, "name", "title", "slug");
@@ -30,16 +34,13 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     }
 
     private Optional<String> getSlug(T obj, List<String> slugFieldNames) {
-        final List<Field> fields = new ArrayList<>();
-
-
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             final Object value;
             try {
                 value = field.get(obj);
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 continue;
             }
             if (slugFieldNames.contains(field.getName()) && (value instanceof String)) {
