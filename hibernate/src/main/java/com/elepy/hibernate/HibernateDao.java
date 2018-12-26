@@ -12,6 +12,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,6 +29,9 @@ public class HibernateDao<T> implements Crud<T> {
     protected final SessionFactory sessionFactory;
     protected final IdentityProvider<T> identityProvider;
     protected final Class<T> aClass;
+
+    private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
+
 
     private final ObjectMapper objectMapper;
 
@@ -52,7 +57,7 @@ public class HibernateDao<T> implements Crud<T> {
             if (StringUtils.isEmpty(querySetup.getQuery())) {
                 criteriaQuery.select(root);
                 final CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-                count = session.createQuery("select count(*) from " + aClass.getName(), Long.class).getSingleResult();
+                count = session.createQuery("select count(*) from " + className, Long.class).getSingleResult();
 
             } else {
                 criteriaQuery.select(root);
@@ -71,7 +76,6 @@ public class HibernateDao<T> implements Crud<T> {
             }
 
             Query<T> query = session.createQuery(criteriaQuery);
-            List<T> list = query.getResultList();
 
 
             return toPage(query, querySetup, count);
@@ -88,7 +92,7 @@ public class HibernateDao<T> implements Crud<T> {
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
         if (remainder > 0) amountOfPages++;
 
-        return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
+        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
     }
 
     @Override
@@ -104,8 +108,6 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public List<T> searchInField(Field field, String qry) {
         try (Session session = sessionFactory.openSession()) {
-
-            final String className = aClass.getSimpleName();
 
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
@@ -152,7 +154,7 @@ public class HibernateDao<T> implements Crud<T> {
             transaction.commit();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
     }
@@ -168,7 +170,7 @@ public class HibernateDao<T> implements Crud<T> {
             transaction.commit();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
     }
@@ -238,7 +240,8 @@ public class HibernateDao<T> implements Crud<T> {
         try {
             objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+
+            logger.error(e.getMessage(), e);
             throw new ElepyException("Error loading object's collections.");
         }
     }

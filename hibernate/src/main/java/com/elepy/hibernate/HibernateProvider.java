@@ -8,10 +8,14 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
 public class HibernateProvider<T> implements CrudProvider<T> {
+    private static final Logger logger = LoggerFactory.getLogger(HibernateProvider.class);
+
     @Override
     public Crud<T> crudFor(Class<T> type, Elepy elepy) {
 
@@ -24,7 +28,7 @@ public class HibernateProvider<T> implements CrudProvider<T> {
                 final Constructor<? extends IdentityProvider> constructor = ClassUtils.emptyConstructor(annotation.value());
                 identityProvider = constructor.newInstance();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 throw new IllegalStateException("Can't create IdentityProvider with annotation IdProvider");
             }
         } else {

@@ -5,6 +5,7 @@ import com.elepy.admin.ElepyAdminPanel;
 import spark.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPanelPlugin> {
 
@@ -45,5 +46,19 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
     @Override
     public int compareTo(ElepyAdminPanelPlugin o) {
         return name.compareTo(o.name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ElepyAdminPanelPlugin that = (ElepyAdminPanelPlugin) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(slug, that.slug);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, slug);
     }
 }

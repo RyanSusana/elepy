@@ -76,9 +76,9 @@ public class ResourceDescriber<T> {
         objectEvaluators.add(new ObjectEvaluatorImpl<>());
 
         if (annotation != null) {
-            for (Class<? extends ObjectEvaluator> clazz : annotation.value()) {
-                if (clazz != null) {
-                    final Constructor<? extends ObjectEvaluator> constructor = ClassUtils.emptyConstructor(clazz);
+            for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {
+                if (objectEvaluatorClass != null) {
+                    final Constructor<? extends ObjectEvaluator> constructor = ClassUtils.emptyConstructor(objectEvaluatorClass);
                     objectEvaluators.add(constructor.newInstance());
                 }
             }

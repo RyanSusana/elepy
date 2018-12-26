@@ -69,12 +69,10 @@ public class TokenHandler implements AuthHandler {
     public User login(Request request) {
         final String elepyToken = request.headers("ELEPY_TOKEN");
 
-        if (elepyToken != null) {
-            if (isValid(elepyToken)) {
-                for (Token token : tokens) {
-                    if (token.getId().trim().equals(elepyToken)) {
-                        return token.getUser();
-                    }
+        if (elepyToken != null && isValid(elepyToken)) {
+            for (Token token : tokens) {
+                if (token.getId().trim().equals(elepyToken)) {
+                    return token.getUser();
                 }
             }
         }

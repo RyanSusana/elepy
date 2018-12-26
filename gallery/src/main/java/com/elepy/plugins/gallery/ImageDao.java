@@ -21,13 +21,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Random;
 
 public class ImageDao extends MongoDao<Image> {
 
     private final DB db;
-
-    private final Random random = new Random();
 
 
     ImageDao(DB db) {

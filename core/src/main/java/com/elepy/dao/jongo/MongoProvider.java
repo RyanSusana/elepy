@@ -8,9 +8,6 @@ import com.mongodb.DB;
 
 public class MongoProvider<T> implements CrudProvider<T> {
 
-    public MongoProvider() {
-    }
-
     @Override
     public Crud<T> crudFor(Class<T> type, Elepy elepy) {
         final RestModel model = type.getAnnotation(RestModel.class);
@@ -19,6 +16,6 @@ public class MongoProvider<T> implements CrudProvider<T> {
 
         final String[] split = slug.split("/");
 
-        return new MongoDao<T>(elepy.getSingleton(DB.class), split[split.length - 1], type);
+        return new MongoDao<>(elepy.getSingleton(DB.class), split[split.length - 1], type);
     }
 }

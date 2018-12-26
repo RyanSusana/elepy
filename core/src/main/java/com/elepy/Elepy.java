@@ -222,7 +222,7 @@ public class Elepy {
         return this;
     }
 
-    public Elepy addExtension(ElepyModule module, Service http) {
+    public Elepy addExtension(ElepyModule module) {
         if (initialized) {
             throw new IllegalStateException("Elepy already initialized, you must add modules before calling start()");
         }
@@ -278,11 +278,6 @@ public class Elepy {
     public Elepy attachSingleton(String singletonName, Object object) {
         singletons.put(singletonName, object);
         return this;
-    }
-
-
-    public Elepy addExtension(ElepyModule module) {
-        return addExtension(module, this.http);
     }
 
     public Elepy addPackage(String packageName) {

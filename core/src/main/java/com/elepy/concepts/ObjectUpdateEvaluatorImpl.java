@@ -11,10 +11,8 @@ public class ObjectUpdateEvaluatorImpl<T> implements ObjectUpdateEvaluator<T> {
         for (Field field : before.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             FieldDescriber describer = new FieldDescriber(field);
-            if (!describer.isEditable()) {
-                if (!field.get(before).equals(field.get(updated))) {
+            if (!describer.isEditable() && !field.get(before).equals(field.get(updated))) {
                     throw new ElepyException("Not allowed to edit: " + describer.getPrettyName());
-                }
             }
         }
     }

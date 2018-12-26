@@ -61,19 +61,23 @@ public class ViewHandler {
     }
 
     private Map<Class<?>, Map<String, Object>> mapDescriptors() throws ClassNotFoundException {
-        Map<Class<?>, Map<String, Object>> descriptorMap = new HashMap<>();
+        Map<Class<?>, Map<String, Object>> newDescriptorMap = new HashMap<>();
         for (Map<String, Object> descriptor : descriptors) {
             final Class<?> javaClass = Class.forName((String) descriptor.get("javaClass"));
 
-            descriptorMap.put(javaClass, descriptor);
+            newDescriptorMap.put(javaClass, descriptor);
         }
 
-        return descriptorMap;
+        return newDescriptorMap;
     }
 
     private Map<ResourceView, Map<String, Object>> customViews() throws IllegalAccessException, InvocationTargetException, InstantiationException {
         Map<ResourceView, Map<String, Object>> views = new HashMap<>();
         List<Class<?>> classes = new ArrayList<>();
+
+        descriptorMap.forEach((cls, description) -> {
+
+        });
         for (Class<?> cls : descriptorMap.keySet()) {
             if (cls.isAnnotationPresent(View.class)) {
                 Map<ResourceView, Map<String, Object>> map = new HashMap<>();

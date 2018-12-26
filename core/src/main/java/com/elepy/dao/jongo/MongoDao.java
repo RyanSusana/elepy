@@ -132,7 +132,7 @@ public class MongoDao<T> implements Crud<T> {
         if (remainder > 0) amountOfPages++;
 
 
-        return new Page<T>(pageSearch.getPageNumber(), amountOfPages, values);
+        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
     }
 
 

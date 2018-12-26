@@ -28,7 +28,7 @@ import static spark.Spark.halt;
 
 public class ElepyAdminPanel implements ElepyModule {
     public static final String ADMIN_USER = "adminUser";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElepyAdminPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;

@@ -3,12 +3,16 @@ package com.elepy.admin.services;
 import com.elepy.admin.models.User;
 import com.elepy.admin.models.UserType;
 import com.elepy.dao.Crud;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final Crud<User> userDao;
 
@@ -25,10 +29,8 @@ public class UserService {
         }
         Optional<User> user = getUser(usernameOrEmail);
 
-        if (user.isPresent()) {
-            if (BCrypt.checkpw(password, user.get().getPassword())) {
-                return user;
-            }
+        if (user.isPresent() && BCrypt.checkpw(password, user.get().getPassword())) {
+            return user;
         }
         return Optional.empty();
     }
@@ -52,7 +54,7 @@ public class UserService {
                 return Optional.of(users.get(0));
             }
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return Optional.empty();
     }

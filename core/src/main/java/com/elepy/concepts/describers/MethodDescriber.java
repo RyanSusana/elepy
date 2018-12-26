@@ -44,24 +44,24 @@ public class MethodDescriber {
 
     private void mapMethodTypeInfo(Method method, Map<String, Object> fieldMap) {
 
-        FieldType type = FieldType.guessType(method);
+        FieldType fieldType = FieldType.guessType(method);
 
-        fieldMap.put("type", type);
+        fieldMap.put("type", fieldType);
         fieldMap.put("generated", true);
 
-        if (type.equals(FieldType.BOOLEAN)) {
+        if (fieldType.equals(FieldType.BOOLEAN)) {
             final Boolean annotation = method.getAnnotation(Boolean.class);
             fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
             fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
-        } else if (type.equals(FieldType.ENUM)) {
+        } else if (fieldType.equals(FieldType.ENUM)) {
             fieldMap.put("availableValues", method.getReturnType().getEnumConstants());
-        } else if (type.equals(FieldType.OBJECT)) {
+        } else if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", method.getReturnType().getSimpleName());
 
             fieldMap.put("fields", new StructureDescriber(method.getReturnType()).getStructure());
-        } else if (type.equals(FieldType.TEXT)) {
+        } else if (fieldType.equals(FieldType.TEXT)) {
             fieldMap.put("textType", method.getAnnotation(Text.class) != null ? method.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
-        } else if (type.equals(FieldType.NUMBER)) {
+        } else if (fieldType.equals(FieldType.NUMBER)) {
             fieldMap.put("numberType", method.getAnnotation(Number.class) != null ? method.getAnnotation(Number.class).value() : NumberType.guessType(method.getReturnType()));
         } else {
             throw new UnsupportedOperationException("Collections are not supported for method annotations.");
@@ -71,22 +71,22 @@ public class MethodDescriber {
     }
 
     public Map<String, Object> mapField() {
-        Map<String, Object> fieldMap = new HashMap<>();
+        Map<String, Object> newFieldMap = new HashMap<>();
 
 
-        fieldMap.put("name", getName());
+        newFieldMap.put("name", getName());
 
-        fieldMap.put("pretty_name", getPrettyName());
-        mapMethodAnnotations(method, fieldMap);
-        mapMethodTypeInfo(method, fieldMap);
+        newFieldMap.put("pretty_name", getPrettyName());
+        mapMethodAnnotations(method, newFieldMap);
+        mapMethodTypeInfo(method, newFieldMap);
 
-        return fieldMap;
+        return newFieldMap;
     }
 
     private String prettyName() {
-        final PrettyName prettyName = method.getAnnotation(PrettyName.class);
-        if (prettyName != null) {
-            return prettyName.value();
+        final PrettyName prettyNameAnnotation = method.getAnnotation(PrettyName.class);
+        if (prettyNameAnnotation != null) {
+            return prettyNameAnnotation.value();
         } else {
             return getName();
         }

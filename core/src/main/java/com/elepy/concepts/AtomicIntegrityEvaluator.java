@@ -2,6 +2,8 @@ package com.elepy.concepts;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AtomicIntegrityEvaluator<T> {
+    private static final Logger logger = LoggerFactory.getLogger(AtomicIntegrityEvaluator.class);
+
     public void evaluate(List<T> items) throws IllegalAccessException {
 
         for (T item : items) {
@@ -37,7 +41,7 @@ public class AtomicIntegrityEvaluator<T> {
                 try {
                     return field.get(t).equals(prop);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                     return false;
                 }
             }).collect(Collectors.toList());
