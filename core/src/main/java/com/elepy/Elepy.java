@@ -209,7 +209,7 @@ public class Elepy {
     }
 
     public Elepy connectDB(DB db) {
-        this.attachSingleton(db);
+        this.attachSingleton(DB.class, db);
         return this;
     }
 
