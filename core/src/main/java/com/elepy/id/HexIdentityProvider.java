@@ -2,6 +2,7 @@ package com.elepy.id;
 
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
+import com.elepy.utils.StringUtils;
 
 public class HexIdentityProvider<T> implements IdentityProvider<T> {
 
@@ -35,7 +36,7 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
     }
 
     private String generateOne() {
-        String generation = prefix + getRandomHexString(length);
+        String generation = prefix + StringUtils.getRandomHexString(length);
 
         if (allCaps) {
             generation = generation.toUpperCase();

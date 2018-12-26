@@ -3,6 +3,7 @@ package com.elepy.id;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
 
 import java.lang.reflect.Field;
@@ -71,7 +72,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     private String getSlug(String slug, Crud crud) {
 
-        final String generatedId = getRandomHexString(prefixLength) + "-" + slug;
+        final String generatedId = StringUtils.getRandomHexString(prefixLength) + "-" + slug;
 
         if (crud.getById(generatedId).isPresent()) {
             return getSlug(slug, crud);
