@@ -5,6 +5,8 @@ import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
 import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Service;
 
@@ -19,6 +21,8 @@ public class RouteGenerator<T> {
     private final String baseSlug;
     private final Filter adminFilter;
     private final Elepy elepy;
+    private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
+
 
     public RouteGenerator(Elepy elepy, ResourceDescriber<T> resourceDescriber, Class<T> tClass) {
         this.restModel = resourceDescriber;
@@ -91,7 +95,7 @@ public class RouteGenerator<T> {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             System.exit(0);
         }
         return getPojoDescriptor(restModel, clazz);
