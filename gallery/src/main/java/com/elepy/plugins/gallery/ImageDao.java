@@ -51,7 +51,7 @@ public class ImageDao extends MongoDao<Image> {
         ImageIO.write(caption, "png", os);
         GridFSInputFile captionGfs = new GridFS(db, "images").createFile(new ByteArrayInputStream(os.toByteArray()));
         captionGfs.setContentType("image/png");
-        captionGfs.setFilename(newFileName+"-caption");
+        captionGfs.setFilename(newFileName + "-caption");
         captionGfs.save();
         final Image image = new Image(newFileName);
         create(image);
@@ -83,8 +83,8 @@ public class ImageDao extends MongoDao<Image> {
     public void delete(String id) {
         super.delete(id);
         final GridFS images = new GridFS(db, "images");
-        images.remove(id+"-original");
-        images.remove(id+"-caption");
+        images.remove(id + "-original");
+        images.remove(id + "-caption");
     }
 
     @Override

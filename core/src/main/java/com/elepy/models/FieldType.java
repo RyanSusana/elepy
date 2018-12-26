@@ -28,19 +28,6 @@ public enum FieldType {
         return getByAnnotation(method).orElse(getByClass(method.getReturnType()));
     }
 
-
-    public boolean isPrimitive() {
-
-        FieldType[] primitiveConsideredTypes = {BOOLEAN, DATE, TEXT, NUMBER, ENUM};
-
-        for (FieldType primitiveConsideredType : primitiveConsideredTypes) {
-            if (this.equals(primitiveConsideredType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static FieldType guessType(java.lang.reflect.Field field) {
         if (isCollection(field.getType())) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
@@ -63,7 +50,6 @@ public enum FieldType {
 
         return getUnannotatedFieldType(type);
     }
-
 
     private static boolean isPrimitive(Class<?> type) {
         if (ClassUtils.isPrimitiveOrWrapper(type)) {
@@ -108,5 +94,17 @@ public enum FieldType {
         return getUnannotatedFieldType(type.getSuperclass());
 
 
+    }
+
+    public boolean isPrimitive() {
+
+        FieldType[] primitiveConsideredTypes = {BOOLEAN, DATE, TEXT, NUMBER, ENUM};
+
+        for (FieldType primitiveConsideredType : primitiveConsideredTypes) {
+            if (this.equals(primitiveConsideredType)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

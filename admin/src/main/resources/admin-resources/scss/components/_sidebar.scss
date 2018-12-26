@@ -12,12 +12,14 @@ $sidebar-width: 22rem;
   top: 0;
   overflow-y: auto;
   height: 100vh;
+
   .models {
     padding: 20px;
     color: $sidebar-color;
     color: var(--sidebar-color);
 
     min-height: 70vh;
+
     p, a {
 
       color: $global-muted-color;
@@ -27,13 +29,16 @@ $sidebar-width: 22rem;
 
         color: lighten($global-muted-color, 15%);
       }
+
       &.active {
         color: lighten($global-muted-color, 20%);
       }
     }
   }
+
   .link-list {
     padding-left: 5px;
+
     .uk-active {
       a {
 
@@ -41,26 +46,32 @@ $sidebar-width: 22rem;
         font-weight: 500 !important;
       }
     }
+
     li {
 
       padding-bottom: 3px;
 
     }
   }
+
   .sidebar-header {
     background-color: darken($primary-color, 10%);
     transition: .3s all;
     padding: 1.5vh 0;
+
     &:hover {
       background-color: darken($primary-color, 5%);
     }
+
     .banner-image {
       width: 60%;
     }
   }
+
   .sidebar-footer {
     position: relative;
     padding: 10px 20px 0 20px;
+
     p {
       font-size: 0.8em;
 

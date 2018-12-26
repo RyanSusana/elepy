@@ -21,7 +21,7 @@ public class ObjectIntegrityTest extends BaseFongoTest {
         try {
             evaluator.evaluate(validObject(), mongoDao);
             fail("Was supposed to throw a rest error message");
-        }catch(ElepyException ignored){
+        } catch (ElepyException ignored) {
 
         }
     }

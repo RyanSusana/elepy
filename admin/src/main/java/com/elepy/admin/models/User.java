@@ -61,9 +61,10 @@ public class User {
     private UserType userType;
 
 
-    public User(){
+    public User() {
 
     }
+
     @JsonCreator
     public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("email") String email, @JsonProperty("user_type") UserType userType) {
         this.id = id;
@@ -82,36 +83,36 @@ public class User {
         return this.id;
     }
 
-    public String getUsername() {
-        return this.username;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public UserType getUserType() {
-        return userType;
-    }
-
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return this.username;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public String getEmail() {
+        return this.email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public UserType getUserType() {
+        return userType;
     }
 
     public void setUserType(UserType userType) {

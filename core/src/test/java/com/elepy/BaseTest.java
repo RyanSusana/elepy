@@ -3,7 +3,6 @@ package com.elepy;
 import com.elepy.concepts.Resource;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class BaseTest {
     public Resource validObject() {

@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class SlugIdentityProvider<T> implements IdentityProvider<T> {
-    private final String[] slugFieldNames;
-
     private static final Logger logger = LoggerFactory.getLogger(SlugIdentityProvider.class);
+    private final String[] slugFieldNames;
     private final int prefixLength;
     private final Slugify slugify;
     private final int maxLength;

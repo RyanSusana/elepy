@@ -32,9 +32,9 @@ public class ElepyAdminPanel implements ElepyModule {
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;
+    private final List<Link> links;
     private TokenHandler tokenHandler;
     private Filter baseAdminAuthenticationFilter;
-    private final List<Link> links;
     private SetupHandler setupHandler;
     private Authenticator authenticator;
     private UserService userService;

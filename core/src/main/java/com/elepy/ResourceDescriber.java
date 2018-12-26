@@ -21,27 +21,22 @@ import java.util.Objects;
 public class ResourceDescriber<T> {
 
     private final Elepy elepy;
+    private final StructureDescriber structureDescriber;
     private Class<T> clazz;
     private RouteHandler<T> deleteImplementation;
     private RouteHandler<T> updateImplementation;
     private RouteHandler<T> findImplementation;
     private RouteHandler<T> createImplementation;
-
     private IdentityProvider<T> identityProvider;
-
     private com.elepy.dao.CrudProvider crudProvider;
-
     private AccessLevel deleteAccessLevel;
     private AccessLevel findAccessLevel;
     private AccessLevel updateAccessLevel;
     private AccessLevel createAccessLevel;
-
     private List<ObjectEvaluator<T>> objectEvaluators;
     private String slug;
     private String description;
     private String name;
-
-    private final StructureDescriber structureDescriber;
 
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.clazz = clazz;

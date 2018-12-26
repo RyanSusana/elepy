@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 public class RouteGenerator<T> {
+    private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
     private final ResourceDescriber<T> restModel;
     private final Class<T> clazz;
     private final Service http;
     private final String baseSlug;
     private final Filter adminFilter;
     private final Elepy elepy;
-    private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
 
 
     public RouteGenerator(Elepy elepy, ResourceDescriber<T> resourceDescriber, Class<T> tClass) {

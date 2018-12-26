@@ -16,7 +16,7 @@ public interface CreateHandler<T> extends RouteHandler<T> {
 
     @Override
     default void handle(Request request, Response response, Crud<T> crud, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        final boolean create= create(request, response, crud, elepy.getObjectMapper(), objectEvaluators);
+        final boolean create = create(request, response, crud, elepy.getObjectMapper(), objectEvaluators);
         if (create) {
             response.body("OK");
             response.status(200);

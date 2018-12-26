@@ -1,7 +1,6 @@
 package com.elepy.dao;
 
 
-
 public class QuerySetup {
 
     private final String query;
@@ -13,7 +12,7 @@ public class QuerySetup {
     private final long pageNumber;
     private final int pageSize;
 
-    public QuerySetup( String query, String sortBy, SortOption sortOption, Long pageNumber, Integer pageSize) {
+    public QuerySetup(String query, String sortBy, SortOption sortOption, Long pageNumber, Integer pageSize) {
 
         this.query = query == null ? "" : query;
         this.pageNumber = pageNumber == null ? 1 : pageNumber;

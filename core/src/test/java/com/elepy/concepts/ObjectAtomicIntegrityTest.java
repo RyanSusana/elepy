@@ -20,11 +20,11 @@ public class ObjectAtomicIntegrityTest extends BaseTest {
         try {
             resourceAtomicIntegrityEvaluator.evaluate(Arrays.asList(resource, resource1));
 
-        }catch (ElepyException errorMessage){
-            if(errorMessage.getMessage().contains("duplicate")){
+        } catch (ElepyException errorMessage) {
+            if (errorMessage.getMessage().contains("duplicate")) {
 
 
-            }else{
+            } else {
                 fail("No duplicates found in arraylist");
             }
         }

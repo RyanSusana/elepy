@@ -5,14 +5,16 @@ import com.elepy.admin.models.User;
 import com.elepy.admin.services.UserService;
 import spark.Request;
 
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 
 
-public class TokenHandler implements AuthHandler{
+public class TokenHandler implements AuthHandler {
 
-    private Set<Token> tokens;
     private final UserService userService;
+    private Set<Token> tokens;
 
     public TokenHandler(UserService userService) {
         this.tokens = new TreeSet<>();
@@ -61,7 +63,6 @@ public class TokenHandler implements AuthHandler{
             return currentTime > maxTime;
         });
     }
-
 
 
     @Override

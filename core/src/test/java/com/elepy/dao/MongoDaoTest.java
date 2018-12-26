@@ -67,14 +67,15 @@ public class MongoDaoTest extends BaseFongoTest {
         assertEquals(1, searchable);
 
     }
+
     @Test
-    public void testMultiCreate(){
+    public void testMultiCreate() {
         final Resource resource = validObject();
         final Resource resource2 = validObject();
 
         resource2.setUnique("Unique2");
 
-        mongoDao.create(Arrays.asList(resource,resource2));
+        mongoDao.create(Arrays.asList(resource, resource2));
 
         assertEquals(2, count());
 

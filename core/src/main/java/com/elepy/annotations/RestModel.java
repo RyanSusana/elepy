@@ -19,7 +19,7 @@ public @interface RestModel {
     String description() default "";
 
     String icon() default "file";
-    
+
     SortOption defaultSortDirection() default SortOption.ASCENDING;
 
     String defaultSortField() default "_id";

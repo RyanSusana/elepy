@@ -24,7 +24,8 @@
                              :style='{ backgroundImage: `url(${image.caption})` }'>
 
                             <div uk-lightbox="animation: fade">
-                                <a :href="image.original" data-type="image" class="uk-position-cover uk-transition-toggle">
+                                <a :href="image.original" data-type="image"
+                                   class="uk-position-cover uk-transition-toggle">
 
                                     <div class="uk-transition-fade uk-position-cover uk-overlay uk-overlay-primary uk-flex uk-flex-center uk-flex-middle">
                                     </div>
@@ -75,7 +76,8 @@
 
 
                 </div>
-                <button id = "uploading-button" class="uk-button uk-button-primary alternative-primary rubberBand" type="submit"><span id="upload-button-text">Upload</span></button>
+                <button id="uploading-button" class="uk-button uk-button-primary alternative-primary rubberBand"
+                        type="submit"><span id="upload-button-text">Upload</span></button>
             </form>
 
         </div>
@@ -128,7 +130,7 @@
         e.preventDefault();
 
 
-        if( $('#image-thumbail-input').val() === ''){
+        if ($('#image-thumbail-input').val() === '') {
             UIkit.notification.closeAll();
             UIkit.notification('Please select an image first!');
             return;
@@ -150,7 +152,7 @@
                 var loadingIcon = '<img id = "upload-loading-icon" style="width: 35px;" src="/admin-resources/images/LoadingPrimary.gif" alt="">';
 
                 UIkit.notification('Uploading image', {
-                    status: 'info', timeout:20000
+                    status: 'info', timeout: 20000
                 });
                 $('#upload-button-text').text("Uploading");
                 $('#uploading-button').prepend(loadingIcon);

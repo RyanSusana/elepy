@@ -10,7 +10,7 @@ import spark.Response;
 import java.util.List;
 
 
-public interface DeleteHandler<T> extends RouteHandler<T>{
+public interface DeleteHandler<T> extends RouteHandler<T> {
     boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
 
     @Override

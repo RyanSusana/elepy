@@ -4,7 +4,6 @@ package com.elepy.annotations;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.DefaultUpdate;
 import com.elepy.routes.RouteHandler;
-import com.elepy.routes.UpdateHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

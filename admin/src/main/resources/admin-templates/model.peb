@@ -114,7 +114,8 @@
                                                :disabled="field.name == 'id' || field.editable == false"
                                                placeholder="">
                                         <!-- IMAGE -->
-                                        <div v-if  = "(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')" class="uk-padding">
+                                        <div v-if="(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
+                                             class="uk-padding">
 
                                             <img :src="selectedData[field.name]" alt="">
                                         </div>
@@ -159,8 +160,9 @@
                                         <!-- HTML -->
                                         <trumbowyg v-model="selectedData[field.name]"
                                                    v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
-                                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
-                                                   ></trumbowyg>
+                                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg"
+                                                   class="editor"
+                                        ></trumbowyg>
 
                                         <!-- ENUM -->
                                         <div class="uk-form-controls">
@@ -202,7 +204,8 @@
 
                                                 <!-- IMAGE -->
 
-                                                <div v-if  = "(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"  class="uk-padding">
+                                                <div v-if="(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
+                                                     class="uk-padding">
 
                                                     <img :src="selectedData[fieldOuter.name][field.name]" alt="">
                                                 </div>
@@ -256,8 +259,9 @@
                                                 <!-- HTML -->
                                                 <trumbowyg v-model="selectedData[fieldOuter.name][field.name]"
                                                            v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
-                                                           svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
-                                                           ></trumbowyg>
+                                                           svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg"
+                                                           class="editor"
+                                                ></trumbowyg>
 
                                                 <!-- ENUM -->
                                                 <div class="uk-form-controls">
@@ -332,7 +336,7 @@
                                         <div v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
                                              class="uk-padding">
 
-                                            <img  class = "" :src="newData[field.name]" alt="">
+                                            <img class="" :src="newData[field.name]" alt="">
                                         </div>
                                         <!-- DATE -->
 
@@ -383,8 +387,9 @@
                                         <!-- HTML -->
                                         <trumbowyg v-model="newData[field.name]"
                                                    v-if="(field.generated === false) && (field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
-                                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg" class="editor"
-                                                   ></trumbowyg>
+                                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg"
+                                                   class="editor"
+                                        ></trumbowyg>
                                         <!-- ENUM -->
                                         <div class="uk-form-controls">
                                             <select class="uk-select" v-model="newData[field.name]"

@@ -51,8 +51,8 @@ public class UserService {
             if (users.size() > 0) {
                 return Optional.of(users.get(0));
             }
-        }catch (NoSuchFieldException e ){
-           e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
         }
         return Optional.empty();
     }

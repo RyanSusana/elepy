@@ -1,12 +1,11 @@
 package com.elepy.concepts;
 
-import com.elepy.annotations.*;
 import com.elepy.annotations.Number;
+import com.elepy.annotations.*;
 import com.elepy.models.AccessLevel;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.math.BigDecimal;
 
