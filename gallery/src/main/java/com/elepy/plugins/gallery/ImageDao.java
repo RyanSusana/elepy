@@ -4,6 +4,7 @@ package com.elepy.plugins.gallery;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.jongo.MongoDao;
+import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
@@ -26,16 +27,18 @@ public class ImageDao extends MongoDao<Image> {
 
     private final DB db;
 
+    private final Random random = new Random();
 
-    public ImageDao(DB db) {
+
+    ImageDao(DB db) {
         super(db, "images", Image.class);
         this.db = db;
     }
 
-    public GridFSInputFile upload(Part part) throws IOException {
+    void upload(Part part) throws IOException {
 
 
-        String newFileName = String.format("%s-%s", getRandomHexString(5), new Slugify().slugify(part.getSubmittedFileName().split("\\.")[0]));
+        String newFileName = String.format("%s-%s", StringUtils.getRandomHexString(5), new Slugify().slugify(part.getSubmittedFileName().split("\\.")[0]));
         GridFSInputFile originalGfs = new GridFS(db, "images").createFile(part.getInputStream());
         originalGfs.setFilename(newFileName + "-original");
         originalGfs.setContentType(part.getContentType());
@@ -52,7 +55,6 @@ public class ImageDao extends MongoDao<Image> {
         captionGfs.save();
         final Image image = new Image(newFileName);
         create(image);
-        return originalGfs;
     }
 
     private Dimension scaleDown(BufferedImage imgSize, Dimension boundary) {
@@ -96,18 +98,8 @@ public class ImageDao extends MongoDao<Image> {
         collection().insert(item);
     }
 
-    public Optional<GridFSDBFile> getGridFile(String id) {
+    Optional<GridFSDBFile> getGridFile(String id) {
         return Optional.ofNullable(new GridFS(db, "images").findOne(id));
-    }
-
-    private String getRandomHexString(int numchars) {
-        Random r = new Random();
-        StringBuilder sb = new StringBuilder();
-        while (sb.length() < numchars) {
-            sb.append(Integer.toHexString(r.nextInt()));
-        }
-
-        return sb.toString().substring(0, numchars);
     }
 
 }
