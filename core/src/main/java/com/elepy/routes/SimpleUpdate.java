@@ -32,12 +32,14 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
         beforeUpdate(before.get(), dao, elepy);
 
+        T updatedObjectFromRequest = updatedObjectFromRequest(before.get(),
+                request,
+                elepy.getObjectMapper(),
+                clazz);
+
         final T updated =
                 this.update(before.get(),
-                        updatedObjectFromRequest(before.get(),
-                                request,
-                                elepy.getObjectMapper(),
-                                clazz),
+                        updatedObjectFromRequest,
                         dao,
                         objectEvaluators,
                         clazz);

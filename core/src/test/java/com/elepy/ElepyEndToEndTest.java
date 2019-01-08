@@ -148,7 +148,6 @@ public class ElepyEndToEndTest extends BaseTest {
 
     @Test
     void testUpdatePartial() throws UnirestException {
-
         final long beginningCount = mongoDao.count();
         final Resource resource = validObject();
 
@@ -159,7 +158,7 @@ public class ElepyEndToEndTest extends BaseTest {
         mongoDao.create(resource);
 
         assertEquals(beginningCount + 1, mongoDao.count());
-        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/updatePartialId").field("unique", "uniqueUpdate").asString();
+        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/updatePartialId").body("{\"id\":\"" + resource.getId() + "\",\"unique\": \"uniqueUpdate\"}").asString();
 
         assertEquals(beginningCount + 1, mongoDao.count());
 
