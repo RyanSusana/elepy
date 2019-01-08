@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
@@ -38,6 +39,45 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         return beforeUpdate;
     }
 
+    public T update(T before, T update, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
+
+        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+
+        updateEvaluator.evaluate(before, update);
+
+        for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
+            if (update != null) {
+                objectEvaluator.evaluate(update, tClass);
+            }
+        }
+
+        new IntegrityEvaluatorImpl<T>().evaluate(update, dao);
+        dao.update(update);
+
+        return update;
+    }
+
+    public T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Class<T> clazz) throws IOException {
+
+        final String body = request.body();
+        if (request.requestMethod().equals("PUT")) {
+            if (body.startsWith("{")) {
+                return objectMapper.readValue(body, clazz);
+            } else {
+                return objectFromMaps(new HashMap<>(), splitQuery(request.body()), objectMapper, clazz);
+            }
+        } else {
+            if (body.startsWith("{")) {
+                final Map<String, Object> beforeMap = objectMapper.convertValue(before, Map.class);
+                final Map<String, Object> changesMap = objectMapper.readValue(request.body(), Map.class);
+                ClassUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
+                return objectFromMaps(beforeMap, changesMap, objectMapper, clazz);
+            } else {
+                return setParamsOnObject(request, objectMapper, before);
+            }
+        }
+    }
+
     public T update(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
@@ -51,40 +91,11 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
             response.status(404);
             throw new ElepyException("No object found with this ID");
         }
-        final T updated;
-
-        if (request.requestMethod().equals("PUT")) {
-            if (body.startsWith("{")) {
-                updated = elepy.getObjectMapper().readValue(body, clazz);
-
-            } else {
-                updated = objectFromMaps(new HashMap<>(), splitQuery(request.body()), elepy.getObjectMapper(), clazz);
-            }
-        } else {
-            if (body.startsWith("{")) {
-                final Map<String, Object> beforeMap = elepy.getObjectMapper().convertValue(before.get(), Map.class);
-                final Map<String, Object> changesMap = elepy.getObjectMapper().readValue(request.body(), Map.class);
-                ClassUtils.getId(before.get()).ifPresent(id -> changesMap.put("id", id));
-                updated = objectFromMaps(beforeMap, changesMap, elepy.getObjectMapper(), clazz);
-            } else {
-                updated = setParamsOnObject(request, elepy.getObjectMapper(), before.get());
-            }
-        }
+        final T updated = updatedObjectFromRequest(before.get(), request, elepy.getObjectMapper(), clazz);
 
         this.beforeUpdate = before.get();
-        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+        update(beforeUpdate, updated, dao, objectEvaluators, clazz);
 
-        updateEvaluator.evaluate(before.get(), updated);
-
-        for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-            if (updated != null) {
-                objectEvaluator.evaluate(updated, clazz);
-
-            }
-        }
-
-        new IntegrityEvaluatorImpl<T>().evaluate(updated, dao);
-        dao.update(updated);
         response.status(200);
         response.body("OK");
         return updated;
