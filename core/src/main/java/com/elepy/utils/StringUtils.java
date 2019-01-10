@@ -9,6 +9,7 @@ public class StringUtils {
     private StringUtils() {
 
     }
+
     public static String getRandomHexString(int numchars) {
         if (numchars <= 0) {
             return "";
