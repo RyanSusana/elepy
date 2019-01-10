@@ -16,10 +16,9 @@ public interface Crud<T> {
 
     List<T> searchInField(Field field, String qry);
 
-
     void update(final T item);
 
-
+    void create(final T item);
 
     default List<T> getAll() {
         return search(new QuerySetup(null, null, null, null, null)).getValues();
@@ -41,18 +40,17 @@ public interface Crud<T> {
         }
     }
 
-
     default void create(final T... items) {
         for (T item : items) {
             create(item);
         }
     }
+
     default void create(final Iterable<T> items) {
         for (T item : items) {
             create(item);
         }
     }
-
 
     long count(String query);
 
@@ -63,7 +61,6 @@ public interface Crud<T> {
     Class<T> getType();
 
     void delete(final String id);
-
 
     default AbstractMap.SimpleEntry<String, SortOption> defaultSort() {
         final Class<T> type = getType();
