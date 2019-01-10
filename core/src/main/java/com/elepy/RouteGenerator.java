@@ -3,6 +3,7 @@ package com.elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
+import com.elepy.dao.CrudProvider;
 import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public class RouteGenerator<T> {
             List<ObjectEvaluator<T>> evaluators = restModel.getObjectEvaluators();
 
             final Crud<T> dao = restModel.getCrudProvider().crudFor(clazz, elepy);
+
+            elepy.attachSingleton(Crud.class, restModel.getSlug(), dao);
+            elepy.attachSingleton(CrudProvider.class, restModel.getSlug(), restModel.getCrudProvider());
 
             setupFilters(restModel);
             if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED)) {
