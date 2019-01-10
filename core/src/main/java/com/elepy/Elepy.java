@@ -30,7 +30,6 @@ public class Elepy implements ElepyContext {
     private final List<ElepyModule> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
-    private final String name;
     private final DefaultElepyContext context;
     private String baseSlug;
     private String configSlug;
@@ -41,19 +40,13 @@ public class Elepy implements ElepyContext {
 
     private Class<? extends CrudProvider> defaultCrudProvider;
 
-
     public Elepy() {
-        this("elepy");
+        this(Service.ignite().port(1337));
     }
 
-    public Elepy(String name) {
-        this(name, Service.ignite().port(1337));
-    }
-
-    public Elepy(String name, Service http) {
+    public Elepy(Service http) {
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
-        this.name = name;
         this.context = new DefaultElepyContext();
         this.descriptors = new ArrayList<>();
         this.adminFilters = new ArrayList<>();
