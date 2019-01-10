@@ -14,23 +14,34 @@ import com.google.common.collect.Lists;
 import spark.Request;
 import spark.Response;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DefaultCreate<T> implements RouteHandler<T> {
 
 
-    public T create(Response response, T product, Crud<T> dao, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public T create(Response response, T product, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             objectEvaluator.evaluate(product, clazz);
         }
         new IntegrityEvaluatorImpl<T>().evaluate(product, dao);
-        dao.create(product);
-        response.status(200);
-        response.body("OK");
+
+        create(response, dao, product);
         return product;
     }
 
-    public void multipleCreate(Response response, Iterable<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+
+    private void create(Response response, Crud<T> dao, T item) {
+        create(response, dao, Collections.singleton(item));
+    }
+
+    private void create(Response response, Crud<T> dao, Iterable<T> items) {
+        dao.create(items);
+        response.status(200);
+        response.body("OK");
+    }
+
+    public void multipleCreate(Response response, List<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         if (ClassUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
@@ -41,10 +52,8 @@ public class DefaultCreate<T> implements RouteHandler<T> {
             }
             new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
         }
-        dao.create(items);
-        response.status(200);
-        response.body("OK");
 
+        create(response, dao, items);
     }
 
     @Override
@@ -60,7 +69,7 @@ public class DefaultCreate<T> implements RouteHandler<T> {
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            create(response, item, dao, objectMapper, objectEvaluators, clazz);
+            create(response, item, dao, objectEvaluators, clazz);
         }
     }
 }

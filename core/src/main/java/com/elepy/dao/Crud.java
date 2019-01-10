@@ -19,7 +19,6 @@ public interface Crud<T> {
 
     void update(final T item);
 
-    void create(final T item);
 
 
     default List<T> getAll() {
@@ -43,6 +42,11 @@ public interface Crud<T> {
     }
 
 
+    default void create(final T... items) {
+        for (T item : items) {
+            create(item);
+        }
+    }
     default void create(final Iterable<T> items) {
         for (T item : items) {
             create(item);
