@@ -3,6 +3,7 @@ package com.elepy.di;
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,11 @@ public class DefaultElepyContext implements ElepyContext {
         }
 
         return (Crud<T>) getSingleton(Crud.class, annotation.slug());
+    }
+
+    @Override
+    public ObjectMapper getObjectMapper() {
+        return getSingleton(ObjectMapper.class);
     }
 
 }

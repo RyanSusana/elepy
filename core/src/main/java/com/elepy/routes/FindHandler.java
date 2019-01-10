@@ -1,9 +1,9 @@
 package com.elepy.routes;
 
-import com.elepy.Elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
+import com.elepy.di.ElepyContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
@@ -18,7 +18,7 @@ public interface FindHandler<T> extends RouteHandler<T> {
 
 
     @Override
-    default void handle(Request request, Response response, Crud<T> crud, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         if (request.params("id") != null && !request.params("id").isEmpty()) {
             findOne(request, response, crud, elepy.getObjectMapper());
         } else {

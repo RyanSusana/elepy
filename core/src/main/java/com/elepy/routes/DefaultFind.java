@@ -1,10 +1,10 @@
 package com.elepy.routes;
 
-import com.elepy.Elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
+import com.elepy.di.ElepyContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
@@ -53,7 +53,7 @@ public class DefaultFind<T> implements RouteHandler<T> {
 
 
     @Override
-    public void handle(Request request, Response response, Crud<T> crud, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws JsonProcessingException {
+    public void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws JsonProcessingException {
         if (request.params("id") != null && !request.params("id").isEmpty()) {
             findOne(request, response, crud, elepy.getObjectMapper());
         } else {

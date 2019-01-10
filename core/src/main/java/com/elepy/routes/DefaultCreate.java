@@ -1,10 +1,10 @@
 package com.elepy.routes;
 
-import com.elepy.Elepy;
 import com.elepy.concepts.AtomicIntegrityEvaluator;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
+import com.elepy.di.ElepyContext;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -48,7 +48,7 @@ public class DefaultCreate<T> implements RouteHandler<T> {
     }
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
         ObjectMapper objectMapper = elepy.getObjectMapper();

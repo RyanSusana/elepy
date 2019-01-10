@@ -1,8 +1,8 @@
 package com.elepy.routes;
 
-import com.elepy.Elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
+import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 import spark.Request;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
         T item = elepy.getObjectMapper().readValue(body, clazz);
@@ -47,7 +47,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     }
 
-    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud, Elepy elepy) throws Exception;
+    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud, ElepyContext elepy) throws Exception;
 
-    public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, Elepy elepy);
+    public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, ElepyContext elepy);
 }

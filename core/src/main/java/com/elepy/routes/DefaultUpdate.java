@@ -1,10 +1,10 @@
 package com.elepy.routes;
 
-import com.elepy.Elepy;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
+import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 import com.elepy.utils.ClassUtils;
@@ -78,7 +78,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
         }
     }
 
-    public T update(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public T update(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
         if (body == null || body.isEmpty()) {
@@ -129,7 +129,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
     }
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, Elepy elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         this.update(request, response, dao, elepy, objectEvaluators, clazz);
     }
 }

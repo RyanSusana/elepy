@@ -30,7 +30,6 @@ public class Elepy {
     private final List<Class<?>> models;
     private final String name;
     private final DefaultElepyContext context;
-    private ObjectMapper objectMapper;
     private String baseSlug;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
@@ -65,7 +64,7 @@ public class Elepy {
         this.models = new ArrayList<>();
         setBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
-        this.objectMapper = new ObjectMapper();
+        attachSingleton(ObjectMapper.class, new ObjectMapper());
         final JacksonMapper.Builder builder = new JacksonMapper.Builder();
 
         builder.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
@@ -182,7 +181,7 @@ public class Elepy {
         http.before(configSlug, allAdminFilters());
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
-            return objectMapper.writeValueAsString(descriptors);
+            return context.getObjectMapper().writeValueAsString(descriptors);
         });
     }
 
@@ -295,14 +294,9 @@ public class Elepy {
     }
 
     public ObjectMapper getObjectMapper() {
-        return this.objectMapper;
+        return this.context.getObjectMapper();
     }
 
-    public Elepy setObjectMapper(ObjectMapper objectMapper) {
-        checkConfig();
-        this.objectMapper = objectMapper;
-        return this;
-    }
 
     public String getBaseSlug() {
         return this.baseSlug;
