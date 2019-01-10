@@ -6,10 +6,7 @@ import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.di.DefaultElepyContext;
-import com.elepy.exceptions.ElepyErrorMessage;
-import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.ElepyMessage;
-import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.exceptions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -229,7 +226,7 @@ public class Elepy {
 
     public Elepy addExtension(ElepyModule module) {
         if (initialized) {
-            throw new IllegalStateException("Elepy already initialized, you must add modules before calling start()");
+            throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start()");
         }
         modules.add(module);
         return this;
@@ -293,7 +290,7 @@ public class Elepy {
 
     private void checkConfig() {
         if (initialized) {
-            throw new IllegalStateException("Elepy already initialized, please do all configuration before calling init()");
+            throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling init()");
         }
     }
 
