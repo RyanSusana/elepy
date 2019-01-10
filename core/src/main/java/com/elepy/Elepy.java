@@ -56,7 +56,7 @@ public class Elepy implements ElepyContext {
         this.baseSlug = "/";
 
         this.models = new ArrayList<>();
-        setBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
+        withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
         attachSingleton(ObjectMapper.class, new ObjectMapper());
 
@@ -175,7 +175,7 @@ public class Elepy implements ElepyContext {
         http.awaitStop();
     }
 
-    public Elepy ipAddress(String ipAddress) {
+    public Elepy withIPAdress(String ipAddress) {
         checkConfig();
         http.ipAddress(ipAddress);
         return this;
@@ -216,11 +216,11 @@ public class Elepy implements ElepyContext {
     }
 
 
-    public Elepy includeModel(Class<?> cls) {
-        return includeModels(cls);
+    public Elepy addModel(Class<?> cls) {
+        return addModels(cls);
     }
 
-    public Elepy includeModels(Class<?>... classes) {
+    public Elepy addModels(Class<?>... classes) {
         for (Class<?> aClass : classes) {
             models.add(aClass);
         }
@@ -260,7 +260,7 @@ public class Elepy implements ElepyContext {
         return defaultCrudProvider;
     }
 
-    public Elepy includeModelPackage(String packageName) {
+    public Elepy addModelPackage(String packageName) {
         this.packages.add(packageName);
         return this;
     }
@@ -311,7 +311,7 @@ public class Elepy implements ElepyContext {
         return this.baseObjectEvaluator;
     }
 
-    public Elepy setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
+    public Elepy withBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
         checkConfig();
         this.baseObjectEvaluator = baseObjectEvaluator;
         return this;
