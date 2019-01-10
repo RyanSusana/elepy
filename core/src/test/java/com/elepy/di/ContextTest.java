@@ -1,6 +1,6 @@
 package com.elepy.di;
 
-import com.elepy.BaseTest;
+import com.elepy.Base;
 import com.elepy.Elepy;
 import com.elepy.concepts.Resource;
 import com.elepy.dao.Crud;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContextTest extends BaseTest {
+public class ContextTest extends Base {
 
 
     @BeforeAll

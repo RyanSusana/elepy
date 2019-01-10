@@ -1,13 +1,13 @@
 package com.elepy.concepts;
 
-import com.elepy.BaseFongoTest;
+import com.elepy.BaseFongo;
 import com.elepy.dao.jongo.MongoDao;
 import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ObjectIntegrityTest extends BaseFongoTest {
+public class ObjectIntegrityTest extends BaseFongo {
 
     @Test
     public void testIntegrityUnique() throws Exception {

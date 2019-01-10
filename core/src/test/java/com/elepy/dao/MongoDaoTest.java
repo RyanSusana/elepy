@@ -1,6 +1,6 @@
 package com.elepy.dao;
 
-import com.elepy.BaseFongoTest;
+import com.elepy.BaseFongo;
 import com.elepy.concepts.Resource;
 import com.elepy.dao.jongo.MongoDao;
 import org.jongo.Jongo;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MongoDaoTest extends BaseFongoTest {
+public class MongoDaoTest extends BaseFongo {
 
     private MongoDao<Resource> mongoDao;
     private Jongo jongo;

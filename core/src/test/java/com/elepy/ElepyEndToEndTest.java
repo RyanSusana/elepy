@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class ElepyEndToEndTest extends BaseTest {
+public class ElepyEndToEndTest extends Base {
 
     private static Elepy elepy;
     private static MongoDao<Resource> mongoDao;

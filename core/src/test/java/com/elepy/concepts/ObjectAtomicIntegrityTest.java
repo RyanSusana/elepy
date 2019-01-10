@@ -1,6 +1,6 @@
 package com.elepy.concepts;
 
-import com.elepy.BaseTest;
+import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class ObjectAtomicIntegrityTest extends BaseTest {
+public class ObjectAtomicIntegrityTest extends Base {
     @Test
     public void testAtomicIntegrity() throws IllegalAccessException {
         final Resource resource = validObject();

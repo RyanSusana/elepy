@@ -4,7 +4,7 @@ import com.elepy.concepts.Resource;
 
 import java.math.BigDecimal;
 
-public class BaseTest {
+public class Base {
     public Resource validObject() {
         Resource resource = new Resource();
 

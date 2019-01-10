@@ -6,7 +6,7 @@ import com.mongodb.MongoClient;
 
 import java.io.IOException;
 
-public class BaseFongoTest extends BaseTest {
+public class BaseFongo extends Base {
 
 
     private MongoClient _mongo;
