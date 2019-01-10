@@ -31,7 +31,7 @@ public class ContextTest extends BaseTest {
         MongoDao<Resource> mongoDao = new MongoDao<>(db, "resources", Resource.class);
 
 
-        elepy.attachSingleton(DB.class, db).addModel(Resource.class).onPort(1111).start();
+        elepy.attachSingleton(DB.class, db).includeModel(Resource.class).onPort(1111).start();
 
         Crud<Resource> crudFor = elepy.getContext().getCrudFor(Resource.class);
 

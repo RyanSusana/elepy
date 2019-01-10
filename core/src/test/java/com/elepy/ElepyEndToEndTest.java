@@ -40,7 +40,7 @@ public class ElepyEndToEndTest extends BaseTest {
 
         mongoDao = new MongoDao<>(db, "resources", Resource.class);
 
-        elepy.addModel(Resource.class);
+        elepy.includeModel(Resource.class);
 
         elepy.onPort(7357);
 

@@ -15,8 +15,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
-import org.jongo.Mapper;
-import org.jongo.marshall.jackson.JacksonMapper;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +35,6 @@ public class Elepy implements ElepyContext {
     private String baseSlug;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
-    private Mapper mapper;
     private List<Filter> adminFilters;
     private List<Map<String, Object>> descriptors;
     private boolean initialized = false;
@@ -69,17 +66,14 @@ public class Elepy implements ElepyContext {
         setBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
         attachSingleton(ObjectMapper.class, new ObjectMapper());
-        final JacksonMapper.Builder builder = new JacksonMapper.Builder();
 
-        builder.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
-        builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-        builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.mapper = builder.build();
+        getObjectMapper()
+                .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+                .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     private void init() {
-
-
         for (ElepyModule module : modules) {
             module.setup(http, this);
         }
@@ -229,11 +223,11 @@ public class Elepy implements ElepyContext {
     }
 
 
-    public Elepy addModel(Class<?> cls) {
-        return addModels(cls);
+    public Elepy includeModel(Class<?> cls) {
+        return includeModels(cls);
     }
 
-    public Elepy addModels(Class<?>... classes) {
+    public Elepy includeModels(Class<?>... classes) {
         for (Class<?> aClass : classes) {
             models.add(aClass);
         }
@@ -264,7 +258,7 @@ public class Elepy implements ElepyContext {
         return context.getSingleton(cls, tag);
     }
 
-    public Elepy defaultProvider(Class<? extends CrudProvider> defaultCrudProvider) {
+    public Elepy withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
         this.defaultCrudProvider = defaultCrudProvider;
         return this;
     }
@@ -273,7 +267,7 @@ public class Elepy implements ElepyContext {
         return defaultCrudProvider;
     }
 
-    public Elepy addPackage(String packageName) {
+    public Elepy includeModelPackage(String packageName) {
         this.packages.add(packageName);
         return this;
     }
@@ -294,7 +288,7 @@ public class Elepy implements ElepyContext {
         return this.baseSlug;
     }
 
-    public Elepy setBaseSlug(String baseSlug) {
+    public Elepy withBaseSlug(String baseSlug) {
         checkConfig();
         this.baseSlug = baseSlug;
         return this;
@@ -304,7 +298,7 @@ public class Elepy implements ElepyContext {
         return this.configSlug;
     }
 
-    public Elepy setConfigSlug(String configSlug) {
+    public Elepy withConfigSlug(String configSlug) {
         checkConfig();
         this.configSlug = configSlug;
         return this;
@@ -327,16 +321,6 @@ public class Elepy implements ElepyContext {
     public Elepy setBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
         checkConfig();
         this.baseObjectEvaluator = baseObjectEvaluator;
-        return this;
-    }
-
-    public Mapper getMapper() {
-        return this.mapper;
-    }
-
-    public Elepy setMapper(Mapper mapper) {
-        checkConfig();
-        this.mapper = mapper;
         return this;
     }
 

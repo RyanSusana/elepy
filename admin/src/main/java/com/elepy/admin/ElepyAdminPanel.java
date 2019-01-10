@@ -114,7 +114,7 @@ public class ElepyAdminPanel implements ElepyModule {
         authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
 
-        elepy.addModel(this.userClass);
+        elepy.includeModel(this.userClass);
     }
 
 
