@@ -8,6 +8,7 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.concepts.describers.StructureDescriber;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
@@ -89,7 +90,7 @@ public class ResourceDescriber<T> {
         final RestModel annotation = clazz.getAnnotation(RestModel.class);
 
         if (annotation == null) {
-            throw new IllegalStateException("Resources must have the @RestModel Annotation");
+            throw new ElepyConfigException("Resources must have the @RestModel Annotation");
         }
 
         this.slug = annotation.slug();
