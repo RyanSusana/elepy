@@ -5,6 +5,7 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
+import com.elepy.di.DefaultElepyContext;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ElepyMessage;
@@ -31,7 +32,7 @@ public class Elepy {
     private final List<String> packages;
     private final List<Class<?>> models;
     private final String name;
-    private final Map<String, Object> singletons;
+    private final DefaultElepyContext context;
     private ObjectMapper objectMapper;
     private String baseSlug;
     private String configSlug;
@@ -56,7 +57,7 @@ public class Elepy {
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
         this.name = name;
-        this.singletons = new TreeMap<>();
+        this.context = new DefaultElepyContext();
         this.descriptors = new ArrayList<>();
         this.adminFilters = new ArrayList<>();
         this.http = http;
@@ -200,6 +201,10 @@ public class Elepy {
         return this;
     }
 
+    public DefaultElepyContext getContext() {
+        return context;
+    }
+
     public Filter allAdminFilters() {
         return (request, response) -> {
             for (Filter adminFilter : adminFilters) {
@@ -231,17 +236,12 @@ public class Elepy {
     }
 
 
-    public <T> T getSingleton(String s, Class<T> cls) {
-        final T t = (T) singletons.get(s);
-        if (t != null) {
-            return t;
-        }
-
-        throw new NoSuchElementException(String.format("No singleton for %s available", cls.getName()));
+    public <T> T getSingleton(Class<T> cls, String tag) {
+        return context.getSingleton(cls, tag);
     }
 
     public <T> T getSingleton(Class<T> cls) {
-        return getSingleton(cls.getName(), cls);
+        return getSingleton(cls, null);
 
     }
 
@@ -256,8 +256,23 @@ public class Elepy {
         return this;
     }
 
-    public Elepy attachSingleton(Object object) {
-        singletons.put(object.getClass().getName(), object);
+    public <T> Elepy attachSingleton(T object) {
+        context.attachSingleton(object);
+        return this;
+    }
+
+    public <T> Elepy attachSingleton(Class<T> cls, String tag, T object) {
+        context.attachSingleton(cls, tag, object);
+        return this;
+    }
+
+    public <T> Elepy attachSingleton(Class<T> cls, T object) {
+        context.attachSingleton(cls, object);
+        return this;
+    }
+
+    public <T> Elepy attachSingleton(T object, String tag) {
+        context.attachSingleton(object, tag);
         return this;
     }
 
@@ -268,16 +283,6 @@ public class Elepy {
 
     public Class<? extends CrudProvider> getDefaultCrudProvider() {
         return defaultCrudProvider;
-    }
-
-    public Elepy attachSingleton(Class<?> cls, Object object) {
-        singletons.put(cls.getName(), object);
-        return this;
-    }
-
-    public Elepy attachSingleton(String singletonName, Object object) {
-        singletons.put(singletonName, object);
-        return this;
     }
 
     public Elepy addPackage(String packageName) {
