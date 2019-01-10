@@ -7,7 +7,10 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
-import com.elepy.exceptions.*;
+import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.exceptions.ElepyErrorMessage;
+import com.elepy.exceptions.ElepyMessage;
+import com.elepy.exceptions.ErrorMessageBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -153,20 +156,17 @@ public class Elepy implements ElepyContext {
             if (exception instanceof ElepyErrorMessage) {
                 elepyErrorMessage = (ElepyErrorMessage) exception;
             } else {
-                if (exception instanceof ElepyException) {
-                    elepyErrorMessage = ErrorMessageBuilder
-                            .anElepyErrorMessage()
-                            .withMessage(exception.getMessage())
-                            .withStatus(400).build();
-                } else {
-                    logger.error(exception.getMessage(), exception);
+
                     elepyErrorMessage = ErrorMessageBuilder
                             .anElepyErrorMessage()
                             .withMessage(exception.getMessage())
                             .withStatus(500).build();
-                }
             }
 
+            if (elepyErrorMessage.getStatus() == 500) {
+                logger.error(exception.getMessage(), exception);
+
+            }
             response.type("application/json");
 
             response.status(elepyErrorMessage.getStatus());
