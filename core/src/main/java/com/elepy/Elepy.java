@@ -3,9 +3,11 @@ package com.elepy;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
+import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.di.DefaultElepyContext;
+import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -21,7 +23,7 @@ import spark.Service;
 
 import java.util.*;
 
-public class Elepy {
+public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
     private final Service http;
@@ -232,15 +234,6 @@ public class Elepy {
     }
 
 
-    public <T> T getSingleton(Class<T> cls, String tag) {
-        return context.getSingleton(cls, tag);
-    }
-
-    public <T> T getSingleton(Class<T> cls) {
-        return getSingleton(cls, null);
-
-    }
-
     public Elepy addModel(Class<?> cls) {
         return addModels(cls);
     }
@@ -270,6 +263,20 @@ public class Elepy {
     public <T> Elepy attachSingleton(T object, String tag) {
         context.attachSingleton(object, tag);
         return this;
+    }
+
+    public <T> T getSingleton(Class<T> cls, String tag) {
+        return context.getSingleton(cls, tag);
+    }
+
+    @Override
+    public <T> Crud<T> getCrudFor(Class<T> cls) {
+        return context.getCrudFor(cls);
+    }
+
+    public <T> T getSingleton(Class<T> cls) {
+        return getSingleton(cls, null);
+
     }
 
     public Elepy defaultProvider(Class<? extends CrudProvider> defaultCrudProvider) {
