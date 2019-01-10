@@ -264,12 +264,6 @@ public class Elepy implements ElepyContext {
         return context.getSingleton(cls, tag);
     }
 
-
-    public <T> T getSingleton(Class<T> cls) {
-        return getSingleton(cls, null);
-
-    }
-
     public Elepy defaultProvider(Class<? extends CrudProvider> defaultCrudProvider) {
         this.defaultCrudProvider = defaultCrudProvider;
         return this;
