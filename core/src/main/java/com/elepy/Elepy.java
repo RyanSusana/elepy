@@ -3,7 +3,6 @@ package com.elepy;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
-import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.di.DefaultElepyContext;
@@ -269,10 +268,6 @@ public class Elepy implements ElepyContext {
         return context.getSingleton(cls, tag);
     }
 
-    @Override
-    public <T> Crud<T> getCrudFor(Class<T> cls) {
-        return context.getCrudFor(cls);
-    }
 
     public <T> T getSingleton(Class<T> cls) {
         return getSingleton(cls, null);
