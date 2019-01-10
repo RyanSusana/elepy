@@ -150,22 +150,18 @@ public class Elepy implements ElepyContext {
 
 
         http.exception(Exception.class, (exception, request, response) -> {
-            logger.error(exception.getMessage(), exception);
-
             final ElepyErrorMessage elepyErrorMessage;
             if (exception instanceof ElepyErrorMessage) {
                 elepyErrorMessage = (ElepyErrorMessage) exception;
             } else {
-
-                    elepyErrorMessage = ErrorMessageBuilder
-                            .anElepyErrorMessage()
-                            .withMessage(exception.getMessage())
-                            .withStatus(500).build();
+                elepyErrorMessage = ErrorMessageBuilder
+                        .anElepyErrorMessage()
+                        .withMessage(exception.getMessage())
+                        .withStatus(500).build();
             }
 
             if (elepyErrorMessage.getStatus() == 500) {
                 logger.error(exception.getMessage(), exception);
-
             }
             response.type("application/json");
 
