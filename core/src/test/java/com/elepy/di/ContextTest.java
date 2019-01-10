@@ -8,20 +8,11 @@ import com.elepy.dao.jongo.MongoDao;
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
 import com.mongodb.FongoDB;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextTest extends Base {
-
-
-    @BeforeAll
-    public static void beforeAll() throws Exception {
-
-
-    }
 
     @Test
     void testCrudFor() {
@@ -37,5 +28,8 @@ public class ContextTest extends Base {
 
         assertNotNull(crudFor);
         assertTrue(crudFor instanceof MongoDao);
+
+        MongoDao<Resource> newMongoDao = (MongoDao<Resource>) crudFor;
+        assertEquals(mongoDao.getClassType(), newMongoDao.getClassType());
     }
 }
