@@ -48,7 +48,6 @@ public class DefaultElepyContext implements ElepyContext {
 
 
     public <T> Crud<T> getCrudFor(Class<T> cls) {
-
         final RestModel annotation = cls.getAnnotation(RestModel.class);
 
         if (annotation == null) {
