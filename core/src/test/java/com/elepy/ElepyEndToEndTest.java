@@ -61,6 +61,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(count + 1, resourcePage.getValues().size());
 
+        assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -76,7 +77,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(foundResource.getId(), resource.getId());
 
-
+        assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -90,6 +91,7 @@ public class ElepyEndToEndTest extends Base {
         final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
 
         assertEquals(count + 1, mongoDao.count());
+        assertEquals(200, postRequest.getStatus());
     }
 
 
@@ -127,6 +129,7 @@ public class ElepyEndToEndTest extends Base {
         final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
 
         assertEquals(count + 2, mongoDao.count());
+        assertEquals(200, postRequest.getStatus());
     }
 
     @Test
@@ -143,6 +146,7 @@ public class ElepyEndToEndTest extends Base {
         final HttpResponse<String> delete = Unirest.delete("http://localhost:7357/resources/deleteId").asString();
 
         assertEquals(beginningCount, mongoDao.count());
+        assertEquals(200, delete.getStatus());
 
     }
 
@@ -168,6 +172,6 @@ public class ElepyEndToEndTest extends Base {
         assertTrue(updatePartialId.isPresent());
         assertEquals("uniqueUpdate", updatePartialId.get().getUnique());
         assertEquals("ryan", updatePartialId.get().getMARKDOWN());
-
+        assertEquals(200, patch.getStatus());
     }
 }
