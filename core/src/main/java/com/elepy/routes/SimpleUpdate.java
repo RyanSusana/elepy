@@ -11,6 +11,15 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A helper class for developers to easily handle the update of objects.
+ *
+ * @param <T> the model you're updating
+ * @see com.elepy.annotations.Update
+ * @see DefaultUpdate
+ * @see RouteHandler
+ * @see UpdateHandler
+ */
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     @Override
@@ -47,7 +56,26 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     }
 
+
+    /**
+     * What happens before you update a model. Throw an exception to cancel the update.
+     *
+     * @param beforeVersion The object before the update
+     * @param crud          The crud implementation
+     * @param elepy         the context where you can get context objects
+     * @throws Exception you can throw any exception and Elepy handles them nicely.
+     * @see ElepyException
+     * @see com.elepy.exceptions.ElepyErrorMessage
+     */
     public abstract void beforeUpdate(T beforeVersion, Crud<T> crud, ElepyContext elepy) throws Exception;
 
+    /**
+     * What happens after you update a model.
+     *
+     * @param beforeVersion The object before the update
+     * @param updatedVersion The object after the update
+     * @param crud The crud implementation
+     * @param elepy the context where you can get context objects
+     */
     public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, ElepyContext elepy);
 }
