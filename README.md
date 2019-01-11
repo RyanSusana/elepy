@@ -61,7 +61,7 @@ public static void main(String[] args) {
 
     new Elepy()
         .attachSingleton(DB.class, database)
-        .ipAddress("localhost")
+        .withIPAddress("localhost")
         .onPort(7777)
         .addModel(Product.class)
         //Add an Elepy extension
