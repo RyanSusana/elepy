@@ -66,111 +66,6 @@ public class Elepy implements ElepyContext {
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
-    private void init() {
-        for (ElepyModule module : modules) {
-            module.setup(http, this);
-        }
-        setupLoggingAndExceptions();
-
-        Map<ResourceDescriber, Class<?>> classes = new HashMap<>();
-
-        if (!packages.isEmpty()) {
-            Reflections reflections = new Reflections(packages);
-            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
-
-            annotated.forEach(claszz -> classes.put(new ResourceDescriber<>(this, claszz), claszz));
-        }
-        for (Class<?> model : models) {
-            classes.put(new ResourceDescriber<>(this, model), model);
-        }
-        final List<Map<String, Object>> maps = setupPojos(classes);
-
-
-        descriptors.addAll(maps);
-
-
-        setupDescriptors(descriptors);
-
-
-        for (ElepyModule module : modules) {
-            module.routes(http, this);
-        }
-        initialized = true;
-
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> setupPojos(Map<ResourceDescriber, Class<?>> classes) {
-        List<Map<String, Object>> descriptorList = new ArrayList<>();
-
-        classes.forEach((restModel, clazz) -> {
-            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, clazz);
-            descriptorList.add(routeGenerator.setupPojo());
-
-        });
-
-        return descriptorList;
-    }
-
-    private void setupLoggingAndExceptions() {
-        http.before((request, response) -> request.attribute("start", System.currentTimeMillis()));
-        http.afterAfter((request, response) -> {
-            response.header("Access-Control-Allow-Origin", "*");
-            response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
-            response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
-
-            if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
-        });
-        http.options("/*", (request, response) -> "");
-        http.notFound((request, response) -> {
-
-            response.type("application/json");
-            return getObjectMapper().writeValueAsString(new ElepyMessage(ErrorMessageBuilder
-                    .anElepyErrorMessage()
-                    .withMessage("Not found")
-                    .withStatus(404).build()));
-
-        });
-
-        http.exception(Exception.class, (exception, request, response) -> {
-            final ElepyErrorMessage elepyErrorMessage;
-            if (exception instanceof ElepyErrorMessage) {
-                elepyErrorMessage = (ElepyErrorMessage) exception;
-            } else {
-                elepyErrorMessage = ErrorMessageBuilder
-                        .anElepyErrorMessage()
-                        .withMessage(exception.getMessage())
-                        .withStatus(500).build();
-            }
-
-            if (elepyErrorMessage.getStatus() == 500) {
-                logger.error(exception.getMessage(), exception);
-            }
-            response.type("application/json");
-
-            response.status(elepyErrorMessage.getStatus());
-            try {
-                response.body(getObjectMapper().writeValueAsString(new ElepyMessage(elepyErrorMessage)));
-            } catch (JsonProcessingException e) {
-                logger.error(e.getMessage(), e);
-            }
-        });
-    }
-
-    private void setupDescriptors(List<Map<String, Object>> descriptors) {
-        http.before(configSlug, getAllAdminFilters());
-        http.get(configSlug, (request, response) -> {
-            response.type("application/json");
-            return context.getObjectMapper().writeValueAsString(descriptors);
-        });
-    }
-
-    private void checkConfig() {
-        if (initialized) {
-            throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling init()");
-        }
-    }
 
     /**
      * Spins up the embedded server and generates all the Elepy rout
@@ -517,6 +412,113 @@ public class Elepy implements ElepyContext {
         checkConfig();
         http.ipAddress(ipAddress);
         return this;
+    }
+
+
+    private void init() {
+        for (ElepyModule module : modules) {
+            module.setup(http, this);
+        }
+        setupLoggingAndExceptions();
+
+        Map<ResourceDescriber, Class<?>> classes = new HashMap<>();
+
+        if (!packages.isEmpty()) {
+            Reflections reflections = new Reflections(packages);
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
+
+            annotated.forEach(claszz -> classes.put(new ResourceDescriber<>(this, claszz), claszz));
+        }
+        for (Class<?> model : models) {
+            classes.put(new ResourceDescriber<>(this, model), model);
+        }
+        final List<Map<String, Object>> maps = setupPojos(classes);
+
+
+        descriptors.addAll(maps);
+
+
+        setupDescriptors(descriptors);
+
+
+        for (ElepyModule module : modules) {
+            module.routes(http, this);
+        }
+        initialized = true;
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> setupPojos(Map<ResourceDescriber, Class<?>> classes) {
+        List<Map<String, Object>> descriptorList = new ArrayList<>();
+
+        classes.forEach((restModel, clazz) -> {
+            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, clazz);
+            descriptorList.add(routeGenerator.setupPojo());
+
+        });
+
+        return descriptorList;
+    }
+
+    private void setupLoggingAndExceptions() {
+        http.before((request, response) -> request.attribute("start", System.currentTimeMillis()));
+        http.afterAfter((request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
+            response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
+
+            if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
+                logger.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+        });
+        http.options("/*", (request, response) -> "");
+        http.notFound((request, response) -> {
+
+            response.type("application/json");
+            return getObjectMapper().writeValueAsString(new ElepyMessage(ErrorMessageBuilder
+                    .anElepyErrorMessage()
+                    .withMessage("Not found")
+                    .withStatus(404).build()));
+
+        });
+
+        http.exception(Exception.class, (exception, request, response) -> {
+            final ElepyErrorMessage elepyErrorMessage;
+            if (exception instanceof ElepyErrorMessage) {
+                elepyErrorMessage = (ElepyErrorMessage) exception;
+            } else {
+                elepyErrorMessage = ErrorMessageBuilder
+                        .anElepyErrorMessage()
+                        .withMessage(exception.getMessage())
+                        .withStatus(500).build();
+            }
+
+            if (elepyErrorMessage.getStatus() == 500) {
+                logger.error(exception.getMessage(), exception);
+            }
+            response.type("application/json");
+
+            response.status(elepyErrorMessage.getStatus());
+            try {
+                response.body(getObjectMapper().writeValueAsString(new ElepyMessage(elepyErrorMessage)));
+            } catch (JsonProcessingException e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+    }
+
+    private void setupDescriptors(List<Map<String, Object>> descriptors) {
+        http.before(configSlug, getAllAdminFilters());
+        http.get(configSlug, (request, response) -> {
+            response.type("application/json");
+            return context.getObjectMapper().writeValueAsString(descriptors);
+        });
+    }
+
+    private void checkConfig() {
+        if (initialized) {
+            throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling init()");
+        }
     }
 
 }
