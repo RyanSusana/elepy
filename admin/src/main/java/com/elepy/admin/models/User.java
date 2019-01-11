@@ -22,7 +22,6 @@ import javax.persistence.Transient;
 @RestModel(
         slug = "/users",
         name = "Users",
-        icon = "users",
         description = "",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING
