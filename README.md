@@ -2,134 +2,77 @@
 
 Elepy is a Rest API Generation Framework/Headless Content Management System for Java/Kotlin developed by [Ryan Susana](https://ryansusana.com/). It is extremely customizable! The framework comes bundled with an admin control panel that lets you easily control your content.
 
-Because it's backed by MongoDB, it's able to handle extremely complex objects with ease.
-
-## Api Generator
-The API generator, Elepy, is the core of the framework. It's super fast, thanks to [spark-java](http://sparkjava.com/) and [jongo](http://jongo.org/).  Most API's (5-6 models) load within 1 second. The api is completely @Annotation based, meaning that you only need to annotate your POJO's and voilà you have a completely configurable REST API for that POJO. The only restriction is that your POJO has a field annotated with `@Identifier` and your POJO class must also be annotated with `@RestModel` from the Elepy framework.
-
-The generator also comes with handy interfaces and annotations that allow you to add restrictions and specifications to your data models. Some annotations include:
-
- - Required Fields `@RequiredField`
- - Min value and max value fields for numbers`@Number`
- - Min length and max length attributes text`@Text`
- - Pretty names to be displayed on your front end: `@PrettyName`
- - Non editable fields after the initial create(id's are non-editable by default) `@NonEditable`
- - Searchable fields for the findAll route `@Searchable`
- - Unique fields `@Unique`
- 
- All of these things get handled by Elepy's implementation of it's own ObjectEvaluator and ObjectUpdateEvaluator. You can also add your own ObjectEvaluators to a POJO by adding to the objectEvaluators array in `@RestModel`
-
-All of the routes are configurable with different access types (ADMIN, PUBLIC, DISABLED) and different Route implementations per route type. The route types are: findOne, find, create, update, delete. They each have their own implementations. You are not limited in what you can do with them.
-
-A `/config` route is also generated that displays how your REST API is modeled. It's done recursively, so even the most intense of objects can be modeled accordingly. It also displays all of the data restrictions are also presented in the config JSON.
-
-Elepy is also modular. All modules must extend the ElepyModule class and they can be hooked onto with the `elepyInstance.addModule(...)` method. The image upload module and the Elepy Admin Panel module are examples.
-
-## Elepy Admin Panel
-
-Elepy comes bundled with an Admin Panel.
-
-This module comes built-in with a User rest model. It communicates with the `/config` route to dynamically generate a nice UI to handle all of Elepy's features. It is built using 2 frameworks, VueJS and UIKit. It is currently limited to models that are 2 deep, so objects inside of objects is about as far as it goes. The UI is very informative, modern and user-friendly.
-
-It features:
-
- - All of Elepy's functionality, this includes but is not limited to: basic routes, search and sort
- - A rich UI dedicated to speed and user-friendliness. A lot of attention was put to detail and interaction going smoothly
- - A built in user model that generates a base admin user that you can log into(if there are no users in the database) it also uses BCrypt to automatically encrypt passwords.
- - Custom Resource Views with `@View` this gives you full control on how a resource looks on the admin panel. All you need to do is render html content with scripts to access ajax data. Elepy supports Vue and Axios out the box.
- - Pluginnable: Plugins are supported with the addPlugin method on ElepyAdminPanels a plugin must have a name and a slug and implement the renderContent method. With this method you get access to the Database and the main section of the Elepy when an admin clicks on your slug. Because Elepy is developer first, you should probably look for any malicious code(code that might mess up your database) before using any Elepy plugin or module
- -Skinnable: The Elepy Admin Panel supports the use of overridable CSS4 Variables. This allows you to change the colors and fonts used by Elepy.
-
-
-## Getting started
-```java
-public class Main {
-
-    public static void main(String[] args) {
-         Elepy elepy =
-                new Elepy()
-                    //Adds a package to scan for
-                    .addPackage("com.ryansusana.elepy.gallery")
-                    //This is the DB object elepy should work with
-                    .attachSingleton(new MongoClient().getDB("elepy-db"))
-                    //Adds the Admin Panel module to elepy, yay!
-                    .addModule(new ElepyAdminPanel())
-                    //The route where Elepy stores its config json(config defines the structure of the rest resources)
-                    .setConfigSlug("/hidden-config/location/here");
-
-
-        //Start her up :)
-        elepy.init();
-
-    }
-}
-
+It's able to handle extremely complex objects with ease.
+### Downloads
+#### Elepy Core
+The core module of Elepy, can be installed with maven. This includes the API generation and the core functionality of Elepy. For the CMS you must include the `elepy-admin` dependency.
 ```
-## Guide to creating a RestResource
-Here is an example of a User resource. 
-``` java
-    @RestModel(
-     //The only 2 required properties in RestModels  are slug and name
-        slug = "/users",
-        name = "Users",
+<dependency>
+    <groupId>com.elepy</groupId>
+    <artifactId>elepy-core</artifactId>
+    <version>1.7.1</version>
+</dependency>
+```
 
-        //Fontawesome icon from the free cdn
-        icon = "users",
+#### Elepy Admin
+This is the admin module of Elepy. It contains the powerful content management system.
+```
+<dependency>
+    <groupId>com.elepy</groupId>
+    <artifactId>elepy-admin</artifactId>
+    <version>1.7.1</version>
+</dependency>
+```
 
-        description = "",
+### Quick Start
+##### Step One: Create and annotate your POJO's
+Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and /slug of your model. You should also take a look at [the awesome collection of Elepy annotations](#annotations). 
+```
+@RestModel(name = "Products", slug = "/products")
+public class Product {
 
-        //Custom route classes these must have an empty constructor and implement one of the Crud Operations: Create, FindOne, Find, Update or Delete.
-        deleteRoute = UserDelete.class,
-        createRoute = UserCreate.class,
-        updateRoute = UserUpdate.class,
-
-        //Access type on each of the setup, these can be: ADMIN, PUBLIC or DISABLED. If disabled, the route won't be created. If public, anyone can access it.
-        //If admin it will run through all the hooked admin filters
-        findAll = RestModelAccessType.ADMIN,
-        findOne = RestModelAccessType.ADMIN,
-        create = RestModelAccessType.ADMIN,
-
-        //Sort
-        //The default sorted mongo field. default is "_id"
-        defaultSortField = "username",
-        //Ascending sort or descending sort
-        defaultSortDirection = SortOption.ASCENDING,
-
-
-        //Specifies the class that will handle ID creation for this resource
-        identityProvider = HexIdProvider.class,
-
-        //Array of ObjectEvaluators that evaluates an object on Create and Update operations
-        objectEvaluators = {UserEvaluator.class}
-    )  
-    public class User {  
+    @Identifier
+    private String productId;
     
-        @MongoId  
-        @PrettyName("UserID")  
-        private String id;  
-  
-        @Unique  
-        @RequiredField 
-        @PrettyName("Username")  
-        @JsonProperty("username")  
-        @Searchable  
-        private String username;  
-  
-        @Unique  
-        @RequiredField 
-        @PrettyName("E-mail adress")  
-        @JsonProperty("email")  
-        @Searchable  
-        private String email;  
-  
-        @PrettyName("User password (encrypted)")  
-        @JsonProperty("password")  
-        @RequiredField  
-        private String password;  
-  
-  
-        //Getters and setters, Immutable classes are allowed! :)  
-    }
-```
-  
+    @Text(value = TextType.TEXTAREA, maximumLength = 100)
+    private String shortDescription;
+    
+    @Text(TextType.HTML)//WYSIWYG editor
+    private String htmlDescription;
 
+    @PrettyName("Product Name")
+    @Required
+    @Unique
+    private String name;
+
+    @Number(minimum = 0)
+    private BigDecimal price;
+
+    @Number(minimum = 0)
+    private int stockLeft;
+
+    //Getters and Setters. I like to use Lombok to automate this :D
+}
+```
+##### Step Two: Configure Elepy
+```
+public static void main(String[] args) {
+    DB database = mongo.getDB("product-database");
+
+    new Elepy()
+        .attachSingleton(DB.class, database)
+        .ipAddress("localhost")
+        .onPort(7777)
+        .addModel(Product.class)
+        //Add an Elepy extension
+        //The AdminPanel/CMS is a great start :D
+        .addExtension(new ElepyAdminPanel())
+        .start();
+
+}
+```
+##### Step Three: Enjoy!
+
+You can now login to the Elepy CMS by going to http://localhost:7777/admin. The username and password is `admin`. You can change at the 'Users' interface.
+
+To clone this repo visit: https://github.com/RyanSusana/elepy-basic-example
