@@ -73,9 +73,9 @@
                         <td :uk-tooltip="'title:'+ field.pretty_name+'; pos: top-left'"
                             v-for="field in selectedModel.fields"
 
-                            v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">((
-                            (field.type == 'DATE'? toDate(data[field.name])
-                            : data[field.name]) | truncate(90) ))
+                            v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">
+                            (( (field.type == 'DATE'? toDate(data[field.name]) : field.type == 'BOOLEAN'?
+                            toBoolean(field, data): data[field.name]) | truncate(90) ))
                         </td>
 
                     </tr>
@@ -165,11 +165,21 @@
                                         ></trumbowyg>
 
                                         <!-- ENUM -->
-                                        <div class="uk-form-controls">
+                                        <div v-if="field.type == 'ENUM' " class="uk-form-controls">
                                             <select class="uk-select" v-model="selectedData[field.name]"
                                                     :disabled="field.name == 'id' || field.editable == false"
-                                                    v-if="field.type == 'ENUM' ">
+                                            >
                                                 <option v-for="value in field.availableValues">((value))</option>
+
+                                            </select>
+                                        </div>
+
+                                        <!-- BOOLEAN -->
+                                        <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
+                                            <select class="uk-select" v-model="selectedData[field.name]"
+                                                    :disabled="field.name == 'id' || field.editable == false">
+                                                <option :value="true">((field.trueValue))</option>
+                                                <option :false="false">((field.falseValue))</option>
 
                                             </select>
                                         </div>
@@ -264,17 +274,26 @@
                                                 ></trumbowyg>
 
                                                 <!-- ENUM -->
-                                                <div class="uk-form-controls">
+                                                <div v-if="field.type == 'ENUM' " class="uk-form-controls">
                                                     <select class="uk-select"
                                                             v-model="selectedData[fieldOuter.name][field.name]"
-                                                            :disabled="field.name == 'id' || field.editable == false"
-                                                            v-if="field.type == 'ENUM' ">
+                                                            :disabled="field.name == 'id' || field.editable == false">
                                                         <option v-for="value in field.availableValues">((value))
                                                         </option>
 
                                                     </select>
                                                 </div>
 
+                                                <!-- BOOLEAN -->
+                                                <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
+                                                    <select class="uk-select"
+                                                            v-model="selectedData[fieldOuter.name][field.name]"
+                                                            :disabled="field.name == 'id' || field.editable == false">
+                                                        <option :value="true">((field.trueValue))</option>
+                                                        <option :false="false">((field.falseValue))</option>
+
+                                                    </select>
+                                                </div>
 
                                             </div>
                                         </div>
@@ -391,15 +410,25 @@
                                                    class="editor"
                                         ></trumbowyg>
                                         <!-- ENUM -->
-                                        <div class="uk-form-controls">
+                                        <div v-if="(field.generated === false) && field.type == 'ENUM' "
+                                             class="uk-form-controls">
                                             <select class="uk-select" v-model="newData[field.name]"
 
-                                                    v-if="(field.generated === false) && field.type == 'ENUM' ">
+                                            >
                                                 <option v-for="value in field.availableValues">((value))</option>
 
                                             </select>
                                         </div>
 
+                                        <!-- BOOLEAN -->
+                                        <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
+                                            <select class="uk-select" v-model="newData[field.name]"
+                                                    :disabled="field.name == 'id' || field.editable == false">
+                                                <option :value="true">((field.trueValue))</option>
+                                                <option :false="false">((field.falseValue))</option>
+
+                                            </select>
+                                        </div>
 
                                     </div>
                                 </div>
@@ -466,18 +495,26 @@
                                                         v-model="newData[fieldOuter.name][field.name]"
                                                         :disabled="field.name == 'id' || (field.editable == false)"></vuejs-colorpicker>
                                                 <!-- ENUM -->
-                                                <div class="uk-form-controls">
+                                                <div v-if="field.type == 'ENUM' " class="uk-form-controls">
                                                     <select class="uk-select"
                                                             v-model="newData[fieldOuter.name][field.name]"
-                                                            :disabled="field.name == 'id' || field.editable == false"
-                                                            v-if="field.type == 'ENUM' ">
+                                                            :disabled="field.name == 'id' || field.editable == false">
                                                         <option v-for="value in field.availableValues">((value))
                                                         </option>
 
                                                     </select>
                                                 </div>
 
+                                                <!-- BOOLEAN -->
+                                                <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
+                                                    <select class="uk-select"
+                                                            v-model="newData[fieldOuter.name][field.name]"
+                                                            :disabled="field.name == 'id' || field.editable == false">
+                                                        <option :value="true">((field.trueValue))</option>
+                                                        <option :false="false">((field.falseValue))</option>
 
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </li>

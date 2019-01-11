@@ -72,6 +72,15 @@ const app = new Vue({
             var date = new Date(milli);
             return date.yyyymmdd();
         },
+        toBoolean: function (field, data) {
+
+            if (data === true) {
+                return field.trueValue;
+            } else {
+                return field.falseValue
+            }
+
+        },
         editModal: function () {
             UIkit.modal(document.getElementById("edit-modal"), {stack: true, 'bg-close': false}).show();
         },
