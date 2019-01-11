@@ -37,7 +37,8 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
             super.handle(request, response, dao, elepy, objectEvaluators, clazz);
 
             afterCreate(item, dao, elepy);
-
+            response.status(200);
+            response.body("OK");
 
         } catch (JsonMappingException e) {
             throw new ElepyException("MultipleCreate not supported with SimpleCreate");

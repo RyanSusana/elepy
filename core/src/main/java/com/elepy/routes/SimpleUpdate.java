@@ -54,6 +54,8 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
                         clazz);
         afterUpdate(before.get(), updated, dao, elepy);
 
+        response.status(200);
+        response.body("OK");
     }
 
 
