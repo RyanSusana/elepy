@@ -3,8 +3,8 @@
 Elepy is a Rest API Generation Framework/Headless Content Management System for Java/Kotlin developed by [Ryan Susana](https://ryansusana.com/). It is extremely customizable! The framework comes bundled with an admin control panel that lets you easily control your content.
 
 It's able to handle extremely complex objects with ease.
-### Downloads
-#### Elepy Core
+## Downloads
+### Elepy Core
 The core module of Elepy, can be installed with maven. This includes the API generation and the core functionality of Elepy. For the CMS you must include the `elepy-admin` dependency.
 ```
 <dependency>
@@ -14,7 +14,7 @@ The core module of Elepy, can be installed with maven. This includes the API gen
 </dependency>
 ```
 
-#### Elepy Admin
+### Elepy Admin
 This is the admin module of Elepy. It contains the powerful content management system.
 ```
 <dependency>
@@ -24,8 +24,8 @@ This is the admin module of Elepy. It contains the powerful content management s
 </dependency>
 ```
 
-### Quick Start
-##### Step One: Create and annotate your POJO's
+## Quick Start
+### Step One: Create and annotate your POJO's
 Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and /slug of your model. You should also take a look at [the awesome collection of Elepy annotations](#annotations). 
 ```
 @RestModel(name = "Products", slug = "/products")
@@ -54,7 +54,7 @@ public class Product {
     //Getters and Setters. I like to use Lombok to automate this :D
 }
 ```
-##### Step Two: Configure Elepy
+### Step Two: Configure Elepy
 ```
 public static void main(String[] args) {
     DB database = mongo.getDB("product-database");
@@ -71,7 +71,7 @@ public static void main(String[] args) {
 
 }
 ```
-##### Step Three: Enjoy!
+### Step Three: Enjoy!
 
 You can now login to the Elepy CMS by going to http://localhost:7777/admin. The username and password is `admin`. You can change at the 'Users' interface.
 
