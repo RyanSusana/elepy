@@ -7,7 +7,7 @@
     <groupId>com.elepy</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
 
     <name>Elepy</name>
     <description>A Restful API generator and Headless CMS</description>
