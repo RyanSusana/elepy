@@ -121,9 +121,9 @@ public class ElepyAdminPanel implements ElepyModule {
     private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
-        http.before("/admin/*/*", (request, response) -> elepy.allAdminFilters().handle(request, response));
-        http.before("/admin/*", (request, response) -> elepy.allAdminFilters().handle(request, response));
-        http.before("/admin", (request, response) -> elepy.allAdminFilters().handle(request, response));
+        http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
+        http.before("/admin/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
+        http.before("/admin", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
         http.post("/retrieve-token", (request, response) -> {
             final Optional<Token> token = tokenHandler.createToken(request);
 

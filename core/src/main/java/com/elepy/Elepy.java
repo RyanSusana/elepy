@@ -56,10 +56,10 @@ public class Elepy implements ElepyContext {
         this.baseSlug = "/";
 
         this.models = new ArrayList<>();
-        withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         this.configSlug = "/config";
-        attachSingleton(ObjectMapper.class, new ObjectMapper());
 
+        withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
+        attachSingleton(ObjectMapper.class, new ObjectMapper());
         getObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
@@ -99,7 +99,6 @@ public class Elepy implements ElepyContext {
 
     }
 
-
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> setupPojos(Map<ResourceDescriber, Class<?>> classes) {
         List<Map<String, Object>> descriptorList = new ArrayList<>();
@@ -112,7 +111,6 @@ public class Elepy implements ElepyContext {
 
         return descriptorList;
     }
-
 
     private void setupLoggingAndExceptions() {
         http.before((request, response) -> request.attribute("start", System.currentTimeMillis()));
@@ -134,7 +132,6 @@ public class Elepy implements ElepyContext {
                     .withStatus(404).build()));
 
         });
-
 
         http.exception(Exception.class, (exception, request, response) -> {
             final ElepyErrorMessage elepyErrorMessage;
@@ -162,109 +159,12 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupDescriptors(List<Map<String, Object>> descriptors) {
-        http.before(configSlug, allAdminFilters());
+        http.before(configSlug, getAllAdminFilters());
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
             return context.getObjectMapper().writeValueAsString(descriptors);
         });
     }
-
-
-    public void stop() {
-        http.stop();
-        http.awaitStop();
-    }
-
-    public Elepy withIPAdress(String ipAddress) {
-        checkConfig();
-        http.ipAddress(ipAddress);
-        return this;
-    }
-
-    public DefaultElepyContext getContext() {
-        return context;
-    }
-
-    public Filter allAdminFilters() {
-        return (request, response) -> {
-            for (Filter adminFilter : adminFilters) {
-                adminFilter.handle(request, response);
-            }
-        };
-    }
-
-    public Elepy connectDB(DB db) {
-        this.attachSingleton(DB.class, db);
-        return this;
-    }
-
-    public void start() {
-        this.init();
-    }
-
-    public Elepy addAdminFilter(Filter filter) {
-        adminFilters.add(filter);
-        return this;
-    }
-
-    public Elepy addExtension(ElepyModule module) {
-        if (initialized) {
-            throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start()");
-        }
-        modules.add(module);
-        return this;
-    }
-
-
-    public Elepy addModel(Class<?> cls) {
-        return addModels(cls);
-    }
-
-    public Elepy addModels(Class<?>... classes) {
-        for (Class<?> aClass : classes) {
-            models.add(aClass);
-        }
-        return this;
-    }
-
-    public <T> Elepy attachSingleton(T object) {
-        context.attachSingleton(object);
-        return this;
-    }
-
-    public <T> Elepy attachSingleton(Class<T> cls, String tag, T object) {
-        context.attachSingleton(cls, tag, object);
-        return this;
-    }
-
-    public <T> Elepy attachSingleton(Class<T> cls, T object) {
-        context.attachSingleton(cls, object);
-        return this;
-    }
-
-    public <T> Elepy attachSingleton(T object, String tag) {
-        context.attachSingleton(object, tag);
-        return this;
-    }
-
-    public <T> T getSingleton(Class<T> cls, String tag) {
-        return context.getSingleton(cls, tag);
-    }
-
-    public Elepy withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
-        this.defaultCrudProvider = defaultCrudProvider;
-        return this;
-    }
-
-    public Class<? extends CrudProvider> getDefaultCrudProvider() {
-        return defaultCrudProvider;
-    }
-
-    public Elepy addModelPackage(String packageName) {
-        this.packages.add(packageName);
-        return this;
-    }
-
 
     private void checkConfig() {
         if (initialized) {
@@ -272,56 +172,351 @@ public class Elepy implements ElepyContext {
         }
     }
 
+    /**
+     * Spins up the embedded server and generates all the Elepy rout
+     * After Elepy has started, no configuration methods can be called.
+     *
+     * @see #stop()
+     */
+    public void start() {
+        this.init();
+    }
+
+    /**
+     * Stops the Elepy embedded server and blocks the current Thread until Elepy is brought to a halt
+     *
+     * @see #start()
+     */
+    public void stop() {
+        http.stop();
+        http.awaitStop();
+    }
+
+    /**
+     * @return The context containing all the context objects
+     * @see ElepyContext
+     */
+    public DefaultElepyContext getContext() {
+        return context;
+    }
+
+    /**
+     * @return The config slug.
+     * @see #withConfigSlug(String)
+     */
+    public String getConfigSlug() {
+        return this.configSlug;
+    }
+
+    /**
+     * @return The {@link Service} related with this Elepy instance.
+     */
+    public Service http() {
+        return http;
+    }
+
+    /**
+     * The default {@link ObjectEvaluator} to your own implementation
+     * This is used to determine an object's validity. It can also be changed per
+     * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
+     *
+     * @return the base object evaluator
+     */
+    public ObjectEvaluator<Object> getBaseObjectEvaluator() {
+        return this.baseObjectEvaluator;
+    }
+
+
+    /**
+     * @return List of JSON-descriptions of all the models. This is only valid after {@link #start()}
+     * has been called.
+     */
+    public List<Map<String, Object>> getDescriptors() {
+        return this.descriptors;
+    }
+
+    /**
+     * @return if Elepy is initiated or not
+     */
+    public boolean isInitialized() {
+        return this.initialized;
+    }
+
+    /**
+     * @return a filter, containing all {@link Filter}s associated with Elepy.
+     * @see Filter
+     */
+    public Filter getAllAdminFilters() {
+        return (request, response) -> {
+            for (Filter adminFilter : adminFilters) {
+                adminFilter.handle(request, response);
+            }
+        };
+    }
+
+    @Override
     public ObjectMapper getObjectMapper() {
         return this.context.getObjectMapper();
     }
 
+    @Override
+    public <T> T getSingleton(Class<T> cls, String tag) {
+        return context.getSingleton(cls, tag);
+    }
 
+    /**
+     * The default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
+     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     * using the default {@link MongoProvider}
+     *
+     * @return the provider
+     * @see CrudProvider
+     * @see MongoProvider
+     * @see com.elepy.dao.Crud
+     */
+    public Class<? extends CrudProvider> getDefaultCrudProvider() {
+        return defaultCrudProvider;
+    }
+
+    /**
+     * The base URI of Elepy.
+     *
+     * @return the base slug, default: "/"
+     */
     public String getBaseSlug() {
         return this.baseSlug;
     }
 
+
+    /**
+     * Attaches a MongoDB to Elepy.
+     *
+     * @param db the MongoDB
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #attachSingleton(Class, Object)
+     */
+    public Elepy connectDB(DB db) {
+        this.attachSingleton(DB.class, db);
+        return this;
+    }
+
+    /**
+     * Adds a Spark {@link Filter} to controlled routes.
+     *
+     * @param filter the {@link Filter}
+     * @return The {@link com.elepy.Elepy} instance
+     * @see Filter
+     */
+    public Elepy addAdminFilter(Filter filter) {
+        adminFilters.add(filter);
+        return this;
+    }
+
+    /**
+     * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
+     * Consider adding the ElepyAdminPanel(in the elepy-admin dependency).
+     *
+     * @param module The module
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy addExtension(ElepyModule module) {
+        if (initialized) {
+            throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start().");
+        }
+        modules.add(module);
+        return this;
+    }
+
+    /**
+     * Adds a model to the Elepy instance
+     *
+     * @param clazz The class of the model you want to add. The class must also be annotated with
+     *              {@link com.elepy.annotations.RestModel}
+     * @return The {@link com.elepy.Elepy} instance
+     * @see RestModel
+     */
+    public Elepy addModel(Class<?> clazz) {
+        return addModels(clazz);
+    }
+
+    /**
+     * Adds an array of models to the Elepy instance
+     *
+     * @param classes An array of model classes. All classes must be annotated with
+     *                {@link com.elepy.annotations.RestModel}
+     * @return The {@link com.elepy.Elepy} instance
+     * @see RestModel
+     */
+    public Elepy addModels(Class<?>... classes) {
+        models.addAll(Arrays.asList(classes));
+        return this;
+    }
+
+
+    /**
+     * Attaches a context object to the Elepy instance. This object would then later be used
+     * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
+     * object is a Database for Elepy or another component to use.
+     * <p>
+     * The context object is bound with a unique key. The key is a combination of the object's class
+     * and a tag. This makes it so that you can bind multiple objects of the same type(such as
+     * multiple DB classes) with different tags.
+     * <p>
+     * This object can be accessed via {@link ElepyContext#getSingleton(Class, String)}
+     *
+     * @param cls    The class type of the object
+     * @param tag    An optional name
+     * @param object The object
+     * @param <T>    The type of the object
+     * @return The {@link com.elepy.Elepy} instance
+     * @see ElepyContext
+     */
+    public <T> Elepy attachSingleton(Class<T> cls, String tag, T object) {
+        context.attachSingleton(cls, tag, object);
+        return this;
+    }
+
+    /**
+     * Attaches a context object with a null tag.
+     * <p>
+     * See {@link #attachSingleton(Class, String, Object)} for a more detailed description.
+     *
+     * @param cls    The class type of the object
+     * @param object The object
+     * @param <T>    The type of the object
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #attachSingleton(Class, String, Object)
+     */
+    public <T> Elepy attachSingleton(Class<T> cls, T object) {
+        context.attachSingleton(cls, object);
+        return this;
+    }
+
+    /**
+     * Attaches a context object with a null tag, and guesses it's class type.
+     * <p>
+     * See {@link #attachSingleton(Class, String, Object)} for a more detailed description.
+     *
+     * @param object The object
+     * @param <T>    Any type of object
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #attachSingleton(Class, String, Object)
+     */
+    public <T> Elepy attachSingleton(T object) {
+        context.attachSingleton(object);
+        return this;
+    }
+
+    /**
+     * Attaches a context object and guesses it's class type.
+     * <p>
+     * See {@link #attachSingleton(Class, String, Object)} for a more detailed description.
+     *
+     * @param object The object
+     * @param tag    An optional name
+     * @param <T>    Any type of object
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #attachSingleton(Class, String, Object)
+     */
+    public <T> Elepy attachSingleton(T object, String tag) {
+        context.attachSingleton(object, tag);
+        return this;
+    }
+
+    /**
+     * Adds a package of models annotated with {@link RestModel} in a package.
+     * <p>
+     * Elepy then uses reflection to scan this package for {@link RestModel}s.
+     *
+     * @param packageName the package to scan.
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #addModels(Class[])
+     */
+    public Elepy addModelPackage(String packageName) {
+        this.packages.add(packageName);
+        return this;
+    }
+
+    /**
+     * Changes the base URI of Elepy models.
+     *
+     * @param baseSlug the base URI of elepy
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #withConfigSlug(String)
+     */
     public Elepy withBaseSlug(String baseSlug) {
         checkConfig();
         this.baseSlug = baseSlug;
         return this;
     }
 
-    public String getConfigSlug() {
-        return this.configSlug;
-    }
-
-    public Elepy withConfigSlug(String configSlug) {
-        checkConfig();
-        this.configSlug = configSlug;
-        return this;
-    }
-
+    /**
+     * Change the port Elepy listens on.
+     *
+     * @param port the port Elepy listens on
+     * @return The {@link com.elepy.Elepy} instance
+     */
     public Elepy onPort(int port) {
         checkConfig();
         http.port(port);
         return this;
     }
 
-    public Service http() {
-        return http;
-    }
-
-    public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return this.baseObjectEvaluator;
-    }
-
+    /**
+     * Changes the default {@link ObjectEvaluator} to your own implementation
+     * This is used to determine an object's validity. It can also be changed per
+     * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
+     *
+     * @param baseObjectEvaluator
+     * @return The {@link com.elepy.Elepy} instance
+     * @see ObjectEvaluator
+     * @see com.elepy.annotations.Evaluators
+     */
     public Elepy withBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
         checkConfig();
         this.baseObjectEvaluator = baseObjectEvaluator;
         return this;
     }
 
-    public List<Map<String, Object>> getDescriptors() {
-        return this.descriptors;
+    /**
+     * Changes the URI for the configuration of the Elepy instance.
+     * This is where Elepy describes it's models
+     *
+     * @param configSlug the URI for the configuration description
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy withConfigSlug(String configSlug) {
+        checkConfig();
+        this.configSlug = configSlug;
+        return this;
     }
 
-    public boolean isInitialized() {
-        return this.initialized;
+    /**
+     * Changes the default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
+     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     * using the default {@link MongoProvider}
+     *
+     * @param defaultCrudProvider
+     * @return The {@link com.elepy.Elepy} instance
+     * @see CrudProvider
+     * @see MongoProvider
+     * @see com.elepy.dao.Crud
+     */
+    public Elepy withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
+        this.defaultCrudProvider = defaultCrudProvider;
+        return this;
     }
+
+    /**
+     * Changes the IP address of the Elepy instance.
+     *
+     * @param ipAddress the IP address.
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy withIPAdress(String ipAddress) {
+        checkConfig();
+        http.ipAddress(ipAddress);
+        return this;
+    }
+
 }

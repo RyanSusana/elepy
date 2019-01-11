@@ -27,8 +27,8 @@ public class PluginHandler {
 
     public void setupRoutes() {
 
-        adminPanel.http().before("/plugins/*", (request, response) -> adminPanel.elepy().allAdminFilters().handle(request, response));
-        adminPanel.http().before("/plugins/*/*", (request, response) -> adminPanel.elepy().allAdminFilters().handle(request, response));
+        adminPanel.http().before("/plugins/*", (request, response) -> adminPanel.elepy().getAllAdminFilters().handle(request, response));
+        adminPanel.http().before("/plugins/*/*", (request, response) -> adminPanel.elepy().getAllAdminFilters().handle(request, response));
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
             plugin.setup(adminPanel.http(), adminPanel.elepy());
             adminPanel.http().get("/plugins/" + plugin.getSlug(), (request, response) -> {

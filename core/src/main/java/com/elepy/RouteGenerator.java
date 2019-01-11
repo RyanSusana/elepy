@@ -31,7 +31,7 @@ public class RouteGenerator<T> {
         this.clazz = tClass;
         this.http = elepy.http();
         this.baseSlug = elepy.getBaseSlug();
-        this.adminFilter = elepy.allAdminFilters();
+        this.adminFilter = elepy.getAllAdminFilters();
         this.elepy = elepy;
 
     }
