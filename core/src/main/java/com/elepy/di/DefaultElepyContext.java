@@ -37,7 +37,7 @@ public class DefaultElepyContext implements ElepyContext {
             return t;
         }
 
-        throw new ElepyConfigException(String.format("No singleton for %s available", cls.getName()));
+        throw new ElepyConfigException(String.format("No context object for %s available", cls.getName()));
     }
 
 

@@ -1,6 +1,7 @@
 package com.elepy.utils;
 
 import com.elepy.annotations.Identifier;
+import com.elepy.annotations.Inject;
 import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.Unique;
 import com.elepy.di.ElepyContext;
@@ -134,9 +135,10 @@ public class ClassUtils {
 
 
     public static <T> T initializeElepyObject(Class<? extends T> cls, ElepyContext elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        T e = initializeElepyObjectConstructor(cls, elepy);
-        injectElepyContextFields(elepy, e);
-        return e;
+        T object = initializeElepyObjectConstructor(cls, elepy);
+        injectElepyContextFields(elepy, object);
+        injectFields(elepy, object);
+        return object;
     }
 
     private static void injectElepyContextFields(ElepyContext elepyContext, Object object) throws IllegalAccessException {
@@ -145,6 +147,16 @@ public class ClassUtils {
             if (field.getType().equals(ElepyContext.class) && field.get(object) == null) {
                 field.set(object, elepyContext);
             }
+        }
+    }
+
+    private static void injectFields(ElepyContext elepyContext, Object object) throws IllegalAccessException {
+        List<Field> fields = searchForFieldsWithAnnotation(object.getClass(), Inject.class);
+
+        for (Field field : fields) {
+            Inject annotation = field.getAnnotation(Inject.class);
+            Object contextObject = elepyContext.getSingleton(field.getType(), annotation.tag());
+            field.set(object, contextObject);
         }
     }
 
