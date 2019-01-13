@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Inject {
     String tag() default "";
+
+    Class classType() default Object.class;
 }

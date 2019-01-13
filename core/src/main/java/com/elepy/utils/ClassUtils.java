@@ -4,6 +4,7 @@ import com.elepy.annotations.Identifier;
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.Unique;
+import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
@@ -82,7 +83,6 @@ public class ClassUtils {
 
 
     public static Optional<Field> getIdField(Class cls) {
-
         Optional<Field> annotated = searchForFieldWithAnnotation(cls, Identifier.class, MongoId.class, Id.class);
         if (annotated.isPresent()) {
             return annotated;
@@ -95,7 +95,6 @@ public class ClassUtils {
         final Optional<Constructor<? extends T>> emptyConstructor = getEmptyConstructor(cls);
 
         if (emptyConstructor.isPresent()) {
-
             return emptyConstructor.get();
         }
         throw new ElepyConfigException("Elepy Object Constructor must be empty, with no parameters.");
@@ -155,7 +154,16 @@ public class ClassUtils {
 
         for (Field field : fields) {
             Inject annotation = field.getAnnotation(Inject.class);
-            Object contextObject = elepyContext.getSingleton(field.getType(), annotation.tag());
+            final Object contextObject;
+            if (annotation.classType().equals(Object.class)) {
+                if (Crud.class.isAssignableFrom(field.getType())) {
+                    contextObject = elepyContext.getSingleton(Crud.class, annotation.tag());
+                } else {
+                    contextObject = elepyContext.getSingleton(field.getType(), annotation.tag());
+                }
+            } else {
+                contextObject = elepyContext.getSingleton(annotation.classType(), annotation.tag());
+            }
             field.set(object, contextObject);
         }
     }
@@ -199,9 +207,7 @@ public class ClassUtils {
         final List<Field> fields = searchForFieldsWithAnnotation(cls, Column.class);
 
         for (Field field : fields) {
-
             final Column unique = field.getAnnotation(Column.class);
-
             if (unique.unique()) {
                 return true;
             }
