@@ -8,7 +8,7 @@ public class ContextKey<T> {
 
     public ContextKey(Class<T> classType, String tag) {
         this.classType = classType;
-        this.tag = tag;
+        this.tag = tag == null ? "" : tag;
     }
 
     public Class<T> getClassType() {

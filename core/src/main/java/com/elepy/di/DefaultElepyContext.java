@@ -22,7 +22,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public <T> void attachSingleton(T object, String tag) {
-        contextMap.put(new ContextKey(object.getClass(), tag), object);
+        contextMap.put(new ContextKey<>(object.getClass(), tag), object);
     }
 
     public <T> void attachSingleton(Class<T> cls, String tag, T object) {
