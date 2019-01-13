@@ -2,6 +2,7 @@ package com.elepy.annotations;
 
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.DefaultDelete;
+import com.elepy.routes.DeleteHandler;
 import com.elepy.routes.RouteHandler;
 
 import java.lang.annotation.ElementType;
@@ -32,6 +33,6 @@ public @interface Delete {
      * @see com.elepy.routes.DeleteHandler
      * @see RouteHandler
      */
-    Class<? extends RouteHandler> handler() default DefaultDelete.class;
+    Class<? extends DeleteHandler> handler() default DefaultDelete.class;
 
 }

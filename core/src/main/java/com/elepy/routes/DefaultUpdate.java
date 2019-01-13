@@ -18,7 +18,7 @@ import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.*;
 
-public class DefaultUpdate<T> implements RouteHandler<T> {
+public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     private T beforeUpdate;
 
@@ -129,7 +129,7 @@ public class DefaultUpdate<T> implements RouteHandler<T> {
     }
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         this.update(request, response, dao, elepy, objectEvaluators, clazz);
     }
 }

@@ -17,7 +17,7 @@ import spark.Response;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultCreate<T> implements RouteHandler<T> {
+public class DefaultCreate<T> implements CreateHandler<T> {
 
 
     public T create(Response response, T product, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
@@ -57,7 +57,7 @@ public class DefaultCreate<T> implements RouteHandler<T> {
     }
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleCreate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
         ObjectMapper objectMapper = elepy.getObjectMapper();

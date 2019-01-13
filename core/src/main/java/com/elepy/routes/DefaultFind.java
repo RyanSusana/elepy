@@ -13,7 +13,7 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultFind<T> implements RouteHandler<T> {
+public class DefaultFind<T> implements FindHandler<T> {
 
 
     public void find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
@@ -53,7 +53,7 @@ public class DefaultFind<T> implements RouteHandler<T> {
 
 
     @Override
-    public void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws JsonProcessingException {
+    public void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws JsonProcessingException {
         if (request.params("id") != null && !request.params("id").isEmpty()) {
             findOne(request, response, crud, elepy.getObjectMapper());
         } else {
