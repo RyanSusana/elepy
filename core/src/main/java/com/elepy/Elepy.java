@@ -23,6 +23,10 @@ import spark.Service;
 
 import java.util.*;
 
+/**
+ * The base Elepy class. Call {@link #start()} to start the configuration and execution of
+ * the Elepy instance.
+ */
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
