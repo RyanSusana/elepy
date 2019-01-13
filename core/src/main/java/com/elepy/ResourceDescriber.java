@@ -24,10 +24,10 @@ public class ResourceDescriber<T> {
     private final Elepy elepy;
     private final StructureDescriber structureDescriber;
     private Class<T> clazz;
-    private RouteHandler<T> deleteImplementation;
-    private RouteHandler<T> updateImplementation;
-    private RouteHandler<T> findImplementation;
-    private RouteHandler<T> createImplementation;
+    private DeleteHandler<T> deleteImplementation;
+    private UpdateHandler<T> updateImplementation;
+    private FindHandler<T> findImplementation;
+    private CreateHandler<T> createImplementation;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
     private AccessLevel deleteAccessLevel;
@@ -109,7 +109,7 @@ public class ResourceDescriber<T> {
             deleteImplementation = new DefaultDelete<>();
             deleteAccessLevel = AccessLevel.ADMIN;
         } else {
-            final Constructor<? extends RouteHandler> constructor = ClassUtils.emptyConstructor(deleteAnnotation.handler());
+            final Constructor<? extends DeleteHandler> constructor = ClassUtils.emptyConstructor(deleteAnnotation.handler());
             deleteImplementation = constructor.newInstance();
             deleteAccessLevel = deleteAnnotation.accessLevel();
         }
@@ -118,7 +118,7 @@ public class ResourceDescriber<T> {
             updateAccessLevel = AccessLevel.ADMIN;
             updateImplementation = new DefaultUpdate<>();
         } else {
-            final Constructor<? extends RouteHandler> constructor = ClassUtils.emptyConstructor(updateAnnotation.handler());
+            final Constructor<? extends UpdateHandler> constructor = ClassUtils.emptyConstructor(updateAnnotation.handler());
             updateImplementation = constructor.newInstance();
             updateAccessLevel = updateAnnotation.accessLevel();
         }
@@ -127,7 +127,7 @@ public class ResourceDescriber<T> {
             findAccessLevel = AccessLevel.PUBLIC;
             findImplementation = new DefaultFind<>();
         } else {
-            final Constructor<? extends RouteHandler> constructor = ClassUtils.emptyConstructor(findAnnotation.handler());
+            final Constructor<? extends FindHandler> constructor = ClassUtils.emptyConstructor(findAnnotation.handler());
             findImplementation = constructor.newInstance();
             findAccessLevel = findAnnotation.accessLevel();
         }
@@ -136,7 +136,7 @@ public class ResourceDescriber<T> {
             createAccessLevel = AccessLevel.PUBLIC;
             createImplementation = new DefaultCreate<>();
         } else {
-            final Constructor<? extends RouteHandler> constructor = ClassUtils.emptyConstructor(createAnnotation.handler());
+            final Constructor<? extends CreateHandler> constructor = ClassUtils.emptyConstructor(createAnnotation.handler());
             createImplementation = constructor.newInstance();
             createAccessLevel = createAnnotation.accessLevel();
         }
