@@ -10,7 +10,7 @@ The core module of Elepy, can be installed with maven. This includes the API gen
 <dependency>
     <groupId>com.elepy</groupId>
     <artifactId>elepy-core</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.2</version>
 </dependency>
 ```
 
@@ -20,7 +20,7 @@ This is the admin module of Elepy. It contains the powerful content management s
 <dependency>
     <groupId>com.elepy</groupId>
     <artifactId>elepy-admin</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.2</version>
 </dependency>
 ```
 
