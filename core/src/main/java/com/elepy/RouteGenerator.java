@@ -56,34 +56,34 @@ public class RouteGenerator<T> {
             setupFilters(restModel);
             if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.post(baseSlug + restModel.getSlug(), (request, response) -> {
-                    restModel.getCreateImplementation().handleCreate(request, response, dao, elepy.getContext(), evaluators, clazz);
+                    restModel.getService().handleCreate(request, response, dao, elepy.getContext(), evaluators, clazz);
 
                     return response.body();
                 });
             }
             if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.put(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                    restModel.getUpdateImplementation().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
+                    restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
 
                     return response.body();
                 });
 
                 http.patch(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                    restModel.getUpdateImplementation().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
+                    restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
 
                     return response.body();
                 });
             }
             if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
-                    restModel.getDeleteImplementation().handleDelete(request, response, dao, elepy.getContext(), evaluators, clazz);
+                    restModel.getService().handleDelete(request, response, dao, elepy.getContext(), evaluators, clazz);
 
                     return response.body();
                 }));
             }
             if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.get(baseSlug + restModel.getSlug(), (request, response) -> {
-                    restModel.getFindImplementation().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
+                    restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
 
                     return response.body();
                 });
@@ -91,7 +91,7 @@ public class RouteGenerator<T> {
             }
             if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                    restModel.getFindImplementation().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
+                    restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
 
                     return response.body();
                 });

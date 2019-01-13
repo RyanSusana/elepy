@@ -8,12 +8,20 @@ import spark.Response;
 
 import java.util.List;
 
-public class DefaultService<T> implements FindHandler<T>, CreateHandler<T>, UpdateHandler<T>, DeleteHandler<T> {
+class FinalService<T> implements Service<T> {
 
-    private DefaultFind<T> find;
-    private DefaultCreate<T> create;
-    private DefaultUpdate<T> update;
-    private DefaultDelete<T> delete;
+    private final FindHandler<T> find;
+    private final CreateHandler<T> create;
+    private final UpdateHandler<T> update;
+    private final DeleteHandler<T> delete;
+
+
+    FinalService(FindHandler<T> find, CreateHandler<T> create, UpdateHandler<T> update, DeleteHandler<T> delete) {
+        this.find = find;
+        this.create = create;
+        this.update = update;
+        this.delete = delete;
+    }
 
     @Override
     public void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
@@ -34,4 +42,5 @@ public class DefaultService<T> implements FindHandler<T>, CreateHandler<T>, Upda
     public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         update.handleUpdate(request, response, dao, elepy, objectEvaluators, clazz);
     }
+
 }

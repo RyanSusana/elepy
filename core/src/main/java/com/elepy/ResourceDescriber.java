@@ -24,10 +24,6 @@ public class ResourceDescriber<T> {
     private final Elepy elepy;
     private final StructureDescriber structureDescriber;
     private Class<T> clazz;
-    private DeleteHandler<T> deleteImplementation;
-    private UpdateHandler<T> updateImplementation;
-    private FindHandler<T> findImplementation;
-    private CreateHandler<T> createImplementation;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
     private AccessLevel deleteAccessLevel;
@@ -38,6 +34,14 @@ public class ResourceDescriber<T> {
     private String slug;
     private String description;
     private String name;
+
+
+    private DeleteHandler<T> deleteImplementation;
+    private UpdateHandler<T> updateImplementation;
+    private FindHandler<T> findImplementation;
+    private CreateHandler<T> createImplementation;
+
+    private Service<T> service;
 
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.clazz = clazz;
@@ -99,6 +103,9 @@ public class ResourceDescriber<T> {
     }
 
     private void routeAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+
+        ServiceBuilder<T> serviceBuilder = new ServiceBuilder<>();
+
         final com.elepy.annotations.Delete deleteAnnotation = clazz.getAnnotation(com.elepy.annotations.Delete.class);
         final com.elepy.annotations.Update updateAnnotation = clazz.getAnnotation(com.elepy.annotations.Update.class);
         final com.elepy.annotations.Find findAnnotation = clazz.getAnnotation(com.elepy.annotations.Find.class);
@@ -112,6 +119,7 @@ public class ResourceDescriber<T> {
             final Constructor<? extends DeleteHandler> constructor = ClassUtils.emptyConstructor(deleteAnnotation.handler());
             deleteImplementation = constructor.newInstance();
             deleteAccessLevel = deleteAnnotation.accessLevel();
+            serviceBuilder.delete(deleteImplementation);
         }
 
         if (updateAnnotation == null) {
@@ -121,6 +129,7 @@ public class ResourceDescriber<T> {
             final Constructor<? extends UpdateHandler> constructor = ClassUtils.emptyConstructor(updateAnnotation.handler());
             updateImplementation = constructor.newInstance();
             updateAccessLevel = updateAnnotation.accessLevel();
+            serviceBuilder.update(updateImplementation);
         }
 
         if (findAnnotation == null) {
@@ -130,6 +139,7 @@ public class ResourceDescriber<T> {
             final Constructor<? extends FindHandler> constructor = ClassUtils.emptyConstructor(findAnnotation.handler());
             findImplementation = constructor.newInstance();
             findAccessLevel = findAnnotation.accessLevel();
+            serviceBuilder.find(findImplementation);
         }
 
         if (createAnnotation == null) {
@@ -139,7 +149,9 @@ public class ResourceDescriber<T> {
             final Constructor<? extends CreateHandler> constructor = ClassUtils.emptyConstructor(createAnnotation.handler());
             createImplementation = constructor.newInstance();
             createAccessLevel = createAnnotation.accessLevel();
+            serviceBuilder.create(createImplementation);
         }
+        service = serviceBuilder.build();
 
     }
 
@@ -149,6 +161,11 @@ public class ResourceDescriber<T> {
 
     public Class<T> getClazz() {
         return clazz;
+    }
+
+
+    public Service<T> getService() {
+        return service;
     }
 
     public DeleteHandler<T> getDeleteImplementation() {
