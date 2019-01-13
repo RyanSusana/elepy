@@ -16,7 +16,7 @@ The core module of Elepy, can be installed with maven. This includes the API gen
 
 ### Elepy Admin
 This is the admin module of Elepy. It contains the powerful content management system.
-```
+``` xml
 <dependency>
     <groupId>com.elepy</groupId>
     <artifactId>elepy-admin</artifactId>
@@ -27,7 +27,7 @@ This is the admin module of Elepy. It contains the powerful content management s
 ## Quick Start
 ### Step One: Create and annotate your POJO's
 Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and /slug of your model. You should also take a look at [the awesome collection of Elepy annotations](#annotations). 
-```
+``` java
 @RestModel(name = "Products", slug = "/products")
 public class Product {
 
@@ -55,7 +55,7 @@ public class Product {
 }
 ```
 ### Step Two: Configure Elepy
-```
+``` java
 public static void main(String[] args) {
     DB database = mongo.getDB("product-database");
 
