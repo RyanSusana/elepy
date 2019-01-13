@@ -23,7 +23,7 @@ import java.util.List;
 public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleCreate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
 
         try {
 
@@ -34,7 +34,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             beforeCreate(item, dao, elepy);
 
-            super.handle(request, response, dao, elepy, objectEvaluators, clazz);
+            super.handleCreate(request, response, dao, elepy, objectEvaluators, clazz);
 
             afterCreate(item, dao, elepy);
             response.status(200);

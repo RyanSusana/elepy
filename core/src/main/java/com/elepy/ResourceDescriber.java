@@ -151,19 +151,19 @@ public class ResourceDescriber<T> {
         return clazz;
     }
 
-    public RouteHandler<T> getDeleteImplementation() {
+    public DeleteHandler<T> getDeleteImplementation() {
         return deleteImplementation;
     }
 
-    public RouteHandler<T> getUpdateImplementation() {
+    public UpdateHandler<T> getUpdateImplementation() {
         return updateImplementation;
     }
 
-    public RouteHandler<T> getFindImplementation() {
+    public FindHandler<T> getFindImplementation() {
         return findImplementation;
     }
 
-    public RouteHandler<T> getCreateImplementation() {
+    public CreateHandler<T> getCreateImplementation() {
         return createImplementation;
     }
 

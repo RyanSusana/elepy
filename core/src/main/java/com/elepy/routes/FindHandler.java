@@ -8,7 +8,7 @@ import spark.Response;
 
 import java.util.List;
 
-public interface FindHandler<T> extends RouteHandler<T> {
+public interface FindHandler<T> {
     /**
      * This handles the functionality of model querying.
      *
@@ -23,10 +23,4 @@ public interface FindHandler<T> extends RouteHandler<T> {
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
     void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
-
-
-    @Override
-    default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        handleFind(request, response, crud, elepy, objectEvaluators, clazz);
-    }
 }

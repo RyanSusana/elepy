@@ -8,7 +8,7 @@ import spark.Response;
 
 import java.util.List;
 
-public interface CreateHandler<T> extends RouteHandler<T> {
+public interface CreateHandler<T> {
 
     /**
      * This handles the functionality of model creation.
@@ -25,8 +25,4 @@ public interface CreateHandler<T> extends RouteHandler<T> {
      */
     void handleCreate(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
 
-    @Override
-    default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        handleCreate(request, response, crud, elepy, objectEvaluators, clazz);
-    }
 }

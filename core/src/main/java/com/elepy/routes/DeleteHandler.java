@@ -9,7 +9,7 @@ import spark.Response;
 import java.util.List;
 
 
-public interface DeleteHandler<T> extends RouteHandler<T> {
+public interface DeleteHandler<T> {
     /**
      * This handles the functionality of model deletion.
      *
@@ -25,8 +25,4 @@ public interface DeleteHandler<T> extends RouteHandler<T> {
      */
     void handleDelete(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
 
-    @Override
-    default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        handleDelete(request, response, crud, elepy, objectEvaluators, clazz);
-    }
 }

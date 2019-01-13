@@ -23,7 +23,7 @@ import java.util.Optional;
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     @Override
-    public void handle(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         String body = request.body();
 
         T item = elepy.getObjectMapper().readValue(body, clazz);
