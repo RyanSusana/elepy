@@ -1,6 +1,7 @@
 package com.elepy.dao;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Field;
@@ -30,7 +31,7 @@ public interface Crud<T> {
         if (id.isPresent()) {
             return id.get();
         }
-        throw new IllegalStateException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
+        throw new ElepyConfigException(item.getClass().getName() + ": has no annotation id. You must annotate the class with MongoId and if no id generator is specified, you must generate your own.");
 
     }
 

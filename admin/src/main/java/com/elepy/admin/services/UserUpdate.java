@@ -6,9 +6,9 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
+import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.routes.UpdateHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
@@ -16,14 +16,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserUpdate implements UpdateHandler<User> {
+
     @Override
-    public boolean update(Request request, Response response, Crud<User> dao, Class<? extends User> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<User>> objectEvaluators) throws Exception {
+    public void handleUpdate(Request request, Response response, Crud<User> crud, ElepyContext elepy, List<ObjectEvaluator<User>> objectEvaluators, Class<User> clazz) throws Exception {
         String body = request.body();
         User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);
-        User updated = objectMapper.readValue(body, clazz);
+        User updated = elepy.getObjectMapper().readValue(body, clazz);
 
 
-        Optional<User> before = dao.getById(dao.getId(updated));
+        Optional<User> before = crud.getById(crud.getId(updated));
 
 
         if (!before.isPresent()) {
@@ -48,15 +49,14 @@ public class UserUpdate implements UpdateHandler<User> {
         for (ObjectEvaluator<User> objectEvaluator : objectEvaluators) {
             objectEvaluator.evaluate(updated, User.class);
         }
-        new IntegrityEvaluatorImpl<User>().evaluate(updated, dao);
+        new IntegrityEvaluatorImpl<User>().evaluate(updated, crud);
         if (!updated.getPassword().equals(before.get().getPassword())) {
             updated = updated.hashWord();
         }
 
 
-        dao.update(updated);
+        crud.update(updated);
         response.status(200);
         response.body("The item is updated");
-        return true;
     }
 }

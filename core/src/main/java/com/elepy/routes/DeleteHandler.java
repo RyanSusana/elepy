@@ -3,7 +3,6 @@ package com.elepy.routes;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
@@ -11,15 +10,23 @@ import java.util.List;
 
 
 public interface DeleteHandler<T> extends RouteHandler<T> {
-    boolean delete(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
+    /**
+     * This handles the functionality of model deletion.
+     *
+     * @param request          The spark request
+     * @param response         The spark response
+     * @param crud             The crud implementation
+     * @param elepy            The elepy context
+     * @param objectEvaluators The list of evaluators
+     * @param clazz            The class type
+     * @throws Exception you can throw any exception and Elepy handles them nicely.
+     * @see com.elepy.exceptions.ElepyException
+     * @see com.elepy.exceptions.ElepyErrorMessage
+     */
+    void handleDelete(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
 
     @Override
     default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        final boolean delete = delete(request, response, crud, elepy.getObjectMapper());
-
-        if (delete) {
-            response.body("OK");
-            response.status(200);
-        }
+        handleDelete(request, response, crud, elepy, objectEvaluators, clazz);
     }
 }

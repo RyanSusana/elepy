@@ -3,7 +3,6 @@ package com.elepy.routes;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
@@ -11,15 +10,23 @@ import java.util.List;
 
 
 public interface UpdateHandler<T> extends RouteHandler<T> {
-    boolean update(Request request, Response response, Crud<T> dao, Class<? extends T> clazz, ObjectMapper objectMapper, List<ObjectEvaluator<T>> objectEvaluators) throws Exception;
+    /**
+     * This handles the functionality of model updates.
+     *
+     * @param request          The spark request
+     * @param response         The spark response
+     * @param crud             The crud implementation
+     * @param elepy            The elepy context
+     * @param objectEvaluators The list of evaluators
+     * @param clazz            The class type
+     * @throws Exception you can throw any exception and Elepy handles them nicely.
+     * @see com.elepy.exceptions.ElepyException
+     * @see com.elepy.exceptions.ElepyErrorMessage
+     */
+    void handleUpdate(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
 
     @Override
     default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        final boolean update = update(request, response, crud, clazz, elepy.getObjectMapper(), objectEvaluators);
-
-        if (update) {
-            response.body("OK");
-            response.status(200);
-        }
+        handleUpdate(request, response, crud, elepy, objectEvaluators, clazz);
     }
 }

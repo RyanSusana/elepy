@@ -2,27 +2,31 @@ package com.elepy.routes;
 
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Page;
 import com.elepy.di.ElepyContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FindHandler<T> extends RouteHandler<T> {
-    Page<T> find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
-
-    Optional<T> findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper);
+    /**
+     * This handles the functionality of model querying.
+     *
+     * @param request          The spark request
+     * @param response         The spark response
+     * @param crud             The crud implementation
+     * @param elepy            The elepy context
+     * @param objectEvaluators The list of evaluators
+     * @param clazz            The class type
+     * @throws Exception you can throw any exception and Elepy handles them nicely.
+     * @see com.elepy.exceptions.ElepyException
+     * @see com.elepy.exceptions.ElepyErrorMessage
+     */
+    void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
 
 
     @Override
     default void handle(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        if (request.params("id") != null && !request.params("id").isEmpty()) {
-            findOne(request, response, crud, elepy.getObjectMapper());
-        } else {
-            find(request, response, crud, elepy.getObjectMapper());
-        }
+        handleFind(request, response, crud, elepy, objectEvaluators, clazz);
     }
 }
