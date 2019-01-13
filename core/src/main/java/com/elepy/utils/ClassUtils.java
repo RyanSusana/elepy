@@ -3,6 +3,8 @@ package com.elepy.utils;
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.Unique;
+import com.elepy.di.ElepyContext;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
@@ -12,6 +14,7 @@ import javax.persistence.Id;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,14 +90,14 @@ public class ClassUtils {
         }
     }
 
-    public static <T> Constructor<T> emptyConstructor(Class<T> cls) {
-        final Optional<Constructor> emptyConstructor = getEmptyConstructor(cls);
+    public static <T> Constructor<? extends T> emptyConstructor(Class<T> cls) {
+        final Optional<Constructor<? extends T>> emptyConstructor = getEmptyConstructor(cls);
 
         if (emptyConstructor.isPresent()) {
 
-            return (Constructor<T>) emptyConstructor.get();
+            return emptyConstructor.get();
         }
-        throw new IllegalArgumentException("Elepy Object Constructor must be empty, with no parameters.");
+        throw new ElepyConfigException("Elepy Object Constructor must be empty, with no parameters.");
 
     }
 
@@ -115,10 +118,58 @@ public class ClassUtils {
         return Optional.empty();
     }
 
-    public static Optional<Constructor> getEmptyConstructor(Class<?> cls) {
+    public static <T> Optional<Constructor<? extends T>> getEmptyConstructor(Class<?> cls) {
+        return getConstructor(cls, 0);
+    }
+
+    public static <T> Optional<Constructor<? extends T>> getElepyConstructor(Class<?> cls) {
         for (Constructor constructor : cls.getConstructors()) {
-            if (constructor.getParameterCount() == 0) {
-                return Optional.of(constructor);
+            if (constructor.getParameterCount() == 1 && (constructor.getParameterTypes()[0].equals(ElepyContext.class))) {
+                return Optional.of((Constructor<T>) constructor);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+
+    public static <T> T initializeElepyObject(Class<? extends T> cls, ElepyContext elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        T e = initializeElepyObjectConstructor(cls, elepy);
+        injectElepyContextFields(elepy, e);
+        return e;
+    }
+
+    private static void injectElepyContextFields(ElepyContext elepyContext, Object object) throws IllegalAccessException {
+        for (Field field : object.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if (field.getType().equals(ElepyContext.class) && field.get(object) == null) {
+                field.set(object, elepyContext);
+            }
+        }
+    }
+
+    private static <T> T initializeElepyObjectConstructor(Class<? extends T> cls, ElepyContext elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+
+        Optional<Constructor<? extends T>> emptyConstructor =
+                ClassUtils.getEmptyConstructor(cls);
+
+        if (emptyConstructor.isPresent()) {
+            return emptyConstructor.get().newInstance();
+        } else {
+            Optional<Constructor<? extends T>> elepyConstructor =
+                    ClassUtils.getElepyConstructor(cls);
+
+            if (!elepyConstructor.isPresent()) {
+                throw new ElepyConfigException(String.format("Can't initialize %s. It has no empty constructor or a constructor with just one ElepyContext.", cls.getName()));
+            }
+            return elepyConstructor.get().newInstance(elepy);
+        }
+    }
+
+    public static <T> Optional<Constructor<? extends T>> getConstructor(Class<?> cls, int amountOfParams) {
+        for (Constructor constructor : cls.getConstructors()) {
+            if (constructor.getParameterCount() == amountOfParams) {
+                return Optional.of((Constructor<T>) constructor);
             }
         }
 

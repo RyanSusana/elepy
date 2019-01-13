@@ -10,7 +10,8 @@ import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.AccessLevel;
-import com.elepy.routes.*;
+import com.elepy.routes.ServiceBuilder;
+import com.elepy.routes.ServiceHandler;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Constructor;
@@ -26,22 +27,17 @@ public class ResourceDescriber<T> {
     private Class<T> clazz;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
-    private AccessLevel deleteAccessLevel;
-    private AccessLevel findAccessLevel;
-    private AccessLevel updateAccessLevel;
-    private AccessLevel createAccessLevel;
+    private AccessLevel deleteAccessLevel = AccessLevel.ADMIN;
+    private AccessLevel findAccessLevel = AccessLevel.PUBLIC;
+    private AccessLevel updateAccessLevel = AccessLevel.ADMIN;
+    private AccessLevel createAccessLevel = AccessLevel.ADMIN;
     private List<ObjectEvaluator<T>> objectEvaluators;
     private String slug;
     private String description;
     private String name;
 
 
-    private DeleteHandler<T> deleteImplementation;
-    private UpdateHandler<T> updateImplementation;
-    private FindHandler<T> findImplementation;
-    private CreateHandler<T> createImplementation;
-
-    private Service<T> service;
+    private ServiceHandler<T> service;
 
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.clazz = clazz;
@@ -50,19 +46,17 @@ public class ResourceDescriber<T> {
         try {
             setupAnnotations();
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new RuntimeException(e);
+            throw new ElepyConfigException("Failed to setup elepy, while trying to process Reflection");
         }
 
     }
 
 
     private void setupAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-
         setupDao();
         routeAnnotations();
         baseAnnotations();
         setupEvaluators();
-
     }
 
     private void setupDao() throws IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -102,54 +96,39 @@ public class ResourceDescriber<T> {
         this.description = annotation.description();
     }
 
+
     private void routeAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         ServiceBuilder<T> serviceBuilder = new ServiceBuilder<>();
 
+        final com.elepy.annotations.Service serviceAnnotation = clazz.getAnnotation(com.elepy.annotations.Service.class);
         final com.elepy.annotations.Delete deleteAnnotation = clazz.getAnnotation(com.elepy.annotations.Delete.class);
         final com.elepy.annotations.Update updateAnnotation = clazz.getAnnotation(com.elepy.annotations.Update.class);
         final com.elepy.annotations.Find findAnnotation = clazz.getAnnotation(com.elepy.annotations.Find.class);
         final com.elepy.annotations.Create createAnnotation = clazz.getAnnotation(com.elepy.annotations.Create.class);
 
-
-        if (deleteAnnotation == null) {
-            deleteImplementation = new DefaultDelete<>();
-            deleteAccessLevel = AccessLevel.ADMIN;
-        } else {
-            final Constructor<? extends DeleteHandler> constructor = ClassUtils.emptyConstructor(deleteAnnotation.handler());
-            deleteImplementation = constructor.newInstance();
+        if (serviceAnnotation != null) {
+            ServiceHandler<T> initialService = ClassUtils.initializeElepyObject(serviceAnnotation.value(), elepy);
+            serviceBuilder.defaultFunctionality(initialService);
+        }
+        if (deleteAnnotation != null) {
             deleteAccessLevel = deleteAnnotation.accessLevel();
-            serviceBuilder.delete(deleteImplementation);
+            serviceBuilder.delete(ClassUtils.initializeElepyObject(deleteAnnotation.handler(), elepy));
         }
 
-        if (updateAnnotation == null) {
-            updateAccessLevel = AccessLevel.ADMIN;
-            updateImplementation = new DefaultUpdate<>();
-        } else {
-            final Constructor<? extends UpdateHandler> constructor = ClassUtils.emptyConstructor(updateAnnotation.handler());
-            updateImplementation = constructor.newInstance();
+        if (updateAnnotation != null) {
             updateAccessLevel = updateAnnotation.accessLevel();
-            serviceBuilder.update(updateImplementation);
+            serviceBuilder.update(ClassUtils.initializeElepyObject(updateAnnotation.handler(), elepy));
         }
 
-        if (findAnnotation == null) {
-            findAccessLevel = AccessLevel.PUBLIC;
-            findImplementation = new DefaultFind<>();
-        } else {
-            final Constructor<? extends FindHandler> constructor = ClassUtils.emptyConstructor(findAnnotation.handler());
-            findImplementation = constructor.newInstance();
+        if (findAnnotation != null) {
             findAccessLevel = findAnnotation.accessLevel();
-            serviceBuilder.find(findImplementation);
+            serviceBuilder.find(ClassUtils.initializeElepyObject(findAnnotation.handler(), elepy));
         }
 
-        if (createAnnotation == null) {
-            createAccessLevel = AccessLevel.PUBLIC;
-            createImplementation = new DefaultCreate<>();
-        } else {
-            final Constructor<? extends CreateHandler> constructor = ClassUtils.emptyConstructor(createAnnotation.handler());
-            createImplementation = constructor.newInstance();
+        if (createAnnotation != null) {
             createAccessLevel = createAnnotation.accessLevel();
-            serviceBuilder.create(createImplementation);
+            serviceBuilder.create(ClassUtils.initializeElepyObject(createAnnotation.handler(), elepy));
         }
         service = serviceBuilder.build();
 
@@ -164,24 +143,8 @@ public class ResourceDescriber<T> {
     }
 
 
-    public Service<T> getService() {
+    public ServiceHandler<T> getService() {
         return service;
-    }
-
-    public DeleteHandler<T> getDeleteImplementation() {
-        return deleteImplementation;
-    }
-
-    public UpdateHandler<T> getUpdateImplementation() {
-        return updateImplementation;
-    }
-
-    public FindHandler<T> getFindImplementation() {
-        return findImplementation;
-    }
-
-    public CreateHandler<T> getCreateImplementation() {
-        return createImplementation;
     }
 
     public AccessLevel getDeleteAccessLevel() {

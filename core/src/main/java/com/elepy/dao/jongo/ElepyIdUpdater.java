@@ -57,7 +57,7 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
         final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
         if (annotation != null) {
-            final Optional<Constructor> o = ClassUtils.getEmptyConstructor(annotation.value());
+            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.value());
             if (!o.isPresent()) {
                 throw new IllegalStateException(annotation.value() + " has no empty constructor.");
             }

@@ -13,22 +13,26 @@ public final class ServiceBuilder<T> {
         find = new DefaultFind<>();
     }
 
-    public ServiceBuilder find(FindHandler<T> find) {
+    public ServiceBuilder<T> defaultFunctionality(ServiceHandler<T> service) {
+        return find(service).create(service).update(service).delete(service);
+    }
+
+    public ServiceBuilder<T> find(FindHandler<T> find) {
         this.find = find;
         return this;
     }
 
-    public ServiceBuilder create(CreateHandler<T> create) {
+    public ServiceBuilder<T> create(CreateHandler<T> create) {
         this.create = create;
         return this;
     }
 
-    public ServiceBuilder update(UpdateHandler<T> update) {
+    public ServiceBuilder<T> update(UpdateHandler<T> update) {
         this.update = update;
         return this;
     }
 
-    public ServiceBuilder delete(DeleteHandler<T> delete) {
+    public ServiceBuilder<T> delete(DeleteHandler<T> delete) {
         this.delete = delete;
         return this;
     }

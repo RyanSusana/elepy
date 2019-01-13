@@ -6,6 +6,16 @@ import com.elepy.di.ElepyContext;
 import com.elepy.routes.SimpleUpdate;
 
 public class ResourceUpdate extends SimpleUpdate<Resource> {
+
+
+    private final ElepyContext elepyContext;
+
+
+    public ResourceUpdate(ElepyContext elepyContext) {
+        this.elepyContext = elepyContext;
+    }
+
+
     @Override
     public void beforeUpdate(Resource beforeVersion, Crud<Resource> crud, ElepyContext elepy) throws Exception {
 

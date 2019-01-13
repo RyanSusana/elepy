@@ -55,7 +55,7 @@ public class ViewHandler {
             });
         }
         for (Map<String, Object> descriptor : descriptors) {
-            defaultDecriptorPanel(descriptor, descriptors);
+            defaultDescriptorPanel(descriptor, descriptors);
         }
 
     }
@@ -84,7 +84,7 @@ public class ViewHandler {
 
                 final View annotation = cls.getAnnotation(View.class);
 
-                final Optional<Constructor> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
+                final Optional<Constructor<?>> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
 
                 final ResourceView resourceView = (ResourceView) emptyConstructor.get().newInstance();
                 resourceView.setDescriptor(descriptorMap.get(cls));
@@ -98,7 +98,7 @@ public class ViewHandler {
         return views;
     }
 
-    private void defaultDecriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
+    private void defaultDescriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
 
         adminPanel.http().get("/admin" + descriptor.get("slug"), (request, response) -> {
 
