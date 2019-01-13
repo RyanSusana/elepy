@@ -8,7 +8,7 @@ import spark.Response;
 
 import java.util.List;
 
-class FinalService<T> implements ServiceHandler<T> {
+public class FinalService<T> implements ServiceHandler<T> {
 
     private final FindHandler<T> find;
     private final CreateHandler<T> create;

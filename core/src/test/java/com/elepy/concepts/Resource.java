@@ -3,6 +3,7 @@ package com.elepy.concepts;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.models.AccessLevel;
+import com.elepy.models.ResourceService;
 import com.elepy.models.ResourceUpdate;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 @RestModel(name = "Test Resource", slug = "/resources")
+@Service(ResourceService.class)
 @Create(accessLevel = AccessLevel.PUBLIC)
 @Find(accessLevel = AccessLevel.PUBLIC)
 @Delete(accessLevel = AccessLevel.PUBLIC)

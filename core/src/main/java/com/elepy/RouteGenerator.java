@@ -48,7 +48,7 @@ public class RouteGenerator<T> {
         try {
             List<ObjectEvaluator<T>> evaluators = restModel.getObjectEvaluators();
 
-            final Crud<T> dao = restModel.getCrudProvider().crudFor(clazz, elepy);
+            final Crud<T> dao = elepy.getCrudFor(clazz); //restModel.getCrudProvider().crudFor(clazz, elepy);
 
             elepy.attachSingleton(Crud.class, restModel.getSlug(), dao);
             elepy.attachSingleton(CrudProvider.class, restModel.getSlug(), restModel.getCrudProvider());

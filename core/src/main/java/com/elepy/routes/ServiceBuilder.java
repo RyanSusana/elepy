@@ -14,7 +14,7 @@ public final class ServiceBuilder<T> {
     }
 
     public ServiceBuilder<T> defaultFunctionality(ServiceHandler<T> service) {
-        return find(service).create(service).update(service).delete(service);
+        return find(service::handleFind).create(service::handleCreate).update(service::handleUpdate).delete(service::handleDelete);
     }
 
     public ServiceBuilder<T> find(FindHandler<T> find) {

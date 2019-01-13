@@ -8,10 +8,11 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.concepts.describers.StructureDescriber;
+import com.elepy.dao.Crud;
+import com.elepy.dao.CrudProvider;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.AccessLevel;
-import com.elepy.routes.ServiceBuilder;
-import com.elepy.routes.ServiceHandler;
+import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Constructor;
@@ -54,8 +55,8 @@ public class ResourceDescriber<T> {
 
     private void setupAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
         setupDao();
-        routeAnnotations();
         baseAnnotations();
+        routeAnnotations();
         setupEvaluators();
     }
 
@@ -91,6 +92,11 @@ public class ResourceDescriber<T> {
             throw new ElepyConfigException("Resources must have the @RestModel Annotation");
         }
 
+        Crud<T> dao = crudProvider.crudFor(clazz, elepy);
+
+        elepy.attachSingleton(Crud.class, annotation.slug(), dao);
+        elepy.attachSingleton(CrudProvider.class, annotation.slug(), crudProvider);
+
         this.slug = annotation.slug();
         this.name = annotation.name();
         this.description = annotation.description();
@@ -113,22 +119,31 @@ public class ResourceDescriber<T> {
         }
         if (deleteAnnotation != null) {
             deleteAccessLevel = deleteAnnotation.accessLevel();
-            serviceBuilder.delete(ClassUtils.initializeElepyObject(deleteAnnotation.handler(), elepy));
+
+            if (!deleteAnnotation.handler().equals(DefaultDelete.class)) {
+                serviceBuilder.delete(ClassUtils.initializeElepyObject(deleteAnnotation.handler(), elepy));
+            }
         }
 
         if (updateAnnotation != null) {
             updateAccessLevel = updateAnnotation.accessLevel();
-            serviceBuilder.update(ClassUtils.initializeElepyObject(updateAnnotation.handler(), elepy));
+            if (!updateAnnotation.handler().equals(DefaultUpdate.class)) {
+                serviceBuilder.update(ClassUtils.initializeElepyObject(updateAnnotation.handler(), elepy));
+            }
         }
 
         if (findAnnotation != null) {
             findAccessLevel = findAnnotation.accessLevel();
-            serviceBuilder.find(ClassUtils.initializeElepyObject(findAnnotation.handler(), elepy));
+            if (!findAnnotation.handler().equals(DefaultFind.class)) {
+                serviceBuilder.find(ClassUtils.initializeElepyObject(findAnnotation.handler(), elepy));
+            }
         }
 
         if (createAnnotation != null) {
             createAccessLevel = createAnnotation.accessLevel();
-            serviceBuilder.create(ClassUtils.initializeElepyObject(createAnnotation.handler(), elepy));
+            if (!createAnnotation.handler().equals(DefaultCreate.class)) {
+                serviceBuilder.create(ClassUtils.initializeElepyObject(createAnnotation.handler(), elepy));
+            }
         }
         service = serviceBuilder.build();
 
