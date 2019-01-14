@@ -178,8 +178,8 @@
                                         <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
                                             <select class="uk-select" v-model="selectedData[field.name]"
                                                     :disabled="field.name == 'id' || field.editable == false">
-                                                <option :value="true">((field.trueValue))</option>
-                                                <option :false="false">((field.falseValue))</option>
+                                                <option v-bind:value="true">((field.trueValue))</option>
+                                                <option v-bind:value="false">((field.falseValue))</option>
 
                                             </select>
                                         </div>
@@ -289,8 +289,8 @@
                                                     <select class="uk-select"
                                                             v-model="selectedData[fieldOuter.name][field.name]"
                                                             :disabled="field.name == 'id' || field.editable == false">
-                                                        <option :value="true">((field.trueValue))</option>
-                                                        <option :false="false">((field.falseValue))</option>
+                                                        <option v-bind:value="true">((field.trueValue))</option>
+                                                        <option v-bind:value="false">((field.falseValue))</option>
 
                                                     </select>
                                                 </div>
@@ -424,8 +424,8 @@
                                         <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
                                             <select class="uk-select" v-model="newData[field.name]"
                                                     :disabled="field.name == 'id' || field.editable == false">
-                                                <option :value="true">((field.trueValue))</option>
-                                                <option :false="false">((field.falseValue))</option>
+                                                <option v-bind:value="true">((field.trueValue))</option>
+                                                <option v-bind:value="false">((field.falseValue))</option>
 
                                             </select>
                                         </div>
@@ -510,8 +510,8 @@
                                                     <select class="uk-select"
                                                             v-model="newData[fieldOuter.name][field.name]"
                                                             :disabled="field.name == 'id' || field.editable == false">
-                                                        <option :value="true">((field.trueValue))</option>
-                                                        <option :false="false">((field.falseValue))</option>
+                                                        <option v-bind:value="true">((field.trueValue))</option>
+                                                        <option v-bind:value="false">((field.falseValue))</option>
 
                                                     </select>
                                                 </div>
