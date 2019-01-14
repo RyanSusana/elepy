@@ -1,9 +1,6 @@
 package com.elepy.utils;
 
-import com.elepy.annotations.Identifier;
-import com.elepy.annotations.Inject;
-import com.elepy.annotations.PrettyName;
-import com.elepy.annotations.Unique;
+import com.elepy.annotations.*;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
@@ -14,9 +11,7 @@ import org.jongo.marshall.jackson.oid.MongoId;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -128,10 +123,17 @@ public class ClassUtils {
                 return Optional.of((Constructor<T>) constructor);
             }
         }
-
         return Optional.empty();
     }
 
+    public static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
+        for (Constructor constructor : cls.getConstructors()) {
+            if (constructor.isAnnotationPresent(ElepyConstructor.class)) {
+                return Optional.of((Constructor<T>) constructor);
+            }
+        }
+        return Optional.empty();
+    }
 
     public static <T> T initializeElepyObject(Class<? extends T> cls, ElepyContext elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         T object = initializeElepyObjectConstructor(cls, elepy);
@@ -149,22 +151,33 @@ public class ClassUtils {
         }
     }
 
+    private static Object getObjectForAnnotatedType(AnnotatedElement annotatedType, ElepyContext elepyContext) {
+        Inject annotation = annotatedType.getAnnotation(Inject.class);
+        final Object contextObject;
+        if (annotation.classType().equals(Object.class)) {
+            if (annotatedType instanceof Field) {
+                if (Crud.class.isAssignableFrom(((Field) annotatedType).getType())) {
+                    return elepyContext.getSingleton(Crud.class, annotation.tag());
+                } else {
+                    return elepyContext.getSingleton(((Field) annotatedType).getType(), annotation.tag());
+                }
+            } else if (annotatedType instanceof Parameter) {
+                if (Crud.class.isAssignableFrom(((Parameter) annotatedType).getType())) {
+                    return elepyContext.getSingleton(Crud.class, annotation.tag());
+                } else {
+                    return elepyContext.getSingleton(((Parameter) annotatedType).getType(), annotation.tag());
+                }
+            }
+        }
+        return elepyContext.getSingleton(annotation.classType(), annotation.tag());
+
+    }
+
     private static void injectFields(ElepyContext elepyContext, Object object) throws IllegalAccessException {
         List<Field> fields = searchForFieldsWithAnnotation(object.getClass(), Inject.class);
 
         for (Field field : fields) {
-            Inject annotation = field.getAnnotation(Inject.class);
-            final Object contextObject;
-            if (annotation.classType().equals(Object.class)) {
-                if (Crud.class.isAssignableFrom(field.getType())) {
-                    contextObject = elepyContext.getSingleton(Crud.class, annotation.tag());
-                } else {
-                    contextObject = elepyContext.getSingleton(field.getType(), annotation.tag());
-                }
-            } else {
-                contextObject = elepyContext.getSingleton(annotation.classType(), annotation.tag());
-            }
-            field.set(object, contextObject);
+            field.set(object, getObjectForAnnotatedType(field, elepyContext));
         }
     }
 
@@ -178,12 +191,22 @@ public class ClassUtils {
         } else {
             Optional<Constructor<? extends T>> elepyConstructor =
                     ClassUtils.getElepyConstructor(cls);
+            if (elepyConstructor.isPresent()) {
+                return elepyConstructor.get().newInstance(elepy);
+            } else {
+                Optional<Constructor<? extends T>> elepyAnnotatedConstructor = getElepyAnnotatedConstructor(cls);
 
-            if (!elepyConstructor.isPresent()) {
-                throw new ElepyConfigException(String.format("Can't initialize %s. It has no empty constructor or a constructor with just one ElepyContext.", cls.getName()));
+                if (elepyAnnotatedConstructor.isPresent()) {
+                    Parameter[] parameters = elepyAnnotatedConstructor.get().getParameters();
+                    Object[] dependencies = new Object[parameters.length];
+                    System.arraycopy(parameters, 0, dependencies, 0, parameters.length);
+                    return elepyAnnotatedConstructor.get().newInstance(dependencies);
+
+                }
             }
-            return elepyConstructor.get().newInstance(elepy);
         }
+        throw new ElepyConfigException(String.format("Can't initialize %s. It has no empty constructor or a constructor with just one ElepyContext.", cls.getName()));
+
     }
 
     public static <T> Optional<Constructor<? extends T>> getConstructor(Class<?> cls, int amountOfParams) {
