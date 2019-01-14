@@ -14,6 +14,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
+import com.elepy.utils.DependencyInjectionUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -114,35 +115,35 @@ public class ResourceDescriber<T> {
         final com.elepy.annotations.Create createAnnotation = clazz.getAnnotation(com.elepy.annotations.Create.class);
 
         if (serviceAnnotation != null) {
-            ServiceHandler<T> initialService = ClassUtils.initializeElepyObject(serviceAnnotation.value(), elepy);
+            ServiceHandler<T> initialService = DependencyInjectionUtils.initializeElepyObject(serviceAnnotation.value(), elepy);
             serviceBuilder.defaultFunctionality(initialService);
         }
         if (deleteAnnotation != null) {
             deleteAccessLevel = deleteAnnotation.accessLevel();
 
             if (!deleteAnnotation.handler().equals(DefaultDelete.class)) {
-                serviceBuilder.delete(ClassUtils.initializeElepyObject(deleteAnnotation.handler(), elepy));
+                serviceBuilder.delete(DependencyInjectionUtils.initializeElepyObject(deleteAnnotation.handler(), elepy));
             }
         }
 
         if (updateAnnotation != null) {
             updateAccessLevel = updateAnnotation.accessLevel();
             if (!updateAnnotation.handler().equals(DefaultUpdate.class)) {
-                serviceBuilder.update(ClassUtils.initializeElepyObject(updateAnnotation.handler(), elepy));
+                serviceBuilder.update(DependencyInjectionUtils.initializeElepyObject(updateAnnotation.handler(), elepy));
             }
         }
 
         if (findAnnotation != null) {
             findAccessLevel = findAnnotation.accessLevel();
             if (!findAnnotation.handler().equals(DefaultFind.class)) {
-                serviceBuilder.find(ClassUtils.initializeElepyObject(findAnnotation.handler(), elepy));
+                serviceBuilder.find(DependencyInjectionUtils.initializeElepyObject(findAnnotation.handler(), elepy));
             }
         }
 
         if (createAnnotation != null) {
             createAccessLevel = createAnnotation.accessLevel();
             if (!createAnnotation.handler().equals(DefaultCreate.class)) {
-                serviceBuilder.create(ClassUtils.initializeElepyObject(createAnnotation.handler(), elepy));
+                serviceBuilder.create(DependencyInjectionUtils.initializeElepyObject(createAnnotation.handler(), elepy));
             }
         }
         service = serviceBuilder.build();
