@@ -71,7 +71,6 @@ public interface ElepyContext {
 
     default Object getObjectForAnnotatedType(AnnotatedElement annotatedType) {
         Inject annotation = annotatedType.getAnnotation(Inject.class);
-        final Object contextObject;
         if (annotation.classType().equals(Object.class)) {
             if (annotatedType instanceof Field) {
                 if (Crud.class.isAssignableFrom(((Field) annotatedType).getType())) {
