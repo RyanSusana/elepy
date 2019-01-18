@@ -9,10 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Service;
+import spark.route.HttpMethod;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.elepy.models.ElepyRouteBuilder.anElepyRoute;
 
 public class RouteGenerator<T> {
     private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
@@ -41,62 +44,93 @@ public class RouteGenerator<T> {
 
     }
 
+
     public Map<String, Object> setupPojo() {
         evaluateHasIdField(clazz);
-        this.setupFilters(restModel);
+
         try {
             List<ObjectEvaluator<T>> evaluators = restModel.getObjectEvaluators();
 
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
-            setupFilters(restModel);
-            if (!restModel.getCreateAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.post(baseSlug + restModel.getSlug(), (request, response) -> {
-                    restModel.getService().handleCreate(request, response, dao, elepy.getContext(), evaluators, clazz);
+            //POST
+            elepy.addRoute(anElepyRoute()
+                    .accessLevel(restModel.getCreateAccessLevel())
+                    .path(baseSlug + restModel.getSlug())
+                    .method(HttpMethod.post)
+                    .route((request, response) -> {
+                        restModel.getService().handleCreate(request, response, dao, elepy.getContext(), evaluators, clazz);
+                        return response.body();
+                    })
+                    .build()
+            );
 
-                    return response.body();
-                });
-            }
-            if (!restModel.getUpdateAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.put(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                    restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
+            // PUT
+            elepy.addRoute(anElepyRoute()
+                    .accessLevel(restModel.getUpdateAccessLevel())
+                    .path(baseSlug + restModel.getSlug() + "/:id")
+                    .method(HttpMethod.put)
+                    .route((request, response) -> {
+                        restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
 
-                    return response.body();
-                });
+                        return response.body();
+                    })
+                    .build()
+            );
 
-                http.patch(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                    restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
+            //PATH
+            elepy.addRoute(anElepyRoute()
+                    .accessLevel(restModel.getUpdateAccessLevel())
+                    .path(baseSlug + restModel.getSlug() + "/:id")
+                    .method(HttpMethod.patch)
+                    .route((request, response) -> {
+                        restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
+                        return response.body();
+                    })
+                    .build()
+            );
 
-                    return response.body();
-                });
-            }
-            if (!restModel.getDeleteAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.delete(baseSlug + restModel.getSlug() + "/:id", ((request, response) -> {
-                    restModel.getService().handleDelete(request, response, dao, elepy.getContext(), evaluators, clazz);
+            // DELETE
+            elepy.addRoute(anElepyRoute()
+                    .accessLevel(restModel.getDeleteAccessLevel())
+                    .path(baseSlug + restModel.getSlug() + "/:id")
+                    .method(HttpMethod.delete)
+                    .route((request, response) -> {
+                        restModel.getService().handleDelete(request, response, dao, elepy.getContext(), evaluators, clazz);
 
-                    return response.body();
-                }));
-            }
-            if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.get(baseSlug + restModel.getSlug(), (request, response) -> {
-                    restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
+                        return response.body();
+                    })
+                    .build()
+            );
 
-                    return response.body();
-                });
+            //GET PAGE
+            elepy.addRoute(anElepyRoute()
+                    .accessLevel(restModel.getFindAccessLevel())
+                    .path(baseSlug + restModel.getSlug())
+                    .method(HttpMethod.get)
+                    .route((request, response) -> {
+                        restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
 
-            }
-            if (!restModel.getFindAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.get(baseSlug + restModel.getSlug() + "/:id", (request, response) -> {
-                    restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
+                        return response.body();
+                    })
+                    .build()
+            );
 
-                    return response.body();
-                });
-            }
+            //GET ONE
+            elepy.addRoute(anElepyRoute()
+                    .accessLevel(restModel.getFindAccessLevel())
+                    .path(baseSlug + restModel.getSlug() + "/:id")
+                    .method(HttpMethod.get)
+                    .route((request, response) -> {
+                        restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
+
+                        return response.body();
+                    })
+                    .build()
+            );
 
         } catch (Exception e) {
-
             logger.error(e.getMessage(), e);
-            System.exit(0);
         }
         return getPojoDescriptor(restModel, clazz);
     }
@@ -127,63 +161,5 @@ public class RouteGenerator<T> {
         actions.put("delete", restModel.getDeleteAccessLevel());
         actions.put("create", restModel.getCreateAccessLevel());
         return actions;
-    }
-
-    private void setupFilters(ResourceDescriber restModel) {
-
-
-        http.before(baseSlug + restModel.getSlug(), (request, response) -> {
-            switch (request.requestMethod().toUpperCase()) {
-                case "GET":
-                    if (restModel.getFindAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                case "POST":
-                    if (restModel.getCreateAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                case "UPDATE":
-                    if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                case "PATCH":
-                    if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                case "DELETE":
-                    if (restModel.getDeleteAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-        http.before(baseSlug + restModel.getSlug() + "/*", (request, response) -> {
-            switch (request.requestMethod().toUpperCase()) {
-                case "GET":
-                    if (restModel.getFindAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                case "UPDATE":
-                    if (restModel.getUpdateAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                case "DELETE":
-                    if (restModel.getDeleteAccessLevel() == AccessLevel.ADMIN) {
-                        adminFilter.handle(request, response);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-
     }
 }

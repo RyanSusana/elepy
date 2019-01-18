@@ -12,6 +12,8 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.models.AccessLevel;
+import com.elepy.models.ElepyRoute;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +22,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
+import spark.RouteImpl;
 import spark.Service;
 
 import java.util.*;
@@ -41,6 +44,8 @@ public class Elepy implements ElepyContext {
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private List<Filter> adminFilters;
     private List<Map<String, Object>> descriptors;
+
+    private List<ElepyRoute> routes;
     private boolean initialized = false;
 
     private Class<? extends CrudProvider> defaultCrudProvider;
@@ -62,6 +67,7 @@ public class Elepy implements ElepyContext {
 
         this.models = new ArrayList<>();
         this.configSlug = "/config";
+        this.routes = new ArrayList<>();
 
         withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         attachSingleton(ObjectMapper.class, new ObjectMapper());
@@ -372,6 +378,13 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    /**
+     * Notifies Elepy that you will need a dependency in the lazy(by default) future.
+     * All dependencies must be satisfied before {@link #start()} ends
+     *
+     * @param cls The class you that needs to satisfy the dependency
+     * @return The {@link com.elepy.Elepy} instance
+     */
     public Elepy requireDependency(Class<?> cls) {
         this.context.requireDependency(cls);
         return this;
@@ -460,6 +473,18 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    /**
+     * Adds a route to be late initialized by Elepy.
+     *
+     * @param elepyRoute the route to add
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy addRoute(ElepyRoute elepyRoute) {
+        checkConfig();
+        routes.add(elepyRoute);
+        return this;
+    }
+
 
     private void init() {
         for (ElepyModule module : modules) {
@@ -485,14 +510,30 @@ public class Elepy implements ElepyContext {
 
 
         context.resolveDependencies();
+
         setupDescriptors(descriptors);
 
 
         for (ElepyModule module : modules) {
             module.routes(http, this);
         }
+        setupRoutes();
         initialized = true;
 
+    }
+
+    private void setupRoutes() {
+        for (ElepyRoute extraRoute : routes) {
+            if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
+                http.addRoute(extraRoute.getMethod(), RouteImpl.create(extraRoute.getPath(), (request, response) -> {
+                    if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
+                        getAllAdminFilters().handle(request, response);
+                    }
+                    extraRoute.getBeforeFilter().handle(request, response);
+                    return extraRoute.getRoute().handle(request, response);
+                }));
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -567,5 +608,4 @@ public class Elepy implements ElepyContext {
             throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling init()");
         }
     }
-
 }
