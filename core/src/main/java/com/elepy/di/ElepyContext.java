@@ -18,7 +18,6 @@ public interface ElepyContext {
 
     <T> T getSingleton(Class<T> cls, String tag);
 
-    //TODO fix this in later versions(only works if you annotate perfectly)
     static String getTag(AnnotatedElement type) {
         Inject injectAnnotation = type.getAnnotation(Inject.class);
 
@@ -32,16 +31,15 @@ public interface ElepyContext {
         }
 
         if (type instanceof Field) {
-            Type genericType = ((Field) type).getType();
+            final Class<?> genericType = (Class) ((ParameterizedType) ((Field) type).getGenericType()).getActualTypeArguments()[0];
             if (genericType != null) {
-                RestModel restModel = genericType.getClass().getAnnotation(RestModel.class);
-
+                RestModel restModel = genericType.getAnnotation(RestModel.class);
+                if (restModel != null) {
+                    return restModel.slug();
+                }
                 tag = genericType.getClass().getAnnotation(Tag.class);
                 if (tag != null) {
                     return tag.value();
-                }
-                if (restModel != null) {
-                    return restModel.slug();
                 }
             }
         }

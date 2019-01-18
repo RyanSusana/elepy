@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ResourceService extends DefaultService<Resource> {
 
-    @Inject(tag = "/resources")
+    @Inject()
     private MongoDao<Resource> crud;
 
     @Route(path = "/resources/:id/extra", requestMethod = HttpMethod.get)
