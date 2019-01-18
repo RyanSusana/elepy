@@ -535,8 +535,19 @@ public class Elepy implements ElepyContext {
 
         setupExtraRoutes();
         igniteAllRoutes();
+        injectModules();
         initialized = true;
 
+    }
+
+    private void injectModules() {
+        try {
+            for (ElepyModule module : modules) {
+                context.injectFields(module);
+            }
+        } catch (Exception e) {
+            throw new ElepyConfigException("Error injecting modules: " + e.getMessage());
+        }
     }
 
     private void setupExtraRoutes() {
