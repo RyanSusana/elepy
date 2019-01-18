@@ -31,16 +31,22 @@ public interface ElepyContext {
         }
 
         if (type instanceof Field) {
-            final Class<?> genericType = (Class) ((ParameterizedType) ((Field) type).getGenericType()).getActualTypeArguments()[0];
-            if (genericType != null) {
-                RestModel restModel = genericType.getAnnotation(RestModel.class);
-                if (restModel != null) {
-                    return restModel.slug();
+            Class<?> fieldType = ((Field) type).getType();
+
+            tag = fieldType.getAnnotation(Tag.class);
+            if (tag != null) {
+                return tag.value();
+            }
+            try {
+                final Class<?> genericType = (Class) ((ParameterizedType) ((Field) type).getGenericType()).getActualTypeArguments()[0];
+                if (genericType != null) {
+                    RestModel restModel = genericType.getAnnotation(RestModel.class);
+                    if (restModel != null) {
+                        return restModel.slug();
+                    }
                 }
-                tag = genericType.getClass().getAnnotation(Tag.class);
-                if (tag != null) {
-                    return tag.value();
-                }
+            } catch (ClassCastException ignored) {
+
             }
         }
 
