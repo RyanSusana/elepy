@@ -87,6 +87,7 @@ public interface ElepyContext {
     }
 
     default <T> T initializeElepyObject(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+
         T object = initializeElepyObjectConstructor(cls);
         injectElepyContextFields(object);
         injectFields(object);
@@ -151,14 +152,29 @@ public interface ElepyContext {
                 if (elepyAnnotatedConstructor.isPresent()) {
                     Parameter[] parameters = elepyAnnotatedConstructor.get().getParameters();
                     Object[] dependencies = new Object[parameters.length];
-                    System.arraycopy(parameters, 0, dependencies, 0, parameters.length);
+                    for (int i = 0; i < parameters.length; i++) {
+                        dependencies[i] = getParamaterDependency(parameters[i]);
+                    }
                     return elepyAnnotatedConstructor.get().newInstance(dependencies);
 
                 }
             }
         }
         throw new ElepyConfigException(String.format("Can't initialize %s. It has no empty constructor or a constructor with just one ElepyContext.", cls.getName()));
-
     }
 
+    default Object getParamaterDependency(Parameter parameter) {
+
+        Inject inject = parameter.getAnnotation(Inject.class);
+
+        if (inject != null) {
+            if (Crud.class.isAssignableFrom(((Parameter) parameter).getType())) {
+                return this.getSingleton(Crud.class, getTag(parameter));
+            } else {
+                return this.getSingleton(((Parameter) parameter).getType(), getTag(parameter));
+            }
+        }
+
+        return getSingleton(parameter.getType(), null);
+    }
 }

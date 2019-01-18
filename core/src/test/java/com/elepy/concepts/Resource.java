@@ -2,10 +2,7 @@ package com.elepy.concepts;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
-import com.elepy.models.AccessLevel;
-import com.elepy.models.ResourceService;
-import com.elepy.models.ResourceUpdate;
-import com.elepy.models.TextType;
+import com.elepy.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,6 +14,7 @@ import java.math.BigDecimal;
 @Find(accessLevel = AccessLevel.PUBLIC)
 @Delete(accessLevel = AccessLevel.PUBLIC)
 @Update(accessLevel = AccessLevel.PUBLIC, handler = ResourceUpdate.class)
+@ExtraRoutes({ResourceExtraRoutes.class})
 public class Resource {
     @Identifier
     private String id;

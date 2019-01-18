@@ -2,21 +2,28 @@ package com.elepy.utils;
 
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
+import com.elepy.annotations.Route;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.ElepyRoute;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
+import spark.Request;
+import spark.Response;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.elepy.models.ElepyRouteBuilder.anElepyRoute;
 
 public class ClassUtils {
 
@@ -119,7 +126,8 @@ public class ClassUtils {
     }
 
     public static <T> Optional<Constructor<? extends T>> getConstructor(Class<?> cls, int amountOfParams) {
-        for (Constructor constructor : cls.getConstructors()) {
+        for (Constructor constructor : cls.getDeclaredConstructors()) {
+            constructor.setAccessible(true);
             if (constructor.getParameterCount() == amountOfParams) {
                 return Optional.of((Constructor<T>) constructor);
             }
@@ -155,6 +163,50 @@ public class ClassUtils {
         }).collect(Collectors.toList()));
 
         return uniqueFields;
+    }
+
+
+    public static ElepyRoute routeFromMethod(Object obj, Method method) {
+        Route annotation = method.getAnnotation(Route.class);
+        spark.Route route;
+        if (method.getParameterCount() == 0) {
+            route = (request, response) -> {
+                method.invoke(obj);
+                return "";
+            };
+        } else if (method.getParameterCount() == 2
+                && method.getParameterTypes()[0].equals(Request.class)
+                && method.getParameterTypes()[1].equals(Response.class)) {
+
+            route = (request, response) -> {
+                Object invoke = method.invoke(obj, request, response);
+                if (invoke instanceof String) {
+                    return invoke;
+                } else {
+                    return "";
+                }
+            };
+
+        } else {
+            throw new ElepyConfigException("@Route annotated method must have no parameters or (Request, Response)");
+        }
+        return anElepyRoute()
+                .accessLevel(annotation.accessLevel())
+                .path(annotation.path())
+                .method(annotation.requestMethod())
+                .route(route)
+                .build();
+    }
+
+    public static List<ElepyRoute> scanForRoutes(Object obj) {
+        List<ElepyRoute> toReturn = new ArrayList<>();
+        for (Method method : obj.getClass().getDeclaredMethods()) {
+            method.setAccessible(true);
+            if (method.isAnnotationPresent(Route.class)) {
+                toReturn.add(routeFromMethod(obj, method));
+            }
+        }
+        return toReturn;
     }
 
 }

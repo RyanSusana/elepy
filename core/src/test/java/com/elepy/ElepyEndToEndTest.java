@@ -174,4 +174,26 @@ public class ElepyEndToEndTest extends Base {
         assertEquals("ryan", updatePartialId.get().getMARKDOWN());
         assertEquals(200, patch.getStatus());
     }
+
+    @Test
+    void testExtraRouteInService() throws UnirestException {
+
+        final String shouldReturn = "I am here";
+        Resource resource1 = validObject();
+        resource1.setId("extra");
+        resource1.setTextField(shouldReturn);
+        mongoDao.create(resource1);
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources/" + resource1.getId() + "/extra").asString();
+
+        assertEquals(200, getRequest.getStatus());
+        assertEquals(shouldReturn, getRequest.getBody());
+    }
+
+    @Test
+    void testExtraRoute() throws UnirestException {
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources-extra").asString();
+
+        assertEquals(201, getRequest.getStatus());
+        assertEquals("generated", getRequest.getBody());
+    }
 }

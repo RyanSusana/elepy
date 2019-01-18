@@ -1,5 +1,6 @@
 package com.elepy;
 
+import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
@@ -14,6 +15,7 @@ import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.models.AccessLevel;
 import com.elepy.models.ElepyRoute;
+import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,7 @@ import spark.Filter;
 import spark.RouteImpl;
 import spark.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -480,8 +483,20 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy addRoute(ElepyRoute elepyRoute) {
+        return addRoutes(Collections.singleton(elepyRoute));
+    }
+
+    /**
+     * Adds routes to be late initialized by Elepy.
+     *
+     * @param elepyRoutes the routes to add
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy addRoutes(Iterable<ElepyRoute> elepyRoutes) {
         checkConfig();
-        routes.add(elepyRoute);
+        for (ElepyRoute route : elepyRoutes) {
+            routes.add(route);
+        }
         return this;
     }
 
@@ -517,12 +532,30 @@ public class Elepy implements ElepyContext {
         for (ElepyModule module : modules) {
             module.routes(http, this);
         }
-        setupRoutes();
+
+        setupExtraRoutes();
+        igniteAllRoutes();
         initialized = true;
 
     }
 
-    private void setupRoutes() {
+    private void setupExtraRoutes() {
+        try {
+            for (Class<?> model : models) {
+                final ExtraRoutes extraRoutesAnnotation = model.getAnnotation(ExtraRoutes.class);
+
+                if (extraRoutesAnnotation != null) {
+                    for (Class<?> aClass : extraRoutesAnnotation.value()) {
+                        addRoutes(ClassUtils.scanForRoutes(initializeElepyObject(aClass)));
+                    }
+                }
+            }
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ElepyConfigException("Failed creating extra routes: " + e.getMessage());
+        }
+    }
+
+    private void igniteAllRoutes() {
         for (ElepyRoute extraRoute : routes) {
             if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.addRoute(extraRoute.getMethod(), RouteImpl.create(extraRoute.getPath(), (request, response) -> {
