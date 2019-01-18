@@ -5,6 +5,7 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
+import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
@@ -161,6 +162,11 @@ public class Elepy implements ElepyContext {
     @Override
     public <T> T getSingleton(Class<T> cls, String tag) {
         return context.getSingleton(cls, tag);
+    }
+
+    @Override
+    public Set<ContextKey> getDependencyKeys() {
+        return context.getDependencyKeys();
     }
 
     /**
@@ -337,6 +343,42 @@ public class Elepy implements ElepyContext {
     }
 
     /**
+     * Enables strict dependency mode.
+     * By default (false) Elepy resolves
+     * all dependencies at the end of the {@link #start()} call.
+     * <p>
+     * By enabling strict mode, Elepy will check for unsatisfied/circular
+     * dependencies every time you call {@link #requireDependency(Class, String)} )}
+     *
+     * @param strict enable/disable strict mode
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy withStrictDependencyMode(boolean strict) {
+        this.context.strictMode(strict);
+        return this;
+    }
+
+
+    /**
+     * Notifies Elepy that you will need a dependency in the lazy(by default) future.
+     * All dependencies must be satisfied before {@link #start()} ends
+     *
+     * @param cls The class you that needs to satisfy the dependency
+     * @param tag The optional tag of the class
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy requireDependency(Class<?> cls, String tag) {
+        this.context.requireDependency(cls, tag);
+        return this;
+    }
+
+    public Elepy requireDependency(Class<?> cls) {
+        this.context.requireDependency(cls);
+        return this;
+    }
+
+
+    /**
      * Changes the base URI of Elepy models.
      *
      * @param baseSlug the base URI of elepy
@@ -442,6 +484,7 @@ public class Elepy implements ElepyContext {
         descriptors.addAll(maps);
 
 
+        context.resolveDependencies();
         setupDescriptors(descriptors);
 
 

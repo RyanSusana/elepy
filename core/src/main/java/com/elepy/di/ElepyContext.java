@@ -3,6 +3,7 @@ package com.elepy.di;
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Tag;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ClassUtils;
@@ -11,10 +12,42 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ElepyContext {
 
     <T> T getSingleton(Class<T> cls, String tag);
+
+    //TODO fix this in later versions(only works if you annotate perfectly)
+    static String getTag(AnnotatedElement type) {
+        Inject injectAnnotation = type.getAnnotation(Inject.class);
+
+        if (injectAnnotation != null && !injectAnnotation.tag().isEmpty()) {
+            return injectAnnotation.tag();
+        }
+
+        Tag tag = type.getAnnotation(Tag.class);
+        if (tag != null && !tag.value().isEmpty()) {
+            return tag.value();
+        }
+
+        if (type instanceof Field) {
+            Type genericType = ((Field) type).getType();
+            if (genericType != null) {
+                RestModel restModel = genericType.getClass().getAnnotation(RestModel.class);
+
+                tag = genericType.getClass().getAnnotation(Tag.class);
+                if (tag != null) {
+                    return tag.value();
+                }
+                if (restModel != null) {
+                    return restModel.slug();
+                }
+            }
+        }
+
+        return null;
+    }
 
     default <T> T getSingleton(Class<T> cls) {
         return getSingleton(cls, null);
@@ -69,26 +102,28 @@ public interface ElepyContext {
         }
     }
 
+    Set<ContextKey> getDependencyKeys();
+
     default Object getObjectForAnnotatedType(AnnotatedElement annotatedType) {
         Inject annotation = annotatedType.getAnnotation(Inject.class);
         if (annotation.classType().equals(Object.class)) {
             if (annotatedType instanceof Field) {
                 if (Crud.class.isAssignableFrom(((Field) annotatedType).getType())) {
-                    return this.getSingleton(Crud.class, annotation.tag());
+                    return this.getSingleton(Crud.class, getTag(annotatedType));
                 } else {
                     return this.getSingleton(((Field) annotatedType).getType(), annotation.tag());
                 }
             } else if (annotatedType instanceof Parameter) {
                 if (Crud.class.isAssignableFrom(((Parameter) annotatedType).getType())) {
-                    return this.getSingleton(Crud.class, annotation.tag());
+                    return this.getSingleton(Crud.class, getTag(annotatedType));
                 } else {
-                    return this.getSingleton(((Parameter) annotatedType).getType(), annotation.tag());
+                    return this.getSingleton(((Parameter) annotatedType).getType(), getTag(annotatedType));
                 }
             }
         }
         return this.getSingleton(annotation.classType(), annotation.tag());
-
     }
+
 
     default void injectFields(Object object) throws IllegalAccessException {
         List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class);
