@@ -605,6 +605,9 @@ public class Elepy implements ElepyContext {
 
         http.exception(Exception.class, (exception, request, response) -> {
             final ElepyErrorMessage elepyErrorMessage;
+            if (exception instanceof InvocationTargetException && ((InvocationTargetException) exception).getTargetException() instanceof ElepyErrorMessage) {
+                exception = (ElepyErrorMessage) ((InvocationTargetException) exception).getTargetException();
+            }
             if (exception instanceof ElepyErrorMessage) {
                 elepyErrorMessage = (ElepyErrorMessage) exception;
             } else {
