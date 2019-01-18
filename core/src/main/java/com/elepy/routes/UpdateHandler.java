@@ -9,7 +9,7 @@ import spark.Response;
 import java.util.List;
 
 
-public interface UpdateHandler<T> {
+public interface UpdateHandler<T> extends HandlerHelper {
     /**
      * This handles the functionality of model updates.
      *

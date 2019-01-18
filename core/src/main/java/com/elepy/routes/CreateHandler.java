@@ -8,7 +8,7 @@ import spark.Response;
 
 import java.util.List;
 
-public interface CreateHandler<T> {
+public interface CreateHandler<T> extends HandlerHelper {
 
     /**
      * This handles the functionality of model creation.

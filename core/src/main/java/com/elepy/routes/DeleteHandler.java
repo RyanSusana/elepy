@@ -9,7 +9,7 @@ import spark.Response;
 import java.util.List;
 
 
-public interface DeleteHandler<T> {
+public interface DeleteHandler<T> extends HandlerHelper {
     /**
      * This handles the functionality of model deletion.
      *

@@ -8,7 +8,7 @@ import spark.Response;
 
 import java.util.List;
 
-public interface FindHandler<T> {
+public interface FindHandler<T> extends HandlerHelper {
     /**
      * This handles the functionality of model querying.
      *

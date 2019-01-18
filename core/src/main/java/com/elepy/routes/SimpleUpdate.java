@@ -17,7 +17,6 @@ import java.util.Optional;
  * @param <T> the model you're updating
  * @see com.elepy.annotations.Update
  * @see DefaultUpdate
- * @see RouteHandler
  * @see UpdateHandler
  */
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
