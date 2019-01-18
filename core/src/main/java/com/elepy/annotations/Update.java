@@ -3,7 +3,6 @@ package com.elepy.annotations;
 
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.DefaultUpdate;
-import com.elepy.routes.RouteHandler;
 import com.elepy.routes.UpdateHandler;
 
 import java.lang.annotation.ElementType;
@@ -33,7 +32,6 @@ public @interface Update {
      * @see com.elepy.routes.SimpleUpdate
      * @see DefaultUpdate
      * @see com.elepy.routes.UpdateHandler
-     * @see RouteHandler
      */
     Class<? extends UpdateHandler> handler() default DefaultUpdate.class;
 }
