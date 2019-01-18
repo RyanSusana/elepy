@@ -18,6 +18,13 @@ public interface ElepyContext {
 
     <T> T getSingleton(Class<T> cls, String tag);
 
+
+    /**
+     * Tries to get a tag from a {@link Field} or {@link Parameter}, defaults to null
+     *
+     * @param type Field or Parameter
+     * @return the guessed field
+     */
     static String getTag(AnnotatedElement type) {
         Inject injectAnnotation = type.getAnnotation(Inject.class);
 

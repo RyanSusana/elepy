@@ -90,7 +90,7 @@ public class FieldDescriber {
 
         fieldMap.put("generated", generated);
         if (fieldType.equals(FieldType.ENUM)) {
-            fieldMap.put("availableValues", field.getType().getEnumConstants());
+            fieldMap.put("availableValues", StructureDescriber.getEnumMap(field.getType()));
         }
         if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", field.getType().getSimpleName());
@@ -117,14 +117,15 @@ public class FieldDescriber {
 
         }
         if (fieldType.equals(FieldType.ENUM_ARRAY)) {
-            final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-            fieldMap.put("availableValues", array.getEnumConstants());
+            final Class<?> array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+            fieldMap.put("availableValues", StructureDescriber.getEnumMap(array));
         }
         if (fieldType.equals(FieldType.PRIMITIVE_ARRAY)) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             fieldMap.put("primitiveType", FieldType.getUnannotatedFieldType(array));
         }
     }
+
 
     public Map<String, Object> mapField() {
         Map<String, Object> newFieldMap = new HashMap<>();

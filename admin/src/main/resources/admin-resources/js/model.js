@@ -81,6 +81,16 @@ const app = new Vue({
             }
 
         },
+        toEnum: function (field, data) {
+            var toReturn = data;
+            field.availableValues.forEach(enumDescription => {
+                if (enumDescription["enumValue"] === data) {
+                    toReturn = enumDescription["enumName"];
+                }
+            })
+            return toReturn;
+
+        },
         editModal: function () {
             UIkit.modal(document.getElementById("edit-modal"), {stack: true, 'bg-close': false}).show();
         },

@@ -75,7 +75,8 @@
 
                             v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">
                             (( (field.type == 'DATE'? toDate(data[field.name]) : field.type == 'BOOLEAN'?
-                            toBoolean(field, data[field.name]): data[field.name]) | truncate(90) ))
+                            toBoolean(field, data[field.name]):field.type == 'ENUM'? toEnum(field, data[field.name]):
+                            data[field.name]) | truncate(90) ))
                         </td>
 
                     </tr>
@@ -169,7 +170,9 @@
                                             <select class="uk-select" v-model="selectedData[field.name]"
                                                     :disabled="field.name == 'id' || field.editable == false"
                                             >
-                                                <option v-for="value in field.availableValues">((value))</option>
+                                                <option v-for="value in field.availableValues"
+                                                        v-bind:value="value.enumValue">((value.enumName))
+                                                </option>
 
                                             </select>
                                         </div>
@@ -278,8 +281,10 @@
                                                     <select class="uk-select"
                                                             v-model="selectedData[fieldOuter.name][field.name]"
                                                             :disabled="field.name == 'id' || field.editable == false">
-                                                        <option v-for="value in field.availableValues">((value))
+                                                        <option v-for="value in field.availableValues"
+                                                                v-bind:value="value.enumValue">((value.enumName))
                                                         </option>
+
 
                                                     </select>
                                                 </div>
@@ -415,7 +420,9 @@
                                             <select class="uk-select" v-model="newData[field.name]"
 
                                             >
-                                                <option v-for="value in field.availableValues">((value))</option>
+                                                <option v-for="value in field.availableValues"
+                                                        v-bind:value="value.enumValue">((value.enumName))
+                                                </option>
 
                                             </select>
                                         </div>
@@ -499,8 +506,10 @@
                                                     <select class="uk-select"
                                                             v-model="newData[fieldOuter.name][field.name]"
                                                             :disabled="field.name == 'id' || field.editable == false">
-                                                        <option v-for="value in field.availableValues">((value))
+                                                        <option v-for="value in field.availableValues"
+                                                                v-bind:value="value.enumValue">((value.enumName))
                                                         </option>
+
 
                                                     </select>
                                                 </div>

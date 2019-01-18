@@ -2,10 +2,12 @@ package com.elepy.concepts.describers;
 
 import com.elepy.annotations.Generated;
 import com.elepy.annotations.Hidden;
+import com.elepy.annotations.PrettyName;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,5 +63,33 @@ public class StructureDescriber {
 
     public List<Map<String, Object>> getStructure() {
         return structure;
+    }
+
+    static List<Map<String, Object>> getEnumMap(Class<?> enumClass) {
+
+        List<Map<String, Object>> toReturn = new ArrayList<>();
+        for (Object enumConstant : enumClass.getEnumConstants()) {
+            Map<String, Object> toAdd = new HashMap<>();
+
+            toAdd.put("enumValue", enumConstant);
+
+            Field declaredField = null;
+            try {
+                declaredField = enumClass.getDeclaredField(((Enum) enumConstant).name());
+            } catch (NoSuchFieldException ignored) {
+                //this exception will never be thrown
+            }
+
+            PrettyName annotation = declaredField.getAnnotation(PrettyName.class);
+            if (annotation != null) {
+
+                toAdd.put("enumName", annotation.value());
+            } else {
+                toAdd.put("enumName", ((Enum) enumConstant).name());
+            }
+            toReturn.add(toAdd);
+
+        }
+        return toReturn;
     }
 }

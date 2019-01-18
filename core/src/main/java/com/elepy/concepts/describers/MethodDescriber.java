@@ -54,7 +54,7 @@ public class MethodDescriber {
             fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
             fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
         } else if (fieldType.equals(FieldType.ENUM)) {
-            fieldMap.put("availableValues", method.getReturnType().getEnumConstants());
+            fieldMap.put("availableValues", StructureDescriber.getEnumMap(method.getReturnType()));
         } else if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", method.getReturnType().getSimpleName());
 
