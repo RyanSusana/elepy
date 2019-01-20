@@ -1,6 +1,7 @@
 package com.elepy;
 
 
+import com.elepy.annotations.Dao;
 import com.elepy.annotations.DaoProvider;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.RestModel;
@@ -54,19 +55,32 @@ public class ResourceDescriber<T> {
 
 
     private void setupAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        setupDao();
+
         baseAnnotations();
         routeAnnotations();
         setupEvaluators();
     }
 
-    private void setupDao() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void setupDao(String slug) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         final DaoProvider annotation = clazz.getAnnotation(DaoProvider.class);
+        final Crud<T> crud;
+
         if (annotation == null) {
             crudProvider = ClassUtils.emptyConstructor(elepy.getDefaultCrudProvider()).newInstance();
         } else {
             crudProvider = ClassUtils.emptyConstructor(annotation.value()).newInstance();
         }
+
+        final Dao daoAnnotation = clazz.getAnnotation(Dao.class);
+        if (daoAnnotation != null) {
+            crud = elepy.initializeElepyObject(daoAnnotation.value());
+        } else {
+            crud = crudProvider.crudFor(clazz, elepy);
+        }
+
+        elepy.attachSingleton(Crud.class, slug, crud);
+        elepy.attachSingleton(CrudProvider.class, slug, crudProvider);
+
     }
 
     private void setupEvaluators() throws IllegalAccessException, InstantiationException, InvocationTargetException {
@@ -85,18 +99,14 @@ public class ResourceDescriber<T> {
         }
     }
 
-    private void baseAnnotations() {
+    private void baseAnnotations() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         final RestModel annotation = clazz.getAnnotation(RestModel.class);
 
         if (annotation == null) {
             throw new ElepyConfigException("Resources must have the @RestModel Annotation");
         }
 
-        Crud<T> dao = crudProvider.crudFor(clazz, elepy);
-
-        elepy.attachSingleton(Crud.class, annotation.slug(), dao);
-        elepy.attachSingleton(CrudProvider.class, annotation.slug(), crudProvider);
-
+        setupDao(annotation.slug());
         this.slug = annotation.slug();
         this.name = annotation.name();
         this.description = annotation.description();

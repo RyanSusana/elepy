@@ -1,6 +1,5 @@
 package com.elepy.dao.jongo;
 
-
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
@@ -14,7 +13,6 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
@@ -30,32 +28,31 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class MongoDao<T> implements Crud<T> {
-    private static final Logger logger = LoggerFactory.getLogger(MongoDao.class);
-    private final Jongo jongo;
-    private final Class<T> classType;
-    private final String collectionName;
-    private final ObjectMapper objectMapper;
-    private final SimpleModule module = new SimpleModule("jongo-custom-module");
+public abstract class MongoDao<T> implements Crud<T> {
 
-    public MongoDao(final DB db, final String collectionName, final Class<T> classType) {
-        this(db, collectionName, classType, null);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
+
+    private Jongo jongo;
+
+    public abstract Class<T> modelClassType();
+
+    public abstract String mongoCollectionName();
+
+    public abstract ObjectMapper objectMapper();
+
+    public abstract DB db();
+
+    public abstract IdentityProvider<T> identityProvider();
+
+    Jongo getJongo() {
+        if (jongo == null) {
+            this.jongo = new Jongo(db(), new ElepyMapper(this, identityProvider()));
+        }
+        return jongo;
     }
-
-    public MongoDao(final DB db, final String collectionName, final Class<T> classType, IdentityProvider<T> identityProvider) {
-
-
-        this.jongo = new Jongo(db, new ElepyMapper(this, identityProvider));
-
-
-        this.objectMapper = new ObjectMapper();
-        this.classType = classType;
-        this.collectionName = collectionName.replaceAll("/", "");
-    }
-
 
     protected MongoCollection collection() {
-        return jongo.getCollection(collectionName);
+        return getJongo().getCollection(mongoCollectionName());
     }
 
 
@@ -66,7 +63,7 @@ public class MongoDao<T> implements Crud<T> {
     }
 
     private Find addDefaultSort(Find find) {
-        RestModel restModel = classType.getAnnotation(RestModel.class);
+        RestModel restModel = modelClassType().getAnnotation(RestModel.class);
         if (restModel != null) {
             find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
         }
@@ -75,7 +72,7 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final String id) {
-        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(classType));
+        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelClassType()));
     }
 
 
@@ -107,7 +104,7 @@ public class MongoDao<T> implements Crud<T> {
             qmap.put("$or", expressions);
 
             try {
-                return collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
+                return collection().count(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
             } catch (JsonProcessingException e) {
                 logger.error(e.getMessage(), e);
                 throw new ElepyException(e.getMessage());
@@ -118,14 +115,14 @@ public class MongoDao<T> implements Crud<T> {
 
     @Override
     public Class<T> getType() {
-        return classType;
+        return modelClassType();
     }
 
 
     private Page<T> toPage(Find find, QuerySetup pageSearch, int amountOfResultsWithThatQuery) {
 
 
-        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(classType).iterator());
+        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(modelClassType()).iterator());
 
         final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
@@ -159,9 +156,9 @@ public class MongoDao<T> implements Crud<T> {
                     expressions.add(keyValue);
                 }
                 qmap.put("$or", expressions);
-                find = querySetup.getQuery() != null ? collection().find(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
+                find = querySetup.getQuery() != null ? collection().find(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
 
-                amountResultsTotal = collection().count(objectMapper.writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
+                amountResultsTotal = collection().count(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
             } else {
                 find = collection().find();
                 amountResultsTotal = collection().count();
@@ -183,12 +180,9 @@ public class MongoDao<T> implements Crud<T> {
 
 
     private List<Field> getSearchableFields() {
-        return ClassUtils.searchForFieldsWithAnnotation(classType, Identifier.class, Searchable.class, MongoId.class, Unique.class);
+        return ClassUtils.searchForFieldsWithAnnotation(modelClassType(), Identifier.class, Searchable.class, MongoId.class, Unique.class);
     }
 
-    public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
 
     @Override
     public void delete(String id) {
@@ -203,7 +197,7 @@ public class MongoDao<T> implements Crud<T> {
     }
 
     private String getIdFieldProp() {
-        Optional<Field> idField = ClassUtils.getIdField(classType);
+        Optional<Field> idField = ClassUtils.getIdField(modelClassType());
         if (idField.isPresent()) {
             return ClassUtils.getPropertyName(idField.get());
         }
@@ -213,11 +207,7 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public void create(Iterable<T> items) {
         try {
-
-
             final T[] ts = Iterables.toArray(items, getType());
-
-
             collection().insert((Object[]) ts);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -244,19 +234,4 @@ public class MongoDao<T> implements Crud<T> {
         }
         return id.get();
     }
-
-
-    public Jongo getJongo() {
-        return this.jongo;
-    }
-
-    public Class<? extends T> getClassType() {
-        return this.classType;
-    }
-
-    public String getCollectionName() {
-        return this.collectionName;
-    }
-
-
 }

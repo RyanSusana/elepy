@@ -1,7 +1,7 @@
 package com.elepy.concepts;
 
 import com.elepy.BaseFongo;
-import com.elepy.dao.jongo.MongoDao;
+import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +12,14 @@ public class ObjectIntegrityTest extends BaseFongo {
     @Test
     public void testIntegrityUnique() throws Exception {
         super.setUp();
-        MongoDao<Resource> mongoDao = new MongoDao<>(getDb(), "resources", Resource.class);
+        DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", Resource.class);
         final IntegrityEvaluatorImpl<Resource> evaluator = new IntegrityEvaluatorImpl<>();
-        mongoDao.create(validObject());
+        defaultMongoDao.create(validObject());
 
 
-        mongoDao.create(validObject());
+        defaultMongoDao.create(validObject());
         try {
-            evaluator.evaluate(validObject(), mongoDao);
+            evaluator.evaluate(validObject(), defaultMongoDao);
             fail("Was supposed to throw a rest error message");
         } catch (ElepyException ignored) {
 

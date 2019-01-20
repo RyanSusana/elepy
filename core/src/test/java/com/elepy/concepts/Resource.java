@@ -2,6 +2,7 @@ package com.elepy.concepts;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
+import com.elepy.dao.ResourceDao;
 import com.elepy.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,9 +11,7 @@ import java.math.BigDecimal;
 
 @RestModel(name = "Test Resource", slug = "/resources")
 @Service(ResourceService.class)
-@Create(accessLevel = AccessLevel.PUBLIC)
-@Find(accessLevel = AccessLevel.PUBLIC)
-@Delete(accessLevel = AccessLevel.PUBLIC)
+@Dao(ResourceDao.class)
 @Update(accessLevel = AccessLevel.PUBLIC, handler = ResourceUpdate.class)
 @ExtraRoutes({ResourceExtraRoutes.class})
 public class Resource {

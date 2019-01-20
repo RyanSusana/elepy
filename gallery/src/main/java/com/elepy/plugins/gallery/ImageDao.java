@@ -3,7 +3,7 @@ package com.elepy.plugins.gallery;
 
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
-import com.elepy.dao.jongo.MongoDao;
+import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
 import com.google.common.collect.Lists;
@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-public class ImageDao extends MongoDao<Image> {
+public class ImageDao extends DefaultMongoDao<Image> {
 
     private final DB db;
 
@@ -87,7 +87,7 @@ public class ImageDao extends MongoDao<Image> {
     @Override
     public Page<Image> search(QuerySetup querySetup) {
 
-        return new Page<>(1, 1, Lists.newArrayList(collection().find().as(getClassType()).iterator()));
+        return new Page<>(1, 1, Lists.newArrayList(collection().find().as(modelClassType()).iterator()));
     }
 
     @Override

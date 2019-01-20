@@ -2,7 +2,7 @@ package com.elepy.dao;
 
 import com.elepy.BaseFongo;
 import com.elepy.concepts.Resource;
-import com.elepy.dao.jongo.MongoDao;
+import com.elepy.dao.jongo.DefaultMongoDao;
 import org.jongo.Jongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,24 +11,24 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MongoDaoTest extends BaseFongo {
+public class DefaultMongoDaoTest extends BaseFongo {
 
-    private MongoDao<Resource> mongoDao;
+    private DefaultMongoDao<Resource> defaultMongoDao;
     private Jongo jongo;
 
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        mongoDao = new MongoDao<>(getDb(), "resources", Resource.class);
+        defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", Resource.class);
         jongo = new Jongo(getDb());
     }
 
     @Test
     public void testCreate() {
 
-        mongoDao.create(validObject());
-        mongoDao.create(validObject());
+        defaultMongoDao.create(validObject());
+        defaultMongoDao.create(validObject());
 
         final long resources = jongo.getCollection("resources").count();
 
@@ -38,8 +38,8 @@ public class MongoDaoTest extends BaseFongo {
     @Test
     public void testDelete() {
         final Resource resource = validObject();
-        mongoDao.create(resource);
-        mongoDao.delete(resource.getId());
+        defaultMongoDao.create(resource);
+        defaultMongoDao.delete(resource.getId());
         assertEquals(0, count());
     }
 
@@ -48,10 +48,10 @@ public class MongoDaoTest extends BaseFongo {
     public void testSearch() {
 
         final Resource resource = validObject();
-        mongoDao.create(resource);
+        defaultMongoDao.create(resource);
 
 
-        final Page<Resource> searchable = mongoDao.search(new QuerySetup("searchable", null, null, 1L, 1));
+        final Page<Resource> searchable = defaultMongoDao.search(new QuerySetup("searchable", null, null, 1L, 1));
         assertEquals(1, searchable.getValues().size());
 
     }
@@ -60,10 +60,10 @@ public class MongoDaoTest extends BaseFongo {
     public void testCountSearch() {
 
         final Resource resource = validObject();
-        mongoDao.create(resource);
+        defaultMongoDao.create(resource);
 
 
-        final long searchable = mongoDao.count("searchable");
+        final long searchable = defaultMongoDao.count("searchable");
         assertEquals(1, searchable);
 
     }
@@ -75,7 +75,7 @@ public class MongoDaoTest extends BaseFongo {
 
         resource2.setUnique("Unique2");
 
-        mongoDao.create(Arrays.asList(resource, resource2));
+        defaultMongoDao.create(Arrays.asList(resource, resource2));
 
         assertEquals(2, count());
 

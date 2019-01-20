@@ -16,6 +16,6 @@ public class MongoProvider<T> implements CrudProvider<T> {
 
         final String[] split = slug.split("/");
 
-        return new MongoDao<>(elepy.getSingleton(DB.class), split[split.length - 1], type);
+        return new DefaultMongoDao<>(elepy.getSingleton(DB.class), split[split.length - 1], type, null, elepy.getObjectMapper());
     }
 }
