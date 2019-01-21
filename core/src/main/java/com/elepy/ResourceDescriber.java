@@ -103,7 +103,7 @@ public class ResourceDescriber<T> {
         final RestModel annotation = clazz.getAnnotation(RestModel.class);
 
         if (annotation == null) {
-            throw new ElepyConfigException("Resources must have the @RestModel Annotation");
+            throw new ElepyConfigException(String.format("Resources must have the @RestModel Annotation, %s doesn't.", clazz.getName()));
         }
 
         setupDao(annotation.slug());
