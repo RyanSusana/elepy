@@ -61,6 +61,16 @@ public class ClassUtils {
         }
     }
 
+    public static Field getPropertyField(Class<?> cls, String property) {
+        for (Field declaredField : cls.getDeclaredFields()) {
+            declaredField.setAccessible(true);
+            if (getPropertyName(declaredField).equals(property)) {
+                return declaredField;
+            }
+        }
+        return null;
+    }
+
     public static String getPrettyName(Field field) {
         if (field.isAnnotationPresent(PrettyName.class)) {
             return field.getAnnotation(PrettyName.class).value();
