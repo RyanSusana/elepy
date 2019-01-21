@@ -569,7 +569,7 @@ public class Elepy implements ElepyContext {
     private void igniteAllRoutes() {
         for (ElepyRoute extraRoute : routes) {
             if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.addRoute(extraRoute.getMethod(), RouteImpl.create(extraRoute.getPath(), (request, response) -> {
+                http.addRoute(extraRoute.getMethod(), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
                     if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
                         getAllAdminFilters().handle(request, response);
                     }

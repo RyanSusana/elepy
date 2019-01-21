@@ -10,6 +10,7 @@ public final class ElepyRouteBuilder {
     private Route route;
     private HttpMethod method;
     private String path;
+    private String acceptType = "*/*";
 
     private ElepyRouteBuilder() {
     }
@@ -43,7 +44,12 @@ public final class ElepyRouteBuilder {
         return this;
     }
 
+    public ElepyRouteBuilder acceptType(String acceptType) {
+        this.acceptType = acceptType;
+        return this;
+    }
+
     public ElepyRoute build() {
-        return new ElepyRoute(path, method, beforeFilter, accessLevel, route);
+        return new ElepyRoute(path, method, beforeFilter, accessLevel, route, acceptType);
     }
 }
