@@ -40,7 +40,7 @@ public class RouteGenerator<T> {
 
     private String evaluateHasIdField(Class cls) {
 
-        return ClassUtils.getPropertyName(ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getSimpleName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier")));
+        return ClassUtils.getPropertyName(ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier")));
 
     }
 
