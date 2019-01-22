@@ -72,7 +72,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     private String getSlug(String slug, Crud crud) {
 
-        final String generatedId = StringUtils.getRandomHexString(prefixLength) + "-" + slug;
+        final String generatedId = StringUtils.getRandomHexString(prefixLength) + (prefixLength == 0 ? "" : "-") + slug;
 
         if (crud.getById(generatedId).isPresent()) {
             return getSlug(slug, crud);
