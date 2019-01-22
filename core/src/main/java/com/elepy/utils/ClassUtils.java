@@ -181,8 +181,12 @@ public class ClassUtils {
         spark.Route route;
         if (method.getParameterCount() == 0) {
             route = (request, response) -> {
-                method.invoke(obj);
-                return "";
+                Object invoke = method.invoke(obj);
+                if (invoke instanceof String) {
+                    return invoke;
+                } else {
+                    return "";
+                }
             };
         } else if (method.getParameterCount() == 2
                 && method.getParameterTypes()[0].equals(Request.class)
