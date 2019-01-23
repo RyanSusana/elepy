@@ -40,7 +40,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
             response.body("OK");
 
         } catch (JsonMappingException e) {
-            throw new ElepyException("MultipleCreate not supported with SimpleCreate");
+            throw new ElepyException("Error mapping SimpleCreate: " + e.getMessage());
         }
     }
 
@@ -60,8 +60,8 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
      * What happens after you create a model.
      *
      * @param createdObject The object after you created it
-     * @param crud the crud implementation
-     * @param elepy the context where you can get context objects
+     * @param crud          the crud implementation
+     * @param elepy         the context where you can get context objects
      */
     public abstract void afterCreate(T createdObject, Crud<T> crud, ElepyContext elepy);
 }
