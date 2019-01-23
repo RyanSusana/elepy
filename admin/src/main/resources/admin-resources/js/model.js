@@ -205,12 +205,14 @@ const app = new Vue({
 
                     this.initData(field, field.name + '.');
                 } else if (field.type === 'ENUM') {
-                    Vue.set(this.bufData, pre + field.name, field.availableValues[0]);
+                    Vue.set(this.bufData, pre + field.name, field.availableValues[0]["enumValue"]);
                 } else if (field.type === 'DATE') {
                     Vue.set(this.bufData, pre + field.name, '2018-01-01');
 
                 } else if (field.type === 'NUMBER') {
                     Vue.set(this.bufData, pre + field.name, 0);
+                } else if (field.type === 'BOOLEAN') {
+                    Vue.set(this.bufData, pre + field.name, false);
                 } else {
                     Vue.set(this.bufData, pre + field.name, '');
                 }
