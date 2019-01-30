@@ -19,7 +19,7 @@ public class HibernateProvider<T> implements CrudProvider<T> {
     @Override
     public Crud<T> crudFor(Class<T> type, Elepy elepy) {
 
-        final SessionFactory singleton = elepy.getSingleton(SessionFactory.class);
+        final SessionFactory singleton = elepy.getDependency(SessionFactory.class);
 
         final IdProvider annotation = type.getAnnotation(IdProvider.class);
         final IdentityProvider<T> identityProvider;

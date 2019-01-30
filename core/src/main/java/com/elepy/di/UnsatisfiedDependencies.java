@@ -80,7 +80,7 @@ class UnsatisfiedDependencies {
             try {
                 Object o = elepyContext.initializeElepyObject(contextKey.getClassType());
                 ContextKey objectContextKey = new ContextKey<>(contextKey.getClassType(), ElepyContext.getTag(contextKey.getClassType()));
-                elepyContext.attachSingleton(objectContextKey.getClassType(), objectContextKey.getTag(), o);
+                elepyContext.registerDependency(objectContextKey.getClassType(), objectContextKey.getTag(), o);
             } catch (Exception e) {
                 if (!(e instanceof ElepyErrorMessage)) {
                     e.printStackTrace();

@@ -61,7 +61,7 @@ public static void main(String[] args) {
     DB database = mongo.getDB("product-database");
 
     new Elepy()
-        .attachSingleton(DB.class, database)
+        .registerDependency(DB.class, database)
         .withIPAddress("localhost")
         .onPort(7777)
         .addModel(Product.class)

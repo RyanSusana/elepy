@@ -16,7 +16,7 @@ import java.util.Set;
 
 public interface ElepyContext {
 
-    <T> T getSingleton(Class<T> cls, String tag);
+    <T> T getDependency(Class<T> cls, String tag);
 
 
     /**
@@ -60,8 +60,8 @@ public interface ElepyContext {
         return null;
     }
 
-    default <T> T getSingleton(Class<T> cls) {
-        return getSingleton(cls, null);
+    default <T> T getDependency(Class<T> cls) {
+        return getDependency(cls, null);
     }
 
     default <T> Crud<T> getCrudFor(Class<T> cls) {
@@ -71,12 +71,12 @@ public interface ElepyContext {
             throw new ElepyConfigException("Resources must have the @RestModel Annotation");
         }
 
-        return (Crud<T>) getSingleton(Crud.class, annotation.slug());
+        return (Crud<T>) getDependency(Crud.class, annotation.slug());
     }
 
 
     default ObjectMapper getObjectMapper() {
-        return getSingleton(ObjectMapper.class);
+        return getDependency(ObjectMapper.class);
     }
 
     default <T> Optional<Constructor<? extends T>> getElepyConstructor(Class<?> cls) {
@@ -116,24 +116,24 @@ public interface ElepyContext {
 
     Set<ContextKey> getDependencyKeys();
 
-    default Object getObjectForAnnotatedType(AnnotatedElement annotatedType) {
+    default Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {
         Inject annotation = annotatedType.getAnnotation(Inject.class);
         if (annotation.classType().equals(Object.class)) {
             if (annotatedType instanceof Field) {
                 if (Crud.class.isAssignableFrom(((Field) annotatedType).getType())) {
-                    return this.getSingleton(Crud.class, getTag(annotatedType));
+                    return this.getDependency(Crud.class, getTag(annotatedType));
                 } else {
-                    return this.getSingleton(((Field) annotatedType).getType(), annotation.tag());
+                    return this.getDependency(((Field) annotatedType).getType(), annotation.tag());
                 }
             } else if (annotatedType instanceof Parameter) {
                 if (Crud.class.isAssignableFrom(((Parameter) annotatedType).getType())) {
-                    return this.getSingleton(Crud.class, getTag(annotatedType));
+                    return this.getDependency(Crud.class, getTag(annotatedType));
                 } else {
-                    return this.getSingleton(((Parameter) annotatedType).getType(), getTag(annotatedType));
+                    return this.getDependency(((Parameter) annotatedType).getType(), getTag(annotatedType));
                 }
             }
         }
-        return this.getSingleton(annotation.classType(), annotation.tag());
+        return this.getDependency(annotation.classType(), annotation.tag());
     }
 
 
@@ -141,7 +141,7 @@ public interface ElepyContext {
         List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class);
 
         for (Field field : fields) {
-            field.set(object, getObjectForAnnotatedType(field));
+            field.set(object, getDependencyForAnnotatedElement(field));
         }
     }
 
@@ -180,12 +180,12 @@ public interface ElepyContext {
 
         if (inject != null) {
             if (Crud.class.isAssignableFrom(((Parameter) parameter).getType())) {
-                return this.getSingleton(Crud.class, getTag(parameter));
+                return this.getDependency(Crud.class, getTag(parameter));
             } else {
-                return this.getSingleton(((Parameter) parameter).getType(), getTag(parameter));
+                return this.getDependency(((Parameter) parameter).getType(), getTag(parameter));
             }
         }
 
-        return getSingleton(parameter.getType(), null);
+        return getDependency(parameter.getType(), null);
     }
 }

@@ -78,8 +78,8 @@ public class ResourceDescriber<T> {
             crud = crudProvider.crudFor(clazz, elepy);
         }
 
-        elepy.attachSingleton(Crud.class, slug, crud);
-        elepy.attachSingleton(CrudProvider.class, slug, crudProvider);
+        elepy.registerDependency(Crud.class, slug, crud);
+        elepy.registerDependency(CrudProvider.class, slug, crudProvider);
 
     }
 

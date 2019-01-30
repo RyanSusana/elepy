@@ -36,7 +36,7 @@ public class ElepyEndToEndTest extends Base {
         final FongoDB db = fongo.getDB("test");
 
 
-        elepy.attachSingleton(DB.class, db);
+        elepy.registerDependency(DB.class, db);
 
 
         elepy.addModel(Resource.class);

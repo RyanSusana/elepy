@@ -34,7 +34,7 @@ public class ContextTest extends Base {
         DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(db, "resources", Resource.class);
 
 
-        elepy.attachSingleton(DB.class, db).addModel(Resource.class).onPort(1111).start();
+        elepy.registerDependency(DB.class, db).addModel(Resource.class).onPort(1111).start();
 
         Crud<Resource> crudFor = elepy.getContext().getCrudFor(Resource.class);
 
@@ -51,9 +51,9 @@ public class ContextTest extends Base {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 
 
-        defaultElepyContext.requireDependency(Dependency2.class);
-        defaultElepyContext.requireDependency(Dependency3.class);
-        defaultElepyContext.requireDependency(Dependency1.class);
+        defaultElepyContext.registerDependency(Dependency2.class);
+        defaultElepyContext.registerDependency(Dependency3.class);
+        defaultElepyContext.registerDependency(Dependency1.class);
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
     }
@@ -62,9 +62,9 @@ public class ContextTest extends Base {
     void testCircularDependencies() {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 
-        defaultElepyContext.requireDependency(Circular3.class);
-        defaultElepyContext.requireDependency(Circular2.class);
-        defaultElepyContext.requireDependency(Circular1.class);
+        defaultElepyContext.registerDependency(Circular3.class);
+        defaultElepyContext.registerDependency(Circular2.class);
+        defaultElepyContext.registerDependency(Circular1.class);
         ElepyDependencyInjectionException elepyDependencyInjectionException =
                 assertThrows(ElepyDependencyInjectionException.class, defaultElepyContext::resolveDependencies);
 
@@ -75,9 +75,9 @@ public class ContextTest extends Base {
     void testUnsatisfiedDependencies() {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 
-        defaultElepyContext.requireDependency(Dependency3.class);
-        defaultElepyContext.requireDependency(Dependency1.class);
-        defaultElepyContext.requireDependency(Unsatisfiable.class);
+        defaultElepyContext.registerDependency(Dependency3.class);
+        defaultElepyContext.registerDependency(Dependency1.class);
+        defaultElepyContext.registerDependency(Unsatisfiable.class);
 
         ElepyDependencyInjectionException elepyDependencyInjectionException =
                 assertThrows(ElepyDependencyInjectionException.class, defaultElepyContext::resolveDependencies);
@@ -92,9 +92,9 @@ public class ContextTest extends Base {
         defaultElepyContext.strictMode(true);
 
         assertDoesNotThrow(() -> {
-            defaultElepyContext.requireDependency(Dependency1.class);
-            defaultElepyContext.requireDependency(Dependency2.class);
-            defaultElepyContext.requireDependency(Dependency3.class);
+            defaultElepyContext.registerDependency(Dependency1.class);
+            defaultElepyContext.registerDependency(Dependency2.class);
+            defaultElepyContext.registerDependency(Dependency3.class);
         });
     }
 
@@ -105,7 +105,7 @@ public class ContextTest extends Base {
 
         ElepyDependencyInjectionException elepyDependencyInjectionException =
                 assertThrows(ElepyDependencyInjectionException.class, () -> {
-                    defaultElepyContext.requireDependency(Unsatisfiable.class);
+                    defaultElepyContext.registerDependency(Unsatisfiable.class);
                 });
 
         assertEquals(2, elepyDependencyInjectionException.getAmount());
@@ -115,9 +115,9 @@ public class ContextTest extends Base {
     void testTaggedDependencies() {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 
-        defaultElepyContext.requireDependency(Named1.class);
-        defaultElepyContext.requireDependency(Named2.class);
-        defaultElepyContext.requireDependency(Unnamed1.class);
+        defaultElepyContext.registerDependency(Named1.class);
+        defaultElepyContext.registerDependency(Named2.class);
+        defaultElepyContext.registerDependency(Unnamed1.class);
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
     }
@@ -126,15 +126,15 @@ public class ContextTest extends Base {
     void testTreeDependenciesPreFilled() {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 
-        defaultElepyContext.requireDependency(Node1.class);
-        defaultElepyContext.requireDependency(Node2.class);
-        defaultElepyContext.requireDependency(Node3.class);
-        defaultElepyContext.requireDependency(Node4.class);
-        defaultElepyContext.requireDependency(Node5.class);
-        defaultElepyContext.requireDependency(Node6.class);
-        defaultElepyContext.requireDependency(Node7.class);
-        defaultElepyContext.requireDependency(Node8.class);
-        defaultElepyContext.requireDependency(Node9.class);
+        defaultElepyContext.registerDependency(Node1.class);
+        defaultElepyContext.registerDependency(Node2.class);
+        defaultElepyContext.registerDependency(Node3.class);
+        defaultElepyContext.registerDependency(Node4.class);
+        defaultElepyContext.registerDependency(Node5.class);
+        defaultElepyContext.registerDependency(Node6.class);
+        defaultElepyContext.registerDependency(Node7.class);
+        defaultElepyContext.registerDependency(Node8.class);
+        defaultElepyContext.registerDependency(Node9.class);
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
         assertEquals(9, defaultElepyContext.getDependencyKeys().size());
@@ -144,7 +144,7 @@ public class ContextTest extends Base {
     void testTreeDependenciesBuild() {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 
-        defaultElepyContext.requireDependency(Node1.class);
+        defaultElepyContext.registerDependency(Node1.class);
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
         assertEquals(9, defaultElepyContext.getDependencyKeys().size());

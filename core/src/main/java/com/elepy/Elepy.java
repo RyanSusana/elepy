@@ -73,7 +73,7 @@ public class Elepy implements ElepyContext {
         this.routes = new ArrayList<>();
 
         withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
-        attachSingleton(ObjectMapper.class, new ObjectMapper());
+        registerDependency(ObjectMapper.class, new ObjectMapper());
         getObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
@@ -169,8 +169,8 @@ public class Elepy implements ElepyContext {
     }
 
     @Override
-    public <T> T getSingleton(Class<T> cls, String tag) {
-        return context.getSingleton(cls, tag);
+    public <T> T getDependency(Class<T> cls, String tag) {
+        return context.getDependency(cls, tag);
     }
 
     @Override
@@ -207,10 +207,10 @@ public class Elepy implements ElepyContext {
      *
      * @param db the MongoDB
      * @return The {@link com.elepy.Elepy} instance
-     * @see #attachSingleton(Class, Object)
+     * @see #registerDependency(Class, Object)
      */
     public Elepy connectDB(DB db) {
-        this.attachSingleton(DB.class, db);
+        this.registerDependency(DB.class, db);
         return this;
     }
 
@@ -276,7 +276,7 @@ public class Elepy implements ElepyContext {
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
-     * This object can be accessed via {@link ElepyContext#getSingleton(Class, String)}
+     * This object can be accessed via {@link ElepyContext#getDependency(Class, String)}
      *
      * @param cls    The class type of the object
      * @param tag    An optional name
@@ -285,55 +285,55 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      * @see ElepyContext
      */
-    public <T> Elepy attachSingleton(Class<T> cls, String tag, T object) {
-        context.attachSingleton(cls, tag, object);
+    public <T> Elepy registerDependency(Class<T> cls, String tag, T object) {
+        context.registerDependency(cls, tag, object);
         return this;
     }
 
     /**
      * Attaches a context object with a null tag.
      * <p>
-     * See {@link #attachSingleton(Class, String, Object)} for a more detailed description.
+     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param cls    The class type of the object
      * @param object The object
      * @param <T>    The type of the object
      * @return The {@link com.elepy.Elepy} instance
-     * @see #attachSingleton(Class, String, Object)
+     * @see #registerDependency(Class, String, Object)
      */
-    public <T> Elepy attachSingleton(Class<T> cls, T object) {
-        context.attachSingleton(cls, object);
+    public <T> Elepy registerDependency(Class<T> cls, T object) {
+        context.registerDependency(cls, object);
         return this;
     }
 
     /**
      * Attaches a context object with a null tag, and guesses it's class type.
      * <p>
-     * See {@link #attachSingleton(Class, String, Object)} for a more detailed description.
+     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param object The object
      * @param <T>    Any type of object
      * @return The {@link com.elepy.Elepy} instance
-     * @see #attachSingleton(Class, String, Object)
+     * @see #registerDependency(Class, String, Object)
      */
-    public <T> Elepy attachSingleton(T object) {
-        context.attachSingleton(object);
+    public <T> Elepy registerDependency(T object) {
+        context.registerDependency(object);
         return this;
     }
 
     /**
      * Attaches a context object and guesses it's class type.
      * <p>
-     * See {@link #attachSingleton(Class, String, Object)} for a more detailed description.
+     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param object The object
      * @param tag    An optional name
      * @param <T>    Any type of object
      * @return The {@link com.elepy.Elepy} instance
-     * @see #attachSingleton(Class, String, Object)
+     * @see #registerDependency(Class, String, Object)
      */
-    public <T> Elepy attachSingleton(T object, String tag) {
-        context.attachSingleton(object, tag);
+    public <T> Elepy registerDependency(T object, String tag) {
+        context.registerDependency(object, tag);
         return this;
     }
 
@@ -357,7 +357,7 @@ public class Elepy implements ElepyContext {
      * all dependencies at the end of the {@link #start()} call.
      * <p>
      * By enabling strict mode, Elepy will check for unsatisfied/circular
-     * dependencies every time you call {@link #requireDependency(Class, String)} )}
+     * dependencies every time you call {@link #registerDependency(Class, String)} )}
      *
      * @param strict enable/disable strict mode
      * @return The {@link com.elepy.Elepy} instance
@@ -376,20 +376,20 @@ public class Elepy implements ElepyContext {
      * @param tag The optional tag of the class
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy requireDependency(Class<?> cls, String tag) {
-        this.context.requireDependency(cls, tag);
+    public Elepy registerDependency(Class<?> cls, String tag) {
+        this.context.registerDependency(cls, tag);
         return this;
     }
 
     /**
      * Notifies Elepy that you will need a dependency in the lazy(by default) future.
-     * All dependencies must be satisfied before {@link #start()} ends
+     * All dependencies must be satisfied before {@link #start()} ends.
      *
      * @param cls The class you that needs to satisfy the dependency
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy requireDependency(Class<?> cls) {
-        this.context.requireDependency(cls);
+    public Elepy registerDependency(Class<?> cls) {
+        this.context.registerDependency(cls);
         return this;
     }
 

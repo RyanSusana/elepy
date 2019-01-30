@@ -32,7 +32,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
 
     @Override
     public void setup(Service http, Elepy elepy) {
-        ImageDao imageDao = new ImageDao(elepy.getSingleton(DB.class));
+        ImageDao imageDao = new ImageDao(elepy.getDependency(DB.class));
 
         http.post(getAdminPanel().elepy().getBaseSlug() + "/images/upload", (request, response) -> {
             try {
