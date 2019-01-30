@@ -54,6 +54,9 @@ public class ClassUtils {
     public static String getPropertyName(Field field) {
         if (field.isAnnotationPresent(JsonProperty.class)) {
             return field.getAnnotation(JsonProperty.class).value();
+
+        } else if (field.isAnnotationPresent(Column.class)) {
+            return field.getAnnotation(Column.class).columnDefinition();
         } else if (hasId(field)) {
             return "id";
         } else {
