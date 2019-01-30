@@ -37,7 +37,6 @@
         <module>core</module>
         <module>hibernate</module>
         <module>gallery</module>
-        <module>logger</module>
     </modules>
 
     <distributionManagement>
