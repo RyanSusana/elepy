@@ -54,7 +54,7 @@ public class RouteGenerator<T> {
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
             //POST
-            elepy.addRoute(anElepyRoute()
+            elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getCreateAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.post)
@@ -66,7 +66,7 @@ public class RouteGenerator<T> {
             );
 
             // PUT
-            elepy.addRoute(anElepyRoute()
+            elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.put)
@@ -79,7 +79,7 @@ public class RouteGenerator<T> {
             );
 
             //PATH
-            elepy.addRoute(anElepyRoute()
+            elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.patch)
@@ -91,7 +91,7 @@ public class RouteGenerator<T> {
             );
 
             // DELETE
-            elepy.addRoute(anElepyRoute()
+            elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.delete)
@@ -104,7 +104,7 @@ public class RouteGenerator<T> {
             );
 
             //GET PAGE
-            elepy.addRoute(anElepyRoute()
+            elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.get)
@@ -117,7 +117,7 @@ public class RouteGenerator<T> {
             );
 
             //GET ONE
-            elepy.addRoute(anElepyRoute()
+            elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.get)

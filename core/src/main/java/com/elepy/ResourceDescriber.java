@@ -125,7 +125,7 @@ public class ResourceDescriber<T> {
 
         if (serviceAnnotation != null) {
             ServiceHandler<T> initialService = elepy.initializeElepyObject(serviceAnnotation.value());
-            elepy.addRoutes(ClassUtils.scanForRoutes(initialService));
+            elepy.addRouting(ClassUtils.scanForRoutes(initialService));
             serviceBuilder.defaultFunctionality(initialService);
         }
         if (deleteAnnotation != null) {

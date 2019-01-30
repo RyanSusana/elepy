@@ -1,10 +1,12 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
+import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ClassUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultElepyContext implements ElepyContext {
 
@@ -41,9 +43,18 @@ public class DefaultElepyContext implements ElepyContext {
         preInitialisedDependencies.add(contextKey);
     }
 
-    public <T> T getDependency(Class<T> cls, String tag) {
-        final ContextKey<T> key = new ContextKey<>(cls, tag);
 
+    public <T> T getDependency(Class<T> cls, String tag) {
+
+
+        final ContextKey<T> key;
+
+        if (tag == null && Crud.class.isAssignableFrom(cls)) {
+            key = getCrudDependencyKey(cls);
+        } else {
+            key = new ContextKey<>(cls, tag);
+
+        }
         final T t = (T) contextMap.get(key);
         if (t != null) {
             return t;
@@ -51,6 +62,18 @@ public class DefaultElepyContext implements ElepyContext {
 
         throw new ElepyConfigException(String.format("No context object for %s available with the tag: %s", cls.getName(), tag));
     }
+
+    private <T> ContextKey<T> getCrudDependencyKey(Class<T> cls) {
+        List<Map.Entry<ContextKey, Object>> first = contextMap.entrySet().stream().filter(contextKeyObjectEntry ->
+                contextKeyObjectEntry.getKey().getClassType().equals(cls)).collect(Collectors.toList());
+
+        if (first.size() == 1) {
+            return first.get(0).getKey();
+        } else {
+            return new ContextKey<>(cls, null);
+        }
+    }
+
 
     public void registerDependency(Class<?> clazz) {
         registerDependency(clazz, ElepyContext.getTag(clazz));
@@ -66,7 +89,7 @@ public class DefaultElepyContext implements ElepyContext {
             resolveDependencies();
         }
     }
-    
+
     public void strictMode(boolean strictMode) {
         this.strictMode = strictMode;
     }

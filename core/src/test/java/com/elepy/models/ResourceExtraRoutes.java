@@ -4,20 +4,17 @@ package com.elepy.models;
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
-import com.elepy.concepts.Resource;
-import com.elepy.dao.jongo.MongoDao;
+import com.elepy.dao.ResourceDao;
 import spark.Request;
 import spark.Response;
 import spark.route.HttpMethod;
 
 public class ResourceExtraRoutes {
 
-    private final MongoDao<Resource> resourceCrud;
+    private ResourceDao resourceCrud;
 
     @ElepyConstructor
-    public ResourceExtraRoutes(
-            @Inject(tag = "/resources") MongoDao<Resource> resourceCrud
-    ) {
+    public ResourceExtraRoutes(@Inject ResourceDao resourceCrud) {
         this.resourceCrud = resourceCrud;
     }
 

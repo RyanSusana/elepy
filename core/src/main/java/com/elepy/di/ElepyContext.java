@@ -185,7 +185,6 @@ public interface ElepyContext {
                 return this.getDependency(((Parameter) parameter).getType(), getTag(parameter));
             }
         }
-
         return getDependency(parameter.getType(), null);
     }
 }

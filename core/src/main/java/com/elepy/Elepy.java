@@ -52,6 +52,7 @@ public class Elepy implements ElepyContext {
     private boolean initialized = false;
 
     private Class<? extends CrudProvider> defaultCrudProvider;
+    private List<Class<?>> routingClasses;
 
     public Elepy() {
         this(Service.ignite().port(1337));
@@ -71,6 +72,7 @@ public class Elepy implements ElepyContext {
         this.models = new ArrayList<>();
         this.configSlug = "/config";
         this.routes = new ArrayList<>();
+        this.routingClasses = new ArrayList<>();
 
         withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         registerDependency(ObjectMapper.class, new ObjectMapper());
@@ -482,8 +484,8 @@ public class Elepy implements ElepyContext {
      * @param elepyRoute the route to add
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy addRoute(ElepyRoute elepyRoute) {
-        return addRoutes(Collections.singleton(elepyRoute));
+    public Elepy addRouting(ElepyRoute elepyRoute) {
+        return addRouting(Collections.singleton(elepyRoute));
     }
 
     /**
@@ -492,11 +494,23 @@ public class Elepy implements ElepyContext {
      * @param elepyRoutes the routes to add
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy addRoutes(Iterable<ElepyRoute> elepyRoutes) {
+    public Elepy addRouting(Iterable<ElepyRoute> elepyRoutes) {
         checkConfig();
         for (ElepyRoute route : elepyRoutes) {
             routes.add(route);
         }
+        return this;
+    }
+
+    /**
+     * This method adds routing of multiple classes to Elepy.
+     *
+     * @param classesWithRoutes Classes with {@link com.elepy.annotations.Route} annotations in them.
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy addRouting(Class<?>... classesWithRoutes) {
+        checkConfig();
+        this.routingClasses.addAll(Arrays.asList(classesWithRoutes));
         return this;
     }
 
@@ -552,14 +566,18 @@ public class Elepy implements ElepyContext {
 
     private void setupExtraRoutes() {
         try {
+
             for (Class<?> model : models) {
                 final ExtraRoutes extraRoutesAnnotation = model.getAnnotation(ExtraRoutes.class);
 
                 if (extraRoutesAnnotation != null) {
                     for (Class<?> aClass : extraRoutesAnnotation.value()) {
-                        addRoutes(ClassUtils.scanForRoutes(initializeElepyObject(aClass)));
+                        addRouting(ClassUtils.scanForRoutes(initializeElepyObject(aClass)));
                     }
                 }
+            }
+            for (Class<?> routingClass : routingClasses) {
+                addRouting(ClassUtils.scanForRoutes(initializeElepyObject(routingClass)));
             }
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new ElepyConfigException("Failed creating extra routes: " + e.getMessage());
