@@ -164,7 +164,7 @@ public interface ElepyContext {
                     Parameter[] parameters = elepyAnnotatedConstructor.get().getParameters();
                     Object[] dependencies = new Object[parameters.length];
                     for (int i = 0; i < parameters.length; i++) {
-                        dependencies[i] = getParamaterDependency(parameters[i]);
+                        dependencies[i] = getParameterDependency(parameters[i]);
                     }
                     return elepyAnnotatedConstructor.get().newInstance(dependencies);
 
@@ -174,7 +174,7 @@ public interface ElepyContext {
         throw new ElepyConfigException(String.format("Can't initialize %s. It has no empty constructor or a constructor with just one ElepyContext.", cls.getName()));
     }
 
-    default Object getParamaterDependency(Parameter parameter) {
+    default Object getParameterDependency(Parameter parameter) {
 
         Inject inject = parameter.getAnnotation(Inject.class);
 
