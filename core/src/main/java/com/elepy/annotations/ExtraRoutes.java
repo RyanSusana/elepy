@@ -14,5 +14,5 @@ public @interface ExtraRoutes {
     /**
      * @return The classes that have @Route annotations
      */
-    Class<?>[] value() default {};
+    Class<?>[] value();
 }
