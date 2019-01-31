@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
-public class HibernateProvider<T> implements CrudProvider<T> {
+public class HibernateProvider implements CrudProvider {
     private static final Logger logger = LoggerFactory.getLogger(HibernateProvider.class);
 
     @Override
-    public Crud<T> crudFor(Class<T> type, Elepy elepy) {
+    public <T> Crud<T> crudFor(Class<T> type, Elepy elepy) {
 
         final SessionFactory singleton = elepy.getDependency(SessionFactory.class);
 

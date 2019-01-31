@@ -6,10 +6,10 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.mongodb.DB;
 
-public class MongoProvider<T> implements CrudProvider<T> {
+public class MongoProvider implements CrudProvider {
 
     @Override
-    public Crud<T> crudFor(Class<T> type, Elepy elepy) {
+    public <T> Crud<T> crudFor(Class<T> type, Elepy elepy) {
         final RestModel model = type.getAnnotation(RestModel.class);
 
         final String slug = model.slug();
