@@ -1,12 +1,18 @@
 package com.elepy.admin.models;
 
+import com.elepy.annotations.PrettyName;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public enum UserType {
-    SUPER_ADMIN(100), ADMIN(95), MODERATOR(90), USER(0), DISABLED(-1);
 
+    @PrettyName("Super Admin") SUPER_ADMIN(100),
+    @PrettyName("Administrator") ADMIN(95),
+    @PrettyName("Moderator") MODERATOR(90),
+    @PrettyName("Regular User") USER(0),
+    @PrettyName("Banned") DISABLED(-1);
 
     private final int level;
 
