@@ -1,10 +1,10 @@
 package com.elepy.hibernate;
 
-import com.elepy.Elepy;
 import com.elepy.annotations.IdProvider;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
+import com.elepy.di.ElepyContext;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.hibernate.SessionFactory;
@@ -17,7 +17,7 @@ public class HibernateProvider implements CrudProvider {
     private static final Logger logger = LoggerFactory.getLogger(HibernateProvider.class);
 
     @Override
-    public <T> Crud<T> crudFor(Class<T> type, Elepy elepy) {
+    public <T> Crud<T> crudFor(Class<T> type, ElepyContext elepy) {
 
         final SessionFactory singleton = elepy.getDependency(SessionFactory.class);
 
