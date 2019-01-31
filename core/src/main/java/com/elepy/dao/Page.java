@@ -6,12 +6,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class Page<T> {
+    /**
+     * The number of the found page
+     */
     private final long currentPageNumber;
 
+    /**
+     * The number of the last page
+     */
     private final long lastPageNumber;
 
+    /**
+     * The found values. This is effectively the payload of the page, the results.
+     */
     private final List<T> values;
 
+    /**
+     * This is a property that defines the size of values.
+     */
     private final int originalSize;
 
     @JsonCreator

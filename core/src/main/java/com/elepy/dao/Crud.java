@@ -9,6 +9,12 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This is the CRUD interface of Elepy. It is the Core of the Data Access Layer. A crud can be anything from
+ * a Database Client to a in-memory collection of objects to another Restful API.
+ *
+ * @param <T> The type of the Model
+ */
 public interface Crud<T> {
 
     /**
