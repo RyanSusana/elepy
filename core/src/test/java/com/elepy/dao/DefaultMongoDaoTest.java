@@ -2,7 +2,10 @@ package com.elepy.dao;
 
 import com.elepy.BaseFongo;
 import com.elepy.concepts.Resource;
-import com.elepy.dao.jongo.DefaultMongoDao;
+import com.elepy.dao.jongo.MongoProvider;
+import com.elepy.di.DefaultElepyContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DB;
 import org.jongo.Jongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,14 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultMongoDaoTest extends BaseFongo {
 
-    private DefaultMongoDao<Resource> defaultMongoDao;
+    private Crud<Resource> defaultMongoDao;
     private Jongo jongo;
 
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", Resource.class);
+
+        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
+        defaultElepyContext.registerDependency(DB.class, getDb());
+        defaultElepyContext.registerDependency(new ObjectMapper());
+
+
+        defaultMongoDao = defaultElepyContext.initializeElepyObject(MongoProvider.class).crudFor(Resource.class);
+
         jongo = new Jongo(getDb());
     }
 

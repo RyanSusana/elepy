@@ -16,10 +16,12 @@ import java.lang.reflect.Constructor;
 public class HibernateProvider implements CrudProvider {
     private static final Logger logger = LoggerFactory.getLogger(HibernateProvider.class);
 
-    @Override
-    public <T> Crud<T> crudFor(Class<T> type, ElepyContext elepy) {
+    private ElepyContext elepyContext;
 
-        final SessionFactory singleton = elepy.getDependency(SessionFactory.class);
+    @Override
+    public <T> Crud<T> crudFor(Class<T> type) {
+
+        final SessionFactory singleton = elepyContext.getDependency(SessionFactory.class);
 
         final IdProvider annotation = type.getAnnotation(IdProvider.class);
         final IdentityProvider<T> identityProvider;
@@ -34,6 +36,6 @@ public class HibernateProvider implements CrudProvider {
         } else {
             identityProvider = new HexIdentityProvider<>();
         }
-        return new HibernateDao<>(singleton, identityProvider, elepy.getObjectMapper(), type);
+        return new HibernateDao<>(singleton, identityProvider, elepyContext.getObjectMapper(), type);
     }
 }

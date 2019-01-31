@@ -109,7 +109,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
         this.http = http;
         this.elepy = elepy;
-        this.userService = new UserService(new ResourceDescriber<>(elepy, User.class).getCrudProvider().crudFor(User.class, elepy));
+        this.userService = new UserService(new ResourceDescriber<>(elepy, User.class).getCrudProvider().crudFor(User.class));
         tokenHandler = new TokenHandler(this.userService);
         authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 

@@ -66,16 +66,16 @@ public class ResourceDescriber<T> {
         final Crud<T> crud;
 
         if (annotation == null) {
-            crudProvider = ClassUtils.emptyConstructor(elepy.getDefaultCrudProvider()).newInstance();
+            crudProvider = elepy.initializeElepyObject(elepy.getDefaultCrudProvider());
         } else {
-            crudProvider = ClassUtils.emptyConstructor(annotation.value()).newInstance();
+            crudProvider = elepy.initializeElepyObject(annotation.value());
         }
 
         final Dao daoAnnotation = clazz.getAnnotation(Dao.class);
         if (daoAnnotation != null) {
             crud = elepy.initializeElepyObject(daoAnnotation.value());
         } else {
-            crud = crudProvider.crudFor(clazz, elepy);
+            crud = crudProvider.crudFor(clazz);
         }
 
         elepy.registerDependency(Crud.class, slug, crud);
