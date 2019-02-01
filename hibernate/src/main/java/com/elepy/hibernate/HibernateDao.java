@@ -5,7 +5,9 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
+import javax.persistence.Column;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -26,9 +29,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class HibernateDao<T> implements Crud<T> {
-    protected final SessionFactory sessionFactory;
-    protected final IdentityProvider<T> identityProvider;
-    protected final Class<T> aClass;
+    private final SessionFactory sessionFactory;
+    private final IdentityProvider<T> identityProvider;
+    private final Class<T> aClass;
 
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
 
@@ -114,7 +117,7 @@ public class HibernateDao<T> implements Crud<T> {
 
             final Root<T> root = criteriaQuery.from(aClass);
 
-            criteriaQuery.select(root).where(cb.like(root.get(field.getName()), qry));
+            criteriaQuery.select(root).where(cb.like(root.get(getJPAFieldName(field)), qry));
 
             Query<T> query = session.createQuery(criteriaQuery);
             final List<T> resultList = query.list();
@@ -180,24 +183,26 @@ public class HibernateDao<T> implements Crud<T> {
 
         try (Session session = sessionFactory.openSession()) {
             if (StringUtils.isEmpty(q)) {
-                String hql = "select count(*) from " + aClass.getName();
-
-                return session.createQuery(hql, Long.class)
-                        .getSingleResult();
+                return count();
             }
             StringBuilder sb = new StringBuilder();
 
-            sb.append("false");
-            for (Field searchable : com.elepy.utils.ClassUtils.searchForFieldsWithAnnotation(aClass, Searchable.class)) {
-                sb.append(" OR ");
+            List<Field> searchables = ClassUtils.searchForFieldsWithAnnotation(aClass, Searchable.class);
+            searchables.add(ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", aClass.getName()))));
+            for (Field searchable : searchables) {
                 sb.append(searchable.getName());
                 sb.append(" LIKE ");
-                sb.append(":query");
+                sb.append(":searchTerm");
+
+                sb.append(" OR ");
             }
+
+            sb.delete(sb.length() - 4, sb.length() - 1);
 
             String hql = "select count(*) from " + aClass.getName() + " WHERE " + sb.toString().replaceAll("false OR", "");
 
-            return session.createQuery(hql, Long.class).setParameter("query", q)
+
+            return session.createQuery(hql, Long.class).setParameter("searchTerm", "%" + q + "%")
                     .getSingleResult();
         }
     }
@@ -225,17 +230,22 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public long count() {
         try (Session session = sessionFactory.openSession()) {
-
             final Query<Long> query = session.createQuery("select count(*) from " + aClass.getName(), Long.class);
-
             return query.getSingleResult();
-
-
         }
     }
 
+    private String getJPAFieldName(Field field) {
+        Column annotation = field.getAnnotation(Column.class);
 
-    public void loadLazyCollections(Object object) {
+        if (annotation != null && !annotation.name().isEmpty()) {
+            return annotation.name();
+        }
+
+        return field.getName();
+    }
+
+    private void loadLazyCollections(Object object) {
 
         try {
             objectMapper.writeValueAsString(object);

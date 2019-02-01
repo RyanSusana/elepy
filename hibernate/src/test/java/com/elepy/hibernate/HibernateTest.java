@@ -1,12 +1,14 @@
-package com.elepy.dao;
+package com.elepy.hibernate;
 
-import com.elepy.BaseFongo;
-import com.elepy.concepts.Resource;
-import com.elepy.dao.jongo.MongoProvider;
+import com.elepy.dao.Crud;
+import com.elepy.dao.Page;
+import com.elepy.dao.QuerySetup;
 import com.elepy.di.DefaultElepyContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DB;
-import org.jongo.Jongo;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,24 +16,27 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DefaultMongoDaoTest extends BaseFongo {
+
+public class HibernateTest {
 
     private Crud<Resource> defaultMongoDao;
-    private Jongo jongo;
+
+    private SessionFactory sessionFactory;
 
     @BeforeEach
     public void setUp() throws Exception {
-        super.setUp();
+
+        Configuration hibernateConfiguration = new Configuration().configure();
 
 
+        sessionFactory = hibernateConfiguration.buildSessionFactory();
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
-        defaultElepyContext.registerDependency(DB.class, getDb());
+        defaultElepyContext.registerDependency(SessionFactory.class, sessionFactory);
         defaultElepyContext.registerDependency(new ObjectMapper());
 
 
-        defaultMongoDao = defaultElepyContext.initializeElepyObject(MongoProvider.class).crudFor(Resource.class);
+        defaultMongoDao = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(Resource.class);
 
-        jongo = new Jongo(getDb());
     }
 
     @Test
@@ -40,9 +45,8 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultMongoDao.create(validObject());
         defaultMongoDao.create(validObject());
 
-        final long resources = jongo.getCollection("resources").count();
 
-        assertEquals(2, resources);
+        assertEquals(2, count());
     }
 
     @Test
@@ -73,7 +77,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultMongoDao.create(resource);
 
 
-        final long searchable = defaultMongoDao.count("searchab");
+        final long searchable = defaultMongoDao.count("searcha");
         assertEquals(1, searchable);
 
     }
@@ -82,8 +86,6 @@ public class DefaultMongoDaoTest extends BaseFongo {
     public void testMultiCreate() {
         final Resource resource = validObject();
         final Resource resource2 = validObject();
-
-        resource2.setUnique("Unique2");
 
         defaultMongoDao.create(Arrays.asList(resource, resource2));
 
@@ -97,6 +99,18 @@ public class DefaultMongoDaoTest extends BaseFongo {
     }
 
     private long count() {
-        return jongo.getCollection("resources").count();
+        try (Session session = sessionFactory.openSession()) {
+            final Query<Long> query = session.createQuery("select count(*) from " + Resource.class.getName(), Long.class);
+            return query.getSingleResult();
+        }
+    }
+
+    public Resource validObject() {
+        Resource resource = new Resource();
+
+        resource.setTextField("textfield");
+        resource.setSearchableField("searchable");
+
+        return resource;
     }
 }
