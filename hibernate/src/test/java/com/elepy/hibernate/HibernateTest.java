@@ -12,7 +12,9 @@ import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -65,7 +67,7 @@ public class HibernateTest {
         defaultMongoDao.create(resource);
 
 
-        final Page<Resource> searchable = defaultMongoDao.search(new QuerySetup("searchable", null, null, 1L, 1));
+        final Page<Resource> searchable = defaultMongoDao.search(new QuerySetup("searchab", null, null, 1L, 1));
         assertEquals(1, searchable.getValues().size());
 
     }
@@ -83,6 +85,20 @@ public class HibernateTest {
     }
 
     @Test
+    public void testSearchInField() throws NoSuchFieldException {
+
+        final Resource resource = validObject();
+        defaultMongoDao.create(resource);
+
+
+        Field searchableField = Resource.class.getDeclaredField("searchableField");
+        searchableField.setAccessible(true);
+        final List<Resource> searchable = defaultMongoDao.searchInField(searchableField, "searchable");
+        assertEquals(1, searchable.size());
+
+    }
+
+    @Test
     public void testMultiCreate() {
         final Resource resource = validObject();
         final Resource resource2 = validObject();
@@ -91,10 +107,6 @@ public class HibernateTest {
 
         assertEquals(2, count());
 
-
-    }
-
-    public void testGetById() {
 
     }
 
@@ -110,6 +122,7 @@ public class HibernateTest {
 
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
+        resource.setUniqueField("unique");
 
         return resource;
     }

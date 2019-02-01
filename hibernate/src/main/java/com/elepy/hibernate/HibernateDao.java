@@ -50,17 +50,15 @@ public class HibernateDao<T> implements Crud<T> {
     public Page<T> search(QuerySetup querySetup) {
         try (Session session = sessionFactory.openSession()) {
 
-            final String className = aClass.getName();
-
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
 
             final Root<T> root = criteriaQuery.from(aClass);
-            final Long count;
+            final long count;
             if (StringUtils.isEmpty(querySetup.getQuery())) {
                 criteriaQuery.select(root);
                 final CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-                count = session.createQuery("select count(*) from " + className, Long.class).getSingleResult();
+                count = count();
 
             } else {
                 criteriaQuery.select(root);

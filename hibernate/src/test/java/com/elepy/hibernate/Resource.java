@@ -3,6 +3,7 @@ package com.elepy.hibernate;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Text;
+import com.elepy.annotations.Unique;
 import com.elepy.models.TextType;
 
 import javax.persistence.Entity;
@@ -20,9 +21,11 @@ public class Resource {
     @Text(TextType.TEXTFIELD)
     private String textField;
 
-
     @Searchable
     private String searchableField;
+
+    @Unique
+    private String uniqueField;
 
     public String getTextField() {
         return textField;
@@ -46,5 +49,13 @@ public class Resource {
 
     public void setSearchableField(String searchableField) {
         this.searchableField = searchableField;
+    }
+
+    public String getUniqueField() {
+        return uniqueField;
+    }
+
+    public void setUniqueField(String uniqueField) {
+        this.uniqueField = uniqueField;
     }
 }
