@@ -141,7 +141,9 @@ public interface ElepyContext {
         List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class);
 
         for (Field field : fields) {
-            field.set(object, getDependencyForAnnotatedElement(field));
+            if (field.get(object) == null) {
+                field.set(object, getDependencyForAnnotatedElement(field));
+            }
         }
     }
 
