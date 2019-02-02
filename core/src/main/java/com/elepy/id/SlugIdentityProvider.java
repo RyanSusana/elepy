@@ -3,7 +3,6 @@ package com.elepy.id;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,17 +15,15 @@ import java.util.Optional;
 public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     private static final Logger logger = LoggerFactory.getLogger(SlugIdentityProvider.class);
     private final String[] slugFieldNames;
-    private final int prefixLength;
     private final Slugify slugify;
     private final int maxLength;
 
 
     public SlugIdentityProvider() {
-        this(3, 70, "name", "title", "slug");
+        this(70, "name", "title", "slug");
     }
 
-    public SlugIdentityProvider(int prefixLength, int maxLength, String... slugFieldNames) {
-        this.prefixLength = prefixLength;
+    public SlugIdentityProvider(int maxLength, String... slugFieldNames) {
         this.maxLength = maxLength;
         this.slugify = new Slugify();
         this.slugFieldNames = slugFieldNames;
@@ -60,22 +57,20 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public String getId(T item, Crud<T> dao) {
-
-        final Optional<String> slug = getSlug(item, Arrays.asList(slugFieldNames));
-
-        if (!slug.isPresent()) {
-            throw new ElepyException("There is no available slug");
-        }
-
-        return getSlug(slug.get(), dao);
+        final String slug = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property"));
+        return getSlug(slug, 0, dao);
     }
 
-    private String getSlug(String slug, Crud crud) {
+    private String getSlug(String slug, int iteration, Crud crud) {
 
-        final String generatedId = StringUtils.getRandomHexString(prefixLength) + (prefixLength == 0 ? "" : "-") + slug;
+        String generatedId = slug;
+
+        if (iteration > 0) {
+            generatedId += "-" + (iteration + 1);
+        }
 
         if (crud.getById(generatedId).isPresent()) {
-            return getSlug(slug, crud);
+            return getSlug(slug, iteration + 1, crud);
         }
 
         return generatedId;
