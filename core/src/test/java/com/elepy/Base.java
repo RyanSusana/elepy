@@ -1,6 +1,6 @@
 package com.elepy;
 
-import com.elepy.concepts.Resource;
+import com.elepy.models.Resource;
 
 import java.math.BigDecimal;
 

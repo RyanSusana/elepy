@@ -1,8 +1,8 @@
 package com.elepy;
 
-import com.elepy.concepts.Resource;
 import com.elepy.dao.Page;
 import com.elepy.dao.ResourceDao;
+import com.elepy.models.Resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;

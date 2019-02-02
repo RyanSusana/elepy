@@ -2,6 +2,7 @@ package com.elepy.concepts;
 
 import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

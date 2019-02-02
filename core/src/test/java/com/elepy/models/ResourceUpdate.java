@@ -1,6 +1,5 @@
 package com.elepy.models;
 
-import com.elepy.concepts.Resource;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.routes.SimpleUpdate;

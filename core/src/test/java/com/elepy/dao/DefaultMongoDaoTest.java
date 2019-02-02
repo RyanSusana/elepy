@@ -1,9 +1,9 @@
 package com.elepy.dao;
 
 import com.elepy.BaseFongo;
-import com.elepy.concepts.Resource;
 import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.di.DefaultElepyContext;
+import com.elepy.models.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import org.jongo.Jongo;

@@ -2,7 +2,6 @@ package com.elepy.di;
 
 import com.elepy.Base;
 import com.elepy.Elepy;
-import com.elepy.concepts.Resource;
 import com.elepy.dao.Crud;
 import com.elepy.dao.ResourceDao;
 import com.elepy.dao.jongo.DefaultMongoDao;
@@ -17,6 +16,7 @@ import com.elepy.di.threeway.Dependency2;
 import com.elepy.di.threeway.Dependency3;
 import com.elepy.di.threeway.Unsatisfiable;
 import com.elepy.di.tree.*;
+import com.elepy.models.Resource;
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
 import com.mongodb.FongoDB;

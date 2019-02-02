@@ -1,9 +1,8 @@
-package com.elepy.concepts;
+package com.elepy.models;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.dao.ResourceDao;
-import com.elepy.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

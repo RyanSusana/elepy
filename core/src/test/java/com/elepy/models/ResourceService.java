@@ -2,7 +2,6 @@ package com.elepy.models;
 
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
-import com.elepy.concepts.Resource;
 import com.elepy.dao.Crud;
 import com.elepy.dao.ResourceDao;
 import com.elepy.routes.DefaultService;
