@@ -62,7 +62,6 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     }
 
     private String getSlug(String slug, int iteration, Crud crud) {
-
         String generatedId = slug;
 
         if (iteration > 0) {
