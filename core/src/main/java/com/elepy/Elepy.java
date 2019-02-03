@@ -522,18 +522,22 @@ public class Elepy implements ElepyContext {
         }
         setupLoggingAndExceptions();
 
-        Map<ResourceDescriber, Class<?>> classes = new HashMap<>();
+        Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
 
         if (!packages.isEmpty()) {
             Reflections reflections = new Reflections(packages);
             Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
 
-            annotated.forEach(claszz -> classes.put(new ResourceDescriber<>(this, claszz), claszz));
+            annotated.forEach(claszz -> resourceDescribers.add(new ResourceDescriber<>(this, claszz)));
         }
         for (Class<?> model : models) {
-            classes.put(new ResourceDescriber<>(this, model), model);
+            resourceDescribers.add(new ResourceDescriber<>(this, model));
         }
-        final List<Map<String, Object>> maps = setupPojos(classes);
+
+        resourceDescribers.forEach((resourceDescriber) -> {
+            System.out.println(resourceDescriber.getClassType().getName());
+        });
+        final List<Map<String, Object>> maps = setupPojos(resourceDescribers);
 
 
         descriptors.addAll(maps);
@@ -600,13 +604,12 @@ public class Elepy implements ElepyContext {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> setupPojos(Map<ResourceDescriber, Class<?>> classes) {
+    private List<Map<String, Object>> setupPojos(Set<ResourceDescriber> classes) {
         List<Map<String, Object>> descriptorList = new ArrayList<>();
 
-        classes.forEach((restModel, clazz) -> {
-            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, clazz);
+        classes.forEach((restModel) -> {
+            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, restModel.getClassType());
             descriptorList.add(routeGenerator.setupPojo());
-
         });
 
         return descriptorList;

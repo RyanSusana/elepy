@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ResourceDescriber<T> {
+public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     private final Elepy elepy;
     private final StructureDescriber structureDescriber;
-    private Class<T> clazz;
+    private Class<T> classType;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
     private AccessLevel deleteAccessLevel = AccessLevel.ADMIN;
@@ -42,9 +42,9 @@ public class ResourceDescriber<T> {
     private ServiceHandler<T> service;
 
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
-        this.clazz = clazz;
+        this.classType = clazz;
         this.elepy = elepy;
-        this.structureDescriber = new StructureDescriber(this.clazz);
+        this.structureDescriber = new StructureDescriber(this.classType);
         try {
             setupAnnotations();
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
@@ -62,7 +62,7 @@ public class ResourceDescriber<T> {
     }
 
     private void setupDao(String slug) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final DaoProvider annotation = clazz.getAnnotation(DaoProvider.class);
+        final DaoProvider annotation = classType.getAnnotation(DaoProvider.class);
         final Crud<T> crud;
 
         if (annotation == null) {
@@ -71,11 +71,11 @@ public class ResourceDescriber<T> {
             crudProvider = elepy.initializeElepyObject(annotation.value());
         }
 
-        final Dao daoAnnotation = clazz.getAnnotation(Dao.class);
+        final Dao daoAnnotation = classType.getAnnotation(Dao.class);
         if (daoAnnotation != null) {
             crud = elepy.initializeElepyObject(daoAnnotation.value());
         } else {
-            crud = crudProvider.crudFor(clazz);
+            crud = crudProvider.crudFor(classType);
         }
 
         elepy.registerDependency(Crud.class, slug, crud);
@@ -86,7 +86,7 @@ public class ResourceDescriber<T> {
     private void setupEvaluators() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         objectEvaluators = new ArrayList<>();
 
-        final Evaluators annotation = clazz.getAnnotation(Evaluators.class);
+        final Evaluators annotation = classType.getAnnotation(Evaluators.class);
         objectEvaluators.add(new ObjectEvaluatorImpl<>());
 
         if (annotation != null) {
@@ -100,10 +100,10 @@ public class ResourceDescriber<T> {
     }
 
     private void baseAnnotations() throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        final RestModel annotation = clazz.getAnnotation(RestModel.class);
+        final RestModel annotation = classType.getAnnotation(RestModel.class);
 
         if (annotation == null) {
-            throw new ElepyConfigException(String.format("Resources must have the @RestModel Annotation, %s doesn't.", clazz.getName()));
+            throw new ElepyConfigException(String.format("Resources must have the @RestModel Annotation, %s doesn't.", classType.getName()));
         }
 
         setupDao(annotation.slug());
@@ -117,11 +117,11 @@ public class ResourceDescriber<T> {
 
         ServiceBuilder<T> serviceBuilder = new ServiceBuilder<>();
 
-        final com.elepy.annotations.Service serviceAnnotation = clazz.getAnnotation(com.elepy.annotations.Service.class);
-        final com.elepy.annotations.Delete deleteAnnotation = clazz.getAnnotation(com.elepy.annotations.Delete.class);
-        final com.elepy.annotations.Update updateAnnotation = clazz.getAnnotation(com.elepy.annotations.Update.class);
-        final com.elepy.annotations.Find findAnnotation = clazz.getAnnotation(com.elepy.annotations.Find.class);
-        final com.elepy.annotations.Create createAnnotation = clazz.getAnnotation(com.elepy.annotations.Create.class);
+        final com.elepy.annotations.Service serviceAnnotation = classType.getAnnotation(com.elepy.annotations.Service.class);
+        final com.elepy.annotations.Delete deleteAnnotation = classType.getAnnotation(com.elepy.annotations.Delete.class);
+        final com.elepy.annotations.Update updateAnnotation = classType.getAnnotation(com.elepy.annotations.Update.class);
+        final com.elepy.annotations.Find findAnnotation = classType.getAnnotation(com.elepy.annotations.Find.class);
+        final com.elepy.annotations.Create createAnnotation = classType.getAnnotation(com.elepy.annotations.Create.class);
 
         if (serviceAnnotation != null) {
             ServiceHandler<T> initialService = elepy.initializeElepyObject(serviceAnnotation.value());
@@ -164,8 +164,8 @@ public class ResourceDescriber<T> {
         return slug;
     }
 
-    public Class<T> getClazz() {
-        return clazz;
+    public Class<T> getClassType() {
+        return classType;
     }
 
 
@@ -227,4 +227,8 @@ public class ResourceDescriber<T> {
         return Objects.hash(slug);
     }
 
+    @Override
+    public int compareTo(ResourceDescriber o) {
+        return slug.compareTo(o.slug);
+    }
 }
