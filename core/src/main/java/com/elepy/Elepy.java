@@ -239,6 +239,7 @@ public class Elepy implements ElepyContext {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start().");
         }
+        registerDependency(module);
         modules.add(module);
         return this;
     }

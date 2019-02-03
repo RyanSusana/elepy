@@ -33,16 +33,23 @@ public class DefaultElepyContext implements ElepyContext {
 
     public <T> void registerDependency(T object, String tag) {
         ContextKey<?> contextKey = new ContextKey<>(object.getClass(), tag);
+        ensureUniqueDependency(contextKey);
         contextMap.put(contextKey, object);
         preInitialisedDependencies.add(contextKey);
     }
 
     public <T> void registerDependency(Class<T> cls, String tag, T object) {
         ContextKey<T> contextKey = new ContextKey<>(cls, tag);
+        ensureUniqueDependency(contextKey);
         contextMap.put(contextKey, object);
         preInitialisedDependencies.add(contextKey);
     }
 
+    private <T> void ensureUniqueDependency(ContextKey<T> key) {
+        if (contextMap.containsKey(key)) {
+            throw new ElepyConfigException(String.format("Elepy already has a key with the class '%s' and the tag '%s'", key.getClassType(), key.getTag()));
+        }
+    }
 
     public <T> T getDependency(Class<T> cls, String tag) {
 
