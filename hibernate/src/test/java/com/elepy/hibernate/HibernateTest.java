@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HibernateTest {
 
-    private Crud<Resource> defaultMongoDao;
+    private Crud<Resource> resourceCrud;
 
     private SessionFactory sessionFactory;
 
@@ -37,15 +37,15 @@ public class HibernateTest {
         defaultElepyContext.registerDependency(new ObjectMapper());
 
 
-        defaultMongoDao = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(Resource.class);
+        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(Resource.class);
 
     }
 
     @Test
     public void testCreate() {
 
-        defaultMongoDao.create(validObject());
-        defaultMongoDao.create(validObject());
+        resourceCrud.create(validObject());
+        resourceCrud.create(validObject());
 
 
         assertEquals(2, count());
@@ -54,8 +54,8 @@ public class HibernateTest {
     @Test
     public void testDelete() {
         final Resource resource = validObject();
-        defaultMongoDao.create(resource);
-        defaultMongoDao.delete(resource.getId());
+        resourceCrud.create(resource);
+        resourceCrud.delete(resource.getId());
         assertEquals(0, count());
     }
 
@@ -64,10 +64,10 @@ public class HibernateTest {
     public void testSearch() {
 
         final Resource resource = validObject();
-        defaultMongoDao.create(resource);
+        resourceCrud.create(resource);
 
 
-        final Page<Resource> searchable = defaultMongoDao.search(new QuerySetup("searchab", null, null, 1L, 1));
+        final Page<Resource> searchable = resourceCrud.search(new QuerySetup("searchab", null, null, 1L, 1));
         assertEquals(1, searchable.getValues().size());
 
     }
@@ -76,10 +76,10 @@ public class HibernateTest {
     public void testCountSearch() {
 
         final Resource resource = validObject();
-        defaultMongoDao.create(resource);
+        resourceCrud.create(resource);
 
 
-        final long searchable = defaultMongoDao.count("searcha");
+        final long searchable = resourceCrud.count("searcha");
         assertEquals(1, searchable);
 
     }
@@ -88,12 +88,12 @@ public class HibernateTest {
     public void testSearchInField() throws NoSuchFieldException {
 
         final Resource resource = validObject();
-        defaultMongoDao.create(resource);
+        resourceCrud.create(resource);
 
 
         Field searchableField = Resource.class.getDeclaredField("searchableField");
         searchableField.setAccessible(true);
-        final List<Resource> searchable = defaultMongoDao.searchInField(searchableField, "searchable");
+        final List<Resource> searchable = resourceCrud.searchInField(searchableField, "searchable");
         assertEquals(1, searchable.size());
 
     }
@@ -103,7 +103,7 @@ public class HibernateTest {
         final Resource resource = validObject();
         final Resource resource2 = validObject();
 
-        defaultMongoDao.create(Arrays.asList(resource, resource2));
+        resourceCrud.create(Arrays.asList(resource, resource2));
 
         assertEquals(2, count());
 
