@@ -2,7 +2,6 @@ package com.elepy.admin;
 
 import com.elepy.Elepy;
 import com.elepy.ElepyModule;
-import com.elepy.ResourceDescriber;
 import com.elepy.admin.concepts.*;
 import com.elepy.admin.concepts.auth.Authenticator;
 import com.elepy.admin.concepts.auth.BasicHandler;
@@ -109,7 +108,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
         this.http = http;
         this.elepy = elepy;
-        this.userService = new UserService(new ResourceDescriber<>(elepy, User.class).getCrudProvider().crudFor(User.class));
+        this.userService = new UserService(elepy.getCrudFor(User.class));
         tokenHandler = new TokenHandler(this.userService);
         authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
