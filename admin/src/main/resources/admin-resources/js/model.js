@@ -202,9 +202,7 @@ const app = new Vue({
         initData: function (model, pre) {
             for (var i = 0; i < model.fields.length; i++) {
                 var field = model.fields[i];
-                if (field.generated) {
-                    //Vue.set(this.bufData, pre + field.name, 'This will be generated');
-                } else if (field.type === 'OBJECT') {
+                if (field.type === 'OBJECT') {
                     Vue.set(this.bufData, pre + field.name, {});
                     this.initData(field, field.name + '.');
                 } else if (field.type === 'ENUM') {
