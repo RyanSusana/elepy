@@ -1,11 +1,11 @@
 Vue.component('Trumbowyg', VueTrumbowyg.default);
-
+Vue.component('vuejs-datepicker', window['vue-ctk-date-time-picker']);
 
 const app = new Vue({
     el: '#app',
     delimiters: ['((', '))'],
     components: {
-        'vuejs-datepicker': vuejsDatepicker,
+
         'vuejs-colorpicker': VueColor.Sketch
     },
     data: {
@@ -208,7 +208,7 @@ const app = new Vue({
                 } else if (field.type === 'ENUM') {
                     Vue.set(this.bufData, pre + field.name, field.availableValues[0]["enumValue"]);
                 } else if (field.type === 'DATE') {
-                    Vue.set(this.bufData, pre + field.name, '2018-01-01');
+                    Vue.set(this.bufData, pre + field.name, new Date().getTime());
                 } else if (field.type === 'NUMBER') {
                     Vue.set(this.bufData, pre + field.name, 0);
                 } else if (field.type === 'BOOLEAN') {
@@ -274,7 +274,10 @@ var template = `
                 <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selecteddata[field.name]"
                                   v-bind:disabled="field.name == 'id' || (field.editable == false)"
                                   placeholder="Click to select a date" input-class="uk-input"
-                                  calendar-class="uk-dark"></vuejs-datepicker>
+                                  calendar-class="uk-dark"
+                                  output-format = "x" :minDate="field.minDate" no-header="true" :maxDate="field.maxDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime">
+                                  
+</vuejs-datepicker>
                 <!-- COLOR -->
                 <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
                                    v-bind:disabled="field.name == 'id' || (field.editable == false)"
@@ -374,7 +377,9 @@ var template = `
                                           v-bind:disabled="field.name == 'id' || (field.editable == false)"
                                           placeholder="Click to select a date"
                                           input-class="uk-input"
-                                          calendar-class="uk-dark"></vuejs-datepicker>
+                                          format="x"
+                                          calendar-class="uk-dark"
+                                          output-format = "x" :minDate="field.minDate" no-header="true" :maxDate="field.maxDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime"></vuejs-datepicker>
 
                         <!-- COLOR -->
                         <vuejs-colorpicker

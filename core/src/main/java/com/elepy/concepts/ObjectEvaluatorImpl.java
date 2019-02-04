@@ -1,8 +1,10 @@
 package com.elepy.concepts;
 
+import com.elepy.annotations.DateTime;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
 import com.elepy.concepts.describers.FieldDescriber;
+import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 
@@ -61,6 +63,21 @@ public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
                 Text textAnnotation = fieldDescriber.getField().getAnnotation(Text.class);
                 if (text.length() > textAnnotation.maximumLength() || text.length() < textAnnotation.minimumLength()) {
                     throw new ElepyException(String.format("%s must be between %d and %d characters long", fieldDescriber.getPrettyName(), textAnnotation.minimumLength(), textAnnotation.maximumLength()));
+                }
+            }
+        }
+        if (fieldDescriber.getType().equals(FieldType.DATE)) {
+            Date date = (Date) obj;
+
+            DateTime dateTimeAnnotation = fieldDescriber.getField().getAnnotation(DateTime.class);
+
+            if (dateTimeAnnotation != null && date != null) {
+                Date min = StructureDescriber.guessDate(dateTimeAnnotation.minDate());
+                Date max = StructureDescriber.guessDate(dateTimeAnnotation.maxDate());
+
+                if (date.before(min) || date.after(max)) {
+                    throw new ElepyException(String.format("%s must be between '%s' and '%s'", fieldDescriber.getPrettyName(), dateTimeAnnotation.minDate(), dateTimeAnnotation.maxDate()));
+
                 }
             }
         }

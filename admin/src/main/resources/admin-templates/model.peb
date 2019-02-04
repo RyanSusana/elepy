@@ -173,8 +173,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
 <script src="/admin-resources/js/vue-truncate.js"></script>
 <script src="https://unpkg.com/marked@0.3.6"></script>
-<script src="https://unpkg.com/vuejs-datepicker"></script>
 <script src="/admin-resources/js/vue-color.js"></script>
+<script src="/admin-resources/js/vue-ctk-date-time-picker.umd.js"></script>
 <script src="/admin-resources/js/model.js"></script>
 {% endif %}
 

@@ -13,6 +13,7 @@ import org.jongo.marshall.jackson.oid.MongoId;
 import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ public class FieldDescriber {
 
     private final boolean generated;
 
+    private static SimpleDateFormat cmsFormat = new SimpleDateFormat("YYYY-MM-dd");
     public FieldDescriber(Field field) {
         this.field = field;
         generated = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.getName().equals(field.getName())).orElse(false);
@@ -91,6 +93,19 @@ public class FieldDescriber {
         fieldMap.put("generated", generated);
         if (fieldType.equals(FieldType.ENUM)) {
             fieldMap.put("availableValues", StructureDescriber.getEnumMap(field.getType()));
+        }
+        if (fieldType.equals(FieldType.DATE)) {
+            DateTime annotation = field.getAnnotation(DateTime.class);
+
+            if (annotation != null) {
+                fieldMap.put("includeTime", annotation.includeTime());
+                fieldMap.put("minDate", cmsFormat.format(StructureDescriber.guessDate(annotation.minDate())));
+                fieldMap.put("maxDate", cmsFormat.format(StructureDescriber.guessDate(annotation.maxDate())));
+            } else {
+                fieldMap.put("includeTime", true);
+                fieldMap.put("minDate", null);
+                fieldMap.put("maxDate", null);
+            }
         }
         if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", field.getType().getSimpleName());
