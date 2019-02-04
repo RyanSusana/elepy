@@ -534,9 +534,6 @@ public class Elepy implements ElepyContext {
             resourceDescribers.add(new ResourceDescriber<>(this, model));
         }
 
-        resourceDescribers.forEach((resourceDescriber) -> {
-            System.out.println(resourceDescriber.getClassType().getName());
-        });
         final List<Map<String, Object>> maps = setupPojos(resourceDescribers);
 
 
