@@ -90,6 +90,10 @@ public class ElepyAdminPanel implements ElepyModule {
     public void routes(Service http, Elepy elepy) {
 
         try {
+            this.userService = new UserService(elepy.getCrudFor(User.class));
+            tokenHandler = new TokenHandler(this.userService);
+            authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
+
 
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin();
@@ -108,10 +112,6 @@ public class ElepyAdminPanel implements ElepyModule {
 
         this.http = http;
         this.elepy = elepy;
-        this.userService = new UserService(elepy.getCrudFor(User.class));
-        tokenHandler = new TokenHandler(this.userService);
-        authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
-
 
         elepy.addModel(this.userClass);
     }
