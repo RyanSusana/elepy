@@ -1,5 +1,6 @@
 package com.elepy.admin.concepts;
 
+import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.models.Attachment;
 import com.elepy.admin.models.AttachmentType;
@@ -23,14 +24,15 @@ public class AttachmentHandler {
 
     private final ElepyAdminPanel adminPanel;
 
+
     public AttachmentHandler(ElepyAdminPanel adminPanel) {
         this.adminPanel = adminPanel;
     }
 
 
-    public void setupAttachments() {
+    public void setupAttachments(ElepyPostConfiguration elepyPostConfiguration) {
         for (Attachment attachment : attachments) {
-            adminPanel.http().get(adminPanel.elepy().getBaseSlug() + attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
+            adminPanel.http().get(elepyPostConfiguration.getBaseSlug() + attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
                 response.type(attachment.getContentType());
                 HttpServletResponse raw = response.raw();
 

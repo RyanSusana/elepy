@@ -1,5 +1,6 @@
 package com.elepy.admin.concepts;
 
+import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 
 import java.util.ArrayList;
@@ -17,23 +18,22 @@ public class PluginHandler {
         this.plugins = new ArrayList<>();
     }
 
-    public void setupPlugins() {
+    public void setupPlugins(ElepyPostConfiguration elepyPostConfiguration) {
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(adminPanel.http(), adminPanel.elepy());
+            plugin.setup(adminPanel.http(), elepyPostConfiguration);
         }
-
     }
 
 
-    public void setupRoutes() {
+    public void setupRoutes(ElepyPostConfiguration elepyPostConfiguration) {
 
-        adminPanel.http().before("/plugins/*", (request, response) -> adminPanel.elepy().getAllAdminFilters().handle(request, response));
-        adminPanel.http().before("/plugins/*/*", (request, response) -> adminPanel.elepy().getAllAdminFilters().handle(request, response));
+        adminPanel.http().before("/plugins/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().handle(request, response));
+        adminPanel.http().before("/plugins/*/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().handle(request, response));
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
-            plugin.setup(adminPanel.http(), adminPanel.elepy());
+            plugin.setup(adminPanel.http(), elepyPostConfiguration);
             adminPanel.http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
                 Map<String, Object> model = new HashMap<>();
-                String content = plugin.renderContent(null);
+                String content = plugin.renderContent(model);
                 model.put("content", content);
                 model.put("plugin", plugin);
                 return adminPanel.renderWithDefaults(request, model, "admin-templates/plugin.peb");

@@ -97,7 +97,7 @@ public class ElepyAdminPanel implements ElepyModule {
             setupLogin();
             setupAdmin(elepy);
 
-            attachmentHandler.setupAttachments();
+            attachmentHandler.setupAttachments(elepy);
             initiated = true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -144,10 +144,10 @@ public class ElepyAdminPanel implements ElepyModule {
 
             return "";
         });
-        viewHandler.setup();
-        pluginHandler.setupPlugins();
-        viewHandler.routes();
-        pluginHandler.setupRoutes();
+        viewHandler.setup(elepy);
+        pluginHandler.setupPlugins(elepy);
+        viewHandler.routes(elepy);
+        pluginHandler.setupRoutes(elepy);
     }
 
 

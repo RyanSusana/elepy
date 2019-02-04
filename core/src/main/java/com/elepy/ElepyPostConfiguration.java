@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Filter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 
 public class ElepyPostConfiguration {
@@ -245,4 +247,11 @@ public class ElepyPostConfiguration {
         return elepy.initializeElepyObject(cls);
     }
 
+    /**
+     * @return List of JSON-descriptions of all the models. This is only valid after {@link Elepy#start()}
+     * has been called.
+     */
+    public List<Map<String, Object>> getDescriptors() {
+        return elepy.getDescriptors();
+    }
 }

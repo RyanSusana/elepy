@@ -1,7 +1,7 @@
 package com.elepy.plugins.gallery;
 
 
-import com.elepy.Elepy;
+import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
@@ -31,10 +31,10 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
     }
 
     @Override
-    public void setup(Service http, Elepy elepy) {
+    public void setup(Service http, ElepyPostConfiguration elepy) {
         ImageDao imageDao = new ImageDao(elepy.getDependency(DB.class));
 
-        http.post(getAdminPanel().elepy().getBaseSlug() + "/images/upload", (request, response) -> {
+        http.post(elepy.getBaseSlug() + "/images/upload", (request, response) -> {
             try {
                 request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
 
@@ -48,11 +48,11 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
 
         });
 
-        http.get(getAdminPanel().elepy().getBaseSlug() + "/images/gallery", (request, response) -> {
+        http.get(elepy.getBaseSlug() + "/images/gallery", (request, response) -> {
             List<Image> images = new ArrayList<>(imageDao.search(new QuerySetup("", "", SortOption.ASCENDING, 1L, Integer.MAX_VALUE)).getValues());
             return elepy.getObjectMapper().writeValueAsString(images);
         });
-        http.get(getAdminPanel().elepy().getBaseSlug() + "/images/:id", (request, response) -> {
+        http.get(elepy.getBaseSlug() + "/images/:id", (request, response) -> {
             final Optional<GridFSDBFile> image = imageDao.getGridFile(request.params("id"));
             if (image.isPresent()) {
                 response.type(image.get().getContentType());
@@ -70,7 +70,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
             response.status(404);
             return "";
         });
-        http.delete(getAdminPanel().elepy().getBaseSlug() + "/images/:id", (request, response) -> {
+        http.delete(elepy.getBaseSlug() + "/images/:id", (request, response) -> {
             final Optional<Image> image = imageDao.getById(request.params("id"));
 
             if (image.isPresent()) {

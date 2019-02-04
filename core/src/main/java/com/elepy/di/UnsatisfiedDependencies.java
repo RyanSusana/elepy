@@ -5,10 +5,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 class UnsatisfiedDependencies {
     private final DefaultElepyContext elepyContext;
@@ -76,11 +73,15 @@ class UnsatisfiedDependencies {
 
         alreadyTried = true;
         List<ContextKey> toRemove = new ArrayList<>();
+        Map<ContextKey, Object> toAdd = new HashMap<>();
         for (ContextKey contextKey : unsatisfiedKeys) {
             try {
                 Object o = elepyContext.initializeElepyObject(contextKey.getClassType());
                 ContextKey objectContextKey = new ContextKey<>(contextKey.getClassType(), ElepyContext.getTag(contextKey.getClassType()));
                 elepyContext.registerDependency(objectContextKey.getClassType(), objectContextKey.getTag(), o);
+
+
+                toAdd.put(objectContextKey, o);
             } catch (Exception e) {
                 if (!(e instanceof ElepyErrorMessage)) {
                     e.printStackTrace();

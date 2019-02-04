@@ -36,7 +36,9 @@ public class DefaultElepyContext implements ElepyContext {
         ensureUniqueDependency(contextKey);
         contextMap.put(contextKey, object);
         preInitialisedDependencies.add(contextKey);
-        strictModeCheck();
+        if (strictMode) {
+            injectPreInitializedDependencies();
+        }
     }
 
     public <T> void registerDependency(Class<T> cls, String tag, T object) {
@@ -44,7 +46,10 @@ public class DefaultElepyContext implements ElepyContext {
         ensureUniqueDependency(contextKey);
         contextMap.put(contextKey, object);
         preInitialisedDependencies.add(contextKey);
-        strictModeCheck();
+        if (strictMode) {
+            injectPreInitializedDependencies();
+        }
+
     }
 
     private <T> void ensureUniqueDependency(ContextKey<T> key) {
@@ -94,27 +99,25 @@ public class DefaultElepyContext implements ElepyContext {
 
     public void registerDependency(ContextKey contextKey) {
         unsatisfiedDependencies.add(contextKey);
-        strictModeCheck();
+        if (strictMode) {
+            resolveDependencies();
+        }
     }
 
     public void strictMode(boolean strictMode) {
         this.strictMode = strictMode;
     }
 
-    private void strictModeCheck() {
-        if (strictMode) {
-            resolveDependencies();
-        }
-    }
-
     public void resolveDependencies() {
         unsatisfiedDependencies.tryToSatisfy();
+        injectPreInitializedDependencies();
+    }
 
+    private void injectPreInitializedDependencies() {
         for (ContextKey preInitialisedDependency : preInitialisedDependencies) {
             if (!ClassUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getClassType(), Inject.class).isEmpty()) {
                 try {
                     this.injectFields(contextMap.get(preInitialisedDependency));
-                    this.injectElepyContextFields(preInitialisedDependency);
                 } catch (IllegalAccessException ignored) {
                     //Will never be thrown
                 }

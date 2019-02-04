@@ -431,7 +431,7 @@ public class Elepy implements ElepyContext {
      * This is used to determine an object's validity. It can also be changed per
      * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
      *
-     * @param baseObjectEvaluator
+     * @param baseObjectEvaluator the base evaluator
      * @return The {@link com.elepy.Elepy} instance
      * @see ObjectEvaluator
      * @see com.elepy.annotations.Evaluators
@@ -460,7 +460,7 @@ public class Elepy implements ElepyContext {
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
      * using the default {@link MongoProvider}
      *
-     * @param defaultCrudProvider
+     * @param defaultCrudProvider the default crud provider
      * @return The {@link com.elepy.Elepy} instance
      * @see CrudProvider
      * @see MongoProvider

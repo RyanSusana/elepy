@@ -1,5 +1,6 @@
 package com.elepy.admin.concepts;
 
+import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
 import com.elepy.utils.ClassUtils;
@@ -21,10 +22,10 @@ public class ViewHandler {
     }
 
 
-    public void setup() throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    public void setup(ElepyPostConfiguration elepyPostConfiguration) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
 
 
-        this.descriptors = adminPanel.elepy().getDescriptors();
+        this.descriptors = elepyPostConfiguration.getDescriptors();
         this.descriptorMap = mapDescriptors();
         this.customViews = customViews();
 
@@ -33,11 +34,11 @@ public class ViewHandler {
         }
     }
 
-    public void routes() {
+    public void routes(ElepyPostConfiguration elepyPostConfiguration) {
         for (Map<String, Object> descriptor : descriptors) {
             adminPanel.http().get("/admin/config" + descriptor.get("slug"), (request, response) -> {
                 response.type("application/json");
-                return adminPanel.elepy().getObjectMapper().writeValueAsString(
+                return elepyPostConfiguration.getObjectMapper().writeValueAsString(
                         descriptor
                 );
             });
