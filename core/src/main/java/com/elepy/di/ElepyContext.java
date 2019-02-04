@@ -8,7 +8,6 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Filter;
 
 import java.lang.reflect.*;
 import java.util.List;
@@ -17,10 +16,15 @@ import java.util.Set;
 
 public interface ElepyContext {
 
+    /**
+     * Tries to get a dependency with a null tag
+     *
+     * @param cls The dependency class
+     * @param <T> The dependency type
+     * @param tag The tag of the dependency
+     * @return the dependency
+     */
     <T> T getDependency(Class<T> cls, String tag);
-
-    Filter getAllAdminFilters();
-
 
     /**
      * Tries to get a tag from a {@link Field} or {@link Parameter}, defaults to null
@@ -63,10 +67,24 @@ public interface ElepyContext {
         return null;
     }
 
+    /**
+     * Tries to get a dependency with a null tag
+     *
+     * @param cls The dependency class
+     * @param <T> The dependency type
+     * @return the dependency
+     */
     default <T> T getDependency(Class<T> cls) {
         return getDependency(cls, null);
     }
 
+    /**
+     * Tries to get a Crud for a RestModel
+     *
+     * @param cls The RestModel class
+     * @param <T> The RestModel type
+     * @return the Crud
+     */
     default <T> Crud<T> getCrudFor(Class<T> cls) {
         final RestModel annotation = cls.getAnnotation(RestModel.class);
 

@@ -521,7 +521,7 @@ public class Elepy implements ElepyContext {
 
     private void init() {
         for (ElepyModule module : modules) {
-            module.beforeElepyConstruction(http, new ElepyConfiguration(this));
+            module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
         }
         setupLoggingAndExceptions();
 
@@ -554,7 +554,7 @@ public class Elepy implements ElepyContext {
 
         initialized = true;
         for (ElepyModule module : modules) {
-            module.afterElepyConstruction(http, this);
+            module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
         }
 
     }

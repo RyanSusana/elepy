@@ -53,7 +53,6 @@ public class DefaultElepyContext implements ElepyContext {
 
     public <T> T getDependency(Class<T> cls, String tag) {
 
-
         final ContextKey<T> key;
 
         if (tag == null && Crud.class.isAssignableFrom(cls)) {
@@ -69,6 +68,7 @@ public class DefaultElepyContext implements ElepyContext {
 
         throw new ElepyConfigException(String.format("No context object for %s available with the tag: %s", cls.getName(), tag));
     }
+
 
     private <T> ContextKey<T> getCrudDependencyKey(Class<T> cls) {
         List<Map.Entry<ContextKey, Object>> first = contextMap.entrySet().stream().filter(contextKeyObjectEntry ->

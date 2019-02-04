@@ -1,14 +1,14 @@
 package com.elepy.admin;
 
-import com.elepy.ElepyConfiguration;
 import com.elepy.ElepyModule;
+import com.elepy.ElepyPostConfiguration;
+import com.elepy.ElepyPreConfiguration;
 import com.elepy.admin.concepts.*;
 import com.elepy.admin.concepts.auth.Authenticator;
 import com.elepy.admin.concepts.auth.BasicHandler;
 import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
-import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -85,7 +85,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
     @Override
-    public void afterElepyConstruction(Service http, ElepyContext elepy) {
+    public void afterElepyConstruction(Service http, ElepyPostConfiguration elepy) {
 
         try {
             this.userService = new UserService(elepy.getCrudFor(User.class));
@@ -106,7 +106,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
     @Override
-    public void beforeElepyConstruction(Service http, ElepyConfiguration elepy) {
+    public void beforeElepyConstruction(Service http, ElepyPreConfiguration elepy) {
 
         this.http = http;
 
@@ -116,7 +116,7 @@ public class ElepyAdminPanel implements ElepyModule {
     }
 
 
-    private void setupAdmin(ElepyContext elepy) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void setupAdmin(ElepyPostConfiguration elepy) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
         http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));

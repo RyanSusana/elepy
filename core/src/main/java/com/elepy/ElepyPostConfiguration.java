@@ -2,20 +2,19 @@ package com.elepy;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
+import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.models.ElepyRoute;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Filter;
 
-/**
- * This is a class dedicated to the safe configuration of Elepy in Modules
- */
-public class ElepyConfiguration {
+import java.lang.reflect.InvocationTargetException;
 
+
+public class ElepyPostConfiguration {
     private final Elepy elepy;
 
-    ElepyConfiguration(Elepy elepy) {
-
+    ElepyPostConfiguration(Elepy elepy) {
         this.elepy = elepy;
     }
 
@@ -222,4 +221,28 @@ public class ElepyConfiguration {
     public Filter getAllAdminFilters() {
         return elepy.getAllAdminFilters();
     }
+
+    public <T> T getDependency(Class<T> cls) {
+        return elepy.getDependency(cls);
+    }
+
+    public <T> T getDependency(Class<T> cls, String tag) {
+        return elepy.getDependency(cls, tag);
+    }
+
+    /**
+     * Tries to get a Crud for a RestModel
+     *
+     * @param cls The RestModel class
+     * @param <T> The RestModel type
+     * @return the Crud
+     */
+    public <T> Crud<T> getCrudFor(Class<T> cls) {
+        return elepy.getCrudFor(cls);
+    }
+
+    public <T> T initializeElepyObject(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        return elepy.initializeElepyObject(cls);
+    }
+
 }
