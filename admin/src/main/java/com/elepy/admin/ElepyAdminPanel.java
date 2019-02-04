@@ -1,6 +1,6 @@
 package com.elepy.admin;
 
-import com.elepy.Elepy;
+import com.elepy.ElepyConfiguration;
 import com.elepy.ElepyModule;
 import com.elepy.admin.concepts.*;
 import com.elepy.admin.concepts.auth.Authenticator;
@@ -43,8 +43,6 @@ public class ElepyAdminPanel implements ElepyModule {
     private Service http;
     private PebbleEngine engine;
 
-
-    private Elepy elepy;
 
     private Class<?> userClass;
 
@@ -97,8 +95,8 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
-            setupLogin();
-            setupAdmin();
+            setupLogin(elepy);
+            setupAdmin(elepy);
 
             attachmentHandler.setupAttachments();
             initiated = true;
@@ -109,16 +107,17 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
     @Override
-    public void beforeElepyConstruction(Service http, Elepy elepy) {
+    public void beforeElepyConstruction(Service http, ElepyConfiguration elepy) {
 
         this.http = http;
-        this.elepy = elepy;
 
+
+        elepy.addAdminFilter(baseAdminAuthenticationFilter);
         elepy.addModel(this.userClass);
     }
 
 
-    private void setupAdmin() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void setupAdmin(ElepyContext elepy) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
         http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
@@ -153,10 +152,9 @@ public class ElepyAdminPanel implements ElepyModule {
     }
 
 
-    private void setupLogin() {
+    private void setupLogin(ElepyContext elepy) {
 
 
-        elepy.addAdminFilter(baseAdminAuthenticationFilter);
         http.get("/elepy-login", (request, response) -> renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb"));
         http.post("/elepy-login", (request, response) -> {
 

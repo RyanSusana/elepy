@@ -199,6 +199,7 @@ public class Elepy implements ElepyContext {
      *
      * @return the base slug, default: "/"
      */
+
     public String getBaseSlug() {
         return this.baseSlug;
     }
@@ -223,6 +224,7 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      * @see Filter
      */
+
     public Elepy addAdminFilter(Filter filter) {
         adminFilters.add(filter);
         return this;
@@ -235,6 +237,7 @@ public class Elepy implements ElepyContext {
      * @param module The module
      * @return The {@link com.elepy.Elepy} instance
      */
+
     public Elepy addExtension(ElepyModule module) {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start().");
@@ -518,7 +521,7 @@ public class Elepy implements ElepyContext {
 
     private void init() {
         for (ElepyModule module : modules) {
-            module.beforeElepyConstruction(http, this);
+            module.beforeElepyConstruction(http, new ElepyConfiguration(this));
         }
         setupLoggingAndExceptions();
 

@@ -7,8 +7,6 @@ import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Filter;
-import spark.Service;
 import spark.route.HttpMethod;
 
 import java.util.HashMap;
@@ -21,9 +19,7 @@ public class RouteGenerator<T> {
     private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
     private final ResourceDescriber<T> restModel;
     private final Class<T> clazz;
-    private final Service http;
     private final String baseSlug;
-    private final Filter adminFilter;
     private final Elepy elepy;
 
 
@@ -31,9 +27,7 @@ public class RouteGenerator<T> {
         this.restModel = resourceDescriber;
 
         this.clazz = tClass;
-        this.http = elepy.http();
         this.baseSlug = elepy.getBaseSlug();
-        this.adminFilter = elepy.getAllAdminFilters();
         this.elepy = elepy;
 
     }
