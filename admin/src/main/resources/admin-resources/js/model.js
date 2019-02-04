@@ -1,4 +1,6 @@
 Vue.component('Trumbowyg', VueTrumbowyg.default);
+
+
 const app = new Vue({
     el: '#app',
     delimiters: ['((', '))'],
@@ -200,15 +202,15 @@ const app = new Vue({
         initData: function (model, pre) {
             for (var i = 0; i < model.fields.length; i++) {
                 var field = model.fields[i];
-                if (field.type === 'OBJECT') {
+                if (field.generated) {
+                    //Vue.set(this.bufData, pre + field.name, 'This will be generated');
+                } else if (field.type === 'OBJECT') {
                     Vue.set(this.bufData, pre + field.name, {});
-
                     this.initData(field, field.name + '.');
                 } else if (field.type === 'ENUM') {
                     Vue.set(this.bufData, pre + field.name, field.availableValues[0]["enumValue"]);
                 } else if (field.type === 'DATE') {
                     Vue.set(this.bufData, pre + field.name, '2018-01-01');
-
                 } else if (field.type === 'NUMBER') {
                     Vue.set(this.bufData, pre + field.name, 0);
                 } else if (field.type === 'BOOLEAN') {
@@ -244,3 +246,215 @@ Date.prototype.yyyymmdd = function () {
     ].join('');
 };
 
+
+var template = `
+<div>
+        <div v-for="(field, index) in selectedmodel.fields" v-if="field.type != 'OBJECT' "
+             class="uk-margin">
+            <label class="uk-form-label" v-if="!(selectedmodel.idField === field.name && creating)">((field.pretty_name))</label>
+            <div class="uk-form-controls">
+                <!-- TEXTFIELD -->
+                <input class="uk-input"
+                       v-if="!(selectedmodel.idField === field.name && creating) && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') ||  (field.type == 'TEXT' && field.textType == 'IMAGE_LINK'))"
+                       v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                       v-model="selecteddata[field.name]" type="text"
+                       placeholder="">
+                <!-- PASSWORD -->
+                <input class="uk-input"
+                       v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
+                       v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                       v-model="selecteddata[field.name]"
+                       type="password"
+                       placeholder="">
+                <!-- IMAGE -->
+                <div v-if="(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
+                     class="uk-padding">
+
+                    <img :src="selecteddata[field.name]" alt="">
+                </div>
+                <!-- DATE -->
+                <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selecteddata[field.name]"
+                                  v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                  placeholder="Click to select a date" input-class="uk-input"
+                                  calendar-class="uk-dark"></vuejs-datepicker>
+                <!-- COLOR -->
+                <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
+                                   v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                   v-bind:value="selecteddata[field.name]"
+                                   v-on:input="selecteddata[field.name] = $event.hex"
+                ></vuejs-colorpicker>
+                <!-- NUMBER -->
+                <input class="uk-input" v-if="field.type == 'NUMBER'"
+                       v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                       v-model="selecteddata[field.name]"
+                       type="number">
+                <!-- TEXTAREA -->
+
+                <textarea class="uk-textarea"
+                          v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
+                          v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                          v-model="selecteddata[field.name]" type="text"
+                          placeholder="" rows="5"></textarea>
+
+                <!-- MARKDOWN -->
+                <div class="uk-padding uk-background-muted"
+                     v-html="compileMarkdown(selecteddata[field.name])"
+                     v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN')">
+                </div>
+                <textarea class="uk-textarea"
+                          v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
+                          v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                          v-model="selecteddata[field.name]" type="text"
+                          placeholder="" rows="13"></textarea>
+
+
+                <!-- HTML -->
+                <trumbowyg v-model="selecteddata[field.name]"
+                           v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
+                           svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg"
+                           class="editor"
+                ></trumbowyg>
+
+                <!-- ENUM -->
+                <div v-if="field.type == 'ENUM' " class="uk-form-controls">
+                    <select class="uk-select" v-model="selecteddata[field.name]"
+                            v-bind:disabled="field.name == 'id' || field.editable == false"
+                    >
+                        <option v-for="value in field.availableValues"
+                                v-bind:value="value.enumValue">((value.enumName))
+                        </option>
+
+                    </select>
+                </div>
+
+                <!-- BOOLEAN -->
+                <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
+                    <select class="uk-select" v-model="selecteddata[field.name]"
+                            v-bind:disabled="field.name == 'id' || field.editable == false">
+                        <option v-bind:value="true">((field.trueValue))</option>
+                        <option v-bind:value="false">((field.falseValue))</option>
+
+                    </select>
+                </div>
+
+
+            </div>
+        </div>
+        <ul class="uk-margin-top" uk-accordion>
+            <li v-for="(fieldOuter, index) in selectedmodel.fields"
+                v-if="fieldOuter.type == 'OBJECT' ">
+                <a class="uk-accordion-title" href="#">((fieldOuter.pretty_name))</a>
+                <div class="uk-accordion-content">
+                    <div v-for="(field, index) in fieldOuter.fields"
+                         class="uk-form-controls">
+                        <label class="uk-form-label">((field.pretty_name))</label>
+                        <!-- TEXTFIELD -->
+                        <input class="uk-input"
+                               v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
+                               v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                               v-model="selecteddata[fieldOuter.name][field.name]"
+                               type="text"
+                               placeholder="">
+                        <!-- PASSWORD -->
+                        <input class="uk-input"
+                               v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
+                               v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                               v-model="selecteddata[fieldOuter.name][field.name]"
+                               type="password"
+                               placeholder="">
+
+                        <!-- IMAGE -->
+
+                        <div v-if="(field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
+                             class="uk-padding">
+
+                            <img :src="selecteddata[fieldOuter.name][field.name]" alt="">
+                        </div>
+                        <!-- DATE -->
+                        <vuejs-datepicker v-if="field.type == 'DATE'"
+                                          v-model="selecteddata[fieldOuter.name][field.name]"
+                                          v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                          placeholder="Click to select a date"
+                                          input-class="uk-input"
+                                          calendar-class="uk-dark"></vuejs-datepicker>
+
+                        <!-- COLOR -->
+                        <vuejs-colorpicker
+                                v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
+                                v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                v-bind:value="selecteddata[fieldOuter.name][field.name]"
+                                v-on:input="selecteddata[fieldOuter.name][field.name] = $event.hex"
+                        ></vuejs-colorpicker>
+
+                        <!-- NUMBER -->
+                        <input class="uk-input" v-if="field.type == 'NUMBER'"
+                               v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                               v-model="selecteddata[fieldOuter.name][field.name]"
+                               type="number">
+                        <!-- TEXTAREA -->
+
+                        <textarea class="uk-textarea"
+                                  v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
+                                  v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                  v-model="selecteddata[fieldOuter.name][field.name]"
+                                  type="text"
+                                  placeholder=""
+                                  rows="5"></textarea>
+                        <!-- MARKDOWN -->
+                        <div class="uk-padding uk-background-muted"
+                             v-html="compileMarkdown(selecteddata[fieldOuter.name][field.name])"
+                             v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN')">
+                        </div>
+
+
+                        <textarea class="uk-textarea"
+                                  v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
+                                  v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                  v-model="selecteddata[fieldOuter.name][field.name]"
+                                  type="text"
+                                  placeholder="" rows="13"></textarea>
+
+
+                        <!-- HTML -->
+                        <trumbowyg v-model="selecteddata[fieldOuter.name][field.name]"
+                                   v-if="(field.type == 'TEXT' && field.textType == 'HTML') && (field.editable === true)"
+                                   svg-path="https://unpkg.com/trumbowyg@2.9.4/dist/ui/icons.svg"
+                                   class="editor"
+                        ></trumbowyg>
+
+                        <!-- ENUM -->
+                        <div v-if="field.type == 'ENUM' " class="uk-form-controls">
+                            <select class="uk-select"
+                                    v-model="selecteddata[fieldOuter.name][field.name]"
+                                    v-bind:disabled="field.name == 'id' || field.editable == false">
+                                <option v-for="value in field.availableValues"
+                                        v-bind:value="value.enumValue">((value.enumName))
+                                </option>
+
+
+                            </select>
+                        </div>
+
+                        <!-- BOOLEAN -->
+                        <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
+                            <select class="uk-select"
+                                    v-model="selecteddata[fieldOuter.name][field.name]"
+                                    v-bind:disabled="field.name == 'id' || field.editable == false">
+                                <option v-bind:value="true">((field.trueValue))</option>
+                                <option v-bind:value="false">((field.falseValue))</option>
+
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+</div>
+`
+Vue.component('elepy-form', {
+    props: ['selecteddata', 'selectedmodel', 'creating'],
+    template: template,
+    delimiters: ['((', '))'],
+})
