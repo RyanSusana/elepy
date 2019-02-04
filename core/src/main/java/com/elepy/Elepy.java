@@ -369,6 +369,7 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy withStrictDependencyMode(boolean strict) {
+        checkConfig();
         this.context.strictMode(strict);
         return this;
     }
@@ -556,6 +557,7 @@ public class Elepy implements ElepyContext {
         for (ElepyModule module : modules) {
             module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
         }
+        context.strictMode(true);
 
     }
 
