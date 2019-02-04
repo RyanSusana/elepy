@@ -550,7 +550,6 @@ public class Elepy implements ElepyContext {
         injectModules();
 
         initialized = true;
-
         for (ElepyModule module : modules) {
             module.afterElepyConstruction(http, this);
         }

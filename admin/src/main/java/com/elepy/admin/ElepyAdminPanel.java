@@ -272,9 +272,6 @@ public class ElepyAdminPanel implements ElepyModule {
         return http;
     }
 
-    public Elepy elepy() {
-        return elepy;
-    }
 
     public boolean isInitiated() {
         return initiated;
