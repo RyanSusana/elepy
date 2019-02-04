@@ -20,7 +20,6 @@ import spark.Service;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static spark.Spark.halt;
@@ -95,7 +94,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
-            setupLogin(elepy);
+            setupLogin();
             setupAdmin(elepy);
 
             attachmentHandler.setupAttachments();
@@ -152,7 +151,7 @@ public class ElepyAdminPanel implements ElepyModule {
     }
 
 
-    private void setupLogin(ElepyContext elepy) {
+    private void setupLogin() {
 
 
         http.get("/elepy-login", (request, response) -> renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb"));
@@ -233,7 +232,7 @@ public class ElepyAdminPanel implements ElepyModule {
         return this;
     }
 
-    public ElepyAdminPanel attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException, URISyntaxException {
+    public ElepyAdminPanel attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException {
         attachmentHandler.attachSrcDirectory(classLoader, directory);
         return this;
     }
