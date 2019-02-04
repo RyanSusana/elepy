@@ -31,7 +31,6 @@ public class Product {
 ``` java
 public static void main(String[] args) {
     DB database = mongo.getDB("product-database");
- 5>0
     new Elepy()
         .attachSingleton(DB.class, database)
         .withIPAddress("localhost")
