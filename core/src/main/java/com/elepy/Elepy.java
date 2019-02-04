@@ -217,7 +217,7 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Adds a Spark {@link Filter} to controlled routes.
+     * Adds a Spark {@link Filter} to controlled afterElepyConstruction.
      *
      * @param filter the {@link Filter}
      * @return The {@link com.elepy.Elepy} instance
@@ -490,9 +490,9 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Adds routes to be late initialized by Elepy.
+     * Adds afterElepyConstruction to be late initialized by Elepy.
      *
-     * @param elepyRoutes the routes to add
+     * @param elepyRoutes the afterElepyConstruction to add
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy addRouting(Iterable<ElepyRoute> elepyRoutes) {
@@ -518,7 +518,7 @@ public class Elepy implements ElepyContext {
 
     private void init() {
         for (ElepyModule module : modules) {
-            module.setup(http, this);
+            module.beforeElepyConstruction(http, this);
         }
         setupLoggingAndExceptions();
 
@@ -545,14 +545,15 @@ public class Elepy implements ElepyContext {
         setupDescriptors(descriptors);
 
 
-        for (ElepyModule module : modules) {
-            module.routes(http, this);
-        }
-
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
+
         initialized = true;
+
+        for (ElepyModule module : modules) {
+            module.afterElepyConstruction(http, this);
+        }
 
     }
 
@@ -582,7 +583,7 @@ public class Elepy implements ElepyContext {
                 addRouting(ClassUtils.scanForRoutes(initializeElepyObject(routingClass)));
             }
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed creating extra routes: " + e.getMessage());
+            throw new ElepyConfigException("Failed creating extra afterElepyConstruction: " + e.getMessage());
         }
     }
 

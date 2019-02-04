@@ -48,7 +48,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         try {
             setupAnnotations();
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed to setup elepy, while trying to process Reflection");
+            throw new ElepyConfigException("Failed to beforeElepyConstruction elepy, while trying to process Reflection");
         }
 
     }

@@ -47,7 +47,7 @@ public class AttachmentHandler {
     public void attachSrc(Attachment attachment) {
 
         if (adminPanel.isInitiated()) {
-            throw new IllegalStateException("Can't attach a source after setup() has been called.");
+            throw new IllegalStateException("Can't attach a source after beforeElepyConstruction() has been called.");
         }
         attachments.add(attachment);
     }

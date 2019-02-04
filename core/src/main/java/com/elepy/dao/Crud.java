@@ -20,7 +20,7 @@ public interface Crud<T> {
     /**
      * Search is how Elepy queries a database based on a {@link QuerySetup} it should provide basic functionality for a search that stays database agnostic.
      *
-     * @param querySetup A query setup including all information needed to return the results of a search
+     * @param querySetup A query beforeElepyConstruction including all information needed to return the results of a search
      * @return a {@link Page} with objects
      */
     Page<T> search(QuerySetup querySetup);

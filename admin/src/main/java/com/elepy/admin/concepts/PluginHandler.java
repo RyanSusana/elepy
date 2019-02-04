@@ -43,7 +43,7 @@ public class PluginHandler {
 
     public ElepyAdminPanel addPlugin(ElepyAdminPanelPlugin plugin) {
         if (adminPanel.isInitiated()) {
-            throw new IllegalStateException("Can't add plugins after setup() has been called!");
+            throw new IllegalStateException("Can't add plugins after beforeElepyConstruction() has been called!");
         }
         plugin.setAdminPanel(adminPanel);
         plugins.add(plugin);

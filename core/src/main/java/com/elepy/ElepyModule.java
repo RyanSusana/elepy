@@ -1,14 +1,15 @@
 package com.elepy;
 
 
+import com.elepy.di.ElepyContext;
 import spark.Service;
 
 public interface ElepyModule {
 
 
-    void setup(Service http, Elepy elepy);
+    void beforeElepyConstruction(Service http, Elepy elepy);
 
-    void routes(Service http, Elepy elepy);
+    void afterElepyConstruction(Service http, ElepyContext elepy);
 
 
 }
