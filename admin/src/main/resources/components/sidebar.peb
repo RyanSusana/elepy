@@ -1,6 +1,5 @@
 <div id="sidebar" class="">
     <a href="/admin" class="sidebar-header uk-flex uk-flex-center">
-
         <img class="banner-image" src="/admin-resources/images/logo-light.svg" alt="logo">
     </a>
     <div class="models uk-light">
