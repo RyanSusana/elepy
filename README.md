@@ -1,4 +1,4 @@
-[https://travis-ci.com/RyanSusana/elepy.svg?branch=master]
+![Travis Button][https://travis-ci.com/RyanSusana/elepy.svg?branch=master]
 
 # About Elepy
 
