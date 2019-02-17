@@ -16,6 +16,7 @@ import com.elepy.di.threeway.Dependency2;
 import com.elepy.di.threeway.Dependency3;
 import com.elepy.di.threeway.Unsatisfiable;
 import com.elepy.di.tree.*;
+import com.elepy.di.unsatisfiedconstructor.DelegationAssistant;
 import com.elepy.models.Resource;
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
@@ -148,5 +149,15 @@ public class ContextTest extends Base {
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
         assertEquals(9, defaultElepyContext.getDependencyKeys().size());
+    }
+
+    @Test
+    void testUnsatisfiedConstructorDependencies() {
+        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
+
+        defaultElepyContext.registerDependency(DelegationAssistant.class);
+
+        assertDoesNotThrow(defaultElepyContext::resolveDependencies);
+
     }
 }
