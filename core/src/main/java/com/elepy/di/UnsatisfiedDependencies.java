@@ -2,9 +2,11 @@ package com.elepy.di;
 
 import com.elepy.annotations.Inject;
 import com.elepy.exceptions.ElepyErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -22,8 +24,20 @@ class UnsatisfiedDependencies {
     private static ContextKey toKey(AnnotatedElement field) {
 
         Inject annotation = field.getAnnotation(Inject.class);
-        Class<?> type = annotation.classType().equals(Object.class) ? (field instanceof Field ? ((Field) field).getType() : ((Parameter) field).getType()) : annotation.classType();
 
+        final Class<?> type;
+
+        if (annotation == null || annotation.classType().equals(Object.class)) {
+            if (field instanceof Field) {
+                type = ((Field) field).getType();
+            } else if (field instanceof Parameter) {
+                type = ((Parameter) field).getType();
+            } else {
+                throw new ElepyException("This should never be thrown: Annotated element is not a Field or Parameter", 500);
+            }
+        } else {
+            type = annotation.classType();
+        }
         return new ContextKey<>(type, ElepyContext.getTag(field));
 
     }
@@ -44,11 +58,19 @@ class UnsatisfiedDependencies {
     }
 
     private void getAllInnerUnsatisfiedDependencies(Class<?> root) {
-        ElepyContext.getElepyAnnotatedConstructor(root).ifPresent(constructor -> {
-            for (Parameter constructorParam : constructor.getParameters()) {
+
+        Optional<Constructor<?>> elepyAnnotatedConstructor =
+
+                ElepyContext.getElepyAnnotatedConstructor(root);
+
+        if (elepyAnnotatedConstructor.isPresent()) {
+            for (Parameter constructorParam : elepyAnnotatedConstructor.get().getParameters()) {
+
+                System.out.println(constructorParam.getType());
                 addAnnotatedElementDependency(constructorParam);
             }
-        });
+        }
+
 
         for (Field field : ClassUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
             addAnnotatedElementDependency(field);
