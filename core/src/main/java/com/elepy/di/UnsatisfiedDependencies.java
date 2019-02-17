@@ -4,7 +4,9 @@ import com.elepy.annotations.Inject;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.utils.ClassUtils;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.Parameter;
 import java.util.*;
 
 class UnsatisfiedDependencies {
@@ -17,10 +19,10 @@ class UnsatisfiedDependencies {
         this.elepyContext = elepyContext;
     }
 
-    private static ContextKey toKey(Field field) {
+    private static ContextKey toKey(AnnotatedElement field) {
 
         Inject annotation = field.getAnnotation(Inject.class);
-        Class<?> type = annotation.classType().equals(Object.class) ? field.getType() : annotation.classType();
+        Class<?> type = annotation.classType().equals(Object.class) ? (field instanceof Field ? ((Field) field).getType() : ((Parameter) field).getType()) : annotation.classType();
 
         return new ContextKey<>(type, ElepyContext.getTag(field));
 
@@ -41,23 +43,33 @@ class UnsatisfiedDependencies {
         return sb.toString();
     }
 
-    private void subs(Class<?> root) {
-        for (Field field : ClassUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
-            ContextKey contextKey = toKey(field);
-            unsatisfiedKeys.add(contextKey);
-
-            if (!scannedClasses.contains(contextKey.getClassType())) {
-                scannedClasses.add(contextKey.getClassType());
-
-                subs(contextKey.getClassType());
+    private void getAllInnerUnsatisfiedDependencies(Class<?> root) {
+        ElepyContext.getElepyAnnotatedConstructor(root).ifPresent(constructor -> {
+            for (Parameter constructorParam : constructor.getParameters()) {
+                addAnnotatedElementDependency(constructorParam);
             }
+        });
 
+        for (Field field : ClassUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
+            addAnnotatedElementDependency(field);
+
+        }
+    }
+
+    private void addAnnotatedElementDependency(AnnotatedElement element) {
+        ContextKey contextKey = toKey(element);
+        unsatisfiedKeys.add(contextKey);
+
+        if (!scannedClasses.contains(contextKey.getClassType())) {
+            scannedClasses.add(contextKey.getClassType());
+
+            getAllInnerUnsatisfiedDependencies(contextKey.getClassType());
         }
     }
 
     public void tryToSatisfy() {
         for (ContextKey unsatisfiedKey : new ArrayList<>(unsatisfiedKeys)) {
-            subs(unsatisfiedKey.getClassType());
+            getAllInnerUnsatisfiedDependencies(unsatisfiedKey.getClassType());
         }
         allDependencies.addAll(unsatisfiedKeys);
         tryToSatisfy(false);

@@ -109,7 +109,7 @@ public interface ElepyContext {
         return Optional.empty();
     }
 
-    default <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
+    static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
         for (Constructor constructor : cls.getConstructors()) {
             if (constructor.isAnnotationPresent(ElepyConstructor.class)) {
                 return Optional.of((Constructor<T>) constructor);
