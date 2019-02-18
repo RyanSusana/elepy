@@ -4,10 +4,10 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Request;
-import spark.Response;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
      *
      * @param objectForCreation The object before you create it
      * @param crud              the crud implementation
-     * @param elepy             the context where you can get context objects
+     * @param elepy             the context where you can GET context objects
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
@@ -61,7 +61,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
      *
      * @param createdObject The object after you created it
      * @param crud          the crud implementation
-     * @param elepy         the context where you can get context objects
+     * @param elepy         the context where you can GET context objects
      */
     public abstract void afterCreate(T createdObject, Crud<T> crud, ElepyContext elepy);
 }

@@ -13,5 +13,10 @@ public interface Response {
 
     HttpServletResponse raw();
 
+    void type(String type);
+
+    String type();
+
+
     void removeCookie(String name);
 }

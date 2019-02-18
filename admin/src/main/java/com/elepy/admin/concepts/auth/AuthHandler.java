@@ -1,7 +1,7 @@
 package com.elepy.admin.concepts.auth;
 
 import com.elepy.admin.models.User;
-import spark.Request;
+import com.elepy.http.Request;
 
 import java.nio.charset.Charset;
 import java.util.Base64;

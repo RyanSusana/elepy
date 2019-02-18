@@ -9,14 +9,18 @@ public class SparkContext implements HttpContext {
         this.response = response;
     }
 
+    public SparkContext(spark.Request request, spark.Response response) {
+        this(new SparkRequest(request), new SparkResponse(response));
+    }
+
 
     @Override
-    public Request req() {
+    public Request request() {
         return request;
     }
 
     @Override
-    public Response res() {
+    public Response response() {
         return response;
     }
 }

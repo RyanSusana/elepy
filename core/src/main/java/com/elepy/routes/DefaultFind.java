@@ -5,10 +5,10 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Request;
-import spark.Response;
 
 import java.util.List;
 import java.util.Optional;

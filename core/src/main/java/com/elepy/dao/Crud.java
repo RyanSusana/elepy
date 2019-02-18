@@ -70,7 +70,7 @@ public interface Crud<T> {
     /**
      * Gets an ID from a given item. Used for internal functionality.
      *
-     * @param item The Item you want to get the ID of.
+     * @param item The Item you want to GET the ID of.
      * @return The found ID
      * @throws ElepyConfigException gets thrown when no ID has been found
      */
@@ -122,7 +122,7 @@ public interface Crud<T> {
     /**
      * Deletes an item from the CRUD.
      *
-     * @param id The ID of the item that you want to delete
+     * @param id The ID of the item that you want to DELETE
      */
     void delete(final String id);
 

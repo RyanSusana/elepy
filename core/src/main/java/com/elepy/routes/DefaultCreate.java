@@ -5,14 +5,14 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import spark.Request;
-import spark.Response;
 
 import java.util.Collections;
 import java.util.List;

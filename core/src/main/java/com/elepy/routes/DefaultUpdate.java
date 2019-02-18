@@ -6,11 +6,11 @@ import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.models.FieldType;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Request;
-import spark.Response;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

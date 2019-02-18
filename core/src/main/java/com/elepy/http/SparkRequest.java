@@ -1,7 +1,6 @@
 package com.elepy.http;
 
 import spark.QueryParamsMap;
-import spark.Session;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -148,11 +147,11 @@ public class SparkRequest implements Request {
     }
 
     public Session session() {
-        return request.session();
+        return new SparkSession(request.session());
     }
 
     public Session session(boolean create) {
-        return request.session(create);
+        return new SparkSession(request.session(create));
     }
 
     @Override

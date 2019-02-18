@@ -13,8 +13,9 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.http.Route;
+import com.elepy.http.SparkContext;
 import com.elepy.models.AccessLevel;
-import com.elepy.models.ElepyRoute;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.RouteImpl;
 import spark.Service;
+import spark.route.HttpMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -48,7 +50,7 @@ public class Elepy implements ElepyContext {
     private List<Filter> adminFilters;
     private List<Map<String, Object>> descriptors;
 
-    private List<ElepyRoute> routes;
+    private List<Route> routes;
     private boolean initialized = false;
 
     private Class<? extends CrudProvider> defaultCrudProvider;
@@ -489,7 +491,7 @@ public class Elepy implements ElepyContext {
      * @param elepyRoute the route to add
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy addRouting(ElepyRoute elepyRoute) {
+    public Elepy addRouting(Route elepyRoute) {
         return addRouting(Collections.singleton(elepyRoute));
     }
 
@@ -499,9 +501,9 @@ public class Elepy implements ElepyContext {
      * @param elepyRoutes the afterElepyConstruction to add
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy addRouting(Iterable<ElepyRoute> elepyRoutes) {
+    public Elepy addRouting(Iterable<Route> elepyRoutes) {
         checkConfig();
-        for (ElepyRoute route : elepyRoutes) {
+        for (Route route : elepyRoutes) {
             routes.add(route);
         }
         return this;
@@ -592,14 +594,17 @@ public class Elepy implements ElepyContext {
     }
 
     private void igniteAllRoutes() {
-        for (ElepyRoute extraRoute : routes) {
+        for (Route extraRoute : routes) {
             if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.addRoute(extraRoute.getMethod(), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
+                http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
                     if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
                         getAllAdminFilters().handle(request, response);
                     }
-                    extraRoute.getBeforeFilter().handle(request, response);
-                    return extraRoute.getRoute().handle(request, response);
+                    SparkContext sparkContext = new SparkContext(request, response);
+                    extraRoute.getBeforeFilter().handle(sparkContext);
+                    extraRoute.getRoute().handle(sparkContext);
+
+                    return response.body();
                 }));
             }
         }

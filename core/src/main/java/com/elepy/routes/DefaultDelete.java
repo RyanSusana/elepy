@@ -3,8 +3,8 @@ package com.elepy.routes;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
-import spark.Request;
-import spark.Response;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 
 import java.util.List;
 import java.util.Optional;

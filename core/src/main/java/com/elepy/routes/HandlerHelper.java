@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 
-import spark.Request;
+import com.elepy.http.Request;
 
 import java.util.Optional;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface HandlerHelper {
 
     /**
-     * Tries to get the model ID from a request.
+     * Tries to GET the model ID from a request.
      *
      * @param request The request
      * @return an optional ID

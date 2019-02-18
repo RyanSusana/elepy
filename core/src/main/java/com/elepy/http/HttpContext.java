@@ -2,7 +2,8 @@ package com.elepy.http;
 
 public interface HttpContext {
 
-    Request req();
+    Request request();
 
-    Response res();
+    Response response();
+
 }

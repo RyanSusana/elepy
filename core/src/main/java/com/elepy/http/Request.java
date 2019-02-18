@@ -35,4 +35,5 @@ public interface Request {
 
     String uri();
 
+    Session session();
 }

@@ -8,9 +8,9 @@ import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.routes.UpdateHandler;
-import spark.Request;
-import spark.Response;
 
 import java.util.List;
 import java.util.Optional;

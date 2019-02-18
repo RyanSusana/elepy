@@ -2,15 +2,15 @@ package com.elepy.utils;
 
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
-import com.elepy.annotations.Route;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.ElepyRoute;
+import com.elepy.http.HttpContextHandler;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
+import com.elepy.http.Route;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
-import spark.Request;
-import spark.Response;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.elepy.models.ElepyRouteBuilder.anElepyRoute;
+import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class ClassUtils {
 
@@ -179,33 +179,29 @@ public class ClassUtils {
     }
 
 
-    public static ElepyRoute routeFromMethod(Object obj, Method method) {
-        Route annotation = method.getAnnotation(Route.class);
-        spark.Route route;
+    public static Route routeFromMethod(Object obj, Method method) {
+        com.elepy.annotations.Route annotation = method.getAnnotation(com.elepy.annotations.Route.class);
+        HttpContextHandler route;
         if (method.getParameterCount() == 0) {
-            route = (request, response) -> {
+            route = ctx -> {
                 Object invoke = method.invoke(obj);
                 if (invoke instanceof String) {
-                    return invoke;
-                } else {
-                    return "";
+                    ctx.response().body((String) invoke);
                 }
             };
         } else if (method.getParameterCount() == 2
                 && method.getParameterTypes()[0].equals(Request.class)
                 && method.getParameterTypes()[1].equals(Response.class)) {
 
-            route = (request, response) -> {
-                Object invoke = method.invoke(obj, request, response);
+            route = ctx -> {
+                Object invoke = method.invoke(obj, ctx.request(), ctx.response());
                 if (invoke instanceof String) {
-                    return invoke;
-                } else {
-                    return "";
+                    ctx.response().body((String) invoke);
                 }
             };
 
         } else {
-            throw new ElepyConfigException("@Route annotated method must have no parameters or (Request, Response)");
+            throw new ElepyConfigException("@HttpContextHandler annotated method must have no parameters or (Request, Response)");
         }
         return anElepyRoute()
                 .accessLevel(annotation.accessLevel())
@@ -215,11 +211,11 @@ public class ClassUtils {
                 .build();
     }
 
-    public static List<ElepyRoute> scanForRoutes(Object obj) {
-        List<ElepyRoute> toReturn = new ArrayList<>();
+    public static List<Route> scanForRoutes(Object obj) {
+        List<Route> toReturn = new ArrayList<>();
         for (Method method : obj.getClass().getDeclaredMethods()) {
             method.setAccessible(true);
-            if (method.isAnnotationPresent(Route.class)) {
+            if (method.isAnnotationPresent(com.elepy.annotations.Route.class)) {
                 toReturn.add(routeFromMethod(obj, method));
             }
         }

@@ -6,9 +6,9 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.routes.DeleteHandler;
-import spark.Request;
-import spark.Response;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +22,10 @@ public class UserDelete implements DeleteHandler<User> {
             throw new ElepyException("No user with this ID is found.", 404);
         }
         if (loggedInUser.getId().equals(toDelete.get().getId())) {
-            throw new ElepyException("You can't delete yourself!");
+            throw new ElepyException("You can't DELETE yourself!");
         }
         if (!loggedInUser.getUserType().hasMoreRightsThan(toDelete.get().getUserType())) {
-            throw new ElepyException("You can't delete users with an equal or greater rank than you!");
+            throw new ElepyException("You can't DELETE users with an equal or greater rank than you!");
         }
         crud.delete(toDelete.get().getId());
     }

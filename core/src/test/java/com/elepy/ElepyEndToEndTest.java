@@ -100,12 +100,14 @@ public class ElepyEndToEndTest extends Base {
     public void testMultiCreate_atomicCreateInsertsNone_OnIntegrityFailure() throws UnirestException, JsonProcessingException {
 
         final long count = defaultMongoDao.count();
+
         final Resource resource = validObject();
 
         resource.setUnique("uniqueMultiCreate");
 
         final Resource resource1 = validObject();
         resource1.setUnique("uniqueMultiCreate");
+
 
         final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
 

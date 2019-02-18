@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
+import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
-import spark.route.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

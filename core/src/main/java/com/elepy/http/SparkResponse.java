@@ -19,10 +19,12 @@ public class SparkResponse implements Response {
         return response.status();
     }
 
+    @Override
     public void type(String contentType) {
         response.type(contentType);
     }
 
+    @Override
     public String type() {
         return response.type();
     }

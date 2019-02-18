@@ -11,11 +11,12 @@ import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.http.Request;
+import com.elepy.http.SparkRequest;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
-import spark.Request;
 import spark.Service;
 
 import java.io.*;
@@ -59,7 +60,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
         this.baseAdminAuthenticationFilter = (request, response) -> {
 
-            final User user = authenticator.authenticate(request);
+            final User user = authenticator.authenticate(new SparkRequest(request));
 
             if (user != null) {
                 request.attribute(ADMIN_USER, user);
@@ -123,7 +124,7 @@ public class ElepyAdminPanel implements ElepyModule {
         http.before("/admin/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
         http.before("/admin", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
         http.post("/retrieve-token", (request, response) -> {
-            final Optional<Token> token = tokenHandler.createToken(request);
+            final Optional<Token> token = tokenHandler.createToken(new SparkRequest(request));
 
             if (token.isPresent()) {
                 return elepy.getObjectMapper().writeValueAsString(token.get());
@@ -135,7 +136,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
             Map<String, Object> model = new HashMap<>();
             model.put("plugins", pluginHandler.getPlugins());
-            return renderWithDefaults(request, model, "admin-templates/base.peb");
+            return renderWithDefaults(new SparkRequest(request), model, "admin-templates/base.peb");
         });
         http.get("/admin-logout", (request, response) -> {
 
@@ -154,7 +155,7 @@ public class ElepyAdminPanel implements ElepyModule {
     private void setupLogin() {
 
 
-        http.get("/elepy-login", (request, response) -> renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb"));
+        http.get("/elepy-login", (request, response) -> renderWithDefaults(new SparkRequest(request), new HashMap<>(), "admin-templates/login.peb"));
         http.post("/elepy-login", (request, response) -> {
 
             final Optional<User> user = userService.login(request.queryParamOrDefault("username", "invalid"), request.queryParamOrDefault("password", "invalid"));

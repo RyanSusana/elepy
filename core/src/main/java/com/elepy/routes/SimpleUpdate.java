@@ -4,9 +4,9 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.utils.ClassUtils;
-import spark.Request;
-import spark.Response;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +63,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      *
      * @param beforeVersion The object before the update
      * @param crud          The crud implementation
-     * @param elepy         the context where you can get context objects
+     * @param elepy         the context where you can GET context objects
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
@@ -76,7 +76,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      * @param beforeVersion The object before the update
      * @param updatedVersion The object after the update
      * @param crud The crud implementation
-     * @param elepy the context where you can get context objects
+     * @param elepy the context where you can GET context objects
      */
     public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, ElepyContext elepy);
 }

@@ -4,7 +4,7 @@ import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
-import com.elepy.models.ElepyRoute;
+import com.elepy.http.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Filter;
 
@@ -194,7 +194,7 @@ public class ElepyPostConfiguration {
      *
      * @param elepyRoute the route to add
      */
-    public void addRouting(ElepyRoute elepyRoute) {
+    public void addRouting(Route elepyRoute) {
         elepy.addRouting(elepyRoute);
     }
 
@@ -203,7 +203,7 @@ public class ElepyPostConfiguration {
      *
      * @param elepyRoutes the afterElepyConstruction to add
      */
-    public void addRouting(Iterable<ElepyRoute> elepyRoutes) {
+    public void addRouting(Iterable<Route> elepyRoutes) {
         elepy.addRouting(elepyRoutes);
     }
 
@@ -233,7 +233,7 @@ public class ElepyPostConfiguration {
     }
 
     /**
-     * Tries to get a Crud for a RestModel
+     * Tries to GET a Crud for a RestModel
      *
      * @param cls The RestModel class
      * @param <T> The RestModel type
