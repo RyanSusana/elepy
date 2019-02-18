@@ -1,5 +1,6 @@
 package com.elepy.http;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface Request {
@@ -18,6 +19,8 @@ public interface Request {
     String ip();
 
     String body();
+
+    HttpServletRequest raw();
 
     byte[] bodyAsBytes();
 
