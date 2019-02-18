@@ -2,8 +2,10 @@ package com.elepy.http;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Set;
 
 public interface Request {
+
     String params(String param);
 
     String requestMethod();
@@ -39,4 +41,21 @@ public interface Request {
     String uri();
 
     Session session();
+
+    String pathInfo();
+
+    String servletPath();
+
+    String contextPath();
+
+    Set<String> queryParams();
+
+    Set<String> headers();
+
+    String queryString();
+
+    Map<String, String> params();
+
+    String[] splat();
+
 }
