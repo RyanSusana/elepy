@@ -641,6 +641,7 @@ public class Elepy implements ElepyContext {
 
                     SparkContext sparkContext = new SparkContext(request, response);
 
+                    sparkContext.response().type("application/json");
                     if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
                         getAllAdminFilters().authenticate(sparkContext);
                     }
