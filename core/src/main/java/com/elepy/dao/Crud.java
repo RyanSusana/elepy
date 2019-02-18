@@ -47,6 +47,16 @@ public interface Crud<T> {
     List<T> searchInField(Field field, String qry);
 
     /**
+     * @param fieldName The name of the field
+     * @param qry       The search term
+     * @return A list of found items
+     * @see #searchInField(Field, String)
+     */
+    default List<T> searchInField(String fieldName, String qry) {
+        return searchInField(ClassUtils.getPropertyField(getType(), fieldName), qry);
+    }
+
+    /**
      * This method is used to update items in a model schema.
      *
      * @param item The item to update
@@ -127,7 +137,6 @@ public interface Crud<T> {
     void delete(final String id);
 
     /**
-     *
      * @param query The searchTerm
      * @return The number of items in the search.
      */
