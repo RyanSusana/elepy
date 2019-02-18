@@ -5,10 +5,7 @@ import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.HttpContextHandler;
-import com.elepy.http.Request;
-import com.elepy.http.Response;
-import com.elepy.http.Route;
+import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -200,6 +197,13 @@ public class ClassUtils {
                 }
             };
 
+        } else if (method.getParameterCount() == 1 && method.getParameterTypes()[0].equals(HttpContext.class)) {
+            route = ctx -> {
+                Object invoke = method.invoke(obj, ctx);
+                if (invoke instanceof String) {
+                    ctx.response().body((String) invoke);
+                }
+            };
         } else {
             throw new ElepyConfigException("@HttpContextHandler annotated method must have no parameters or (Request, Response)");
         }
