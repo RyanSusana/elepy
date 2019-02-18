@@ -565,6 +565,7 @@ public class Elepy implements ElepyContext {
             resourceDescribers.add(new ResourceDescriber<>(this, model));
         }
 
+
         final List<Map<String, Object>> maps = setupPojos(resourceDescribers);
 
         descriptors.addAll(maps);
@@ -653,10 +654,14 @@ public class Elepy implements ElepyContext {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> setupPojos(Set<ResourceDescriber> classes) {
+    private List<Map<String, Object>> setupPojos(Set<ResourceDescriber> modelDescribers) {
         List<Map<String, Object>> descriptorList = new ArrayList<>();
 
-        classes.forEach((restModel) -> {
+
+        modelDescribers.forEach(ResourceDescriber::setupDao);
+        modelDescribers.forEach(ResourceDescriber::setupAnnotations);
+
+        modelDescribers.forEach(restModel -> {
             RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, restModel.getClassType());
             descriptorList.add(routeGenerator.setupPojo());
         });
