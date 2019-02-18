@@ -7,18 +7,17 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.Request;
-import com.elepy.http.Response;
+import com.elepy.http.HttpContext;
 import com.elepy.routes.CreateHandler;
 
 import java.util.List;
 
 public class UserCreate implements CreateHandler<User> {
     @Override
-    public void handleCreate(Request request, Response response, Crud<User> crud, ElepyContext elepy, List<ObjectEvaluator<User>> objectEvaluators, Class<User> clazz) throws Exception {
-        String body = request.body();
+    public void handleCreate(HttpContext context, Crud<User> crud, ElepyContext elepy, List<ObjectEvaluator<User>> objectEvaluators, Class<User> clazz) throws Exception {
+        String body = context.request().body();
         User user = elepy.getObjectMapper().readValue(body, crud.getType());
-        User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);
+        User loggedInUser = context.request().session().attribute(ElepyAdminPanel.ADMIN_USER);
 
 
         for (ObjectEvaluator<User> objectEvaluator : objectEvaluators) {
@@ -32,6 +31,6 @@ public class UserCreate implements CreateHandler<User> {
         }
         user = user.hashWord();
         crud.create(user);
-        response.body(request.body());
+        context.response().body(context.request().body());
     }
 }

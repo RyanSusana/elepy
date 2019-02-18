@@ -2,6 +2,7 @@ package com.elepy.admin.concepts;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
+import com.elepy.http.SparkRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class PluginHandler {
                 String content = plugin.renderContent(model);
                 model.put("content", content);
                 model.put("plugin", plugin);
-                return adminPanel.renderWithDefaults(request, model, "admin-templates/plugin.peb");
+                return adminPanel.renderWithDefaults(new SparkRequest(request), model, "admin-templates/plugin.peb");
             });
         }
     }

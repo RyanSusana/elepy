@@ -6,8 +6,7 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.Request;
-import com.elepy.http.Response;
+import com.elepy.http.HttpContext;
 import com.elepy.routes.DeleteHandler;
 
 import java.util.List;
@@ -15,9 +14,9 @@ import java.util.Optional;
 
 public class UserDelete implements DeleteHandler<User> {
     @Override
-    public void handleDelete(Request request, Response response, Crud<User> crud, ElepyContext elepy, List<ObjectEvaluator<User>> objectEvaluators, Class<User> clazz) throws Exception {
-        final Optional<User> toDelete = crud.getById(request.params("id"));
-        User loggedInUser = request.session().attribute(ElepyAdminPanel.ADMIN_USER);
+    public void handleDelete(HttpContext context, Crud<User> crud, ElepyContext elepy, List<ObjectEvaluator<User>> objectEvaluators, Class<User> clazz) throws Exception {
+        final Optional<User> toDelete = crud.getById(context.request().params("id"));
+        User loggedInUser = context.request().session().attribute(ElepyAdminPanel.ADMIN_USER);
         if (!toDelete.isPresent()) {
             throw new ElepyException("No user with this ID is found.", 404);
         }
