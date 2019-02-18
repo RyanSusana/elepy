@@ -30,12 +30,12 @@ public class SparkResponse implements Response {
     }
 
     @Override
-    public void body(String body) {
+    public void result(String body) {
         response.body(body);
     }
 
     @Override
-    public String body() {
+    public String result() {
         return response.body();
     }
 

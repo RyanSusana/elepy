@@ -183,7 +183,7 @@ public class ClassUtils {
             route = ctx -> {
                 Object invoke = method.invoke(obj);
                 if (invoke instanceof String) {
-                    ctx.response().body((String) invoke);
+                    ctx.response().result((String) invoke);
                 }
             };
         } else if (method.getParameterCount() == 2
@@ -193,7 +193,7 @@ public class ClassUtils {
             route = ctx -> {
                 Object invoke = method.invoke(obj, ctx.request(), ctx.response());
                 if (invoke instanceof String) {
-                    ctx.response().body((String) invoke);
+                    ctx.response().result((String) invoke);
                 }
             };
 
@@ -201,7 +201,7 @@ public class ClassUtils {
             route = ctx -> {
                 Object invoke = method.invoke(obj, ctx);
                 if (invoke instanceof String) {
-                    ctx.response().body((String) invoke);
+                    ctx.response().result((String) invoke);
                 }
             };
         } else {

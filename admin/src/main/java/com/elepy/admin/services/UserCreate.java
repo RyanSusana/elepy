@@ -31,6 +31,6 @@ public class UserCreate implements CreateHandler<User> {
         }
         user = user.hashWord();
         crud.create(user);
-        context.response().body(context.request().body());
+        context.response().result(context.request().body());
     }
 }

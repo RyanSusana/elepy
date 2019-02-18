@@ -53,7 +53,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         afterUpdate(before.get(), updated, dao, elepy);
 
         context.response().status(200);
-        context.response().body("OK");
+        context.response().result("OK");
     }
 
 

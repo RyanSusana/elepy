@@ -56,6 +56,6 @@ public class UserUpdate implements UpdateHandler<User> {
 
         crud.update(updated);
         context.response().status(200);
-        context.response().body("The item is updated");
+        context.response().result("The item is updated");
     }
 }

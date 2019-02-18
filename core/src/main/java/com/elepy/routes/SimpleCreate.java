@@ -36,7 +36,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             afterCreate(item, dao, elepy);
             context.response().status(200);
-            context.response().body("OK");
+            context.response().result("OK");
 
         } catch (JsonMappingException e) {
             throw new ElepyException("Error mapping SimpleCreate: " + e.getMessage());

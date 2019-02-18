@@ -34,7 +34,7 @@ public class DefaultFind<T> implements FindHandler<T> {
 
 
         response.status(200);
-        response.body(objectMapper.writeValueAsString(dao.search(new QuerySetup(q, fieldSort, ((fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageNumber, pageSize))));
+        response.result(objectMapper.writeValueAsString(dao.search(new QuerySetup(q, fieldSort, ((fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageNumber, pageSize))));
 
     }
 
@@ -45,10 +45,10 @@ public class DefaultFind<T> implements FindHandler<T> {
         final Optional<T> id = dao.getById(request.params("id"));
         if (id.isPresent()) {
             response.status(200);
-            response.body(objectMapper.writeValueAsString(id.get()));
+            response.result(objectMapper.writeValueAsString(id.get()));
         } else {
             response.status(404);
-            response.body("");
+            response.result("");
         }
     }
 

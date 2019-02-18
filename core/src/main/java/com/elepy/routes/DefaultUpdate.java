@@ -98,7 +98,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         update(beforeUpdate, updated, dao, objectEvaluators, clazz);
 
         response.status(200);
-        response.body("OK");
+        response.result("OK");
         return updated;
     }
 

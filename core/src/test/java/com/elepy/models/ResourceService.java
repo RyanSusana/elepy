@@ -23,10 +23,10 @@ public class ResourceService extends DefaultService<Resource> {
 
         if (id.isPresent()) {
             response.status(200);
-            response.body(id.get().getTextField());
+            response.result(id.get().getTextField());
         } else {
             response.status(400);
-            response.body("I am not here");
+            response.result("I am not here");
         }
     }
 }

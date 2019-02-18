@@ -38,7 +38,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
     private void create(Response response, Crud<T> dao, Iterable<T> items) {
         dao.create(items);
         response.status(200);
-        response.body("OK");
+        response.result("OK");
     }
 
     public void multipleCreate(Response response, List<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {

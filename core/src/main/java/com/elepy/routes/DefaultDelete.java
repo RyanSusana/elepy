@@ -17,6 +17,6 @@ public class DefaultDelete<T> implements DeleteHandler<T> {
             dao.delete(context.request().params("id"));
         }
         context.response().status(200);
-        context.response().body("OK");
+        context.response().result("OK");
     }
 }

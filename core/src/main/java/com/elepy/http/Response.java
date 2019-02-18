@@ -7,16 +7,15 @@ public interface Response {
 
     int status();
 
-    void body(String body);
+    void result(String body);
 
-    String body();
+    String result();
 
     HttpServletResponse raw();
 
     void type(String type);
 
     String type();
-
 
     void removeCookie(String name);
 }
