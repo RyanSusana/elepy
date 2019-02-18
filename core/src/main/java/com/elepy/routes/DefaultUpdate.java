@@ -6,6 +6,7 @@ import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.FieldType;
@@ -129,7 +130,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     }
 
     @Override
-    public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        this.update(request, response, dao, elepy, objectEvaluators, clazz);
+    public void handleUpdate(HttpContext httpContext, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, elepy, objectEvaluators, clazz);
     }
 }

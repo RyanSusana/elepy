@@ -5,6 +5,7 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -53,11 +54,11 @@ public class DefaultFind<T> implements FindHandler<T> {
 
 
     @Override
-    public void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        if (request.params("id") != null && !request.params("id").isEmpty()) {
-            findOne(request, response, crud, elepy.getObjectMapper());
+    public void handleFind(HttpContext context, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+        if (context.request().params("id") != null && !context.request().params("id").isEmpty()) {
+            findOne(context.request(), context.response(), crud, elepy.getObjectMapper());
         } else {
-            find(request, response, crud, elepy.getObjectMapper());
+            find(context.request(), context.response(), crud, elepy.getObjectMapper());
         }
     }
 }

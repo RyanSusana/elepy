@@ -4,8 +4,7 @@ import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.Request;
-import com.elepy.http.Response;
+import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,22 +21,22 @@ import java.util.List;
 public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
     @Override
-    public void handleCreate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleCreate(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
 
         try {
 
-            String body = request.body();
+            String body = context.request().body();
 
             ObjectMapper objectMapper = elepy.getObjectMapper();
             T item = objectMapper.readValue(body, dao.getType());
 
             beforeCreate(item, dao, elepy);
 
-            super.handleCreate(request, response, dao, elepy, objectEvaluators, clazz);
+            super.handleCreate(context, dao, elepy, objectEvaluators, clazz);
 
             afterCreate(item, dao, elepy);
-            response.status(200);
-            response.body("OK");
+            context.response().status(200);
+            context.response().body("OK");
 
         } catch (JsonMappingException e) {
             throw new ElepyException("Error mapping SimpleCreate: " + e.getMessage());
