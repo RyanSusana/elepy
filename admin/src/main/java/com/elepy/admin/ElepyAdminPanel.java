@@ -121,9 +121,9 @@ public class ElepyAdminPanel implements ElepyModule {
     private void setupAdmin(ElepyPostConfiguration elepy) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
-        http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().handle(new SparkContext(request, response)));
-        http.before("/admin/*", (request, response) -> elepy.getAllAdminFilters().handle(new SparkContext(request, response)));
-        http.before("/admin", (request, response) -> elepy.getAllAdminFilters().handle(new SparkContext(request, response)));
+        http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().authenticate(new SparkContext(request, response)));
+        http.before("/admin/*", (request, response) -> elepy.getAllAdminFilters().authenticate(new SparkContext(request, response)));
+        http.before("/admin", (request, response) -> elepy.getAllAdminFilters().authenticate(new SparkContext(request, response)));
         http.post("/retrieve-token", (request, response) -> {
             final Optional<Token> token = tokenHandler.createToken(new SparkRequest(request));
 

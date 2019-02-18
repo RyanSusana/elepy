@@ -165,7 +165,7 @@ public class Elepy implements ElepyContext {
     public Filter getAllAdminFilters() {
         return ctx -> {
             for (Filter adminFilter : adminFilters) {
-                adminFilter.handle(ctx);
+                adminFilter.authenticate(ctx);
             }
         };
     }
@@ -642,7 +642,7 @@ public class Elepy implements ElepyContext {
                     SparkContext sparkContext = new SparkContext(request, response);
 
                     if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
-                        getAllAdminFilters().handle(sparkContext);
+                        getAllAdminFilters().authenticate(sparkContext);
                     }
                     extraRoute.getBeforeFilter().handle(sparkContext);
                     extraRoute.getRoute().handle(sparkContext);
@@ -719,7 +719,7 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupDescriptors(List<Map<String, Object>> descriptors) {
-        http.before(configSlug, (request, response) -> getAllAdminFilters().handle(new SparkContext(request, response)));
+        http.before(configSlug, (request, response) -> getAllAdminFilters().authenticate(new SparkContext(request, response)));
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
             return context.getObjectMapper().writeValueAsString(descriptors);

@@ -34,7 +34,7 @@ public interface Crud<T> {
     Optional<T> getById(final String id);
 
     /**
-     * This method is used to look for model items based on a specific field name. It is used to help Elepy handle
+     * This method is used to look for model items based on a specific field name. It is used to help Elepy authenticate
      * {@link com.elepy.annotations.Unique} Identity constraints. This method is the Elepy equivalent to SQL's:
      * <p>
      * 'SELECT * FROM Item item WHERE item.field LIKE :qry'

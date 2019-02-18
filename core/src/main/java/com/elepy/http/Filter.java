@@ -1,6 +1,5 @@
 package com.elepy.http;
 
-public interface Filter extends HttpContextHandler {
-    @Override
-    void handle(HttpContext context) throws Exception;
+public interface Filter {
+    void authenticate(HttpContext context) throws Exception;
 }
