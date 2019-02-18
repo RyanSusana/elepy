@@ -13,6 +13,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.elepy.http.SparkContext;
 import com.elepy.models.AccessLevel;
@@ -24,7 +25,6 @@ import com.mongodb.DB;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Filter;
 import spark.RouteImpl;
 import spark.Service;
 import spark.route.HttpMethod;
@@ -47,7 +47,9 @@ public class Elepy implements ElepyContext {
     private String baseSlug;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
+
     private List<Filter> adminFilters;
+    private List<Class<? extends Filter>> adminFilterClasses;
     private List<Map<String, Object>> descriptors;
 
     private List<Route> routes;
@@ -75,6 +77,7 @@ public class Elepy implements ElepyContext {
         this.configSlug = "/config";
         this.routes = new ArrayList<>();
         this.routingClasses = new ArrayList<>();
+        this.adminFilterClasses = new ArrayList<>();
 
         withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
         registerDependency(ObjectMapper.class, new ObjectMapper());
@@ -160,9 +163,9 @@ public class Elepy implements ElepyContext {
      * @see Filter
      */
     public Filter getAllAdminFilters() {
-        return (request, response) -> {
+        return ctx -> {
             for (Filter adminFilter : adminFilters) {
-                adminFilter.handle(request, response);
+                adminFilter.handle(ctx);
             }
         };
     }
@@ -220,17 +223,31 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Adds a Spark {@link Filter} to controlled afterElepyConstruction.
+     * Adds a {@link Filter} administrative checking service.
      *
      * @param filter the {@link Filter}
      * @return The {@link com.elepy.Elepy} instance
      * @see Filter
      */
-
     public Elepy addAdminFilter(Filter filter) {
+        checkConfig();
         adminFilters.add(filter);
         return this;
     }
+
+    /**
+     * Adds a {@link Filter} administrative checking service.
+     *
+     * @param filterClass the {@link Filter} class
+     * @return The {@link com.elepy.Elepy} instance
+     * @see Filter
+     */
+    public Elepy addAdminFilter(Class<? extends Filter> filterClass) {
+        checkConfig();
+        adminFilterClasses.add(filterClass);
+        return this;
+    }
+
 
     /**
      * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
@@ -270,6 +287,7 @@ public class Elepy implements ElepyContext {
      * @see RestModel
      */
     public Elepy addModels(Class<?>... classes) {
+        checkConfig();
         models.addAll(Arrays.asList(classes));
         return this;
     }
@@ -294,6 +312,7 @@ public class Elepy implements ElepyContext {
      * @see ElepyContext
      */
     public <T> Elepy registerDependency(Class<T> cls, String tag, T object) {
+        checkConfig();
         context.registerDependency(cls, tag, object);
         return this;
     }
@@ -310,6 +329,7 @@ public class Elepy implements ElepyContext {
      * @see #registerDependency(Class, String, Object)
      */
     public <T> Elepy registerDependency(Class<T> cls, T object) {
+        checkConfig();
         context.registerDependency(cls, object);
         return this;
     }
@@ -325,6 +345,7 @@ public class Elepy implements ElepyContext {
      * @see #registerDependency(Class, String, Object)
      */
     public <T> Elepy registerDependency(T object) {
+        checkConfig();
         context.registerDependency(object);
         return this;
     }
@@ -341,6 +362,7 @@ public class Elepy implements ElepyContext {
      * @see #registerDependency(Class, String, Object)
      */
     public <T> Elepy registerDependency(T object, String tag) {
+        checkConfig();
         context.registerDependency(object, tag);
         return this;
     }
@@ -355,6 +377,7 @@ public class Elepy implements ElepyContext {
      * @see #addModels(Class[])
      */
     public Elepy addModelPackage(String packageName) {
+        checkConfig();
         this.packages.add(packageName);
         return this;
     }
@@ -386,6 +409,7 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy registerDependency(Class<?> cls, String tag) {
+        checkConfig();
         this.context.registerDependency(cls, tag);
         return this;
     }
@@ -398,6 +422,7 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy registerDependency(Class<?> cls) {
+        checkConfig();
         this.context.registerDependency(cls);
         return this;
     }
@@ -542,15 +567,13 @@ public class Elepy implements ElepyContext {
 
         final List<Map<String, Object>> maps = setupPojos(resourceDescribers);
 
-
         descriptors.addAll(maps);
-
 
         context.resolveDependencies();
 
         setupDescriptors(descriptors);
 
-
+        setupFilters();
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
@@ -575,7 +598,6 @@ public class Elepy implements ElepyContext {
 
     private void setupExtraRoutes() {
         try {
-
             for (Class<?> model : models) {
                 final ExtraRoutes extraRoutesAnnotation = model.getAnnotation(ExtraRoutes.class);
 
@@ -588,8 +610,26 @@ public class Elepy implements ElepyContext {
             for (Class<?> routingClass : routingClasses) {
                 addRouting(ClassUtils.scanForRoutes(initializeElepyObject(routingClass)));
             }
+
+
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed creating extra afterElepyConstruction: " + e.getMessage());
+            throw new ElepyConfigException("Failed creating extra Routes: " + e.getMessage());
+        }
+    }
+
+    private void setupFilters() {
+        try {
+            for (Filter adminFilter : adminFilters) {
+                context.injectFields(adminFilter);
+                addRouting(ClassUtils.scanForRoutes(adminFilter));
+            }
+            for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
+                Filter filter = initializeElepyObject(adminFilterClass);
+                adminFilters.add(filter);
+                addRouting(ClassUtils.scanForRoutes(filter));
+            }
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ElepyConfigException("Failed creating extra Filters: " + e.getMessage());
         }
     }
 
@@ -597,10 +637,12 @@ public class Elepy implements ElepyContext {
         for (Route extraRoute : routes) {
             if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
                 http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
-                    if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
-                        getAllAdminFilters().handle(request, response);
-                    }
+
                     SparkContext sparkContext = new SparkContext(request, response);
+
+                    if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
+                        getAllAdminFilters().handle(sparkContext);
+                    }
                     extraRoute.getBeforeFilter().handle(sparkContext);
                     extraRoute.getRoute().handle(sparkContext);
 
@@ -672,7 +714,7 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupDescriptors(List<Map<String, Object>> descriptors) {
-        http.before(configSlug, getAllAdminFilters());
+        http.before(configSlug, (request, response) -> getAllAdminFilters().handle(new SparkContext(request, response)));
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
             return context.getObjectMapper().writeValueAsString(descriptors);
@@ -681,7 +723,7 @@ public class Elepy implements ElepyContext {
 
     private void checkConfig() {
         if (initialized) {
-            throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling init()");
+            throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling start()");
         }
     }
 }

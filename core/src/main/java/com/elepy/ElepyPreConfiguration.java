@@ -3,9 +3,9 @@ package com.elepy;
 import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Filter;
 
 /**
  * This is a class dedicated to the safe configuration of Elepy in Modules

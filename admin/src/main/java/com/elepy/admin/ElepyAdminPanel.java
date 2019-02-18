@@ -11,12 +11,13 @@ import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.http.Filter;
 import com.elepy.http.Request;
+import com.elepy.http.SparkContext;
 import com.elepy.http.SparkRequest;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Filter;
 import spark.Service;
 
 import java.io.*;
@@ -58,18 +59,18 @@ public class ElepyAdminPanel implements ElepyModule {
         this.viewHandler = new ViewHandler(this);
 
 
-        this.baseAdminAuthenticationFilter = (request, response) -> {
+        this.baseAdminAuthenticationFilter = context -> {
 
-            final User user = authenticator.authenticate(new SparkRequest(request));
+            final User user = authenticator.authenticate(context.request());
 
             if (user != null) {
-                request.attribute(ADMIN_USER, user);
-                request.session().attribute(ADMIN_USER, user);
+                context.request().attribute(ADMIN_USER, user);
+                context.request().session().attribute(ADMIN_USER, user);
             } else {
-                final User adminUser = request.session().attribute(ADMIN_USER);
+                final User adminUser = context.request().session().attribute(ADMIN_USER);
                 if (adminUser == null) {
-                    request.session().attribute("redirectUrl", request.uri());
-                    response.redirect("/elepy-login");
+                    context.request().session().attribute("redirectUrl", context.request().uri());
+                    context.response().redirect("/elepy-login");
                     halt();
                 }
             }
@@ -120,9 +121,9 @@ public class ElepyAdminPanel implements ElepyModule {
     private void setupAdmin(ElepyPostConfiguration elepy) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
-        http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
-        http.before("/admin/*", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
-        http.before("/admin", (request, response) -> elepy.getAllAdminFilters().handle(request, response));
+        http.before("/admin/*/*", (request, response) -> elepy.getAllAdminFilters().handle(new SparkContext(request, response)));
+        http.before("/admin/*", (request, response) -> elepy.getAllAdminFilters().handle(new SparkContext(request, response)));
+        http.before("/admin", (request, response) -> elepy.getAllAdminFilters().handle(new SparkContext(request, response)));
         http.post("/retrieve-token", (request, response) -> {
             final Optional<Token> token = tokenHandler.createToken(new SparkRequest(request));
 

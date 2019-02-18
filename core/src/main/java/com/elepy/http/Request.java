@@ -58,4 +58,6 @@ public interface Request {
 
     String[] splat();
 
+    void attribute(String attribute, Object value);
+
 }

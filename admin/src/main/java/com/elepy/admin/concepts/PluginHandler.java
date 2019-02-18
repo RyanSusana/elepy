@@ -2,6 +2,7 @@ package com.elepy.admin.concepts;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
+import com.elepy.http.SparkContext;
 import com.elepy.http.SparkRequest;
 
 import java.util.ArrayList;
@@ -27,9 +28,8 @@ public class PluginHandler {
 
 
     public void setupRoutes(ElepyPostConfiguration elepyPostConfiguration) {
-
-        adminPanel.http().before("/plugins/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().handle(request, response));
-        adminPanel.http().before("/plugins/*/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().handle(request, response));
+        adminPanel.http().before("/plugins/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().handle(new SparkContext(request, response)));
+        adminPanel.http().before("/plugins/*/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().handle(new SparkContext(request, response)));
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
             plugin.setup(adminPanel.http(), elepyPostConfiguration);
             adminPanel.http().get("/plugins/" + plugin.getSlug(), (request, response) -> {

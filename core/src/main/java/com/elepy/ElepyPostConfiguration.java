@@ -4,9 +4,9 @@ import com.elepy.annotations.RestModel;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Filter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -52,15 +52,6 @@ public class ElepyPostConfiguration {
         return elepy.getBaseSlug();
     }
 
-    /**
-     * Adds a Spark {@link Filter} to controlled afterElepyConstruction.
-     *
-     * @param filter the {@link Filter}
-     * @see Filter
-     */
-    public void addAdminFilter(Filter filter) {
-        elepy.addAdminFilter(filter);
-    }
 
     /**
      * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
