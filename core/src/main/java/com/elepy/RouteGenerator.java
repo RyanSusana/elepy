@@ -3,12 +3,15 @@ package com.elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,13 @@ public class RouteGenerator<T> {
 
     private String evaluateHasIdField(Class cls) {
 
-        return ClassUtils.getPropertyName(ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier")));
+        Field field = ClassUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
+
+        if (!Arrays.asList(Long.class, String.class, Integer.class).contains(org.apache.commons.lang3.ClassUtils.primitivesToWrappers(field.getType())[0])) {
+            throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
+        }
+
+        return ClassUtils.getPropertyName(field);
 
     }
 

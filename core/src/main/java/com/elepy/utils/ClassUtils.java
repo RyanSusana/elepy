@@ -82,12 +82,12 @@ public class ClassUtils {
         return field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
     }
 
-    public static Optional<String> getId(Object object) {
+    public static Optional<Object> getId(Object object) {
 
         try {
             Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
             field.setAccessible(true);
-            return Optional.ofNullable((String) field.get(object));
+            return Optional.ofNullable(field.get(object));
         } catch (IllegalAccessException e) {
             throw new ElepyException("Illegally accessing id field");
         }
@@ -95,8 +95,26 @@ public class ClassUtils {
     }
 
 
+    public static Object toObject(Class clazz, String value) {
+        if (Boolean.class == clazz || boolean.class == clazz) return Boolean.valueOf(value);
+        if (Byte.class == clazz || byte.class == clazz) return Byte.valueOf(value);
+        if (Short.class == clazz || short.class == clazz) return Short.valueOf(value);
+        if (Integer.class == clazz || int.class == clazz) return Integer.valueOf(value);
+        if (Long.class == clazz || long.class == clazz) return Long.valueOf(value);
+        if (Float.class == clazz || float.class == clazz) return Float.valueOf(value);
+        if (Double.class == clazz || double.class == clazz) return Double.valueOf(value);
+        return value;
+    }
+
+    public static Object toObjectIdFromString(Class tClass, String value) {
+        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
+
+        return toObject(idType, value);
+    }
+
     public static Optional<Field> getIdField(Class cls) {
         Optional<Field> annotated = searchForFieldWithAnnotation(cls, Identifier.class, MongoId.class, Id.class);
+
         if (annotated.isPresent()) {
             return annotated;
         } else {

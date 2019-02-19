@@ -31,7 +31,7 @@ public interface Crud<T> {
      * @param id The id of the model item
      * @return An optional item.
      */
-    Optional<T> getById(final String id);
+    Optional<T> getById(final Object id);
 
     /**
      * This method is used to look for model items based on a specific field name. It is used to help Elepy authenticate
@@ -84,8 +84,8 @@ public interface Crud<T> {
      * @return The found ID
      * @throws ElepyConfigException gets thrown when no ID has been found
      */
-    default String getId(final T item) {
-        Optional<String> id = ClassUtils.getId(item);
+    default Object getId(final T item) {
+        Optional<Object> id = ClassUtils.getId(item);
 
         if (id.isPresent()) {
             return id.get();
@@ -134,7 +134,7 @@ public interface Crud<T> {
      *
      * @param id The ID of the item that you want to DELETE
      */
-    void delete(final String id);
+    void delete(final Object id);
 
     /**
      * @param query The searchTerm

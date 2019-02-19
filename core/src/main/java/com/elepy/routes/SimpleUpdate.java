@@ -26,7 +26,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
         T item = elepy.getObjectMapper().readValue(body, clazz);
 
-        final Optional<String> id = ClassUtils.getId(item);
+        final Optional<Object> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
             throw new ElepyException("This item doesn't can't be identified.");
         }

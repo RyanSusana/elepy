@@ -8,6 +8,7 @@ import com.elepy.di.ElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,11 +39,12 @@ public class DefaultFind<T> implements FindHandler<T> {
 
     }
 
-    public void findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
+    public void findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, Class<T> clazz) throws JsonProcessingException {
         response.type("application/json");
 
+        Object paramId = ClassUtils.toObjectIdFromString(clazz, request.params("id"));
 
-        final Optional<T> id = dao.getById(request.params("id"));
+        final Optional<T> id = dao.getById(paramId);
         if (id.isPresent()) {
             response.status(200);
             response.result(objectMapper.writeValueAsString(id.get()));
@@ -56,7 +58,7 @@ public class DefaultFind<T> implements FindHandler<T> {
     @Override
     public void handleFind(HttpContext context, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
         if (context.request().params("id") != null && !context.request().params("id").isEmpty()) {
-            findOne(context.request(), context.response(), crud, elepy.getObjectMapper());
+            findOne(context.request(), context.response(), crud, elepy.getObjectMapper(), clazz);
         } else {
             find(context.request(), context.response(), crud, elepy.getObjectMapper());
         }

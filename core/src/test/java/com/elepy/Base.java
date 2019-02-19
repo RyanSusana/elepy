@@ -5,9 +5,13 @@ import com.elepy.models.Resource;
 import java.math.BigDecimal;
 
 public class Base {
-    public Resource validObject() {
+
+    private static int counter = -100;
+
+    public synchronized Resource validObject() {
         Resource resource = new Resource();
 
+        resource.setId(counter++);
         resource.setMaxLen40("230428");
         resource.setMinLen20("My name is ryan and this is a string  with more than 20 chars");
         resource.setMinLen10MaxLen50("12345678910111213");

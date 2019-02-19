@@ -23,6 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,10 +98,11 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
-    public Optional<T> getById(String id) {
+    public Optional<T> getById(Object id) {
         try (Session session = sessionFactory.openSession()) {
 
-            final T t = session.get(aClass, id);
+            final T t = session.get(aClass, (Serializable) id);
+
             loadLazyCollections(t);
             return Optional.ofNullable(t);
         }
@@ -134,11 +136,9 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     private void create(Session session, T item) throws IllegalAccessException {
-        final Optional<String> id = com.elepy.utils.ClassUtils.getId(item);
+        final Optional<Object> id = com.elepy.utils.ClassUtils.getId(item);
         if (!id.isPresent()) {
             final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyException("No ID field found"));
-
-
             idField.setAccessible(true);
 
             idField.set(item, identityProvider.getId(item, this));
@@ -212,10 +212,10 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Object id) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
-            final T item = session.get(aClass, id);
+            final T item = session.get(aClass, (Serializable) id);
             if (item != null) {
                 session.delete(item);
             }
