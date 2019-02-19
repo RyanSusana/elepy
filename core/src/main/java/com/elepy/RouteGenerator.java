@@ -3,17 +3,20 @@ package com.elepy;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
+import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.route.HttpMethod;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.elepy.models.ElepyRouteBuilder.anElepyRoute;
+import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class RouteGenerator<T> {
     private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
@@ -34,7 +37,13 @@ public class RouteGenerator<T> {
 
     private String evaluateHasIdField(Class cls) {
 
-        return ClassUtils.getPropertyName(ClassUtils.getIdField(cls).orElseThrow(() -> new IllegalStateException(cls.getName() + " doesn't have a valid identifying field, please annotate a String field with @Identifier")));
+        Field field = ClassUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
+
+        if (!Arrays.asList(Long.class, String.class, Integer.class).contains(org.apache.commons.lang3.ClassUtils.primitivesToWrappers(field.getType())[0])) {
+            throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
+        }
+
+        return ClassUtils.getPropertyName(field);
 
     }
 
@@ -51,11 +60,8 @@ public class RouteGenerator<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getCreateAccessLevel())
                     .path(baseSlug + restModel.getSlug())
-                    .method(HttpMethod.post)
-                    .route((request, response) -> {
-                        restModel.getService().handleCreate(request, response, dao, elepy.getContext(), evaluators, clazz);
-                        return response.body();
-                    })
+                    .method(HttpMethod.POST)
+                    .route(ctx -> restModel.getService().handleCreate(ctx, dao, elepy.getContext(), evaluators, clazz))
                     .build()
             );
 
@@ -63,24 +69,17 @@ public class RouteGenerator<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
-                    .method(HttpMethod.put)
-                    .route((request, response) -> {
-                        restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
-
-                        return response.body();
-                    })
+                    .method(HttpMethod.PUT)
+                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, elepy.getContext(), evaluators, clazz))
                     .build()
             );
 
-            //PATH
+            //PATCH
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
-                    .method(HttpMethod.patch)
-                    .route((request, response) -> {
-                        restModel.getService().handleUpdate(request, response, dao, elepy.getContext(), evaluators, clazz);
-                        return response.body();
-                    })
+                    .method(HttpMethod.PATCH)
+                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, elepy.getContext(), evaluators, clazz))
                     .build()
             );
 
@@ -88,12 +87,8 @@ public class RouteGenerator<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
-                    .method(HttpMethod.delete)
-                    .route((request, response) -> {
-                        restModel.getService().handleDelete(request, response, dao, elepy.getContext(), evaluators, clazz);
-
-                        return response.body();
-                    })
+                    .method(HttpMethod.DELETE)
+                    .route(ctx -> restModel.getService().handleDelete(ctx, dao, elepy.getContext(), evaluators, clazz))
                     .build()
             );
 
@@ -101,12 +96,8 @@ public class RouteGenerator<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
-                    .method(HttpMethod.get)
-                    .route((request, response) -> {
-                        restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
-
-                        return response.body();
-                    })
+                    .method(HttpMethod.GET)
+                    .route(ctx -> restModel.getService().handleFind(ctx, dao, elepy.getContext(), evaluators, clazz))
                     .build()
             );
 
@@ -114,12 +105,8 @@ public class RouteGenerator<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
-                    .method(HttpMethod.get)
-                    .route((request, response) -> {
-                        restModel.getService().handleFind(request, response, dao, elepy.getContext(), evaluators, clazz);
-
-                        return response.body();
-                    })
+                    .method(HttpMethod.GET)
+                    .route(ctx -> restModel.getService().handleFind(ctx, dao, elepy.getContext(), evaluators, clazz))
                     .build()
             );
 
@@ -152,7 +139,7 @@ public class RouteGenerator<T> {
         actions.put("findOne", restModel.getFindAccessLevel());
         actions.put("findAll", restModel.getFindAccessLevel());
         actions.put("update", restModel.getUpdateAccessLevel());
-        actions.put("delete", restModel.getDeleteAccessLevel());
+        actions.put("DELETE", restModel.getDeleteAccessLevel());
         actions.put("create", restModel.getCreateAccessLevel());
         return actions;
     }

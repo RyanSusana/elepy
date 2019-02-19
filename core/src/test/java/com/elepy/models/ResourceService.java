@@ -4,10 +4,10 @@ import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
 import com.elepy.dao.Crud;
 import com.elepy.dao.ResourceDao;
+import com.elepy.http.HttpMethod;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.routes.DefaultService;
-import spark.Request;
-import spark.Response;
-import spark.route.HttpMethod;
 
 import java.util.Optional;
 
@@ -16,17 +16,17 @@ public class ResourceService extends DefaultService<Resource> {
     @Inject(tag = "/resources", classType = Crud.class)
     private ResourceDao crud;
 
-    @Route(path = "/resources/:id/extra", requestMethod = HttpMethod.get)
+    @Route(path = "/resources/:id/extra", requestMethod = HttpMethod.GET)
     public void extraRoute(Request request, Response response) {
 
-        Optional<Resource> id = crud.getById(request.params("id"));
+        Optional<Resource> id = crud.getById(Integer.parseInt(request.params("id")));
 
         if (id.isPresent()) {
             response.status(200);
-            response.body(id.get().getTextField());
+            response.result(id.get().getTextField());
         } else {
             response.status(400);
-            response.body("I am not here");
+            response.result("I am not here");
         }
     }
 }

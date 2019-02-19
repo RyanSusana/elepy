@@ -93,7 +93,7 @@ public class HibernateTest {
 
         Field searchableField = Resource.class.getDeclaredField("searchableField");
         searchableField.setAccessible(true);
-        final List<Resource> searchable = resourceCrud.searchInField(searchableField, "searchable");
+        final List<Resource> searchable = resourceCrud.searchInField("searchableField", "searchable");
         assertEquals(1, searchable.size());
 
     }

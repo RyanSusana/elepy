@@ -5,9 +5,9 @@ import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
 import com.elepy.dao.ResourceDao;
-import spark.Request;
-import spark.Response;
-import spark.route.HttpMethod;
+import com.elepy.http.HttpMethod;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 
 public class ResourceExtraRoutes {
 
@@ -18,7 +18,7 @@ public class ResourceExtraRoutes {
         this.resourceCrud = resourceCrud;
     }
 
-    @Route(path = "/resources-extra", requestMethod = HttpMethod.get)
+    @Route(path = "/resources-extra", requestMethod = HttpMethod.GET)
     public String newRoute(Request request, Response response) {
         response.status(201);
         return "generated";

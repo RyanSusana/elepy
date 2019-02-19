@@ -3,7 +3,7 @@ package com.elepy.admin.concepts.auth;
 import com.elepy.admin.models.Token;
 import com.elepy.admin.models.User;
 import com.elepy.admin.services.UserService;
-import spark.Request;
+import com.elepy.http.Request;
 
 import java.util.Optional;
 import java.util.Set;

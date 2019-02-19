@@ -17,17 +17,7 @@ import java.util.Set;
 public interface ElepyContext {
 
     /**
-     * Tries to get a dependency with a null tag
-     *
-     * @param cls The dependency class
-     * @param <T> The dependency type
-     * @param tag The tag of the dependency
-     * @return the dependency
-     */
-    <T> T getDependency(Class<T> cls, String tag);
-
-    /**
-     * Tries to get a tag from a {@link Field} or {@link Parameter}, defaults to null
+     * Tries to GET a tag from a {@link Field} or {@link Parameter}, defaults to null
      *
      * @param type Field or Parameter
      * @return the guessed field
@@ -68,7 +58,17 @@ public interface ElepyContext {
     }
 
     /**
-     * Tries to get a dependency with a null tag
+     * Tries to GET a dependency with a null tag
+     *
+     * @param cls The dependency class
+     * @param <T> The dependency type
+     * @param tag The tag of the dependency
+     * @return the dependency
+     */
+    <T> T getDependency(Class<T> cls, String tag);
+
+    /**
+     * Tries to GET a dependency with a null tag
      *
      * @param cls The dependency class
      * @param <T> The dependency type
@@ -79,7 +79,7 @@ public interface ElepyContext {
     }
 
     /**
-     * Tries to get a Crud for a RestModel
+     * Tries to GET a Crud for a RestModel
      *
      * @param cls The RestModel class
      * @param <T> The RestModel type

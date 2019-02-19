@@ -3,6 +3,7 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
+import com.elepy.http.SparkRequest;
 import com.elepy.utils.ClassUtils;
 
 import java.lang.reflect.Constructor;
@@ -52,7 +53,7 @@ public class ViewHandler {
                 model.put("headers", resourceView.renderHeaders());
 
                 model.put("currentDescriptor", resourceView.getDescriptor());
-                return adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb");
+                return adminPanel.renderWithDefaults(new SparkRequest(request), model, "admin-templates/custom-model.peb");
             });
         }
         for (Map<String, Object> descriptor : descriptors) {
@@ -107,7 +108,7 @@ public class ViewHandler {
 
             model.put("descriptors", descriptors);
             model.put("currentDescriptor", descriptor);
-            return adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb");
+            return adminPanel.renderWithDefaults(new SparkRequest(request), model, "admin-templates/model.peb");
         });
     }
 

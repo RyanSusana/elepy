@@ -5,14 +5,14 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.HttpContext;
+import com.elepy.http.Response;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import spark.Request;
-import spark.Response;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
     private void create(Response response, Crud<T> dao, Iterable<T> items) {
         dao.create(items);
         response.status(200);
-        response.body("OK");
+        response.result("OK");
     }
 
     public void multipleCreate(Response response, List<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
@@ -57,19 +57,19 @@ public class DefaultCreate<T> implements CreateHandler<T> {
     }
 
     @Override
-    public void handleCreate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        String body = request.body();
+    public void handleCreate(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+        String body = context.request().body();
 
         ObjectMapper objectMapper = elepy.getObjectMapper();
         try {
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(response, ts, dao, objectEvaluators, clazz);
+            multipleCreate(context.response(), ts, dao, objectEvaluators, clazz);
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            create(response, item, dao, objectEvaluators, clazz);
+            create(context.response(), item, dao, objectEvaluators, clazz);
         }
     }
 }

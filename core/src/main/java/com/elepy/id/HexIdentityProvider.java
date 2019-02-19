@@ -2,6 +2,7 @@ package com.elepy.id;
 
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.StringUtils;
 
 public class HexIdentityProvider<T> implements IdentityProvider<T> {
@@ -21,7 +22,7 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
         this.length = length;
         this.prefix = prefix == null ? "" : prefix;
         if (length < 2) {
-            throw new IllegalStateException("Can't create a HexIdentityProvider with a minimum length of less than 2");
+            throw new ElepyConfigException("Can't create a HexIdentityProvider with a minimum length of less than 2");
         }
     }
 

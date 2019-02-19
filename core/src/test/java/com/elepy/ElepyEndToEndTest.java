@@ -100,12 +100,14 @@ public class ElepyEndToEndTest extends Base {
     public void testMultiCreate_atomicCreateInsertsNone_OnIntegrityFailure() throws UnirestException, JsonProcessingException {
 
         final long count = defaultMongoDao.count();
+
         final Resource resource = validObject();
 
         resource.setUnique("uniqueMultiCreate");
 
         final Resource resource1 = validObject();
         resource1.setUnique("uniqueMultiCreate");
+
 
         final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
 
@@ -139,12 +141,12 @@ public class ElepyEndToEndTest extends Base {
         final long beginningCount = defaultMongoDao.count();
         final Resource resource = validObject();
 
-        resource.setId("deleteId");
+        resource.setId(55);
 
         defaultMongoDao.create(resource);
 
         assertEquals(beginningCount + 1, defaultMongoDao.count());
-        final HttpResponse<String> delete = Unirest.delete("http://localhost:7357/resources/deleteId").asString();
+        final HttpResponse<String> delete = Unirest.delete("http://localhost:7357/resources/55").asString();
 
         assertEquals(beginningCount, defaultMongoDao.count());
         assertEquals(200, delete.getStatus());
@@ -156,19 +158,19 @@ public class ElepyEndToEndTest extends Base {
         final long beginningCount = defaultMongoDao.count();
         final Resource resource = validObject();
 
-        resource.setId("updatePartialId");
+        resource.setId(66);
         resource.setMARKDOWN("ryan");
 
 
         defaultMongoDao.create(resource);
 
         assertEquals(beginningCount + 1, defaultMongoDao.count());
-        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/updatePartialId").body("{\"id\":\"" + resource.getId() + "\",\"unique\": \"uniqueUpdate\"}").asString();
+        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/66").body("{\"id\":\"" + resource.getId() + "\",\"unique\": \"uniqueUpdate\"}").asString();
 
         assertEquals(beginningCount + 1, defaultMongoDao.count());
 
 
-        Optional<Resource> updatePartialId = defaultMongoDao.getById("updatePartialId");
+        Optional<Resource> updatePartialId = defaultMongoDao.getById(66);
 
         assertTrue(updatePartialId.isPresent());
         assertEquals("uniqueUpdate", updatePartialId.get().getUnique());
@@ -181,7 +183,7 @@ public class ElepyEndToEndTest extends Base {
 
         final String shouldReturn = "I am here";
         Resource resource1 = validObject();
-        resource1.setId("extra");
+        resource1.setId(77);
         resource1.setTextField(shouldReturn);
         defaultMongoDao.create(resource1);
         final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources/" + resource1.getId() + "/extra").asString();

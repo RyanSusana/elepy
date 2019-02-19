@@ -3,7 +3,7 @@ package com.elepy.dao.jongo;
 import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.id.HexIdentityProvider;
+import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
 
@@ -25,9 +25,8 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public boolean mustGenerateObjectId(Object pojo) {
-        final Optional<String> id = ClassUtils.getId(pojo);
+        return ClassUtils.getId(pojo).map(o -> o instanceof String && ((String) o).trim().isEmpty()).orElse(true);
 
-        return id.map(s -> s.trim().equals("")).orElse(true);
     }
 
     @Override
@@ -64,7 +63,7 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
             return ((Constructor<IdentityProvider>) o.get()).newInstance();
 
         } else {
-            return new HexIdentityProvider<>();
+            return new DefaultIdentityProvider();
         }
 
     }

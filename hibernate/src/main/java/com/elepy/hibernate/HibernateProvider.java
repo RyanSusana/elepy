@@ -6,7 +6,7 @@ import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.di.ElepyContext;
-import com.elepy.id.HexIdentityProvider;
+import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class HibernateProvider implements CrudProvider {
                 throw new IllegalStateException("Can't create IdentityProvider with annotation IdProvider");
             }
         } else {
-            identityProvider = new HexIdentityProvider<>();
+            identityProvider = new DefaultIdentityProvider<>();
         }
         return new HibernateDao<>(singleton, identityProvider, elepyContext.getObjectMapper(), type);
     }
