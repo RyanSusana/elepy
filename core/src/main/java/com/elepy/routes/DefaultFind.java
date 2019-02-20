@@ -1,22 +1,19 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
-import com.elepy.di.ElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import com.elepy.models.ModelDescription;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
 import java.util.Optional;
 
 public class DefaultFind<T> implements FindHandler<T> {
-
 
     public void find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
 
@@ -56,11 +53,11 @@ public class DefaultFind<T> implements FindHandler<T> {
 
 
     @Override
-    public void handleFind(HttpContext context, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleFind(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
         if (context.request().params("id") != null && !context.request().params("id").isEmpty()) {
-            findOne(context.request(), context.response(), crud, elepy.getObjectMapper(), clazz);
+            findOne(context.request(), context.response(), crud, objectMapper, modelDescription.getModelType());
         } else {
-            find(context.request(), context.response(), crud, elepy.getObjectMapper());
+            find(context.request(), context.response(), crud, objectMapper);
         }
     }
 }

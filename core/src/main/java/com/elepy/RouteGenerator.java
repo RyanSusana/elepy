@@ -1,11 +1,11 @@
 package com.elepy;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
+import com.elepy.models.ModelDescription;
 import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
@@ -52,16 +51,17 @@ public class RouteGenerator<T> {
         evaluateHasIdField(clazz);
 
         try {
-            List<ObjectEvaluator<T>> evaluators = restModel.getObjectEvaluators();
 
             final Crud<T> dao = elepy.getCrudFor(clazz);
+
+            ModelDescription<T> modelDescription = new ModelDescription<>(baseSlug + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
 
             //POST
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getCreateAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.POST)
-                    .route(ctx -> restModel.getService().handleCreate(ctx, dao, elepy.getContext(), evaluators, clazz))
+                    .route(ctx -> restModel.getService().handleCreate(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -70,7 +70,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PUT)
-                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, elepy.getContext(), evaluators, clazz))
+                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -79,7 +79,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PATCH)
-                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, elepy.getContext(), evaluators, clazz))
+                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -88,7 +88,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.DELETE)
-                    .route(ctx -> restModel.getService().handleDelete(ctx, dao, elepy.getContext(), evaluators, clazz))
+                    .route(ctx -> restModel.getService().handleDelete(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -97,7 +97,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.GET)
-                    .route(ctx -> restModel.getService().handleFind(ctx, dao, elepy.getContext(), evaluators, clazz))
+                    .route(ctx -> restModel.getService().handleFind(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -106,7 +106,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.GET)
-                    .route(ctx -> restModel.getService().handleFind(ctx, dao, elepy.getContext(), evaluators, clazz))
+                    .route(ctx -> restModel.getService().handleFind(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 

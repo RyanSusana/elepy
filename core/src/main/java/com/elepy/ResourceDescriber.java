@@ -120,6 +120,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     }
 
 
+    @SuppressWarnings("unchecked")
     private void routeAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         ServiceBuilder<T> serviceBuilder = new ServiceBuilder<>();

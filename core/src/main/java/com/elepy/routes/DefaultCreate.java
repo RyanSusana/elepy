@@ -4,9 +4,9 @@ import com.elepy.concepts.AtomicIntegrityEvaluator;
 import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Response;
+import com.elepy.models.ModelDescription;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -47,6 +47,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
         }
 
         for (T item : items) {
+
             for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
                 objectEvaluator.evaluate(item, clazz);
             }
@@ -57,19 +58,19 @@ public class DefaultCreate<T> implements CreateHandler<T> {
     }
 
     @Override
-    public void handleCreate(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleCreate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
 
-        ObjectMapper objectMapper = elepy.getObjectMapper();
         try {
+
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(context.response(), ts, dao, objectEvaluators, clazz);
+            multipleCreate(context.response(), ts, dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType());
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            create(context.response(), item, dao, objectEvaluators, clazz);
+            create(context.response(), item, dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType());
         }
     }
 }

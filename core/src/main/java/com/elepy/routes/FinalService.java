@@ -1,11 +1,9 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
 import com.elepy.http.HttpContext;
-
-import java.util.List;
+import com.elepy.models.ModelDescription;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FinalService<T> implements ServiceHandler<T> {
 
@@ -23,23 +21,23 @@ public class FinalService<T> implements ServiceHandler<T> {
     }
 
     @Override
-    public void handleFind(HttpContext context, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        find.handleFind(context, crud, elepy, objectEvaluators, clazz);
+    public void handleFind(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find.handleFind(context, crud, modelDescription, objectMapper);
     }
 
     @Override
-    public void handleCreate(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        create.handleCreate(context, dao, elepy, objectEvaluators, clazz);
+    public void handleCreate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        create.handleCreate(context, dao, modelDescription, objectMapper);
     }
 
     @Override
-    public void handleDelete(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
-        delete.handleDelete(context, dao, elepy, objectEvaluators, tClass);
+    public void handleDelete(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        delete.handleDelete(context, dao, modelDescription, objectMapper);
     }
 
     @Override
-    public void handleUpdate(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        update.handleUpdate(context, dao, elepy, objectEvaluators, clazz);
+    public void handleUpdate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        update.handleUpdate(context, dao, modelDescription, objectMapper);
     }
 
 }

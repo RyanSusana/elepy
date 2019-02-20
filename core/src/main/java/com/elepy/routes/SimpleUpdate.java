@@ -1,13 +1,12 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
+import com.elepy.models.ModelDescription;
 import com.elepy.utils.ClassUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,11 +19,12 @@ import java.util.Optional;
  */
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
+
     @Override
-    public void handleUpdate(HttpContext context, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void handleUpdate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
 
-        T item = elepy.getObjectMapper().readValue(body, clazz);
+        T item = objectMapper.readValue(body, modelDescription.getModelType());
 
         final Optional<Object> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
@@ -37,20 +37,20 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
             throw new ElepyException("This item doesn't exist and therefor can't be updated");
         }
 
-        beforeUpdate(before.get(), dao, elepy);
+        beforeUpdate(before.get(), dao);
 
         T updatedObjectFromRequest = updatedObjectFromRequest(before.get(),
                 context.request(),
-                elepy.getObjectMapper(),
-                clazz);
+                objectMapper,
+                modelDescription.getModelType());
 
         final T updated =
-                this.update(before.get(),
+                update(before.get(),
                         updatedObjectFromRequest,
                         dao,
-                        objectEvaluators,
-                        clazz);
-        afterUpdate(before.get(), updated, dao, elepy);
+                        modelDescription.getObjectEvaluators(),
+                        modelDescription.getModelType());
+        afterUpdate(before.get(), updated, dao);
 
         context.response().status(200);
         context.response().result("OK");
@@ -62,12 +62,11 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      *
      * @param beforeVersion The object before the update
      * @param crud          The crud implementation
-     * @param elepy         the context where you can GET context objects
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud, ElepyContext elepy) throws Exception;
+    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud) throws Exception;
 
     /**
      * What happens after you update a model.
@@ -75,7 +74,6 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      * @param beforeVersion  The object before the update
      * @param updatedVersion The object after the update
      * @param crud           The crud implementation
-     * @param elepy          the context where you can GET context objects
      */
-    public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, ElepyContext elepy);
+    public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud);
 }

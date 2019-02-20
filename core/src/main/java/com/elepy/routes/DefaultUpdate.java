@@ -4,12 +4,12 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.FieldType;
+import com.elepy.models.ModelDescription;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,7 +23,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     private T beforeUpdate;
 
-    public static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
+    private static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
         Map<String, Object> queryPairs = new LinkedHashMap<>();
         String[] pairs = body.split("&");
         for (String pair : pairs) {
@@ -79,7 +79,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         }
     }
 
-    public T update(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public T update(Request request, Response response, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz, ObjectMapper objectMapper) throws Exception {
         String body = request.body();
 
         if (body == null || body.isEmpty()) {
@@ -92,7 +92,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             response.status(404);
             throw new ElepyException("No object found with this ID");
         }
-        final T updated = updatedObjectFromRequest(before.get(), request, elepy.getObjectMapper(), clazz);
+        final T updated = updatedObjectFromRequest(before.get(), request, objectMapper, clazz);
 
         this.beforeUpdate = before.get();
         update(beforeUpdate, updated, dao, objectEvaluators, clazz);
@@ -130,7 +130,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     }
 
     @Override
-    public void handleUpdate(HttpContext httpContext, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        this.update(httpContext.request(), httpContext.response(), dao, elepy, objectEvaluators, clazz);
+    public void handleUpdate(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
     }
 }
