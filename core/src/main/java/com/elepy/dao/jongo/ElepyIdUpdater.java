@@ -1,9 +1,9 @@
 package com.elepy.dao.jongo;
 
-import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.id.DefaultIdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
 
@@ -40,11 +40,11 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
         final Field idField = ClassUtils.getIdField(target.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
 
         idField.setAccessible(true);
-        try {
-            idField.set(target, provider(target).getId(target, crud));
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
-        }
+//        try {
+//            idField.set(target, provider(target).getId(target, crud));
+//        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+//            throw new IllegalStateException(e);
+//        }
     }
 
     private IdentityProvider provider(Object item) throws IllegalAccessException, InvocationTargetException, InstantiationException {

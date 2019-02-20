@@ -25,6 +25,8 @@ public class HibernateTest {
 
     private SessionFactory sessionFactory;
 
+    private static int resourceCounter = -100;
+
     @BeforeEach
     public void setUp() throws Exception {
 
@@ -120,6 +122,7 @@ public class HibernateTest {
     public Resource validObject() {
         Resource resource = new Resource();
 
+        resource.setId(resourceCounter++);
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
         resource.setUniqueField("unique");

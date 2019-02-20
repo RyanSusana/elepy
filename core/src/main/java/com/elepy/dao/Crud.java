@@ -109,7 +109,7 @@ public interface Crud<T> {
     /**
      * Creates multiple items in the CRUD.
      *
-     * @param items The items you want to create
+     * @param items The items you want to singleCreate
      */
     default void create(final T... items) {
         for (T item : items) {
@@ -120,7 +120,7 @@ public interface Crud<T> {
     /**
      * Creates multiple items in the CRUD.
      *
-     * @param items The items you want to create
+     * @param items The items you want to singleCreate
      */
     default void create(final Iterable<T> items) {
         for (T item : items) {

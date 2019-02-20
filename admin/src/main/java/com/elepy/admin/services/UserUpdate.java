@@ -6,25 +6,23 @@ import com.elepy.concepts.IntegrityEvaluatorImpl;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
+import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.routes.UpdateHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
 import java.util.Optional;
 
 public class UserUpdate implements UpdateHandler<User> {
 
     @Override
-    public void handleUpdate(HttpContext context, Crud<User> crud, ElepyContext elepy, List<ObjectEvaluator<User>> objectEvaluators, Class<User> clazz) throws Exception {
+    public void handleUpdate(HttpContext context, Crud<User> crud, ModelDescription<User> modelDescription, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
         User loggedInUser = context.request().session().attribute(ElepyAdminPanel.ADMIN_USER);
-        User updated = elepy.getObjectMapper().readValue(body, clazz);
-
+        User updated = objectMapper.readValue(body, modelDescription.getModelType());
 
         Optional<User> before = crud.getById(crud.getId(updated));
-
 
         if (!before.isPresent()) {
             context.response().status(404);
@@ -45,7 +43,7 @@ public class UserUpdate implements UpdateHandler<User> {
 
         updateEvaluator.evaluate(before.get(), updated);
 
-        for (ObjectEvaluator<User> objectEvaluator : objectEvaluators) {
+        for (ObjectEvaluator<User> objectEvaluator : modelDescription.getObjectEvaluators()) {
             objectEvaluator.evaluate(updated, User.class);
         }
         new IntegrityEvaluatorImpl<User>().evaluate(updated, crud);

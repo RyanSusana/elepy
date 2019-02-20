@@ -141,7 +141,7 @@ public class RouteGenerator<T> {
         actions.put("findAll", restModel.getFindAccessLevel());
         actions.put("update", restModel.getUpdateAccessLevel());
         actions.put("DELETE", restModel.getDeleteAccessLevel());
-        actions.put("create", restModel.getCreateAccessLevel());
+        actions.put("singleCreate", restModel.getCreateAccessLevel());
         return actions;
     }
 }

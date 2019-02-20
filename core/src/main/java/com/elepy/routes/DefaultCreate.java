@@ -20,19 +20,35 @@ import java.util.List;
 public class DefaultCreate<T> implements CreateHandler<T> {
 
 
-    public T create(Response response, T product, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-            objectEvaluator.evaluate(product, clazz);
-        }
-        new IntegrityEvaluatorImpl<T>().evaluate(product, dao);
+    public T singleCreate(Response response, T item, Crud<T> dao, ModelDescription<T> modelDescription) throws Exception {
+        evaluate(item, modelDescription, dao);
 
-        create(response, dao, product);
-        return product;
+        create(response, dao, Collections.singletonList(item));
+        return item;
     }
 
 
-    private void create(Response response, Crud<T> dao, T item) {
-        create(response, dao, Collections.singleton(item));
+    public void multipleCreate(Response response, List<T> items, Crud<T> dao, ModelDescription<T> modelDescription) throws Exception {
+        if (ClassUtils.hasIntegrityRules(dao.getType())) {
+            new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
+        }
+
+        for (T item : items) {
+            evaluate(item, modelDescription, dao);
+        }
+
+        create(response, dao, items);
+    }
+
+    private void evaluate(T item, ModelDescription<T> modelDescription, Crud<T> dao) throws Exception {
+        for (ObjectEvaluator<T> objectEvaluator : modelDescription.getObjectEvaluators()) {
+            objectEvaluator.evaluate(item, modelDescription.getModelType());
+        }
+        new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
+
+
+        modelDescription.getIdentityProvider().provideId(item, dao);
+
     }
 
     private void create(Response response, Crud<T> dao, Iterable<T> items) {
@@ -41,36 +57,19 @@ public class DefaultCreate<T> implements CreateHandler<T> {
         response.result("OK");
     }
 
-    public void multipleCreate(Response response, List<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        if (ClassUtils.hasIntegrityRules(dao.getType())) {
-            new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
-        }
-
-        for (T item : items) {
-
-            for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-                objectEvaluator.evaluate(item, clazz);
-            }
-            new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
-        }
-
-        create(response, dao, items);
-    }
-
     @Override
     public void handleCreate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
 
         try {
-
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(context.response(), ts, dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType());
+            multipleCreate(context.response(), ts, dao, modelDescription);
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            create(context.response(), item, dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType());
+            singleCreate(context.response(), item, dao, modelDescription);
         }
     }
 }

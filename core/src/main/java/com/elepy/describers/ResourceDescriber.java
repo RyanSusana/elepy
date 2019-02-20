@@ -2,15 +2,13 @@ package com.elepy.describers;
 
 
 import com.elepy.Elepy;
-import com.elepy.annotations.Dao;
-import com.elepy.annotations.DaoProvider;
-import com.elepy.annotations.Evaluators;
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.*;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
@@ -107,11 +105,18 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void baseAnnotations() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         final RestModel annotation = classType.getAnnotation(RestModel.class);
 
         if (annotation == null) {
             throw new ElepyConfigException(String.format("Resources must have the @RestModel Annotation, %s doesn't.", classType.getName()));
+        }
+
+        if (classType.isAnnotationPresent(IdProvider.class)) {
+            this.identityProvider = elepy.initializeElepyObject(classType.getAnnotation(IdProvider.class).value());
+        } else {
+            this.identityProvider = new DefaultIdentityProvider<>();
         }
 
         this.slug = annotation.slug();

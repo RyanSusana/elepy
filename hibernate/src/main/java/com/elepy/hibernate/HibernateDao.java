@@ -1,7 +1,6 @@
 package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
-import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
@@ -31,7 +30,6 @@ import java.util.Optional;
 
 public class HibernateDao<T> implements Crud<T> {
     private final SessionFactory sessionFactory;
-    private final IdentityProvider<T> identityProvider;
     private final Class<T> aClass;
 
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
@@ -39,9 +37,8 @@ public class HibernateDao<T> implements Crud<T> {
 
     private final ObjectMapper objectMapper;
 
-    public HibernateDao(SessionFactory sessionFactory, IdentityProvider<T> identityProvider, ObjectMapper objectMapper, Class<T> aClass) {
+    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Class<T> aClass) {
         this.sessionFactory = sessionFactory;
-        this.identityProvider = identityProvider;
         this.aClass = aClass;
         this.objectMapper = objectMapper;
     }
@@ -137,12 +134,7 @@ public class HibernateDao<T> implements Crud<T> {
 
     private void create(Session session, T item) throws IllegalAccessException {
         final Optional<Object> id = com.elepy.utils.ClassUtils.getId(item);
-        if (!id.isPresent()) {
-            final Field idField = com.elepy.utils.ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyException("No ID field found"));
-            idField.setAccessible(true);
 
-            idField.set(item, identityProvider.getId(item, this));
-        }
         session.save(item);
     }
 

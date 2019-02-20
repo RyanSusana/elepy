@@ -40,9 +40,9 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
     }
 
     /**
-     * What happens before you create a model. Throw an exception to cancel the creation.
+     * What happens before you singleCreate a model. Throw an exception to cancel the creation.
      *
-     * @param objectForCreation The object before you create it
+     * @param objectForCreation The object before you singleCreate it
      * @param crud              the crud implementation
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
@@ -51,7 +51,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
     public abstract void beforeCreate(T objectForCreation, Crud<T> crud) throws Exception;
 
     /**
-     * What happens after you create a model.
+     * What happens after you singleCreate a model.
      *
      * @param createdObject The object after you created it
      * @param crud          the crud implementation

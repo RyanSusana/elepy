@@ -4,7 +4,6 @@ import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
-import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
@@ -42,11 +41,10 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     public abstract DB db();
 
-    public abstract IdentityProvider<T> identityProvider();
 
     Jongo getJongo() {
         if (jongo == null) {
-            this.jongo = new Jongo(db(), new ElepyMapper(this, identityProvider()));
+            this.jongo = new Jongo(db());
         }
         return jongo;
     }

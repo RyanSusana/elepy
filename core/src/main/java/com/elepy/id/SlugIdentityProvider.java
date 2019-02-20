@@ -2,6 +2,7 @@ package com.elepy.id;
 
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.utils.ClassUtils;
 import com.github.slugify.Slugify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,24 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         this.slugFieldNames = slugFieldNames;
     }
 
+
+    @Override
+    public void provideId(T item, Crud<T> dao) {
+        final String slug = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property. This must be a String."));
+        String generatedSlug = generateSlug(slug, 0, dao);
+
+        Field field = ClassUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+
+        field.setAccessible(true);
+
+        try {
+            field.set(item, generatedSlug);
+        } catch (IllegalAccessException e) {
+            throw new ElepyException("Failed to reflectively access: " + field.getName(), 500);
+        }
+
+    }
+
     private Optional<String> getSlug(T obj, List<String> slugFieldNames) {
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -51,16 +70,9 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         }
 
         return s.substring(0, maxLen);
-
     }
 
-    @Override
-    public String getId(T item, Crud<T> dao) {
-        final String slug = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property"));
-        return getSlug(slug, 0, dao);
-    }
-
-    private String getSlug(String slug, int iteration, Crud crud) {
+    private String generateSlug(String slug, int iteration, Crud crud) {
         String generatedId = slug;
 
         if (iteration > 0) {
@@ -68,7 +80,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         }
 
         if (crud.getById(generatedId).isPresent()) {
-            return getSlug(slug, iteration + 1, crud);
+            return generateSlug(slug, iteration + 1, crud);
         }
 
         return generatedId;

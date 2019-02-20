@@ -65,8 +65,6 @@ class UnsatisfiedDependencies {
 
         if (elepyAnnotatedConstructor.isPresent()) {
             for (Parameter constructorParam : elepyAnnotatedConstructor.get().getParameters()) {
-
-                System.out.println(constructorParam.getType());
                 addAnnotatedElementDependency(constructorParam);
             }
         }

@@ -1,7 +1,6 @@
 package com.elepy.dao;
 
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.id.IdentityProvider;
 import com.elepy.dao.jongo.MongoDao;
 import com.elepy.models.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,8 +37,4 @@ public class ResourceDao extends MongoDao<Resource> {
         return db;
     }
 
-    @Override
-    public IdentityProvider<Resource> identityProvider() {
-        return null;
-    }
 }
