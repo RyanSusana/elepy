@@ -1,14 +1,14 @@
-package com.elepy;
+package com.elepy.describers;
 
 
+import com.elepy.Elepy;
 import com.elepy.annotations.Dao;
 import com.elepy.annotations.DaoProvider;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.RestModel;
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
-import com.elepy.concepts.describers.StructureDescriber;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.exceptions.ElepyConfigException;
@@ -25,7 +25,7 @@ import java.util.Objects;
 public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     private final Elepy elepy;
-    private final StructureDescriber structureDescriber;
+    private final ClassDescriber classDescriber;
     private Class<T> classType;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
@@ -44,7 +44,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.classType = clazz;
         this.elepy = elepy;
-        this.structureDescriber = new StructureDescriber(this.classType);
+        this.classDescriber = new ClassDescriber(this.classType);
         try {
             this.baseAnnotations();
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -213,8 +213,8 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         return crudProvider;
     }
 
-    public StructureDescriber getStructureDescriber() {
-        return structureDescriber;
+    public ClassDescriber getClassDescriber() {
+        return classDescriber;
     }
 
     @Override

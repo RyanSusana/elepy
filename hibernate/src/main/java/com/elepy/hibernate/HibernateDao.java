@@ -1,7 +1,7 @@
 package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;

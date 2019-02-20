@@ -1,6 +1,5 @@
 package com.elepy.id;
 
-import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;

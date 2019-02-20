@@ -1,7 +1,8 @@
 package com.elepy;
 
-import com.elepy.concepts.describers.StructureDescriber;
+import com.elepy.describers.ClassDescriber;
 import com.elepy.dao.Crud;
+import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
@@ -130,7 +131,7 @@ public class RouteGenerator<T> {
 
         model.put("actions", getActions(restModel));
         model.put("idField", evaluateHasIdField(clazz));
-        model.put("fields", new StructureDescriber(clazz).getStructure());
+        model.put("fields", new ClassDescriber(clazz).getStructure());
         return model;
     }
 

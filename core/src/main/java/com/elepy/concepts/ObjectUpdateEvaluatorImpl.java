@@ -1,6 +1,6 @@
 package com.elepy.concepts;
 
-import com.elepy.concepts.describers.FieldDescriber;
+import com.elepy.describers.FieldDescriber;
 import com.elepy.exceptions.ElepyException;
 
 import java.lang.reflect.Field;

@@ -1,4 +1,4 @@
-package com.elepy.concepts.describers;
+package com.elepy.describers;
 
 import com.elepy.annotations.Boolean;
 import com.elepy.annotations.Number;
@@ -92,15 +92,15 @@ public class FieldDescriber {
 
         fieldMap.put("generated", generated);
         if (fieldType.equals(FieldType.ENUM)) {
-            fieldMap.put("availableValues", StructureDescriber.getEnumMap(field.getType()));
+            fieldMap.put("availableValues", ClassDescriber.getEnumMap(field.getType()));
         }
         if (fieldType.equals(FieldType.DATE)) {
             DateTime annotation = field.getAnnotation(DateTime.class);
 
             if (annotation != null) {
                 fieldMap.put("includeTime", annotation.includeTime());
-                fieldMap.put("minDate", cmsFormat.format(StructureDescriber.guessDate(annotation.minDate())));
-                fieldMap.put("maxDate", cmsFormat.format(StructureDescriber.guessDate(annotation.maxDate())));
+                fieldMap.put("minDate", cmsFormat.format(ClassDescriber.guessDate(annotation.minDate())));
+                fieldMap.put("maxDate", cmsFormat.format(ClassDescriber.guessDate(annotation.maxDate())));
             } else {
                 fieldMap.put("includeTime", true);
                 fieldMap.put("minDate", null);
@@ -110,7 +110,7 @@ public class FieldDescriber {
         if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", field.getType().getSimpleName());
 
-            fieldMap.put("fields", new StructureDescriber(field.getType()).getStructure());
+            fieldMap.put("fields", new ClassDescriber(field.getType()).getStructure());
         }
         if (fieldType.equals(FieldType.TEXT)) {
             fieldMap.put("textType", field.getAnnotation(Text.class) != null ? field.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
@@ -127,13 +127,13 @@ public class FieldDescriber {
 
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 
-            fieldMap.put("fields", new StructureDescriber(array));
+            fieldMap.put("fields", new ClassDescriber(array));
             fieldMap.put("arrayType", array.getSimpleName());
 
         }
         if (fieldType.equals(FieldType.ENUM_ARRAY)) {
             final Class<?> array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-            fieldMap.put("availableValues", StructureDescriber.getEnumMap(array));
+            fieldMap.put("availableValues", ClassDescriber.getEnumMap(array));
         }
         if (fieldType.equals(FieldType.PRIMITIVE_ARRAY)) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];

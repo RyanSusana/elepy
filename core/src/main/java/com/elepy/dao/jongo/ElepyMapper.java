@@ -1,6 +1,6 @@
 package com.elepy.dao.jongo;
 
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

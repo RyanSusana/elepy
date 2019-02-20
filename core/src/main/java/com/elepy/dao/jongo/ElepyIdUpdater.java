@@ -1,6 +1,6 @@
 package com.elepy.dao.jongo;
 
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.id.DefaultIdentityProvider;

@@ -1,7 +1,7 @@
 package com.elepy.dao;
 
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.dao.jongo.MongoDao;
 import com.elepy.models.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;

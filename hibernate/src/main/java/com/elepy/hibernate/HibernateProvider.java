@@ -2,7 +2,7 @@ package com.elepy.hibernate;
 
 import com.elepy.annotations.IdProvider;
 import com.elepy.annotations.Inject;
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.di.ElepyContext;
