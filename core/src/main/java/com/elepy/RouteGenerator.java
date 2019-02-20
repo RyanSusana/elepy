@@ -1,12 +1,12 @@
 package com.elepy;
 
-import com.elepy.describers.ClassDescriber;
 import com.elepy.dao.Crud;
+import com.elepy.describers.ClassDescriber;
+import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
-import com.elepy.models.ModelDescription;
 import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

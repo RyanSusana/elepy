@@ -1,8 +1,8 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
+import com.elepy.describers.ModelDescription;
 import com.elepy.http.HttpContext;
-import com.elepy.models.ModelDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FinalService<T> implements ServiceHandler<T> {

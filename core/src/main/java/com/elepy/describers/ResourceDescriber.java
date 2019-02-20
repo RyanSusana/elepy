@@ -6,12 +6,12 @@ import com.elepy.annotations.Dao;
 import com.elepy.annotations.DaoProvider;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.RestModel;
-import com.elepy.id.IdentityProvider;
 import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.id.IdentityProvider;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
@@ -54,7 +54,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     }
 
 
-    void setupAnnotations() {
+    public void setupAnnotations() {
 
         try {
             routeAnnotations();
@@ -64,7 +64,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         }
     }
 
-    void setupDao() {
+    public void setupDao() {
         try {
             final DaoProvider annotation = classType.getAnnotation(DaoProvider.class);
             final Crud<T> crud;
