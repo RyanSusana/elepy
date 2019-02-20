@@ -8,6 +8,11 @@ import com.elepy.utils.StringUtils;
 
 import java.lang.reflect.Field;
 
+/**
+ * This Identity provider generates a random 10 char hex String for an ID.
+ *
+ * @param <T> The model type
+ */
 public class HexIdentityProvider<T> implements IdentityProvider<T> {
 
 

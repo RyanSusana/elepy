@@ -7,6 +7,11 @@ import com.elepy.utils.ClassUtils;
 import java.lang.reflect.Field;
 import java.util.Random;
 
+/**
+ * This {@link IdentityProvider} generates ID's by using random numbers.
+ *
+ * @param <T> The model type
+ */
 public class NumberIdentityProvider<T> implements IdentityProvider<T> {
     private final Random random = new Random();
 

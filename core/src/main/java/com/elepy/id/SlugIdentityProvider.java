@@ -12,6 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This {@link IdentityProvider} creates an SEO-friendly link Slug for an ID.
+ *
+ * @param <T> The model type
+ */
 public class SlugIdentityProvider<T> implements IdentityProvider<T> {
     private static final Logger logger = LoggerFactory.getLogger(SlugIdentityProvider.class);
     private final String[] slugFieldNames;

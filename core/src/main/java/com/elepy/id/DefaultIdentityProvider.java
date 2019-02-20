@@ -4,6 +4,11 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 
+/**
+ * This is the default {@link IdentityProvider} it delegates to {@link HexIdentityProvider} for Strings and {@link NumberIdentityProvider} for numbers.
+ *
+ * @param <T> The type of the Model
+ */
 public class DefaultIdentityProvider<T> implements IdentityProvider<T> {
 
     private final HexIdentityProvider<T> hexIdentityProvider = new HexIdentityProvider<>();
