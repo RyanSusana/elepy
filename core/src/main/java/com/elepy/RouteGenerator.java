@@ -98,7 +98,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.GET)
-                    .route(ctx -> restModel.getService().handleFind(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleFindMany(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -107,7 +107,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.GET)
-                    .route(ctx -> restModel.getService().handleFind(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleFindOne(ctx, dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 

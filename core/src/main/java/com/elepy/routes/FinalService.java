@@ -21,8 +21,13 @@ public class FinalService<T> implements ServiceHandler<T> {
     }
 
     @Override
-    public void handleFind(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        find.handleFind(context, crud, modelDescription, objectMapper);
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find.handleFindMany(context, crud, modelDescription, objectMapper);
+    }
+
+    @Override
+    public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find.handleFindOne(context, crud, modelDescription, objectMapper);
     }
 
     @Override

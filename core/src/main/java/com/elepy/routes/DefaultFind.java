@@ -53,11 +53,12 @@ public class DefaultFind<T> implements FindHandler<T> {
 
 
     @Override
-    public void handleFind(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        if (context.request().params("id") != null && !context.request().params("id").isEmpty()) {
-            findOne(context.request(), context.response(), crud, objectMapper, modelDescription.getModelType());
-        } else {
-            find(context.request(), context.response(), crud, objectMapper);
-        }
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find(context.request(), context.response(), crud, objectMapper);
+    }
+
+    @Override
+    public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        findOne(context.request(), context.response(), crud, objectMapper, modelDescription.getModelType());
     }
 }
