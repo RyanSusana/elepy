@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @RestModel(name = "Test Resource", slug = "/resources")
 @Service(ResourceService.class)
 @Dao(ResourceDao.class)
-@Update(accessLevel = AccessLevel.PUBLIC, handler = ResourceUpdate.class)
+//@Update(accessLevel = AccessLevel.PUBLIC, handler = ResourceUpdate.class)
 @ExtraRoutes({ResourceExtraRoutes.class})
 public class Resource {
     @Identifier

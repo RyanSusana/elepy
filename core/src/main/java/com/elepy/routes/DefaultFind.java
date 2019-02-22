@@ -7,7 +7,6 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,7 +38,7 @@ public class DefaultFind<T> implements FindHandler<T> {
     public void findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, Class<T> clazz) throws JsonProcessingException {
         response.type("application/json");
 
-        Object paramId = ClassUtils.toObjectIdFromString(clazz, request.params("id"));
+        Object paramId = request.modelId();
 
         final Optional<T> id = dao.getById(paramId);
         if (id.isPresent()) {

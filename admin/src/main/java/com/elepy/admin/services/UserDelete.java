@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserDelete implements DeleteHandler<User> {
     @Override
     public void handleDelete(HttpContext context, Crud<User> crud, ModelDescription<User> modelDescription, ObjectMapper objectMapper) throws Exception {
-        final Optional<User> toDelete = crud.getById(context.request().params("id"));
+        final Optional<User> toDelete = crud.getById(context.modelId());
         User loggedInUser = context.request().session().attribute(ElepyAdminPanel.ADMIN_USER);
         if (!toDelete.isPresent()) {
             throw new ElepyException("No user with this ID is found.", 404);

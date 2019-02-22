@@ -6,6 +6,10 @@ public interface HttpContext {
 
     Response response();
 
+    default Object modelId() {
+        return request().modelId();
+    }
+
 }
 
 

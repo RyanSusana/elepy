@@ -5,6 +5,7 @@ import com.elepy.describers.ClassDescriber;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.HttpContext;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.AccessLevel;
 import com.elepy.utils.ClassUtils;
@@ -62,7 +63,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getCreateAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.POST)
-                    .route(ctx -> restModel.getService().handleCreate(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleCreate(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -71,7 +72,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PUT)
-                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleUpdatePut(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -80,7 +81,10 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PATCH)
-                    .route(ctx -> restModel.getService().handleUpdate(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> {
+                        ctx.request().attribute("modelClass", restModel.getClassType());
+                        restModel.getService().handleUpdatePatch(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper());
+                    })
                     .build()
             );
 
@@ -89,7 +93,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.DELETE)
-                    .route(ctx -> restModel.getService().handleDelete(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleDelete(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -98,7 +102,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.GET)
-                    .route(ctx -> restModel.getService().handleFindMany(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleFindMany(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -107,7 +111,7 @@ public class RouteGenerator<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.GET)
-                    .route(ctx -> restModel.getService().handleFindOne(ctx, dao, modelDescription, elepy.getObjectMapper()))
+                    .route(ctx -> restModel.getService().handleFindOne(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
 
@@ -117,6 +121,10 @@ public class RouteGenerator<T> {
         return getPojoDescriptor(restModel, clazz);
     }
 
+    private HttpContext injectModelClassInHttpContext(HttpContext ctx) {
+        ctx.request().attribute("modelClass", restModel.getClassType());
+        return ctx;
+    }
     private Map<String, Object> getPojoDescriptor(ResourceDescriber restModel, Class<?> clazz) {
         Map<String, Object> model = new HashMap<>();
         if (baseSlug.equals("/")) {

@@ -58,6 +58,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return update;
     }
 
+    @SuppressWarnings("unchecked")
     public T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Class<T> clazz) throws IOException {
 
         final String body = request.body();
@@ -86,12 +87,12 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             throw new ElepyException("No changes detected.");
         }
 
-        Optional<T> before = dao.getById(request.params("id"));
+        Optional<T> before = dao.getById(request.modelId());
 
         if (!before.isPresent()) {
-            response.status(404);
-            throw new ElepyException("No object found with this ID");
+            throw new ElepyException("No object found with this ID", 404);
         }
+
         final T updated = updatedObjectFromRequest(before.get(), request, objectMapper, clazz);
 
         this.beforeUpdate = before.get();
@@ -102,6 +103,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return updated;
     }
 
+    @SuppressWarnings("unchecked")
     public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
 
         fieldsToAdd.forEach((fieldName, fieldObject) -> {
@@ -120,7 +122,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return (T) objectMapper.convertValue(objectAsMap, cls);
     }
 
-
+    @SuppressWarnings("unchecked")
     public T setParamsOnObject(Request request, ObjectMapper objectMapper, T object) throws UnsupportedEncodingException {
 
         Map<String, Object> map = objectMapper.convertValue(object, Map.class);
@@ -130,7 +132,12 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     }
 
     @Override
-    public void handleUpdate(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+    public void handleUpdatePut(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
+    }
+
+    @Override
+    public void handleUpdatePatch(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
         this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
     }
 }

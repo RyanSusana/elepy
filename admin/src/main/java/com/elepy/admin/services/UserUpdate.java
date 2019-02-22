@@ -17,7 +17,7 @@ import java.util.Optional;
 public class UserUpdate implements UpdateHandler<User> {
 
     @Override
-    public void handleUpdate(HttpContext context, Crud<User> crud, ModelDescription<User> modelDescription, ObjectMapper objectMapper) throws Exception {
+    public void handleUpdatePut(HttpContext context, Crud<User> crud, ModelDescription<User> modelDescription, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
         User loggedInUser = context.request().session().attribute(ElepyAdminPanel.ADMIN_USER);
         User updated = objectMapper.readValue(body, modelDescription.getModelType());
@@ -55,5 +55,10 @@ public class UserUpdate implements UpdateHandler<User> {
         crud.update(updated);
         context.response().status(200);
         context.response().result("The item is updated");
+    }
+
+    @Override
+    public void handleUpdatePatch(HttpContext context, Crud<User> crud, ModelDescription<User> modelDescription, ObjectMapper objectMapper) throws Exception {
+        handleUpdatePut(context, crud, modelDescription, objectMapper);
     }
 }

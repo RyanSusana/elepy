@@ -41,8 +41,13 @@ public class FinalService<T> implements ServiceHandler<T> {
     }
 
     @Override
-    public void handleUpdate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        update.handleUpdate(context, dao, modelDescription, objectMapper);
+    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        update.handleUpdatePut(context, dao, modelDescription, objectMapper);
+    }
+
+    @Override
+    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        update.handleUpdatePatch(context, crud, modelDescription, objectMapper);
     }
 
 }

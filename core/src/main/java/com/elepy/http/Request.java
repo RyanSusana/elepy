@@ -1,5 +1,7 @@
 package com.elepy.http;
 
+import com.elepy.utils.ClassUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
@@ -59,5 +61,28 @@ public interface Request {
     String[] splat();
 
     void attribute(String attribute, Object value);
+
+    default Object modelId() {
+        return modelId(attribute("modelClass"));
+    }
+
+    default Object modelId(Class cls) {
+
+        String id = params("id");
+        if (cls == null) {
+            try {
+                return Integer.parseInt(id);
+            } catch (Exception e) {
+                try {
+
+                    return Long.parseLong(id);
+                } catch (Exception e1) {
+                    return id;
+                }
+            }
+        } else {
+            return ClassUtils.toObjectIdFromString(cls, id);
+        }
+    }
 
 }

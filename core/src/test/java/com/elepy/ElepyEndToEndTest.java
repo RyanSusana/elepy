@@ -165,7 +165,7 @@ public class ElepyEndToEndTest extends Base {
         defaultMongoDao.create(resource);
 
         assertEquals(beginningCount + 1, defaultMongoDao.count());
-        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/66").body("{\"id\":\"" + resource.getId() + "\",\"unique\": \"uniqueUpdate\"}").asString();
+        final HttpResponse<String> patch = Unirest.patch("http://localhost:7357/resources/66").body("{\"id\":" + resource.getId() + ",\"unique\": \"uniqueUpdate\"}").asString();
 
         assertEquals(beginningCount + 1, defaultMongoDao.count());
 

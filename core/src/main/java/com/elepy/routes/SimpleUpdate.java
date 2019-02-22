@@ -21,7 +21,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
 
     @Override
-    public void handleUpdate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
 
         T item = objectMapper.readValue(body, modelDescription.getModelType());
@@ -56,6 +56,10 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         context.response().result("OK");
     }
 
+    @Override
+    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        super.handleUpdatePut(context, crud, modelDescription, objectMapper);
+    }
 
     /**
      * What happens before you update a model. Throw an exception to cancel the update.
