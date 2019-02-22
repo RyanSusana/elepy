@@ -36,6 +36,7 @@ public class FieldDescriber {
     private final boolean generated;
 
     private static SimpleDateFormat cmsFormat = new SimpleDateFormat("YYYY-MM-dd");
+
     public FieldDescriber(Field field) {
         this.field = field;
         generated = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.getName().equals(field.getName())).orElse(false);
@@ -83,6 +84,10 @@ public class FieldDescriber {
 
         Importance importance = field.getAnnotation(Importance.class);
         fieldMap.put("importance", importance == null ? 0 : importance.value());
+
+
+        fieldMap.put("unique", field.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
+
     }
 
     private void mapFieldTypeInformation(Field field, Map<String, Object> fieldMap) {
