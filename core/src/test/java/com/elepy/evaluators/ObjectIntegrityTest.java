@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.BaseFongo;
 import com.elepy.dao.jongo.DefaultMongoDao;
@@ -14,7 +14,7 @@ public class ObjectIntegrityTest extends BaseFongo {
     public void testIntegrityUnique() throws Exception {
         super.setUp();
         DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", Resource.class);
-        final IntegrityEvaluatorImpl<Resource> evaluator = new IntegrityEvaluatorImpl<>();
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>();
         defaultMongoDao.create(validObject());
 
 

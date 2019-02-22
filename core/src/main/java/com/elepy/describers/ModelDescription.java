@@ -1,6 +1,6 @@
 package com.elepy.describers;
 
-import com.elepy.concepts.ObjectEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.IdentityProvider;
 
 import java.util.List;

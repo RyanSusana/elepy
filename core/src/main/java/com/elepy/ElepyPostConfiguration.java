@@ -1,9 +1,9 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
+import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;

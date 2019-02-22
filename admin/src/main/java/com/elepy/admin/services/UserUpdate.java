@@ -2,11 +2,11 @@ package com.elepy.admin.services;
 
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.models.User;
-import com.elepy.concepts.IntegrityEvaluatorImpl;
-import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
+import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.routes.UpdateHandler;
@@ -39,14 +39,14 @@ public class UserUpdate implements UpdateHandler<User> {
             }
         }
 
-        ObjectUpdateEvaluatorImpl<User> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+        DefaultObjectUpdateEvaluator<User> updateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
         updateEvaluator.evaluate(before.get(), updated);
 
         for (ObjectEvaluator<User> objectEvaluator : modelDescription.getObjectEvaluators()) {
             objectEvaluator.evaluate(updated, User.class);
         }
-        new IntegrityEvaluatorImpl<User>().evaluate(updated, crud);
+        new DefaultIntegrityEvaluator<User>().evaluate(updated, crud);
         if (!updated.getPassword().equals(before.get().getPassword())) {
             updated = updated.hashWord();
         }

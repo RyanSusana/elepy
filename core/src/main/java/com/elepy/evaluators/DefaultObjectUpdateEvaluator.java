@@ -1,11 +1,11 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.describers.FieldDescriber;
 import com.elepy.exceptions.ElepyException;
 
 import java.lang.reflect.Field;
 
-public class ObjectUpdateEvaluatorImpl<T> implements ObjectUpdateEvaluator<T> {
+public class DefaultObjectUpdateEvaluator<T> implements ObjectUpdateEvaluator<T> {
     @Override
     public void evaluate(T before, T updated) throws IllegalAccessException {
         for (Field field : before.getClass().getDeclaredFields()) {

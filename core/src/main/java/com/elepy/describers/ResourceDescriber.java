@@ -3,10 +3,10 @@ package com.elepy.describers;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
-import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.concepts.ObjectEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
+import com.elepy.evaluators.ObjectEvaluator;
+import com.elepy.evaluators.ObjectEvaluatorImpl;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;

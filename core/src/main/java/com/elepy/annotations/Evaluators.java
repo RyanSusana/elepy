@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
 import com.elepy.Elepy;
-import com.elepy.concepts.ObjectEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

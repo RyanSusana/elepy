@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-public class IntegrityEvaluatorImpl<T> implements IntegrityEvaluator<T> {
+public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
     @Override
     public void evaluate(T item, Crud<T> dao, boolean insert) {
         try {

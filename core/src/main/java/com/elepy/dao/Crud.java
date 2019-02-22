@@ -42,7 +42,7 @@ public interface Crud<T> {
      * @param field The field of the model that you want to search
      * @param qry   The search term.
      * @return A list of all found model items.
-     * @see com.elepy.concepts.IntegrityEvaluator
+     * @see com.elepy.evaluators.IntegrityEvaluator
      */
     List<T> searchInField(Field field, String qry);
 

@@ -1,10 +1,10 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.IntegrityEvaluatorImpl;
-import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
+import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
@@ -42,7 +42,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     public T update(T before, T update, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
 
-        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+        DefaultObjectUpdateEvaluator<T> updateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
         updateEvaluator.evaluate(before, update);
 
@@ -52,7 +52,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             }
         }
 
-        new IntegrityEvaluatorImpl<T>().evaluate(update, dao);
+        new DefaultIntegrityEvaluator<T>().evaluate(update, dao);
         dao.update(update);
 
         return update;
