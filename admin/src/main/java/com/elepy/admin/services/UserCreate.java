@@ -22,7 +22,7 @@ public class UserCreate implements CreateHandler<User> {
         for (ObjectEvaluator<User> objectEvaluator : modelDescription.getObjectEvaluators()) {
             objectEvaluator.evaluate(user, User.class);
         }
-        new IntegrityEvaluatorImpl<User>().evaluate(user, crud);
+        new IntegrityEvaluatorImpl<User>().evaluate(user, crud, true);
 
         if (!loggedInUser.getUserType().hasMoreRightsThan(user.getUserType())) {
 

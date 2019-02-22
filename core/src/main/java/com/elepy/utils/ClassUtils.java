@@ -190,6 +190,8 @@ public class ClassUtils {
             return column.unique();
         }).collect(Collectors.toList()));
 
+        getIdField(cls).ifPresent(uniqueFields::add);
+
         return uniqueFields;
     }
 

@@ -33,13 +33,13 @@ public class FieldDescriber {
 
     private final FieldType type;
 
-    private final boolean generated;
+    private final boolean idField;
 
     private static SimpleDateFormat cmsFormat = new SimpleDateFormat("YYYY-MM-dd");
 
     public FieldDescriber(Field field) {
         this.field = field;
-        generated = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.getName().equals(field.getName())).orElse(false);
+        idField = ClassUtils.getIdField(field.getDeclaringClass()).map(field1 -> field1.getName().equals(field.getName())).orElse(false);
         name = name();
         prettyName = prettyName();
         this.fieldMap = mapField();
@@ -50,7 +50,6 @@ public class FieldDescriber {
 
 
     }
-
 
     private String prettyName() {
         final PrettyName prettyNameAnnotation = field.getAnnotation(PrettyName.class);
@@ -88,6 +87,8 @@ public class FieldDescriber {
 
         fieldMap.put("unique", field.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
 
+
+        fieldMap.put("generated", (field.isAnnotationPresent(Generated.class) || (idField && !field.isAnnotationPresent(Identifier.class)) || (idField && field.isAnnotationPresent(Identifier.class) && field.getAnnotation(Identifier.class).generated())));
     }
 
     private void mapFieldTypeInformation(Field field, Map<String, Object> fieldMap) {
@@ -95,7 +96,6 @@ public class FieldDescriber {
 
         fieldMap.put("type", fieldType);
 
-        fieldMap.put("generated", generated);
         if (fieldType.equals(FieldType.ENUM)) {
             fieldMap.put("availableValues", ClassDescriber.getEnumMap(field.getType()));
         }

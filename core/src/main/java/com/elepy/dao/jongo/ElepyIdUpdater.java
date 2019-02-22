@@ -8,18 +8,16 @@ import com.elepy.utils.ClassUtils;
 import org.bson.types.ObjectId;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     private final Crud crud;
-    private final IdentityProvider identityProvider;
+    private IdentityProvider identityProvider;
 
-    public ElepyIdUpdater(Crud crud, IdentityProvider identityProvider) {
+    public ElepyIdUpdater(Crud crud) {
         this.crud = crud;
-        this.identityProvider = identityProvider;
     }
 
 
@@ -36,35 +34,30 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public void setObjectId(Object target, ObjectId id) {
-
-        final Field idField = ClassUtils.getIdField(target.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
-
-        idField.setAccessible(true);
-//        try {
-//            idField.set(target, provider(target).getId(target, crud));
-//        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-//            throw new IllegalStateException(e);
-//        }
+        try {
+            provider(target).provideId(target, crud);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private IdentityProvider provider(Object item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (identityProvider == null) {
+            ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("No ID found"));
+            final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
-        if (identityProvider != null) {
-            return identityProvider;
-        }
-        ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("No ID found"));
-        final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
+            if (annotation != null) {
+                final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.value());
+                if (!o.isPresent()) {
+                    throw new IllegalStateException(annotation.value() + " has no empty constructor.");
+                }
+                return ((Constructor<IdentityProvider>) o.get()).newInstance();
 
-        if (annotation != null) {
-            final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.value());
-            if (!o.isPresent()) {
-                throw new IllegalStateException(annotation.value() + " has no empty constructor.");
+            } else {
+                return new DefaultIdentityProvider();
             }
-            return ((Constructor<IdentityProvider>) o.get()).newInstance();
-
-        } else {
-            return new DefaultIdentityProvider();
         }
+        return identityProvider;
 
     }
 }
