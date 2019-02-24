@@ -12,19 +12,22 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
     @Override
     public void evaluate(T item, Crud<T> dao, boolean insert) {
         try {
-            checkUniqueness(item, dao);
+            checkUniqueness(item, dao, insert);
         } catch (IllegalAccessException e) {
             throw new ElepyException("Can't reflectively checkUniqueness()", 500);
         }
     }
 
-    private void checkUniqueness(T item, Crud<T> dao) throws IllegalAccessException {
+    private void checkUniqueness(T item, Crud<T> dao, boolean insert) throws IllegalAccessException {
 
         List<Field> uniqueFields = ClassUtils.getUniqueFields(item.getClass());
 
 
         Optional<Object> id = ClassUtils.getId(item);
 
+        if (insert && id.isPresent() && dao.getById(id.get()).isPresent()) {
+            throw new ElepyException("Duplicate ID's", 400);
+        }
         for (Field field : uniqueFields) {
             Object prop = field.get(item);
             final List<T> foundItems = dao.searchInField(field, prop.toString());
