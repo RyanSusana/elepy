@@ -711,10 +711,6 @@ public class Elepy implements ElepyContext {
             response.type("application/json");
             response.result(context.getObjectMapper().writeValueAsString(descriptors));
         });
-
-
-        http.get("", ((request, response) -> {
-        }));
     }
 
     private void checkConfig() {

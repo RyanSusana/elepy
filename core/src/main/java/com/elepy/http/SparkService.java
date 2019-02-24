@@ -7,10 +7,9 @@ import spark.RouteImpl;
 import spark.Service;
 import spark.route.HttpMethod;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.TreeMap;
 
 public class SparkService implements HttpService {
 
@@ -19,10 +18,14 @@ public class SparkService implements HttpService {
 
     private Map<RouteKey, Route> routes;
 
+    private int counter;
+
+    private boolean ignitedOnce = false;
+
     public SparkService(Service service, Elepy elepy) {
         this.http = service;
         this.elepy = elepy;
-        this.routes = new HashMap<>();
+        this.routes = new TreeMap<>();
     }
 
 
@@ -57,7 +60,12 @@ public class SparkService implements HttpService {
 
     @Override
     public void addRoute(Route route) {
-        routes.put(new RouteKey(UUID.randomUUID()), route);
+        routes.put(new RouteKey(counter++), route);
+
+        //auto-ignite route if ignite() already has been called
+        if (ignitedOnce) {
+            ignite();
+        }
     }
 
     @Override
@@ -68,6 +76,7 @@ public class SparkService implements HttpService {
                 igniteRoute(route);
             }
         }));
+        ignitedOnce = true;
     }
 
     @Override
@@ -121,7 +130,6 @@ public class SparkService implements HttpService {
 
                 SparkContext sparkContext = new SparkContext(request, response);
 
-                sparkContext.response().type("application/json");
                 if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
                     elepy.getAllAdminFilters().authenticate(sparkContext);
                 }
@@ -136,12 +144,12 @@ public class SparkService implements HttpService {
 
     private class RouteKey implements Comparable<RouteKey> {
 
-        private final UUID id;
+        private final Integer id;
 
         private boolean ignited;
 
 
-        private RouteKey(UUID id) {
+        private RouteKey(Integer id) {
             this.id = id;
             this.ignited = false;
         }

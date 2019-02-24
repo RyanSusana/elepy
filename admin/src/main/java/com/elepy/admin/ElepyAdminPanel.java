@@ -152,7 +152,7 @@ public class ElepyAdminPanel implements ElepyModule {
     private void setupLogin() {
 
 
-        http.get("/elepy-login", (request, response) -> renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb"));
+        http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb")));
         http.post("/elepy-login", (request, response) -> {
 
             final Optional<User> user = userService.login(request.queryParamOrDefault("username", "invalid"), request.queryParamOrDefault("password", "invalid"));
@@ -168,11 +168,10 @@ public class ElepyAdminPanel implements ElepyModule {
                 response.status(200);
                 request.session().removeAttribute("redirectUrl");
                 response.result(redirectUrl);
+            } else {
+                response.status(401);
+                throw ErrorMessageBuilder.anElepyErrorMessage().withMessage("Invalid login credentials").withStatus(401).build();
             }
-
-
-            response.status(401);
-            throw ErrorMessageBuilder.anElepyErrorMessage().withMessage("Invalid login credentials").withStatus(401).build();
         });
 
 

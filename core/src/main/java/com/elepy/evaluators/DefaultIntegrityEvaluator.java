@@ -28,7 +28,9 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
         if (insert && id.isPresent() && dao.getById(id.get()).isPresent()) {
             throw new ElepyException("Duplicate ID's", 400);
         }
+
         for (Field field : uniqueFields) {
+            field.setAccessible(true);
             Object prop = field.get(item);
             final List<T> foundItems = dao.searchInField(field, prop.toString());
             if (foundItems.size() > 0) {
@@ -44,7 +46,6 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
                 }
             }
         }
-
 
     }
 
