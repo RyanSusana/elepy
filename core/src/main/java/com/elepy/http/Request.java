@@ -62,10 +62,16 @@ public interface Request {
 
     void attribute(String attribute, Object value);
 
+    /**
+     * @return The ID of the model a.k.a request.params("id)
+     */
     default Object modelId() {
         return modelId(attribute("modelClass"));
     }
 
+    /**
+     * @return The ID of the model a.k.a request.params("id)
+     */
     default Object modelId(Class cls) {
 
         String id = params("id");
