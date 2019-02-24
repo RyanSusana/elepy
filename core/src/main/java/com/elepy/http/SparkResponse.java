@@ -34,6 +34,7 @@ public class SparkResponse implements Response {
         response.body(body);
     }
 
+
     @Override
     public String result() {
         return response.body();

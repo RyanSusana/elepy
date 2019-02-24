@@ -2,8 +2,6 @@ package com.elepy.admin.concepts;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
-import com.elepy.http.SparkContext;
-import com.elepy.http.SparkRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +26,8 @@ public class PluginHandler {
 
 
     public void setupRoutes(ElepyPostConfiguration elepyPostConfiguration) {
-        adminPanel.http().before("/plugins/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().authenticate(new SparkContext(request, response)));
-        adminPanel.http().before("/plugins/*/*", (request, response) -> elepyPostConfiguration.getAllAdminFilters().authenticate(new SparkContext(request, response)));
+        adminPanel.http().before("/plugins/*", ctx -> elepyPostConfiguration.getAllAdminFilters().authenticate(ctx));
+        adminPanel.http().before("/plugins/*/*", ctx -> elepyPostConfiguration.getAllAdminFilters().authenticate(ctx));
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
             plugin.setup(adminPanel.http(), elepyPostConfiguration);
             adminPanel.http().get("/plugins/" + plugin.getSlug(), (request, response) -> {
@@ -37,7 +35,7 @@ public class PluginHandler {
                 String content = plugin.renderContent(model);
                 model.put("content", content);
                 model.put("plugin", plugin);
-                return adminPanel.renderWithDefaults(new SparkRequest(request), model, "admin-templates/plugin.peb");
+                response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/plugin.peb"));
             });
         }
     }

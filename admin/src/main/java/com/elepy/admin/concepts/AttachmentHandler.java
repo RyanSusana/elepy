@@ -39,9 +39,6 @@ public class AttachmentHandler {
                 raw.getOutputStream().write(attachment.getSrc());
                 raw.getOutputStream().flush();
                 raw.getOutputStream().close();
-
-                response.raw().getOutputStream();
-                return response.raw();
             });
         }
     }

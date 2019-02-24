@@ -15,9 +15,9 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.http.Filter;
+import com.elepy.http.HttpService;
 import com.elepy.http.Route;
-import com.elepy.http.SparkContext;
-import com.elepy.models.AccessLevel;
+import com.elepy.http.SparkService;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,9 +26,7 @@ import com.mongodb.DB;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.RouteImpl;
 import spark.Service;
-import spark.route.HttpMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -40,7 +38,7 @@ import java.util.*;
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
-    private final Service http;
+    private final SparkService http;
     private final List<ElepyModule> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
@@ -69,7 +67,7 @@ public class Elepy implements ElepyContext {
         this.context = new DefaultElepyContext();
         this.descriptors = new ArrayList<>();
         this.adminFilters = new ArrayList<>();
-        this.http = http;
+        this.http = new SparkService(http, this);
 
         this.defaultCrudProvider = MongoProvider.class;
         this.baseSlug = "/";
@@ -106,7 +104,6 @@ public class Elepy implements ElepyContext {
      */
     public void stop() {
         http.stop();
-        http.awaitStop();
     }
 
     /**
@@ -128,7 +125,7 @@ public class Elepy implements ElepyContext {
     /**
      * @return The {@link Service} related with this Elepy instance.
      */
-    public Service http() {
+    public HttpService http() {
         return http;
     }
 
@@ -636,23 +633,11 @@ public class Elepy implements ElepyContext {
     }
 
     private void igniteAllRoutes() {
+
         for (Route extraRoute : routes) {
-            if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
-                http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
-
-                    SparkContext sparkContext = new SparkContext(request, response);
-
-                    sparkContext.response().type("application/json");
-                    if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
-                        getAllAdminFilters().authenticate(sparkContext);
-                    }
-                    extraRoute.getBeforeFilter().handle(sparkContext);
-                    extraRoute.getRoute().handle(sparkContext);
-
-                    return response.body();
-                }));
-            }
+            http.addRoute(extraRoute);
         }
+        http.ignite();
     }
 
     @SuppressWarnings("unchecked")
@@ -681,7 +666,7 @@ public class Elepy implements ElepyContext {
             if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
                 logger.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
-        http.options("/*", (request, response) -> "");
+        http.options("/*", (request, response) -> response.result(""));
         http.notFound((request, response) -> {
 
             response.type("application/json");
@@ -721,11 +706,15 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupDescriptors(List<Map<String, Object>> descriptors) {
-        http.before(configSlug, (request, response) -> getAllAdminFilters().authenticate(new SparkContext(request, response)));
+        http.before(configSlug, ctx -> getAllAdminFilters().authenticate(ctx));
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
-            return context.getObjectMapper().writeValueAsString(descriptors);
+            response.result(context.getObjectMapper().writeValueAsString(descriptors));
         });
+
+
+        http.get("", ((request, response) -> {
+        }));
     }
 
     private void checkConfig() {

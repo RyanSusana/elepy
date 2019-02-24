@@ -5,6 +5,7 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
+import com.elepy.http.HttpService;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
@@ -13,7 +14,6 @@ import com.mongodb.gridfs.GridFSDBFile;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Service;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
     }
 
     @Override
-    public void setup(Service http, ElepyPostConfiguration elepy) {
+    public void setup(HttpService http, ElepyPostConfiguration elepy) {
         ImageDao imageDao = new ImageDao(elepy.getDependency(DB.class));
 
         http.post(elepy.getBaseSlug() + "/images/upload", (request, response) -> {
@@ -40,17 +40,16 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
 
                 final Part part = request.raw().getPart("image");
                 imageDao.upload(part);
-                return "You have succesfully uploaded an image";
+                response.result("You have succesfully uploaded an image");
             } catch (Exception e) {
                 response.status(401);
-                return e.getMessage();
+                response.result(e.getMessage());
             }
-
         });
 
         http.get(elepy.getBaseSlug() + "/images/gallery", (request, response) -> {
             List<Image> images = new ArrayList<>(imageDao.search(new QuerySetup("", "", SortOption.ASCENDING, 1L, Integer.MAX_VALUE)).getValues());
-            return elepy.getObjectMapper().writeValueAsString(images);
+            response.result(elepy.getObjectMapper().writeValueAsString(images));
         });
         http.get(elepy.getBaseSlug() + "/images/:id", (request, response) -> {
             final Optional<GridFSDBFile> image = imageDao.getGridFile(request.params("id"));
@@ -62,26 +61,21 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
                 raw.getOutputStream().write(IOUtils.toByteArray(image.get().getInputStream()));
                 raw.getOutputStream().flush();
                 raw.getOutputStream().close();
-
-                response.raw().getOutputStream();
-                return response.raw();
-
             }
             response.status(404);
-            return "";
+            response.result("");
         });
         http.delete(elepy.getBaseSlug() + "/images/:id", (request, response) -> {
             final Optional<Image> image = imageDao.getById(request.params("id"));
 
             if (image.isPresent()) {
-
                 imageDao.delete(request.params("id"));
 
-                return "Successfully deleted image!";
+                response.result("Successfully deleted image!");
 
             }
             response.status(404);
-            return "Image not found";
+            response.result("Image not found");
         });
     }
 

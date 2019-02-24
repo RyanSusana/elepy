@@ -9,6 +9,7 @@ public interface Response {
 
     void result(String body);
 
+
     String result();
 
     HttpServletResponse raw();

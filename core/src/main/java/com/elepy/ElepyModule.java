@@ -1,7 +1,7 @@
 package com.elepy;
 
 
-import spark.Service;
+import com.elepy.http.HttpService;
 
 public interface ElepyModule {
 
@@ -11,7 +11,7 @@ public interface ElepyModule {
      * @param http  The SparkJava Service
      * @param elepy A link to the Elepy object where extra configuration can happen
      */
-    void beforeElepyConstruction(Service http, ElepyPreConfiguration elepy);
+    void beforeElepyConstruction(HttpService http, ElepyPreConfiguration elepy);
 
     /**
      * This method is used by Elepy to let a module execute it's functionality after Elepy is completely setup.
@@ -19,7 +19,7 @@ public interface ElepyModule {
      * @param http  The SparkJava Service
      * @param elepy a link to Elepy after it has been constructed and all the dependencies have been set and Elepy specific routes have been generated
      */
-    void afterElepyConstruction(Service http, ElepyPostConfiguration elepy);
+    void afterElepyConstruction(HttpService http, ElepyPostConfiguration elepy);
 
 
 }
