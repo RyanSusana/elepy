@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
  * Signifies that this value is generated and therefor uneditable.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Generated {
 }

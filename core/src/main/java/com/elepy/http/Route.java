@@ -1,19 +1,17 @@
-package com.elepy.models;
+package com.elepy.http;
 
 import com.elepy.exceptions.ElepyConfigException;
-import spark.Filter;
-import spark.Route;
-import spark.route.HttpMethod;
+import com.elepy.models.AccessLevel;
 
 import java.util.Objects;
 
 /**
  * A route that can be added to {@link com.elepy.Elepy}
  */
-public class ElepyRoute {
-    private final Filter beforeFilter;
+public class Route {
+    private final HttpContextHandler beforeFilter;
     private final AccessLevel accessLevel;
-    private final Route route;
+    private final HttpContextHandler route;
     private final HttpMethod method;
     private final String path;
     private final String acceptType;
@@ -26,8 +24,8 @@ public class ElepyRoute {
      * @param route        The Spark route interface
      * @param acceptType   The accept type of the route
      */
-    public ElepyRoute(String path, HttpMethod method, Filter beforeFilter, AccessLevel accessLevel, Route route, String acceptType) {
-        this.beforeFilter = beforeFilter == null ? (req, res) -> {
+    public Route(String path, HttpMethod method, HttpContextHandler beforeFilter, AccessLevel accessLevel, HttpContextHandler route, String acceptType) {
+        this.beforeFilter = beforeFilter == null ? ctx -> {
         } : beforeFilter;
         this.accessLevel = accessLevel == null ? AccessLevel.PUBLIC : accessLevel;
         this.acceptType = acceptType == null ? "*/*" : acceptType;
@@ -40,11 +38,11 @@ public class ElepyRoute {
     }
 
 
-    public Filter getBeforeFilter() {
+    public HttpContextHandler getBeforeFilter() {
         return beforeFilter;
     }
 
-    public Route getRoute() {
+    public HttpContextHandler getRoute() {
         return route;
     }
 
@@ -64,7 +62,7 @@ public class ElepyRoute {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ElepyRoute that = (ElepyRoute) o;
+        Route that = (Route) o;
         return method == that.method &&
                 Objects.equals(path, that.path);
     }

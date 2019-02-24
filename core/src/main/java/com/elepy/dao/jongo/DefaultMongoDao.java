@@ -1,7 +1,7 @@
 package com.elepy.dao.jongo;
 
 
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import org.jongo.Jongo;
@@ -30,7 +30,7 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
         this.collectionName = collectionName.replaceAll("/", "");
         this.identityProvider = identityProvider;
         this.objectMapper = objectMapper;
-        this.jongo = new Jongo(db(), new ElepyMapper(this, identityProvider()));
+        this.jongo = new Jongo(db(), new ElepyMapper(this));
 
     }
 
@@ -59,8 +59,4 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
         return db;
     }
 
-    @Override
-    public IdentityProvider<T> identityProvider() {
-        return identityProvider;
-    }
 }

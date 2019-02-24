@@ -1,12 +1,9 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
-import spark.Request;
-import spark.Response;
-
-import java.util.List;
+import com.elepy.describers.ModelDescription;
+import com.elepy.http.HttpContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FinalService<T> implements ServiceHandler<T> {
 
@@ -24,23 +21,33 @@ public class FinalService<T> implements ServiceHandler<T> {
     }
 
     @Override
-    public void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        find.handleFind(request, response, crud, elepy, objectEvaluators, clazz);
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find.handleFindMany(context, crud, modelDescription, objectMapper);
     }
 
     @Override
-    public void handleCreate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        create.handleCreate(request, response, dao, elepy, objectEvaluators, clazz);
+    public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find.handleFindOne(context, crud, modelDescription, objectMapper);
     }
 
     @Override
-    public void handleDelete(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
-        delete.handleDelete(request, response, dao, elepy, objectEvaluators, tClass);
+    public void handleCreate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        create.handleCreate(context, dao, modelDescription, objectMapper);
     }
 
     @Override
-    public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        update.handleUpdate(request, response, dao, elepy, objectEvaluators, clazz);
+    public void handleDelete(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        delete.handleDelete(context, dao, modelDescription, objectMapper);
+    }
+
+    @Override
+    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        update.handleUpdatePut(context, dao, modelDescription, objectMapper);
+    }
+
+    @Override
+    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        update.handleUpdatePatch(context, crud, modelDescription, objectMapper);
     }
 
 }

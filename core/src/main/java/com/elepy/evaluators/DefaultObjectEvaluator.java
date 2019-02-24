@@ -1,17 +1,17 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.annotations.DateTime;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
-import com.elepy.concepts.describers.FieldDescriber;
-import com.elepy.concepts.describers.StructureDescriber;
+import com.elepy.describers.ClassDescriber;
+import com.elepy.describers.FieldDescriber;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 
 import java.lang.reflect.Field;
 import java.util.Date;
 
-public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
+public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
 
     public void evaluate(T o, Class<T> clazz) throws Exception {
@@ -72,8 +72,8 @@ public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
             DateTime dateTimeAnnotation = fieldDescriber.getField().getAnnotation(DateTime.class);
 
             if (dateTimeAnnotation != null && date != null) {
-                Date min = StructureDescriber.guessDate(dateTimeAnnotation.minDate());
-                Date max = StructureDescriber.guessDate(dateTimeAnnotation.maxDate());
+                Date min = ClassDescriber.guessDate(dateTimeAnnotation.minDate());
+                Date max = ClassDescriber.guessDate(dateTimeAnnotation.maxDate());
 
                 if (date.before(min) || date.after(max)) {
                     throw new ElepyException(String.format("%s must be between '%s' and '%s'", fieldDescriber.getPrettyName(), dateTimeAnnotation.minDate(), dateTimeAnnotation.maxDate()));

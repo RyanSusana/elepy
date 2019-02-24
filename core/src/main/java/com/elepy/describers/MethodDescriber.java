@@ -1,4 +1,4 @@
-package com.elepy.concepts.describers;
+package com.elepy.describers;
 
 import com.elepy.annotations.Boolean;
 import com.elepy.annotations.Number;
@@ -54,11 +54,11 @@ public class MethodDescriber {
             fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
             fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
         } else if (fieldType.equals(FieldType.ENUM)) {
-            fieldMap.put("availableValues", StructureDescriber.getEnumMap(method.getReturnType()));
+            fieldMap.put("availableValues", ClassDescriber.getEnumMap(method.getReturnType()));
         } else if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", method.getReturnType().getSimpleName());
 
-            fieldMap.put("fields", new StructureDescriber(method.getReturnType()).getStructure());
+            fieldMap.put("fields", new ClassDescriber(method.getReturnType()).getStructure());
         } else if (fieldType.equals(FieldType.TEXT)) {
             fieldMap.put("textType", method.getAnnotation(Text.class) != null ? method.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
         } else if (fieldType.equals(FieldType.NUMBER)) {

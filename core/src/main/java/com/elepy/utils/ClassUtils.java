@@ -2,15 +2,12 @@ package com.elepy.utils;
 
 import com.elepy.annotations.Identifier;
 import com.elepy.annotations.PrettyName;
-import com.elepy.annotations.Route;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.ElepyRoute;
+import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
-import spark.Request;
-import spark.Response;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -23,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.elepy.models.ElepyRouteBuilder.anElepyRoute;
+import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class ClassUtils {
 
@@ -85,12 +82,12 @@ public class ClassUtils {
         return field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
     }
 
-    public static Optional<String> getId(Object object) {
+    public static Optional<Object> getId(Object object) {
 
         try {
             Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
             field.setAccessible(true);
-            return Optional.ofNullable((String) field.get(object));
+            return Optional.ofNullable(field.get(object));
         } catch (IllegalAccessException e) {
             throw new ElepyException("Illegally accessing id field");
         }
@@ -98,8 +95,26 @@ public class ClassUtils {
     }
 
 
+    public static Object toObject(Class clazz, String value) {
+        if (Boolean.class == clazz || boolean.class == clazz) return Boolean.valueOf(value);
+        if (Byte.class == clazz || byte.class == clazz) return Byte.valueOf(value);
+        if (Short.class == clazz || short.class == clazz) return Short.valueOf(value);
+        if (Integer.class == clazz || int.class == clazz) return Integer.valueOf(value);
+        if (Long.class == clazz || long.class == clazz) return Long.valueOf(value);
+        if (Float.class == clazz || float.class == clazz) return Float.valueOf(value);
+        if (Double.class == clazz || double.class == clazz) return Double.valueOf(value);
+        return value;
+    }
+
+    public static Object toObjectIdFromString(Class tClass, String value) {
+        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
+
+        return toObject(idType, value);
+    }
+
     public static Optional<Field> getIdField(Class cls) {
         Optional<Field> annotated = searchForFieldWithAnnotation(cls, Identifier.class, MongoId.class, Id.class);
+
         if (annotated.isPresent()) {
             return annotated;
         } else {
@@ -175,37 +190,42 @@ public class ClassUtils {
             return column.unique();
         }).collect(Collectors.toList()));
 
+        getIdField(cls).ifPresent(uniqueFields::add);
+
         return uniqueFields;
     }
 
 
-    public static ElepyRoute routeFromMethod(Object obj, Method method) {
-        Route annotation = method.getAnnotation(Route.class);
-        spark.Route route;
+    public static Route routeFromMethod(Object obj, Method method) {
+        com.elepy.annotations.Route annotation = method.getAnnotation(com.elepy.annotations.Route.class);
+        HttpContextHandler route;
         if (method.getParameterCount() == 0) {
-            route = (request, response) -> {
+            route = ctx -> {
                 Object invoke = method.invoke(obj);
                 if (invoke instanceof String) {
-                    return invoke;
-                } else {
-                    return "";
+                    ctx.response().result((String) invoke);
                 }
             };
         } else if (method.getParameterCount() == 2
                 && method.getParameterTypes()[0].equals(Request.class)
                 && method.getParameterTypes()[1].equals(Response.class)) {
 
-            route = (request, response) -> {
-                Object invoke = method.invoke(obj, request, response);
+            route = ctx -> {
+                Object invoke = method.invoke(obj, ctx.request(), ctx.response());
                 if (invoke instanceof String) {
-                    return invoke;
-                } else {
-                    return "";
+                    ctx.response().result((String) invoke);
                 }
             };
 
+        } else if (method.getParameterCount() == 1 && method.getParameterTypes()[0].equals(HttpContext.class)) {
+            route = ctx -> {
+                Object invoke = method.invoke(obj, ctx);
+                if (invoke instanceof String) {
+                    ctx.response().result((String) invoke);
+                }
+            };
         } else {
-            throw new ElepyConfigException("@Route annotated method must have no parameters or (Request, Response)");
+            throw new ElepyConfigException("@HttpContextHandler annotated method must have no parameters or (Request, Response)");
         }
         return anElepyRoute()
                 .accessLevel(annotation.accessLevel())
@@ -215,11 +235,11 @@ public class ClassUtils {
                 .build();
     }
 
-    public static List<ElepyRoute> scanForRoutes(Object obj) {
-        List<ElepyRoute> toReturn = new ArrayList<>();
+    public static List<Route> scanForRoutes(Object obj) {
+        List<Route> toReturn = new ArrayList<>();
         for (Method method : obj.getClass().getDeclaredMethods()) {
             method.setAccessible(true);
-            if (method.isAnnotationPresent(Route.class)) {
+            if (method.isAnnotationPresent(com.elepy.annotations.Route.class)) {
                 toReturn.add(routeFromMethod(obj, method));
             }
         }

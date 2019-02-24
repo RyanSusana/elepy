@@ -16,12 +16,12 @@ public class ResourceUpdate extends SimpleUpdate<Resource> {
 
 
     @Override
-    public void beforeUpdate(Resource beforeVersion, Crud<Resource> crud, ElepyContext elepy) throws Exception {
+    public void beforeUpdate(Resource beforeVersion, Crud<Resource> crud) throws Exception {
 
     }
 
     @Override
-    public void afterUpdate(Resource beforeVersion, Resource updatedVersion, Crud<Resource> crud, ElepyContext elepy) {
+    public void afterUpdate(Resource beforeVersion, Resource updatedVersion, Crud<Resource> crud) {
 
 
     }

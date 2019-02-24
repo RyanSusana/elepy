@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
@@ -18,7 +18,7 @@ public class ObjectEvaluateTest extends Base {
     @BeforeEach
     public void setUp() throws Exception {
 
-        this.resourceObjectEvaluator = new ObjectEvaluatorImpl<>();
+        this.resourceObjectEvaluator = new DefaultObjectEvaluator<>();
 
     }
 

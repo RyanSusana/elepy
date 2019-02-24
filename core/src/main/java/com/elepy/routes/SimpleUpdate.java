@@ -1,18 +1,16 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
+import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.HttpContext;
 import com.elepy.utils.ClassUtils;
-import spark.Request;
-import spark.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
- * A helper class for developers to easily handle the update of objects.
+ * A helper class for developers to easily authenticate the update of objects.
  *
  * @param <T> the model you're updating
  * @see com.elepy.annotations.Update
@@ -21,13 +19,14 @@ import java.util.Optional;
  */
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
+
     @Override
-    public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        String body = request.body();
+    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        String body = context.request().body();
 
-        T item = elepy.getObjectMapper().readValue(body, clazz);
+        T item = objectMapper.readValue(body, modelDescription.getModelType());
 
-        final Optional<String> id = ClassUtils.getId(item);
+        final Optional<Object> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
             throw new ElepyException("This item doesn't can't be identified.");
         }
@@ -38,45 +37,47 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
             throw new ElepyException("This item doesn't exist and therefor can't be updated");
         }
 
-        beforeUpdate(before.get(), dao, elepy);
+        beforeUpdate(before.get(), dao);
 
         T updatedObjectFromRequest = updatedObjectFromRequest(before.get(),
-                request,
-                elepy.getObjectMapper(),
-                clazz);
+                context.request(),
+                objectMapper,
+                modelDescription.getModelType());
 
         final T updated =
-                this.update(before.get(),
+                update(before.get(),
                         updatedObjectFromRequest,
                         dao,
-                        objectEvaluators,
-                        clazz);
-        afterUpdate(before.get(), updated, dao, elepy);
+                        modelDescription.getObjectEvaluators(),
+                        modelDescription.getModelType());
+        afterUpdate(before.get(), updated, dao);
 
-        response.status(200);
-        response.body("OK");
+        context.response().status(200);
+        context.response().result("OK");
     }
 
+    @Override
+    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        super.handleUpdatePut(context, crud, modelDescription, objectMapper);
+    }
 
     /**
      * What happens before you update a model. Throw an exception to cancel the update.
      *
      * @param beforeVersion The object before the update
      * @param crud          The crud implementation
-     * @param elepy         the context where you can get context objects
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud, ElepyContext elepy) throws Exception;
+    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud) throws Exception;
 
     /**
      * What happens after you update a model.
      *
-     * @param beforeVersion The object before the update
+     * @param beforeVersion  The object before the update
      * @param updatedVersion The object after the update
-     * @param crud The crud implementation
-     * @param elepy the context where you can get context objects
+     * @param crud           The crud implementation
      */
-    public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud, ElepyContext elepy);
+    public abstract void afterUpdate(T beforeVersion, T updatedVersion, Crud<T> crud);
 }

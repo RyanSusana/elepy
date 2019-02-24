@@ -16,7 +16,7 @@ import javax.persistence.Table;
 public class Resource {
 
     @Id
-    private String id;
+    private int id;
 
     @Text(TextType.TEXTFIELD)
     private String textField;
@@ -35,11 +35,11 @@ public class Resource {
         this.textField = textField;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

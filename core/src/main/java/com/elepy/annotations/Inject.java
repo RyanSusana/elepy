@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 public @interface Inject {
     /**
      * @return the context tag. Usually this is empty, but if you have multiple instances.
-     * of this object in the {@link com.elepy.di.ElepyContext} then they get differentiated
+     * of this object in the {@link com.elepy.di.ElepyContext} then they GET differentiated
      * with the tag attribute.
      */
     String tag() default "";

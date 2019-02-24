@@ -1,4 +1,4 @@
-package com.elepy.concepts.describers;
+package com.elepy.describers;
 
 import com.elepy.annotations.Generated;
 import com.elepy.annotations.Hidden;
@@ -11,7 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class StructureDescriber {
+public class ClassDescriber {
 
     private final Class cls;
 
@@ -45,7 +45,7 @@ public class StructureDescriber {
         DATE_FORMATS.put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
     }
 
-    public StructureDescriber(Class cls) {
+    public ClassDescriber(Class cls) {
         this.cls = cls;
         this.structure = describe();
     }

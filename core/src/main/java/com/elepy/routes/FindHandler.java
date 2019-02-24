@@ -1,26 +1,33 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
-import spark.Request;
-import spark.Response;
+import com.elepy.describers.ModelDescription;
+import com.elepy.http.HttpContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
-
-public interface FindHandler<T> extends HandlerHelper {
+public interface FindHandler<T> {
     /**
      * This handles the functionality of model querying.
      *
-     * @param request          The spark request
-     * @param response         The spark response
-     * @param crud             The crud implementation
-     * @param elepy            The elepy context
-     * @param objectEvaluators The list of evaluators
-     * @param clazz            The class type
+     * e.g GET /model
+     *
+     * @param crud The crud implementation
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see com.elepy.exceptions.ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception;
+    void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception;
+
+
+    /**
+     * This handles the functionality of finding a model by it's ID, or some self-defined domain specification
+     * <p>
+     * e.g GET /model/:id
+     *
+     * @param crud The crud implementation
+     * @throws Exception you can throw any exception and Elepy handles them nicely.
+     * @see com.elepy.exceptions.ElepyException
+     * @see com.elepy.exceptions.ElepyErrorMessage
+     */
+    void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception;
 }

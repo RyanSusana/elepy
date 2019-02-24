@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
@@ -14,7 +14,7 @@ public class ObjectUpdateTest extends Base {
 
     @Test
     public void testSuccessfulUpdate() throws Exception {
-        ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+        ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
         Resource updatedEditable = validObject();
         updatedEditable.setNumberMax40(BigDecimal.valueOf(9));
@@ -25,7 +25,7 @@ public class ObjectUpdateTest extends Base {
     public void testCantChangeNonEditable() throws Exception {
 
         try {
-            ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+            ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
             Resource updatedNonEditable = validObject();
             updatedNonEditable.setNonEditable(UUID.randomUUID().toString());

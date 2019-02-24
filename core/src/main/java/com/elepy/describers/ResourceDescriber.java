@@ -1,17 +1,15 @@
-package com.elepy;
+package com.elepy.describers;
 
 
-import com.elepy.annotations.Dao;
-import com.elepy.annotations.DaoProvider;
-import com.elepy.annotations.Evaluators;
-import com.elepy.annotations.RestModel;
-import com.elepy.concepts.IdentityProvider;
-import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.concepts.ObjectEvaluatorImpl;
-import com.elepy.concepts.describers.StructureDescriber;
+import com.elepy.Elepy;
+import com.elepy.annotations.*;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
+import com.elepy.evaluators.DefaultObjectEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.id.DefaultIdentityProvider;
+import com.elepy.id.IdentityProvider;
 import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
@@ -25,7 +23,7 @@ import java.util.Objects;
 public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     private final Elepy elepy;
-    private final StructureDescriber structureDescriber;
+    private final ClassDescriber classDescriber;
     private Class<T> classType;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
@@ -44,42 +42,50 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.classType = clazz;
         this.elepy = elepy;
-        this.structureDescriber = new StructureDescriber(this.classType);
+        this.classDescriber = new ClassDescriber(this.classType);
         try {
-            setupAnnotations();
+            this.baseAnnotations();
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new ElepyConfigException("Failed to setup @RestModel: " + e.getMessage());
+        }
+
+    }
+
+
+    public void setupAnnotations() {
+
+        try {
+            routeAnnotations();
+            setupEvaluators();
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed to beforeElepyConstruction elepy, while trying to process Reflection");
+            throw new ElepyConfigException("Failed to setup annotations: " + e.getMessage());
         }
-
     }
 
+    public void setupDao() {
+        try {
+            final DaoProvider annotation = classType.getAnnotation(DaoProvider.class);
+            final Crud<T> crud;
 
-    private void setupAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+            if (annotation == null) {
+                crudProvider = elepy.initializeElepyObject(elepy.getDefaultCrudProvider());
+            } else {
+                crudProvider = elepy.initializeElepyObject(annotation.value());
+            }
 
-        baseAnnotations();
-        routeAnnotations();
-        setupEvaluators();
-    }
+            final Dao daoAnnotation = classType.getAnnotation(Dao.class);
+            if (daoAnnotation != null) {
+                crud = elepy.initializeElepyObject(daoAnnotation.value());
+            } else {
+                crud = crudProvider.crudFor(classType);
+            }
 
-    private void setupDao(String slug) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final DaoProvider annotation = classType.getAnnotation(DaoProvider.class);
-        final Crud<T> crud;
 
-        if (annotation == null) {
-            crudProvider = elepy.initializeElepyObject(elepy.getDefaultCrudProvider());
-        } else {
-            crudProvider = elepy.initializeElepyObject(annotation.value());
+            elepy.registerDependency(Crud.class, slug, crud);
+            elepy.registerDependency(CrudProvider.class, slug, crudProvider);
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ElepyConfigException("Failed to setup DAO: " + e.getMessage());
         }
-
-        final Dao daoAnnotation = classType.getAnnotation(Dao.class);
-        if (daoAnnotation != null) {
-            crud = elepy.initializeElepyObject(daoAnnotation.value());
-        } else {
-            crud = crudProvider.crudFor(classType);
-        }
-
-        elepy.registerDependency(Crud.class, slug, crud);
-        elepy.registerDependency(CrudProvider.class, slug, crudProvider);
 
     }
 
@@ -87,7 +93,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         objectEvaluators = new ArrayList<>();
 
         final Evaluators annotation = classType.getAnnotation(Evaluators.class);
-        objectEvaluators.add(new ObjectEvaluatorImpl<>());
+        objectEvaluators.add(new DefaultObjectEvaluator<>());
 
         if (annotation != null) {
             for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {
@@ -99,6 +105,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void baseAnnotations() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         final RestModel annotation = classType.getAnnotation(RestModel.class);
 
@@ -106,13 +113,19 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
             throw new ElepyConfigException(String.format("Resources must have the @RestModel Annotation, %s doesn't.", classType.getName()));
         }
 
-        setupDao(annotation.slug());
+        if (classType.isAnnotationPresent(IdProvider.class)) {
+            this.identityProvider = elepy.initializeElepyObject(classType.getAnnotation(IdProvider.class).value());
+        } else {
+            this.identityProvider = new DefaultIdentityProvider<>();
+        }
+
         this.slug = annotation.slug();
         this.name = annotation.name();
         this.description = annotation.description();
     }
 
 
+    @SuppressWarnings("unchecked")
     private void routeAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         ServiceBuilder<T> serviceBuilder = new ServiceBuilder<>();
@@ -205,8 +218,8 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         return crudProvider;
     }
 
-    public StructureDescriber getStructureDescriber() {
-        return structureDescriber;
+    public ClassDescriber getClassDescriber() {
+        return classDescriber;
     }
 
     @Override

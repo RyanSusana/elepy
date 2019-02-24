@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
@@ -28,7 +28,7 @@ public class AtomicIntegrityEvaluator<T> {
 
     private void checkUniqueness(T item, List<T> theRest) throws IllegalAccessException {
         List<Field> uniqueFields = ClassUtils.getUniqueFields(item.getClass());
-        Optional<String> id = ClassUtils.getId(item);
+        Optional<Object> id = ClassUtils.getId(item);
 
         for (Field field : uniqueFields) {
 
@@ -50,7 +50,7 @@ public class AtomicIntegrityEvaluator<T> {
         }
     }
 
-    private void integrityCheck(List<T> foundItems, Optional<String> id, Field field, Object prop) {
+    private void integrityCheck(List<T> foundItems, Optional<Object> id, Field field, Object prop) {
         if (!foundItems.isEmpty()) {
 
 
@@ -59,7 +59,7 @@ public class AtomicIntegrityEvaluator<T> {
             }
 
             T foundRecord = foundItems.get(0);
-            final Optional<String> foundId = ClassUtils.getId(foundRecord);
+            final Optional<Object> foundId = ClassUtils.getId(foundRecord);
             if (id.isPresent() || foundId.isPresent()) {
                 if (!id.equals(foundId)) {
                     throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));

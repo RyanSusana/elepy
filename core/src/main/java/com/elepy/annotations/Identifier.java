@@ -11,4 +11,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Identifier {
+    /**
+     * If the field is auto generated or not. Use this in coalition with the {@link IdProvider}
+     * The CMS won't let you edit the ID if this is true.
+     */
+    boolean generated() default true;
 }

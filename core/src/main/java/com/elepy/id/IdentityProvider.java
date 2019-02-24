@@ -1,7 +1,7 @@
-package com.elepy.concepts;
+package com.elepy.id;
 
 import com.elepy.dao.Crud;
 
 public interface IdentityProvider<T> {
-    String getId(T item, Crud<T> dao);
+    void provideId(T item, Crud<T> dao);
 }

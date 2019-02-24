@@ -1,4 +1,4 @@
-package com.elepy.concepts;
+package com.elepy.evaluators;
 
 import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
@@ -16,6 +16,8 @@ public class ObjectAtomicIntegrityTest extends Base {
         final Resource resource = validObject();
         final Resource resource1 = validObject();
 
+        resource.setId(91);
+        resource1.setId(91);
         final AtomicIntegrityEvaluator<Resource> resourceAtomicIntegrityEvaluator = new AtomicIntegrityEvaluator<>();
 
         try {

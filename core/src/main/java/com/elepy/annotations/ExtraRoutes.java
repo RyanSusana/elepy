@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface ExtraRoutes {
     /**
-     * @return The classes that have @Route annotations
+     * @return The classes that have @HttpContextHandler annotations
      */
     Class<?>[] value();
 }
