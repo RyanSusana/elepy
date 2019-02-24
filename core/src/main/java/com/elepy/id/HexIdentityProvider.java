@@ -42,7 +42,7 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
         String currentId = (String) ClassUtils.getId(item).orElse("");
 
 
-        if (currentId.isEmpty()) {
+        if (currentId.isEmpty() || dao.getById(currentId).isPresent()) {
             String id = generateId(dao);
 
             Field field = ClassUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));

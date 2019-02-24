@@ -32,7 +32,7 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
 
             long longId = id == null ? -1 : Long.parseLong(id.toString());
 
-            if (longId <= 0) {
+            if (longId <= 0 || dao.getById(id).isPresent()) {
                 idField.set(item, generateId(dao, org.apache.commons.lang3.ClassUtils.primitiveToWrapper(idType)));
             }
 
