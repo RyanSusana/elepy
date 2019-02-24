@@ -18,7 +18,7 @@ public class ObjectEvaluateTest extends Base {
     @BeforeEach
     public void setUp() throws Exception {
 
-        this.resourceObjectEvaluator = new ObjectEvaluatorImpl<>();
+        this.resourceObjectEvaluator = new DefaultObjectEvaluator<>();
 
     }
 

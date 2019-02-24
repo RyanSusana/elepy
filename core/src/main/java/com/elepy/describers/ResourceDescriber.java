@@ -5,8 +5,8 @@ import com.elepy.Elepy;
 import com.elepy.annotations.*;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
+import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.evaluators.ObjectEvaluatorImpl;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
@@ -93,7 +93,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         objectEvaluators = new ArrayList<>();
 
         final Evaluators annotation = classType.getAnnotation(Evaluators.class);
-        objectEvaluators.add(new ObjectEvaluatorImpl<>());
+        objectEvaluators.add(new DefaultObjectEvaluator<>());
 
         if (annotation != null) {
             for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {

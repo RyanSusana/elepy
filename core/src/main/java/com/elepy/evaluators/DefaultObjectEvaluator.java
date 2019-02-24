@@ -11,7 +11,7 @@ import com.elepy.models.FieldType;
 import java.lang.reflect.Field;
 import java.util.Date;
 
-public class ObjectEvaluatorImpl<T> implements ObjectEvaluator<T> {
+public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
 
     public void evaluate(T o, Class<T> clazz) throws Exception {

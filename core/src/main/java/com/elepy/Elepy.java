@@ -8,8 +8,8 @@ import com.elepy.describers.ResourceDescriber;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
+import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.evaluators.ObjectEvaluatorImpl;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyMessage;
@@ -80,7 +80,7 @@ public class Elepy implements ElepyContext {
         this.routingClasses = new ArrayList<>();
         this.adminFilterClasses = new ArrayList<>();
 
-        withBaseObjectEvaluator(new ObjectEvaluatorImpl<>());
+        withBaseObjectEvaluator(new DefaultObjectEvaluator<>());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         getObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
