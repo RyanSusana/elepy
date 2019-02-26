@@ -18,7 +18,10 @@ public class ObjectUpdateTest extends Base {
 
         Resource updatedEditable = validObject();
         updatedEditable.setNumberMax40(BigDecimal.valueOf(9));
-        resourceObjectUpdateEvaluator.evaluate(validObject(), updatedEditable);
+
+        Resource resource = validObject();
+        resource.setId(updatedEditable.getId());
+        resourceObjectUpdateEvaluator.evaluate(resource, updatedEditable);
     }
 
     @Test
