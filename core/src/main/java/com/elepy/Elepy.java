@@ -627,6 +627,8 @@ public class Elepy implements ElepyContext {
                 adminFilters.add(filter);
                 addRouting(ClassUtils.scanForRoutes(filter));
             }
+
+            registerDependency(Filter.class, "allAdmin", getAllAdminFilters());
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new ElepyConfigException("Failed creating extra Filters: " + e.getMessage());
         }
