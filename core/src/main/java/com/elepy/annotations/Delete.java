@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.models.AccessLevel;
+import com.elepy.http.AccessLevel;
 import com.elepy.routes.DefaultDelete;
 import com.elepy.routes.DeleteHandler;
 

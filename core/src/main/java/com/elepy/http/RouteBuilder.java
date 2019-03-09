@@ -1,7 +1,5 @@
 package com.elepy.http;
 
-import com.elepy.models.AccessLevel;
-
 public final class RouteBuilder {
     private HttpContextHandler beforeFilter;
     private AccessLevel accessLevel;

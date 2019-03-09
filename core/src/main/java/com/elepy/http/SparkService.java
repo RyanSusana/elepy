@@ -1,7 +1,6 @@
 package com.elepy.http;
 
 import com.elepy.Elepy;
-import com.elepy.models.AccessLevel;
 import spark.ExceptionHandler;
 import spark.RouteImpl;
 import spark.Service;

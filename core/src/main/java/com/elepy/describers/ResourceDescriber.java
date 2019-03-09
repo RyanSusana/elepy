@@ -8,9 +8,9 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.AccessLevel;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
 

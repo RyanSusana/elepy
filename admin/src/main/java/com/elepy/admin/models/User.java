@@ -3,7 +3,7 @@ package com.elepy.admin.models;
 import com.elepy.admin.services.*;
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
-import com.elepy.models.AccessLevel;
+import com.elepy.http.AccessLevel;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

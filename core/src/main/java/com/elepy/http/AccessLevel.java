@@ -1,4 +1,4 @@
-package com.elepy.models;
+package com.elepy.http;
 
 public enum AccessLevel {
     ADMIN, PUBLIC, DISABLED
