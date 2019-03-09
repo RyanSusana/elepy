@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Token implements Comparable<Token> {
     private String id;
 
-    private User user;
+    private UserInterface user;
 
     private long creationTime;
 
@@ -22,11 +22,11 @@ public class Token implements Comparable<Token> {
         return this;
     }
 
-    public User getUser() {
+    public UserInterface getUser() {
         return user;
     }
 
-    public Token setUser(User user) {
+    public Token setUser(UserInterface user) {
         this.user = user;
         return this;
     }

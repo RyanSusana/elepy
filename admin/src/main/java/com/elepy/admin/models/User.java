@@ -28,7 +28,7 @@ import javax.persistence.Transient;
 )
 @Entity(name = "elepy_user")
 @Table(name = "elepy_users")
-public class User {
+public class User implements UserInterface {
 
     @Identifier
     @Id
@@ -96,6 +96,11 @@ public class User {
 
     public String getPassword() {
         return this.password;
+    }
+
+    @Override
+    public boolean passwordEquals(String otherPassword) {
+        return BCrypt.checkpw(otherPassword, password);
     }
 
     public void setPassword(String password) {
