@@ -14,15 +14,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 
-@Delete(handler = UserDelete.class)
+@Delete(accessLevel = AccessLevel.PROTECTED, handler = UserDelete.class)
 @Find(accessLevel = AccessLevel.PROTECTED)
-@Create(accessLevel = AccessLevel.PROTECTED, handler = UserCreate.class)
-@Update(handler = UserUpdate.class)
+@Create(handler = UserCreate.class)
+@Update(accessLevel = AccessLevel.PROTECTED, handler = UserUpdate.class)
 @Evaluators({UserEvaluator.class})
 @RestModel(
         slug = "/users",
         name = "Users",
-        description = "",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING
 )

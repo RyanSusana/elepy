@@ -37,8 +37,7 @@ public class UserCreate implements CreateHandler<User> {
         new DefaultIntegrityEvaluator<User>().evaluate(user, crud, true);
 
         if (!loggedInUser.getUserType().hasMoreRightsThan(user.getUserType())) {
-
-            throw new ElepyException("You are not allowed to singleCreate users with an equal higher rank than you!");
+            throw new ElepyException("You are not allowed to create users with an equal higher rank than you!");
         }
         user = user.hashWord();
         crud.create(user);
