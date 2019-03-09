@@ -23,7 +23,7 @@ public @interface Update {
      * @return the access level
      * @see AccessLevel
      */
-    AccessLevel accessLevel() default AccessLevel.ADMIN;
+    AccessLevel accessLevel() default AccessLevel.PROTECTED;
 
     /**
      * The class that handles the functionality of deletes on this Resource.

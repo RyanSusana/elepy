@@ -15,8 +15,8 @@ import javax.persistence.Transient;
 
 
 @Delete(handler = UserDelete.class)
-@Find(accessLevel = AccessLevel.ADMIN)
-@Create(accessLevel = AccessLevel.ADMIN, handler = UserCreate.class)
+@Find(accessLevel = AccessLevel.PROTECTED)
+@Create(accessLevel = AccessLevel.PROTECTED, handler = UserCreate.class)
 @Update(handler = UserUpdate.class)
 @Evaluators({UserEvaluator.class})
 @RestModel(

@@ -23,7 +23,7 @@ public @interface Create {
      * @return the access level
      * @see AccessLevel
      */
-    AccessLevel accessLevel() default AccessLevel.ADMIN;
+    AccessLevel accessLevel() default AccessLevel.PROTECTED;
 
     /**
      * The class that handles the functionality of creates on this Resource.

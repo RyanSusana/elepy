@@ -1,5 +1,5 @@
 package com.elepy.http;
 
 public enum AccessLevel {
-    ADMIN, PUBLIC, DISABLED
+    PROTECTED, PUBLIC, DISABLED
 }
