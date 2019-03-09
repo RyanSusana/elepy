@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserCreate implements CreateHandler<User> {
 
-    @Inject(tag = "allAdmin")
+    @Inject(tag = "protected")
     private Filter allAdminFilter;
 
     @Override

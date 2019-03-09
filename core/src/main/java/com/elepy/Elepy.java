@@ -14,10 +14,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
-import com.elepy.http.Filter;
-import com.elepy.http.HttpService;
-import com.elepy.http.Route;
-import com.elepy.http.SparkService;
+import com.elepy.http.*;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -47,7 +44,7 @@ public class Elepy implements ElepyContext {
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
 
-    private List<Filter> adminFilters;
+    private MultiFilter adminFilters;
     private List<Class<? extends Filter>> adminFilterClasses;
     private List<Map<String, Object>> descriptors;
 
@@ -66,7 +63,7 @@ public class Elepy implements ElepyContext {
         this.packages = new ArrayList<>();
         this.context = new DefaultElepyContext();
         this.descriptors = new ArrayList<>();
-        this.adminFilters = new ArrayList<>();
+        this.adminFilters = new MultiFilter();
         this.http = new SparkService(http, this);
 
         this.defaultCrudProvider = MongoProvider.class;
@@ -161,11 +158,7 @@ public class Elepy implements ElepyContext {
      * @see Filter
      */
     public Filter getAllAdminFilters() {
-        return ctx -> {
-            for (Filter adminFilter : adminFilters) {
-                adminFilter.authenticate(ctx);
-            }
-        };
+        return adminFilters;
     }
 
     @Override
@@ -546,6 +539,8 @@ public class Elepy implements ElepyContext {
 
 
     private void init() {
+
+
         for (ElepyModule module : modules) {
             module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
         }
@@ -563,7 +558,7 @@ public class Elepy implements ElepyContext {
             resourceDescribers.add(new ResourceDescriber<>(this, model));
         }
 
-
+        registerDependency(Filter.class, "protected", adminFilters);
         final List<Map<String, Object>> maps = setupPojos(resourceDescribers);
 
         descriptors.addAll(maps);
@@ -571,6 +566,7 @@ public class Elepy implements ElepyContext {
         context.resolveDependencies();
 
         setupDescriptors(descriptors);
+
 
         setupFilters();
         setupExtraRoutes();
@@ -628,7 +624,6 @@ public class Elepy implements ElepyContext {
                 addRouting(ClassUtils.scanForRoutes(filter));
             }
 
-            registerDependency(Filter.class, "allAdmin", getAllAdminFilters());
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new ElepyConfigException("Failed creating extra Filters: " + e.getMessage());
         }
