@@ -13,7 +13,7 @@ public class UserEvaluator implements ObjectEvaluator<User> {
         String username = user.getUsername();
 
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher("I am a string");
+        Matcher m = p.matcher(username);
 
         if (username.contains(" ") || m.find()) {
             throw new ElepyException("Usernames can not contain spaces or special characters!");

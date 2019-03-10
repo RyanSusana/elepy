@@ -1,7 +1,5 @@
 package com.elepy.http;
 
-import com.elepy.models.AccessLevel;
-
 public interface HttpService {
 
     void ipAddress(String ip);

@@ -1,7 +1,6 @@
 package com.elepy.http;
 
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.models.AccessLevel;
 
 import java.util.Objects;
 

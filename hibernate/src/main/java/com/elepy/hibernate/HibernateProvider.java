@@ -5,11 +5,8 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.CrudProvider;
 import com.elepy.di.ElepyContext;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HibernateProvider implements CrudProvider {
-    private static final Logger logger = LoggerFactory.getLogger(HibernateProvider.class);
 
     @Inject
     private ElepyContext elepyContext;

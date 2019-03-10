@@ -1,7 +1,6 @@
 package com.elepy.http;
 
 import com.elepy.Elepy;
-import com.elepy.models.AccessLevel;
 import spark.ExceptionHandler;
 import spark.RouteImpl;
 import spark.Service;
@@ -130,7 +129,7 @@ public class SparkService implements HttpService {
 
                 SparkContext sparkContext = new SparkContext(request, response);
 
-                if (extraRoute.getAccessLevel().equals(AccessLevel.ADMIN)) {
+                if (extraRoute.getAccessLevel().equals(AccessLevel.PROTECTED)) {
                     elepy.getAllAdminFilters().authenticate(sparkContext);
                 }
                 extraRoute.getBeforeFilter().handle(sparkContext);

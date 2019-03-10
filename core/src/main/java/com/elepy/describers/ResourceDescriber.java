@@ -8,9 +8,9 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.AccessLevel;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.AccessLevel;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
 
@@ -27,10 +27,10 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     private Class<T> classType;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
-    private AccessLevel deleteAccessLevel = AccessLevel.ADMIN;
+    private AccessLevel deleteAccessLevel = AccessLevel.PROTECTED;
     private AccessLevel findAccessLevel = AccessLevel.PUBLIC;
-    private AccessLevel updateAccessLevel = AccessLevel.ADMIN;
-    private AccessLevel createAccessLevel = AccessLevel.ADMIN;
+    private AccessLevel updateAccessLevel = AccessLevel.PROTECTED;
+    private AccessLevel createAccessLevel = AccessLevel.PROTECTED;
     private List<ObjectEvaluator<T>> objectEvaluators;
     private String slug;
     private String description;

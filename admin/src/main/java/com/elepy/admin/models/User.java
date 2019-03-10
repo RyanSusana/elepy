@@ -3,7 +3,7 @@ package com.elepy.admin.models;
 import com.elepy.admin.services.*;
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
-import com.elepy.models.AccessLevel;
+import com.elepy.http.AccessLevel;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,21 +14,20 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 
-@Delete(handler = UserDelete.class)
-@Find(accessLevel = AccessLevel.ADMIN)
-@Create(accessLevel = AccessLevel.ADMIN, handler = UserCreate.class)
-@Update(handler = UserUpdate.class)
+@Delete(accessLevel = AccessLevel.PROTECTED, handler = UserDelete.class)
+@Find(accessLevel = AccessLevel.PROTECTED)
+@Create(handler = UserCreate.class)
+@Update(accessLevel = AccessLevel.PROTECTED, handler = UserUpdate.class)
 @Evaluators({UserEvaluator.class})
 @RestModel(
         slug = "/users",
         name = "Users",
-        description = "",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING
 )
 @Entity(name = "elepy_user")
 @Table(name = "elepy_users")
-public class User {
+public class User implements UserInterface {
 
     @Identifier
     @Id
@@ -96,6 +95,11 @@ public class User {
 
     public String getPassword() {
         return this.password;
+    }
+
+    @Override
+    public boolean passwordEquals(String otherPassword) {
+        return BCrypt.checkpw(otherPassword, password);
     }
 
     public void setPassword(String password) {
