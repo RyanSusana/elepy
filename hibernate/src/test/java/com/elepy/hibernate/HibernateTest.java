@@ -25,6 +25,8 @@ public class HibernateTest {
 
     private SessionFactory sessionFactory;
 
+    private static int resourceCounter = -100;
+
     @BeforeEach
     public void setUp() throws Exception {
 
@@ -93,7 +95,7 @@ public class HibernateTest {
 
         Field searchableField = Resource.class.getDeclaredField("searchableField");
         searchableField.setAccessible(true);
-        final List<Resource> searchable = resourceCrud.searchInField(searchableField, "searchable");
+        final List<Resource> searchable = resourceCrud.searchInField("searchableField", "searchable");
         assertEquals(1, searchable.size());
 
     }
@@ -120,6 +122,7 @@ public class HibernateTest {
     public Resource validObject() {
         Resource resource = new Resource();
 
+        resource.setId(resourceCounter++);
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
         resource.setUniqueField("unique");

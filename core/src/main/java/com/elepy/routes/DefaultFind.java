@@ -1,20 +1,18 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
-import com.elepy.di.ElepyContext;
+import com.elepy.describers.ModelDescription;
+import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Request;
-import spark.Response;
 
-import java.util.List;
 import java.util.Optional;
 
 public class DefaultFind<T> implements FindHandler<T> {
-
 
     public void find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
 
@@ -33,31 +31,33 @@ public class DefaultFind<T> implements FindHandler<T> {
 
 
         response.status(200);
-        response.body(objectMapper.writeValueAsString(dao.search(new QuerySetup(q, fieldSort, ((fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageNumber, pageSize))));
+        response.result(objectMapper.writeValueAsString(dao.search(new QuerySetup(q, fieldSort, ((fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageNumber, pageSize))));
 
     }
 
-    public void findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
+    public void findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, Class<T> clazz) throws JsonProcessingException {
         response.type("application/json");
 
+        Object paramId = request.modelId();
 
-        final Optional<T> id = dao.getById(request.params("id"));
+        final Optional<T> id = dao.getById(paramId);
         if (id.isPresent()) {
             response.status(200);
-            response.body(objectMapper.writeValueAsString(id.get()));
+            response.result(objectMapper.writeValueAsString(id.get()));
         } else {
             response.status(404);
-            response.body("");
+            response.result("");
         }
     }
 
 
     @Override
-    public void handleFind(Request request, Response response, Crud<T> crud, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        if (request.params("id") != null && !request.params("id").isEmpty()) {
-            findOne(request, response, crud, elepy.getObjectMapper());
-        } else {
-            find(request, response, crud, elepy.getObjectMapper());
-        }
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find(context.request(), context.response(), crud, objectMapper);
+    }
+
+    @Override
+    public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        findOne(context.request(), context.response(), crud, objectMapper, modelDescription.getModelType());
     }
 }

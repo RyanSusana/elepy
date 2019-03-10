@@ -1,16 +1,17 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.IntegrityEvaluatorImpl;
-import com.elepy.concepts.ObjectEvaluator;
-import com.elepy.concepts.ObjectUpdateEvaluatorImpl;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
+import com.elepy.describers.ModelDescription;
+import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.models.FieldType;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Request;
-import spark.Response;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +23,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     private T beforeUpdate;
 
-    public static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
+    private static Map<String, Object> splitQuery(String body) throws UnsupportedEncodingException {
         Map<String, Object> queryPairs = new LinkedHashMap<>();
         String[] pairs = body.split("&");
         for (String pair : pairs) {
@@ -41,7 +42,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     public T update(T before, T update, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
 
-        ObjectUpdateEvaluatorImpl<T> updateEvaluator = new ObjectUpdateEvaluatorImpl<>();
+        DefaultObjectUpdateEvaluator<T> updateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
         updateEvaluator.evaluate(before, update);
 
@@ -51,12 +52,13 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             }
         }
 
-        new IntegrityEvaluatorImpl<T>().evaluate(update, dao);
+        new DefaultIntegrityEvaluator<T>().evaluate(update, dao);
         dao.update(update);
 
         return update;
     }
 
+    @SuppressWarnings("unchecked")
     public T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Class<T> clazz) throws IOException {
 
         final String body = request.body();
@@ -78,29 +80,30 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         }
     }
 
-    public T update(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public T update(Request request, Response response, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz, ObjectMapper objectMapper) throws Exception {
         String body = request.body();
 
         if (body == null || body.isEmpty()) {
             throw new ElepyException("No changes detected.");
         }
 
-        Optional<T> before = dao.getById(request.params("id"));
+        Optional<T> before = dao.getById(request.modelId());
 
         if (!before.isPresent()) {
-            response.status(404);
-            throw new ElepyException("No object found with this ID");
+            throw new ElepyException("No object found with this ID", 404);
         }
-        final T updated = updatedObjectFromRequest(before.get(), request, elepy.getObjectMapper(), clazz);
+
+        final T updated = updatedObjectFromRequest(before.get(), request, objectMapper, clazz);
 
         this.beforeUpdate = before.get();
         update(beforeUpdate, updated, dao, objectEvaluators, clazz);
 
         response.status(200);
-        response.body("OK");
+        response.result("OK");
         return updated;
     }
 
+    @SuppressWarnings("unchecked")
     public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
 
         fieldsToAdd.forEach((fieldName, fieldObject) -> {
@@ -119,7 +122,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return (T) objectMapper.convertValue(objectAsMap, cls);
     }
 
-
+    @SuppressWarnings("unchecked")
     public T setParamsOnObject(Request request, ObjectMapper objectMapper, T object) throws UnsupportedEncodingException {
 
         Map<String, Object> map = objectMapper.convertValue(object, Map.class);
@@ -129,7 +132,12 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     }
 
     @Override
-    public void handleUpdate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        this.update(request, response, dao, elepy, objectEvaluators, clazz);
+    public void handleUpdatePut(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
+    }
+
+    @Override
+    public void handleUpdatePatch(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
     }
 }

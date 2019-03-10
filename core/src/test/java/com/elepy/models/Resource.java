@@ -11,11 +11,11 @@ import java.math.BigDecimal;
 @RestModel(name = "Test Resource", slug = "/resources")
 @Service(ResourceService.class)
 @Dao(ResourceDao.class)
-@Update(accessLevel = AccessLevel.PUBLIC, handler = ResourceUpdate.class)
+//@Update(accessLevel = AccessLevel.PUBLIC, handler = ResourceUpdate.class)
 @ExtraRoutes({ResourceExtraRoutes.class})
 public class Resource {
     @Identifier
-    private String id;
+    private int id;
 
     @Text(TextType.TEXTFIELD)
     private String textField;
@@ -75,13 +75,6 @@ public class Resource {
         this.nonEditable = nonEditable;
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getTextField() {
         return this.textField;
@@ -184,5 +177,13 @@ public class Resource {
     @Generated
     public String generatedField() {
         return "I am generated";
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

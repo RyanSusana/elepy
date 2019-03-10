@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
 
-import com.elepy.models.AccessLevel;
+import com.elepy.http.AccessLevel;
 import com.elepy.routes.CreateHandler;
 import com.elepy.routes.DefaultCreate;
 
@@ -23,7 +23,7 @@ public @interface Create {
      * @return the access level
      * @see AccessLevel
      */
-    AccessLevel accessLevel() default AccessLevel.ADMIN;
+    AccessLevel accessLevel() default AccessLevel.PROTECTED;
 
     /**
      * The class that handles the functionality of creates on this Resource.

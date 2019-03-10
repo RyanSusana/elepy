@@ -1,14 +1,14 @@
 package com.elepy.admin.concepts.auth;
 
-import com.elepy.admin.models.User;
-import spark.Request;
+import com.elepy.admin.models.UserInterface;
+import com.elepy.http.Request;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
 
 public interface AuthHandler {
-    User login(Request request);
+    UserInterface login(Request request);
 
 
     default Optional<String[]> basicCredentials(Request request) {

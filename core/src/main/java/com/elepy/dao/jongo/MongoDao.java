@@ -4,7 +4,6 @@ import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
-import com.elepy.concepts.IdentityProvider;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
@@ -42,11 +41,10 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     public abstract DB db();
 
-    public abstract IdentityProvider<T> identityProvider();
 
     Jongo getJongo() {
         if (jongo == null) {
-            this.jongo = new Jongo(db(), new ElepyMapper(this, identityProvider()));
+            this.jongo = new Jongo(db(), new ElepyMapper(this));
         }
         return jongo;
     }
@@ -71,7 +69,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     @Override
-    public Optional<T> getById(final String id) {
+    public Optional<T> getById(final Object id) {
         return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelClassType()));
     }
 
@@ -185,13 +183,13 @@ public abstract class MongoDao<T> implements Crud<T> {
 
 
     @Override
-    public void delete(String id) {
+    public void delete(Object id) {
         collection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
     }
 
     @Override
     public void update(T item) {
-        final String id = getId(item);
+        final Object id = getId(item);
         collection().update(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).with(item);
 
     }
@@ -210,6 +208,7 @@ public abstract class MongoDao<T> implements Crud<T> {
             final T[] ts = Iterables.toArray(items, getType());
             collection().insert((Object[]) ts);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
@@ -220,6 +219,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         try {
             collection().insert(item);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
@@ -227,8 +227,8 @@ public abstract class MongoDao<T> implements Crud<T> {
 
 
     @Override
-    public String getId(T item) {
-        Optional<String> id = ClassUtils.getId(item);
+    public Object getId(T item) {
+        Optional<Object> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
             throw new ElepyException("No Identifier provided to the object.");
         }

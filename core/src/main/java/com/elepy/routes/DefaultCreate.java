@@ -1,18 +1,18 @@
 package com.elepy.routes;
 
-import com.elepy.concepts.AtomicIntegrityEvaluator;
-import com.elepy.concepts.IntegrityEvaluatorImpl;
-import com.elepy.concepts.ObjectEvaluator;
 import com.elepy.dao.Crud;
-import com.elepy.di.ElepyContext;
+import com.elepy.describers.ModelDescription;
+import com.elepy.evaluators.AtomicIntegrityEvaluator;
+import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.ObjectEvaluator;
+import com.elepy.http.HttpContext;
+import com.elepy.http.Response;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import spark.Request;
-import spark.Response;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,56 +20,54 @@ import java.util.List;
 public class DefaultCreate<T> implements CreateHandler<T> {
 
 
-    public T create(Response response, T product, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-            objectEvaluator.evaluate(product, clazz);
-        }
-        new IntegrityEvaluatorImpl<T>().evaluate(product, dao);
+    public T singleCreate(Response response, T item, Crud<T> dao, ModelDescription<T> modelDescription) throws Exception {
+        evaluate(item, modelDescription, dao);
 
-        create(response, dao, product);
-        return product;
+        create(response, dao, Collections.singletonList(item));
+        return item;
     }
 
 
-    private void create(Response response, Crud<T> dao, T item) {
-        create(response, dao, Collections.singleton(item));
-    }
-
-    private void create(Response response, Crud<T> dao, Iterable<T> items) {
-        dao.create(items);
-        response.status(200);
-        response.body("OK");
-    }
-
-    public void multipleCreate(Response response, List<T> items, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
+    public void multipleCreate(Response response, List<T> items, Crud<T> dao, ModelDescription<T> modelDescription) throws Exception {
         if (ClassUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
 
         for (T item : items) {
-            for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
-                objectEvaluator.evaluate(item, clazz);
-            }
-            new IntegrityEvaluatorImpl<T>().evaluate(item, dao);
+            evaluate(item, modelDescription, dao);
         }
 
         create(response, dao, items);
     }
 
-    @Override
-    public void handleCreate(Request request, Response response, Crud<T> dao, ElepyContext elepy, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz) throws Exception {
-        String body = request.body();
+    private void evaluate(T item, ModelDescription<T> modelDescription, Crud<T> dao) throws Exception {
+        for (ObjectEvaluator<T> objectEvaluator : modelDescription.getObjectEvaluators()) {
+            objectEvaluator.evaluate(item, modelDescription.getModelType());
+        }
 
-        ObjectMapper objectMapper = elepy.getObjectMapper();
+        modelDescription.getIdentityProvider().provideId(item, dao);
+        new DefaultIntegrityEvaluator<T>().evaluate(item, dao, true);
+    }
+
+    private void create(Response response, Crud<T> dao, Iterable<T> items) {
+        dao.create(items);
+        response.status(200);
+        response.result("OK");
+    }
+
+    @Override
+    public void handleCreate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        String body = context.request().body();
+
         try {
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(response, ts, dao, objectEvaluators, clazz);
+            multipleCreate(context.response(), ts, dao, modelDescription);
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            create(response, item, dao, objectEvaluators, clazz);
+            singleCreate(context.response(), item, dao, modelDescription);
         }
     }
 }

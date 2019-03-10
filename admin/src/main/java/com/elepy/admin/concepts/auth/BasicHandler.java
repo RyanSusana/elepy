@@ -1,8 +1,8 @@
 package com.elepy.admin.concepts.auth;
 
-import com.elepy.admin.models.User;
+import com.elepy.admin.models.UserInterface;
 import com.elepy.admin.services.UserService;
-import spark.Request;
+import com.elepy.http.Request;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ public class BasicHandler implements AuthHandler {
         this.userService = userService;
     }
 
-    public User login(Request request) {
+    public UserInterface login(Request request) {
 
         final Optional<String[]> authorizationOpt = this.basicCredentials(request);
         if (!authorizationOpt.isPresent()) {
@@ -21,7 +21,7 @@ public class BasicHandler implements AuthHandler {
         }
 
         final String[] authorization = authorizationOpt.get();
-        final Optional<User> login = userService.login(authorization[0], authorization[1]);
+        final Optional<UserInterface> login = userService.login(authorization[0], authorization[1]);
 
         return login.orElse(null);
 

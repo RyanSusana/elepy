@@ -1,8 +1,8 @@
 package com.elepy.admin.concepts.auth;
 
 
-import com.elepy.admin.models.User;
-import spark.Request;
+import com.elepy.admin.models.UserInterface;
+import com.elepy.http.Request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,9 @@ public class Authenticator {
         return this;
     }
 
-    public User authenticate(Request request) {
+    public UserInterface authenticate(Request request) {
         for (AuthHandler authenticationMethod : authenticationMethods) {
-            final User login = authenticationMethod.login(request);
+            final UserInterface login = authenticationMethod.login(request);
 
             if (login != null) {
                 return login;

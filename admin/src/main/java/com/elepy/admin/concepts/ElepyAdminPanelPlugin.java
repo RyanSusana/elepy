@@ -2,7 +2,7 @@ package com.elepy.admin.concepts;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
-import spark.Service;
+import com.elepy.http.HttpService;
 
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
     }
 
 
-    public abstract void setup(Service http, ElepyPostConfiguration elepy);
+    public abstract void setup(HttpService http, ElepyPostConfiguration elepy);
 
     public abstract String renderContent(Map<String, Object> model);
 

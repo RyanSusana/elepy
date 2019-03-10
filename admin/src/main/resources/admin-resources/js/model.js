@@ -249,18 +249,18 @@ var template = `
 <div>
         <div v-for="(field, index) in selectedmodel.fields" v-if="field.type != 'OBJECT' "
              class="uk-margin">
-            <label class="uk-form-label" v-if="!(selectedmodel.idField === field.name && creating)">((field.pretty_name))</label>
+            <label class="uk-form-label" v-if="!(selectedmodel.idField === field.name && creating && field.generated)">((field.pretty_name))</label>
             <div class="uk-form-controls">
                 <!-- TEXTFIELD -->
                 <input class="uk-input"
-                       v-if="!(selectedmodel.idField === field.name && creating) && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') ||  (field.type == 'TEXT' && field.textType == 'IMAGE_LINK'))"
-                       v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                       v-if="!(selectedmodel.idField === field.name && creating && field.generated) && (field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') ||  (field.type == 'TEXT' && field.textType == 'IMAGE_LINK'))"
+                       v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                        v-model="selecteddata[field.name]" type="text"
                        placeholder="">
                 <!-- PASSWORD -->
                 <input class="uk-input"
                        v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
-                       v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                       v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                        v-model="selecteddata[field.name]"
                        type="password"
                        placeholder="">
@@ -272,7 +272,7 @@ var template = `
                 </div>
                 <!-- DATE -->
                 <vuejs-datepicker v-if="field.type == 'DATE'" v-model="selecteddata[field.name]"
-                                  v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                  v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                   placeholder="Click to select a date" input-class="uk-input"
                                   calendar-class="uk-dark"
                                   output-format = "x" :minDate="field.minDate" no-header="true" :maxDate="field.maxDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime">
@@ -280,20 +280,20 @@ var template = `
 </vuejs-datepicker>
                 <!-- COLOR -->
                 <vuejs-colorpicker v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
-                                   v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                   v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                    v-bind:value="selecteddata[field.name]"
                                    v-on:input="selecteddata[field.name] = $event.hex"
                 ></vuejs-colorpicker>
                 <!-- NUMBER -->
-                <input class="uk-input" v-if="field.type == 'NUMBER'"
-                       v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                <input class="uk-input" v-if="field.type == 'NUMBER' && !(selectedmodel.idField === field.name && creating && field.generated)"
+                       v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                        v-model="selecteddata[field.name]"
                        type="number">
                 <!-- TEXTAREA -->
 
                 <textarea class="uk-textarea"
                           v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
-                          v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                          v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                           v-model="selecteddata[field.name]" type="text"
                           placeholder="" rows="5"></textarea>
 
@@ -304,7 +304,7 @@ var template = `
                 </div>
                 <textarea class="uk-textarea"
                           v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
-                          v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                          v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                           v-model="selecteddata[field.name]" type="text"
                           placeholder="" rows="13"></textarea>
 
@@ -319,7 +319,7 @@ var template = `
                 <!-- ENUM -->
                 <div v-if="field.type == 'ENUM' " class="uk-form-controls">
                     <select class="uk-select" v-model="selecteddata[field.name]"
-                            v-bind:disabled="field.name == 'id' || field.editable == false"
+                            v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                     >
                         <option v-for="value in field.availableValues"
                                 v-bind:value="value.enumValue">((value.enumName))
@@ -331,7 +331,7 @@ var template = `
                 <!-- BOOLEAN -->
                 <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
                     <select class="uk-select" v-model="selecteddata[field.name]"
-                            v-bind:disabled="field.name == 'id' || field.editable == false">
+                            v-bind:disabled="field.generated == true || (field.editable == false && !creating)">
                         <option v-bind:value="true">((field.trueValue))</option>
                         <option v-bind:value="false">((field.falseValue))</option>
 
@@ -352,14 +352,14 @@ var template = `
                         <!-- TEXTFIELD -->
                         <input class="uk-input"
                                v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"
-                               v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                               v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                v-model="selecteddata[fieldOuter.name][field.name]"
                                type="text"
                                placeholder="">
                         <!-- PASSWORD -->
                         <input class="uk-input"
                                v-if=" (field.type == 'TEXT' && field.textType == 'PASSWORD')"
-                               v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                               v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                v-model="selecteddata[fieldOuter.name][field.name]"
                                type="password"
                                placeholder="">
@@ -374,7 +374,7 @@ var template = `
                         <!-- DATE -->
                         <vuejs-datepicker v-if="field.type == 'DATE'"
                                           v-model="selecteddata[fieldOuter.name][field.name]"
-                                          v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                          v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                           placeholder="Click to select a date"
                                           input-class="uk-input"
                                           format="x"
@@ -384,21 +384,21 @@ var template = `
                         <!-- COLOR -->
                         <vuejs-colorpicker
                                 v-if="field.type == 'TEXT' && field.textType == 'COLOR'"
-                                v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                 v-bind:value="selecteddata[fieldOuter.name][field.name]"
                                 v-on:input="selecteddata[fieldOuter.name][field.name] = $event.hex"
                         ></vuejs-colorpicker>
 
                         <!-- NUMBER -->
                         <input class="uk-input" v-if="field.type == 'NUMBER'"
-                               v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                               v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                v-model="selecteddata[fieldOuter.name][field.name]"
                                type="number">
                         <!-- TEXTAREA -->
 
                         <textarea class="uk-textarea"
                                   v-if="(field.type == 'TEXT' && field.textType == 'TEXTAREA')"
-                                  v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                  v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                   v-model="selecteddata[fieldOuter.name][field.name]"
                                   type="text"
                                   placeholder=""
@@ -412,7 +412,7 @@ var template = `
 
                         <textarea class="uk-textarea"
                                   v-if="(field.type == 'TEXT' && field.textType == 'MARKDOWN') && (field.editable === true)"
-                                  v-bind:disabled="field.name == 'id' || (field.editable == false)"
+                                  v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                   v-model="selecteddata[fieldOuter.name][field.name]"
                                   type="text"
                                   placeholder="" rows="13"></textarea>
@@ -429,7 +429,7 @@ var template = `
                         <div v-if="field.type == 'ENUM' " class="uk-form-controls">
                             <select class="uk-select"
                                     v-model="selecteddata[fieldOuter.name][field.name]"
-                                    v-bind:disabled="field.name == 'id' || field.editable == false">
+                                    v-bind:disabled="field.generated == true || (field.editable == false && !creating)">
                                 <option v-for="value in field.availableValues"
                                         v-bind:value="value.enumValue">((value.enumName))
                                 </option>
@@ -442,7 +442,7 @@ var template = `
                         <div v-if="field.type == 'BOOLEAN' " class="uk-form-controls">
                             <select class="uk-select"
                                     v-model="selecteddata[fieldOuter.name][field.name]"
-                                    v-bind:disabled="field.name == 'id' || field.editable == false">
+                                    v-bind:disabled="field.generated == true || (field.editable == false && !creating)">
                                 <option v-bind:value="true">((field.trueValue))</option>
                                 <option v-bind:value="false">((field.falseValue))</option>
 

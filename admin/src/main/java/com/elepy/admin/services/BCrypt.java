@@ -26,7 +26,7 @@ import java.security.SecureRandom;
  * cracking using a computationally-intensive hashing algorithm,
  * based on Bruce Schneier's Blowfish cipher. The work factor of
  * the algorithm is parameterised, so it can be increased as
- * computers get faster.
+ * computers GET faster.
  * <p>
  * Usage is really simple. To hash a password for the first time,
  * call the hashpw method with a random salt, like this:

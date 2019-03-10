@@ -77,7 +77,7 @@ public class ImageDao extends DefaultMongoDao<Image> {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Object id) {
         super.delete(id);
         final GridFS images = new GridFS(db, "images");
         images.remove(id + "-original");

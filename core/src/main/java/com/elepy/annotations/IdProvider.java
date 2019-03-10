@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.concepts.IdentityProvider;
+import com.elepy.id.IdentityProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
