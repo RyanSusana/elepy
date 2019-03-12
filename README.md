@@ -5,6 +5,8 @@
 Elepy is a Rest API Generation Framework/Headless Content Management System for Java/Kotlin developed by [Ryan Susana](https://ryansusana.com/). It is extremely customizable! The framework comes bundled with an admin control panel that lets you easily control your content.
 
 It's able to handle extremely complex objects with ease.
+Read this article: https://medium.com/@ryansusana/rapidly-create-a-customized-cms-with-this-awesome-java-framework-e04ef2ea7810
+
 ## Downloads
 The latest versions of elepy can be found at: https://elepy.com/#DOWNLOADS
 ### Elepy Core
