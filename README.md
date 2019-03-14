@@ -1,4 +1,13 @@
 ![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
+# Version 2.0 On the way!
+Elepy is currently in alpha-2 of its version 2 release. You can download it here:
+``` xml
+<dependency>
+    <groupId>com.elepy</groupId>
+    <artifactId>elepy-*</artifactId>
+    <version>2.0.0-alpha-2</version>
+</dependency>
+```
 
 # About Elepy
 
