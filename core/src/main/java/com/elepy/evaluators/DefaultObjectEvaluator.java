@@ -72,11 +72,11 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
             DateTime dateTimeAnnotation = fieldDescriber.getField().getAnnotation(DateTime.class);
 
             if (dateTimeAnnotation != null && date != null) {
-                Date min = ClassDescriber.guessDate(dateTimeAnnotation.minDate());
-                Date max = ClassDescriber.guessDate(dateTimeAnnotation.maxDate());
+                Date min = ClassDescriber.guessDate(dateTimeAnnotation.minimumDate());
+                Date max = ClassDescriber.guessDate(dateTimeAnnotation.maximumDate());
 
                 if (date.before(min) || date.after(max)) {
-                    throw new ElepyException(String.format("%s must be between '%s' and '%s'", fieldDescriber.getPrettyName(), dateTimeAnnotation.minDate(), dateTimeAnnotation.maxDate()));
+                    throw new ElepyException(String.format("%s must be between '%s' and '%s'", fieldDescriber.getPrettyName(), dateTimeAnnotation.minimumDate(), dateTimeAnnotation.maximumDate()));
 
                 }
             }

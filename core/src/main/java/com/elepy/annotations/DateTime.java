@@ -20,10 +20,10 @@ public @interface DateTime {
     /**
      * The minimum date. It supports a list of formats including UNIX timestamps, ISO time and simple 'YYYY-MM-dd''
      */
-    String minDate() default "1970-01-01";
+    String minimumDate() default "1970-01-01";
 
     /**
      * The maximum date. It supports a list of formats including UNIX timestamps, ISO time and simple 'YYYY-MM-dd''
      */
-    String maxDate() default "2099-12-22";
+    String maximumDate() default "2099-12-22";
 }
