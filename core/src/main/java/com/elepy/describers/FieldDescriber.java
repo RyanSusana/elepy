@@ -104,12 +104,12 @@ public class FieldDescriber {
 
             if (annotation != null) {
                 fieldMap.put("includeTime", annotation.includeTime());
-                fieldMap.put("minDate", cmsFormat.format(ClassDescriber.guessDate(annotation.minDate())));
-                fieldMap.put("maxDate", cmsFormat.format(ClassDescriber.guessDate(annotation.maxDate())));
+                fieldMap.put("minimumDate", cmsFormat.format(ClassDescriber.guessDate(annotation.minimumDate())));
+                fieldMap.put("maximumDate", cmsFormat.format(ClassDescriber.guessDate(annotation.maximumDate())));
             } else {
                 fieldMap.put("includeTime", true);
-                fieldMap.put("minDate", null);
-                fieldMap.put("maxDate", null);
+                fieldMap.put("minimumDate", null);
+                fieldMap.put("maximumDate", null);
             }
         }
         if (fieldType.equals(FieldType.OBJECT)) {

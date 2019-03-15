@@ -275,7 +275,7 @@ var template = `
                                   v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                   placeholder="Click to select a date" input-class="uk-input"
                                   calendar-class="uk-dark"
-                                  output-format = "x" :minDate="field.minDate" no-header="true" :maxDate="field.maxDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime">
+                                  output-format = "x" :minDate="field.minimumDate" no-header="true" :maxDate="field.maximumDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime">
                                   
 </vuejs-datepicker>
                 <!-- COLOR -->
@@ -379,7 +379,7 @@ var template = `
                                           input-class="uk-input"
                                           format="x"
                                           calendar-class="uk-dark"
-                                          output-format = "x" :minDate="field.minDate" no-header="true" :maxDate="field.maxDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime"></vuejs-datepicker>
+                                          output-format = "x" :minDate="field.minimumDate" no-header="true" :maxDate="field.maximumDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime"></vuejs-datepicker>
 
                         <!-- COLOR -->
                         <vuejs-colorpicker
