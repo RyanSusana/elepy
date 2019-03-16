@@ -1,8 +1,8 @@
 package com.elepy.admin;
 
 import com.elepy.Elepy;
-import com.elepy.Resource;
 import com.elepy.admin.dto.CollectedToken;
+import com.elepy.admin.dto.Resource;
 import com.elepy.admin.models.User;
 import com.elepy.dao.Crud;
 import com.fasterxml.jackson.databind.ObjectMapper;

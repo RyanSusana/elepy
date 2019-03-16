@@ -16,9 +16,6 @@ const app = new Vue({
                     "password": selfReference.password
                 }
             }).then(function (response) {
-                //console.log(response.data)
-                //ref.modelData = response.data
-                console.log("redirecting");
                 window.location = response.data
 
             })
