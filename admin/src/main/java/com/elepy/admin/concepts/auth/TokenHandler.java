@@ -3,6 +3,7 @@ package com.elepy.admin.concepts.auth;
 import com.elepy.admin.models.Token;
 import com.elepy.admin.models.UserInterface;
 import com.elepy.admin.services.UserService;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 
 import java.util.Optional;
@@ -21,50 +22,6 @@ public class TokenHandler implements AuthHandler {
         this.userService = userService;
     }
 
-    public boolean isValid(String id) {
-        removeOverdueTokens();
-
-        return false;
-
-    }
-
-    public Optional<Token> createToken(Request request) {
-
-        final Optional<String[]> credentials = basicCredentials(request);
-
-        if (!credentials.isPresent()) {
-            return Optional.empty();
-        }
-
-        final String username = credentials.get()[0];
-        final String password = credentials.get()[1];
-
-        return createToken(username, password);
-    }
-
-    public Optional<Token> createToken(String username, String password) {
-        final Optional<UserInterface> login = userService.login(username, password);
-
-        if (!login.isPresent()) {
-            return Optional.empty();
-        }
-
-        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 3).setUser(login.get());
-
-        tokens.add(token);
-        return Optional.of(token);
-    }
-
-    private void removeOverdueTokens() {
-        final long currentTime = System.currentTimeMillis();
-        tokens.removeIf(token -> {
-            final long maxTime = token.getCreationTime() + token.getDuration();
-
-            return currentTime > maxTime;
-        });
-    }
-
-
     @Override
     public UserInterface login(Request request) {
         final String elepyToken = request.headers("ELEPY_TOKEN");
@@ -78,4 +35,47 @@ public class TokenHandler implements AuthHandler {
         }
         return null;
     }
+
+    public Token createToken(Request request) {
+
+        final Optional<String[]> credentials = basicCredentials(request);
+
+        if (!credentials.isPresent()) {
+            throw new ElepyException("Invalid username or password", 401);
+        }
+
+        final String username = credentials.get()[0];
+        final String password = credentials.get()[1];
+
+        return createToken(username, password);
+    }
+
+    private Token createToken(String username, String password) {
+        final Optional<UserInterface> login = userService.login(username, password);
+
+        if (!login.isPresent()) {
+            throw new ElepyException("Invalid username or password", 401);
+        }
+
+        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 3).setUser(login.get());
+
+        tokens.add(token);
+        return token;
+    }
+
+    private void removeOverdueTokens() {
+        final long currentTime = System.currentTimeMillis();
+        tokens.removeIf(token -> {
+            final long maxTime = token.getCreationTime() + token.getDuration();
+
+            return currentTime > maxTime;
+        });
+    }
+
+    private boolean isValid(String id) {
+        removeOverdueTokens();
+        return tokens.stream().anyMatch(token -> id.equals(token.getId()));
+    }
+
+
 }

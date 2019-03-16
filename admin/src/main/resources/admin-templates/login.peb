@@ -18,83 +18,58 @@
             src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
             crossorigin="anonymous"></script>
-    <script src="/admin-resources/js/login.js"></script>
 </head>
 
 <body>
+<div class="login-section">
 
-<div id="login-section" class="uk-section" style="">
-    <div class="uk-container">
-        <div class="uk-flex-center" uk-grid>
-            <div class="uk-width-2-5">
-                <div class="login-card animated fadeInUpSmall">
-                    <div class="login-header">
-                        <div class="uk-flex uk-flex-center uk-flex-middle uk-width-1-1">
-
-                            <a target="_blank" href="https://elepy.com" class="icon-login"><img class="icon-login"
-                                                                                                src="/admin-resources/images/icon-light.svg"
-                                                                                                alt="logo"></a>
-
-                            <div class="login-caption uk-flex uk-flex-center">
-
-                                <div class="inner">
-                                    <h3>Admin Panel</h3>
-                                    <h5>Login</h5>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="login-content">
-
-                        <form id="login-form" method="post" action="/elepy-login" class="uk-form-stacked">
-
-                            <div class="uk-margin">
-                                <label class="uk-form-label" for="form-stacked-text">Username</label>
-                                <div class="uk-form-controls">
-                                    <input name="username" class="uk-input" type="text"
-                                           placeholder="Username">
-                                </div>
-                            </div>
+    <div class="uk-flex-center uk-flex">
 
 
-                            <div class="uk-margin">
-                                <label class="uk-form-label" for="form-stacked-text">Password</label>
-                                <div class="uk-form-controls">
-                                    <input name="password" class="uk-input" type="password"
-                                           placeholder="Password">
-                                </div>
-                            </div>
-
-                        </form>
+        <div id="login-app"
+             class="login-box uk-card uk-card-secondary uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s uk-background-secondary uk-margin-large-top">
 
 
-                    </div>
-                    <div class="login-footer">
+            <div class="login-logo uk-background-primary">
+                <img class="logo-image" src="/admin-resources/images/logo-light.svg" alt="logo">
+            </div>
 
-                        <p class=" uk-text-center">
-                            <button type="submit" form="login-form" class="uk-button uk-button-primary"><i
-                                    class="fas fa-sign-in-alt"></i>Sign in
-                            </button>
-                        </p>
+            <div class="login-box-content uk-light uk-padding">
+
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Username</label>
+                    <div class="uk-form-controls">
+                        <input name="username" class="uk-input" v-model="username" type="text"
+                               placeholder="Username">
                     </div>
                 </div>
 
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Password</label>
+                    <div class="uk-form-controls">
+                        <input name="password" class="uk-input" v-model="password" type="password"
+                               placeholder="Password">
+                    </div>
+                </div>
+
+                <div class="uk-flex uk-flex-center">
+                    <button id="login-button" v-on:click="login" class="uk-button uk-button-primary">Login</button>
+
+                    </div>
             </div>
 
-        </div>
-    </div>
 
+        </div>
+
+
+    </div>
 
 </div>
 
 
-<script>
-
-
-</script>
+<script src="/admin-resources/js/login.js"></script>
 </body>
 
 </html>

@@ -9,6 +9,7 @@ import com.elepy.admin.concepts.auth.BasicHandler;
 import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
+import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.http.Filter;
@@ -38,6 +39,7 @@ public class ElepyAdminPanel implements ElepyModule {
     private Authenticator authenticator;
     private UserService userService;
     private boolean initiated = false;
+    private Crud<? extends UserInterface> userCrud;
 
     private HttpService http;
     private PebbleEngine engine;
@@ -61,15 +63,22 @@ public class ElepyAdminPanel implements ElepyModule {
 
             final UserInterface user = authenticator.authenticate(context.request());
 
+
             if (user != null) {
                 context.request().attribute(ADMIN_USER, user);
                 context.request().session().attribute(ADMIN_USER, user);
             } else {
                 final User adminUser = context.request().session().attribute(ADMIN_USER);
                 if (adminUser == null) {
-                    context.request().session().attribute("redirectUrl", context.request().uri());
-                    context.response().redirect("/elepy-login");
-                    halt();
+                    if (userCrud.count() == 0) {
+                        context.response().redirect("/elepy-initial-user");
+                        halt();
+                    } else {
+                        context.request().session().attribute("redirectUrl", context.request().uri());
+                        context.response().redirect("/elepy-login");
+                        halt();
+                    }
+
                 }
             }
 
@@ -88,7 +97,8 @@ public class ElepyAdminPanel implements ElepyModule {
     public void afterElepyConstruction(HttpService http, ElepyPostConfiguration elepy) {
 
         try {
-            this.userService = new UserService(elepy.getCrudFor(userClass));
+            this.userCrud = elepy.getCrudFor(userClass);
+            this.userService = new UserService(userCrud);
             this.tokenHandler = new TokenHandler(this.userService);
             this.authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
 
@@ -123,14 +133,11 @@ public class ElepyAdminPanel implements ElepyModule {
         http.before("/admin/*", ctx -> elepy.getAllAdminFilters().authenticate(ctx));
         http.before("/admin", ctx -> elepy.getAllAdminFilters().authenticate(ctx));
         http.post("/retrieve-token", (request, response) -> {
-            final Optional<Token> token = tokenHandler.createToken(request);
-
-            if (token.isPresent()) {
-                response.result(elepy.getObjectMapper().writeValueAsString(token.get()));
-            } else {
-                throw new ElepyException("Invalid username/password");
-            }
+            final Token token = tokenHandler.createToken(request);
+            response.result(elepy.getObjectMapper().writeValueAsString(token));
         });
+
+
         http.get("/admin", (request, response) -> {
 
             Map<String, Object> model = new HashMap<>();
@@ -169,6 +176,25 @@ public class ElepyAdminPanel implements ElepyModule {
                 throw ErrorMessageBuilder.anElepyErrorMessage().withMessage("Invalid login credentials").withStatus(401).build();
             }
         });
+
+        http.get("/elepy-login-check", ctx -> {
+            final UserInterface user = authenticator.authenticate(ctx.request());
+
+            if (user == null) {
+                throw new ElepyException("You are not logged in.", 401);
+            }
+            throw new ElepyException("Your are logged in", 200);
+
+        });
+
+
+        http.before("/elepy-initial-user", (request, response) -> {
+            if (userCrud.count() >= 0) {
+                response.redirect("/elepy-login");
+                halt();
+            }
+        });
+        http.get("/elepy-initial-user", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/initial-user.peb")));
 
 
     }
