@@ -297,6 +297,11 @@ public class ElepyAdminPanel implements ElepyModule {
         return addLink(new Link(to, text, fontAwesomeClass));
     }
 
+    public ElepyAdminPanel onNoUserFound(NoUserFoundHandler noUserFoundHandler) {
+        this.noUserFoundHandler = noUserFoundHandler;
+        return this;
+    }
+
     public HttpService http() {
         return http;
     }
@@ -306,7 +311,7 @@ public class ElepyAdminPanel implements ElepyModule {
         return initiated;
     }
 
-    protected Class<? extends UserInterface> getUserClass() {
+    Class<? extends UserInterface> getUserClass() {
         return userClass;
     }
 
