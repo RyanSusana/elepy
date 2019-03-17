@@ -57,6 +57,7 @@ public class RouteGenerator<T> {
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
             ModelDescription<T> modelDescription = new ModelDescription<>(baseSlug + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
+            elepy.putModelDescription(modelDescription);
 
             //POST
             elepy.addRouting(anElepyRoute()
@@ -125,6 +126,7 @@ public class RouteGenerator<T> {
         ctx.request().attribute("modelClass", restModel.getClassType());
         return ctx;
     }
+
     private Map<String, Object> getPojoDescriptor(ResourceDescriber restModel, Class<?> clazz) {
         Map<String, Object> model = new HashMap<>();
         if (baseSlug.equals("/")) {

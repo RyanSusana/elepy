@@ -2,6 +2,7 @@ package com.elepy;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.Crud;
+import com.elepy.describers.ModelDescription;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Filter;
@@ -244,5 +245,14 @@ public class ElepyPostConfiguration {
      */
     public List<Map<String, Object>> getDescriptors() {
         return elepy.getDescriptors();
+    }
+
+    /**
+     * @param clazz The RestModel's class
+     * @param <T>   The RestModel's type
+     * @return a model description representing everything you need to know about a RestModel
+     */
+    public <T> ModelDescription<T> getModelDescriptionFor(Class<T> clazz) {
+        return elepy.getModelDescriptionFor(clazz);
     }
 }

@@ -4,6 +4,7 @@ import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.CrudProvider;
 import com.elepy.dao.jongo.MongoProvider;
+import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
@@ -54,6 +55,8 @@ public class Elepy implements ElepyContext {
     private Class<? extends CrudProvider> defaultCrudProvider;
     private List<Class<?>> routingClasses;
 
+    private final Map<Class<?>, ModelDescription<?>> classModelDescriptionMap;
+
     public Elepy() {
         this(Service.ignite().port(1337));
     }
@@ -75,6 +78,7 @@ public class Elepy implements ElepyContext {
         this.routingClasses = new ArrayList<>();
         this.adminFilterClasses = new ArrayList<>();
 
+        this.classModelDescriptionMap = new HashMap<>();
         withBaseObjectEvaluator(new DefaultObjectEvaluator<>());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         getObjectMapper()
@@ -537,6 +541,20 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    /**
+     * @param clazz The RestModel's class
+     * @param <T>   The RestModel's type
+     * @return a model description representing everything you need to know about a RestModel
+     */
+    @SuppressWarnings("unchecked")
+    public <T> ModelDescription<T> getModelDescriptionFor(Class<T> clazz) {
+        return (ModelDescription<T>) classModelDescriptionMap.get(clazz);
+    }
+
+
+    void putModelDescription(ModelDescription<?> clazz) {
+        classModelDescriptionMap.put(clazz.getModelType(), clazz);
+    }
 
     private void init() {
 
