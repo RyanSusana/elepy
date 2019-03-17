@@ -4,12 +4,18 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
 import com.elepy.describers.ModelDescription;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ViewHandler {
+
+
     private ElepyAdminPanel adminPanel;
 
     private Map<ModelDescription<?>, RestModelView> models;
@@ -19,13 +25,12 @@ public class ViewHandler {
     }
 
 
-    public void setup(ElepyPostConfiguration elepyPostConfiguration) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
-
+    public void setupModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         this.models = mapModels(elepyPostConfiguration);
     }
 
 
-    public void routes(ElepyPostConfiguration elepyPostConfiguration) {
+    public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
 
         for (ModelDescription<?> descriptor : models.keySet()) {
             adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
@@ -53,11 +58,27 @@ public class ViewHandler {
 
                     Map<String, Object> model = new HashMap<>();
 
-                    model.put("content", restModelView.renderView(modelDescription));
+                    String content = restModelView.renderView(modelDescription);
 
-                    // TODO parse stylesheets
-                    model.put("headers", null);
+                    Document document = Jsoup.parse(content);
 
+                    Elements styles = document.select("style");
+                    Elements stylesheets = document.select("stylesheet");
+
+                    stylesheets.remove();
+                    styles.remove();
+
+
+                    model.put("styles", styles);
+                    model.put("stylesheets", stylesheets.stream().map(sheet -> {
+                        if (sheet.hasText()) {
+                            return sheet.text();
+                        } else if (sheet.hasAttr("src")) {
+                            return sheet.attr("src");
+                        }
+                        return "";
+                    }).collect(Collectors.toSet()));
+                    model.put("content", document.body().html());
                     model.put("currentDescriptor", modelDescription.getJsonDescription());
                     response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
                 });
@@ -81,4 +102,6 @@ public class ViewHandler {
         }
         return modelsToReturn;
     }
+
+
 }

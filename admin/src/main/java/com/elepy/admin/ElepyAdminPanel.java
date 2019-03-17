@@ -156,9 +156,9 @@ public class ElepyAdminPanel implements ElepyModule {
             request.session().invalidate();
             response.redirect("/elepy-login");
         });
-        this.viewHandler.setup(elepy);
+        this.viewHandler.setupModels(elepy);
         this.pluginHandler.setupPlugins(elepy);
-        this.viewHandler.routes(elepy);
+        this.viewHandler.initializeRoutes(elepy);
         this.pluginHandler.setupRoutes(elepy);
     }
 
