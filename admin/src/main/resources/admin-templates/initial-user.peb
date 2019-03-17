@@ -1,13 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="SHORTCUT ICON" href="/admin-resources/images/favicon.png"/>
+    <link rel="stylesheet" href="/admin-resources/css/main.css">
+    <title>Elepy Admin Initial User Registration</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.42/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.42/js/uikit-icons.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+            crossorigin="anonymous"></script>
 </head>
-<body>
 
+<body>
+<div class="login-section">
+
+    <div class="uk-flex-center uk-flex">
+
+
+        <div id="register-app"
+             class="login-box uk-card uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s uk-margin-large-top">
+
+
+            <div class="login-logo uk-background-primary">
+                <img class="logo-image" src="/admin-resources/images/logo-light.svg" alt="logo">
+            </div>
+
+            <div class="login-box-content uk-padding">
+
+                <p>Create the initial super-user of the CMS. This user has the most privileges and can only be created
+                    once.</p>
+
+                <hr>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Username</label>
+                    <div class="uk-form-controls">
+                        <input name="username" class="uk-input" v-model="user.username" type="text"
+                               placeholder="Username">
+                    </div>
+                </div>
+                <hr>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Password</label>
+                    <div class="uk-form-controls">
+                        <input name="password" class="uk-input" v-model="user.password"
+                               type="password"
+                               placeholder="Password">
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Confirm Password</label>
+                    <div class="uk-form-controls">
+                        <input name="password" class="uk-input" v-on:keyup.enter="register" v-model="confirmPassword"
+                               type="password"
+                               placeholder="Confirm Password">
+                    </div>
+                </div>
+
+                <div class="uk-flex uk-flex-center">
+                    <button id="login-button" v-on:click="register" class="uk-button uk-button-primary">Create User and
+                        Login
+                    </button>
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script src="/admin-resources/js/register.js"></script>
 </body>
+
 </html>

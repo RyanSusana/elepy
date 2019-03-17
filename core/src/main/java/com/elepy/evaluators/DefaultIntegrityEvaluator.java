@@ -32,7 +32,8 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
         for (Field field : uniqueFields) {
             field.setAccessible(true);
             Object prop = field.get(item);
-            final List<T> foundItems = dao.searchInField(field, prop.toString());
+
+            final List<T> foundItems = dao.searchInField(field, prop == null ? "" : prop.toString());
             if (foundItems.size() > 0) {
 
                 if (foundItems.size() > 1) {

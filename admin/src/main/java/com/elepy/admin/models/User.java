@@ -15,8 +15,8 @@ import javax.persistence.Transient;
 
 
 @Delete(accessLevel = AccessLevel.PROTECTED, handler = UserDelete.class)
-@Find(accessLevel = AccessLevel.PROTECTED)
-@Create(handler = UserCreate.class)
+@Find(accessLevel = AccessLevel.PROTECTED, handler = UserFind.class)
+@Create(handler = UserCreate.class, accessLevel = AccessLevel.PUBLIC)
 @Update(accessLevel = AccessLevel.PROTECTED, handler = UserUpdate.class)
 @Evaluators({UserEvaluator.class})
 @RestModel(
@@ -76,6 +76,12 @@ public class User implements UserInterface {
     public User hashWord() {
         return new User(id, username, BCrypt.hashpw(password, BCrypt.gensalt()), email, userType);
     }
+
+    @Transient
+    public User emptyWord() {
+        return new User(id, username, "", email, userType);
+    }
+
 
     public String getId() {
         return this.id;

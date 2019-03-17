@@ -11,7 +11,6 @@ import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.http.Filter;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
@@ -21,7 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.halt;
 
@@ -47,6 +49,8 @@ public class ElepyAdminPanel implements ElepyModule {
 
     private Class<? extends UserInterface> userClass;
 
+    private NoUserFoundHandler noUserFoundHandler;
+
     public ElepyAdminPanel() {
 
         this.userClass = User.class;
@@ -59,27 +63,24 @@ public class ElepyAdminPanel implements ElepyModule {
         this.viewHandler = new ViewHandler(this);
 
 
+        this.noUserFoundHandler = (ctx, crud) -> {
+            ctx.response().redirect("/elepy-initial-user");
+            halt();
+        };
         this.baseAdminAuthenticationFilter = context -> {
-
+            if (userCrud.count() == 0) {
+                noUserFoundHandler.handle(context, userCrud);
+            }
             final UserInterface user = authenticator.authenticate(context.request());
-
 
             if (user != null) {
                 context.request().attribute(ADMIN_USER, user);
-                context.request().session().attribute(ADMIN_USER, user);
             } else {
-                final User adminUser = context.request().session().attribute(ADMIN_USER);
-                if (adminUser == null) {
-                    if (userCrud.count() == 0) {
-                        context.response().redirect("/elepy-initial-user");
-                        halt();
-                    } else {
-                        context.request().session().attribute("redirectUrl", context.request().uri());
-                        context.response().redirect("/elepy-login");
-                        halt();
-                    }
 
-                }
+                context.request().session().attribute("redirectUrl", context.request().uri());
+                context.response().redirect("/elepy-login", 301);
+                halt();
+
             }
 
         };
@@ -95,7 +96,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
     @Override
     public void afterElepyConstruction(HttpService http, ElepyPostConfiguration elepy) {
-
+        new AdminSetupEvaluation(this).evaluate();
         try {
             this.userCrud = elepy.getCrudFor(userClass);
             this.userService = new UserService(userCrud);
@@ -146,6 +147,8 @@ public class ElepyAdminPanel implements ElepyModule {
         });
         http.get("/admin-logout", (request, response) -> {
 
+
+            response.removeCookie("ELEPY_TOKEN");
             request.session().invalidate();
             response.redirect("/elepy-login");
         });
@@ -160,21 +163,31 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
         http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb")));
+
+        http.before("/elepy-login", (request, response) -> {
+            if (userCrud.count() <= 0) {
+                response.redirect("/elepy-initial-user", 301);
+                halt();
+            }
+        });
+
         http.post("/elepy-login", (request, response) -> {
 
-            final Optional<UserInterface> user = userService.login(request.queryParamOrDefault("username", "invalid"), request.queryParamOrDefault("password", "invalid"));
 
+            boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
+
+            int durationInSeconds = keepLoggedIn ? Integer.MAX_VALUE : 60 * 60;
+
+            Token token = tokenHandler.createToken(request.queryParamOrDefault("username", "invalid"),
+                    request.queryParamOrDefault("password", "invalid"), durationInSeconds * 1000L);
             final String redirectUrl = request.session().attribute("redirectUrl") == null ? "/admin" : request.session().attribute("redirectUrl");
 
-            if (user.isPresent()) {
-                request.session().attribute(ADMIN_USER, user.get());
-                response.status(200);
-                request.session().removeAttribute("redirectUrl");
-                response.result(redirectUrl);
-            } else {
-                response.status(401);
-                throw ErrorMessageBuilder.anElepyErrorMessage().withMessage("Invalid login credentials").withStatus(401).build();
-            }
+            response.status(200);
+            request.session().removeAttribute("redirectUrl");
+
+            response.cookie("ELEPY_TOKEN", token.getId(), durationInSeconds);
+            response.result(redirectUrl);
+
         });
 
         http.get("/elepy-login-check", ctx -> {
@@ -189,8 +202,8 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
         http.before("/elepy-initial-user", (request, response) -> {
-            if (userCrud.count() >= 0) {
-                response.redirect("/elepy-login");
+            if (userCrud.count() > 0) {
+                response.redirect("/elepy-login", 301);
                 halt();
             }
         });
@@ -203,7 +216,7 @@ public class ElepyAdminPanel implements ElepyModule {
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
         model.put("descriptors", viewHandler.getDescriptors());
         model.put("plugins", pluginHandler.getPlugins());
-        model.put("user", request.session().attribute(ADMIN_USER));
+        model.put("user", request.attribute(ADMIN_USER));
         model.put("links", links);
         return render(model, templatePath);
     }
@@ -291,6 +304,10 @@ public class ElepyAdminPanel implements ElepyModule {
 
     public boolean isInitiated() {
         return initiated;
+    }
+
+    protected Class<? extends UserInterface> getUserClass() {
+        return userClass;
     }
 
     public AttachmentHandler getAttachmentHandler() {

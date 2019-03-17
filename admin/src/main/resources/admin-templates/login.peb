@@ -27,15 +27,19 @@
 
 
         <div id="login-app"
-             class="login-box uk-card uk-card-secondary uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s uk-background-secondary uk-margin-large-top">
+             class="login-box uk-card uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s  uk-margin-large-top">
 
 
             <div class="login-logo uk-background-primary">
                 <img class="logo-image" src="/admin-resources/images/logo-light.svg" alt="logo">
             </div>
 
-            <div class="login-box-content uk-light uk-padding">
+            <div class="login-box-content uk-padding">
 
+                <div v-if="initialUser">
+                    <p>Login with your recently created user.</p>
+                    <hr>
+                </div>
 
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">Username</label>
@@ -49,15 +53,20 @@
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">Password</label>
                     <div class="uk-form-controls">
-                        <input name="password" class="uk-input" v-model="password" type="password"
+                        <input name="password" class="uk-input" v-on:keyup.enter="login" v-model="password"
+                               type="password"
                                placeholder="Password">
                     </div>
                 </div>
 
+                <div class="uk-margin uk-margin-small-left">
+                    <label><input class="uk-checkbox" v-model="keepLoggedIn" type="checkbox" checked> Remain logged
+                        in</label>
+                </div>
                 <div class="uk-flex uk-flex-center">
                     <button id="login-button" v-on:click="login" class="uk-button uk-button-primary">Login</button>
 
-                    </div>
+                </div>
             </div>
 
 

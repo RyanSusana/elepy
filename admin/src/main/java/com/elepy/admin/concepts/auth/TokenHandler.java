@@ -24,16 +24,15 @@ public class TokenHandler implements AuthHandler {
 
     @Override
     public UserInterface login(Request request) {
-        final String elepyToken = request.headers("ELEPY_TOKEN");
 
-        if (elepyToken != null && isValid(elepyToken)) {
-            for (Token token : tokens) {
-                if (token.getId().trim().equals(elepyToken)) {
-                    return token.getUser();
-                }
-            }
-        }
-        return null;
+        String cookieToken = request.cookie("ELEPY_TOKEN");
+
+
+        final String elepyToken = cookieToken == null ? request.headers("ELEPY_TOKEN") : cookieToken;
+
+        Optional<Token> validToken = getValidToken(elepyToken);
+
+        return validToken.map(Token::getUser).orElse(null);
     }
 
     public Token createToken(Request request) {
@@ -47,17 +46,17 @@ public class TokenHandler implements AuthHandler {
         final String username = credentials.get()[0];
         final String password = credentials.get()[1];
 
-        return createToken(username, password);
+        return createToken(username, password, 1000 * 60 * 60 * 3);
     }
 
-    private Token createToken(String username, String password) {
+    public Token createToken(String username, String password, long duration) {
         final Optional<UserInterface> login = userService.login(username, password);
 
         if (!login.isPresent()) {
             throw new ElepyException("Invalid username or password", 401);
         }
 
-        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(1000 * 60 * 60 * 3).setUser(login.get());
+        final Token token = new Token().setId(UUID.randomUUID().toString()).setCreationTime(System.currentTimeMillis()).setDuration(duration).setUser(login.get());
 
         tokens.add(token);
         return token;
@@ -72,9 +71,13 @@ public class TokenHandler implements AuthHandler {
         });
     }
 
-    private boolean isValid(String id) {
+    private Optional<Token> getValidToken(String id) {
         removeOverdueTokens();
-        return tokens.stream().anyMatch(token -> id.equals(token.getId()));
+
+        if (id == null) {
+            return Optional.empty();
+        }
+        return tokens.stream().filter(token -> id.equals(token.getId())).findAny();
     }
 
 

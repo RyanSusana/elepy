@@ -4,16 +4,29 @@ const app = new Vue({
     data: {
 
         username: "",
-        password: ""
+        password: "",
+        keepLoggedIn: false,
+        initialUser: false
+    },
+    created: function () {
+        this.initialUser = this.getQueryParams("initialUser") != null
     },
     methods: {
+
+        getQueryParams: function (qs) {
+            let url_string = window.location.href;
+            let url = new URL(url_string);
+            return url.searchParams.get(qs)
+        },
+
         login: function () {
 
             let selfReference = this;
             axios.post("/elepy-login", null, {
                 params: {
                     "username": selfReference.username,
-                    "password": selfReference.password
+                    "password": selfReference.password,
+                    "keepLoggedIn": selfReference.keepLoggedIn
                 }
             }).then(function (response) {
                 window.location = response.data

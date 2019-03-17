@@ -1,4 +1,4 @@
-//@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto+Slab');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 $primary-color: #39f;
 
@@ -22,6 +22,7 @@ $dark-grey: #212121;
 $sidebar-color: $primary-color;
 $global-link-color: $primary-color;
 
+$global-font-family: 'Open Sans', sans-serif;
 $notification-message-background: lighten($dark-grey, 3%);
 $notification-message-color: #ccc;
 $global-primary-background: $primary-color;

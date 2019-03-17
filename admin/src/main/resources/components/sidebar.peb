@@ -38,7 +38,7 @@
                 <li><a href="{{ link.href }}" target="_blank"><i class="{{ link.fontAwesomeClass }}"></i>{{ link.text }}
                 </a></li>
             {% endfor %}
-            <li><a href="/admin-logout"><i class="fas fa-sign-out-alt"></i>Log out: {{user.username}}</a></li>
+            <li><a href="/admin-logout"><i class="fas fa-sign-out-alt"></i>Log out</a></li>
 
         </ul>
     </div>

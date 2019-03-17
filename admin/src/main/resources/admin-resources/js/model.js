@@ -275,7 +275,7 @@ var template = `
                                   v-bind:disabled="field.generated == true || (field.editable == false && !creating)"
                                   placeholder="Click to select a date" input-class="uk-input"
                                   calendar-class="uk-dark"
-                                  output-format = "x" :minDate="field.minimumDate" no-header="true" :maxDate="field.maximumDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime">
+                                  output-format = "x" :minDate="field.minimumDate"  :maxDate="field.maximumDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime">
                                   
 </vuejs-datepicker>
                 <!-- COLOR -->
@@ -379,7 +379,7 @@ var template = `
                                           input-class="uk-input"
                                           format="x"
                                           calendar-class="uk-dark"
-                                          output-format = "x" :minDate="field.minimumDate" no-header="true" :maxDate="field.maximumDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime"></vuejs-datepicker>
+                                          output-format = "x" :minDate="field.minimumDate" :maxDate="field.maximumDate" :auto-close = "!field.includeTime" :only-date="!field.includeTime"></vuejs-datepicker>
 
                         <!-- COLOR -->
                         <vuejs-colorpicker
@@ -460,4 +460,20 @@ Vue.component('elepy-form', {
     props: ['selecteddata', 'selectedmodel', 'creating'],
     template: template,
     delimiters: ['((', '))'],
+    methods: {
+        compileMarkdown: function (item) {
+            return marked(item, {sanitize: false})
+        },
+        fromDate: function (field, index) {
+            this.selectedData[field] = document.getElementById('date-form-field-' + index).value;
+            this.newData[field] = document.getElementById('date-form2-field-' + index).value;
+
+            console.log(document.getElementById('date-form2-field-' + index).value);
+
+        },
+        toDate: function (milli) {
+            var date = new Date(milli);
+            return date.yyyymmdd();
+        },
+    }
 })

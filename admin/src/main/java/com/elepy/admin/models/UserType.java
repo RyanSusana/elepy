@@ -11,8 +11,7 @@ public enum UserType {
     @PrettyName("Super Admin") SUPER_ADMIN(100),
     @PrettyName("Administrator") ADMIN(95),
     @PrettyName("Moderator") MODERATOR(90),
-    @PrettyName("Regular User") USER(0),
-    @PrettyName("Banned") DISABLED(-1);
+    @PrettyName("Regular User") USER(0);
 
     private final int level;
 

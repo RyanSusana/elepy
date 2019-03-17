@@ -11,26 +11,32 @@
 #login-button {
   margin-top: 2em;
   width: 50%;
-  padding: 5px;
+  padding: 10px;
+  text-transform: none;
+  font-size: 1.08em;
 }
 
-@mixin hook-form-single-line() {
-  background-color: red;
-}
 
 .login-box {
   border-radius: .3em;
   overflow: hidden;
+
+  background: #FAFAFA;
+
+  box-shadow: 0 2px 1px #aaa;
+
+  hr {
+    border-top: 1px solid #aaa;
+  }
 }
 
 .login-box-content {
 
-  height: 300px;
 }
 
 .login-logo {
 
   .logo-image {
-    padding: 2.5em 3.5em;
+    padding: 2.5em 4em;
   }
 }
