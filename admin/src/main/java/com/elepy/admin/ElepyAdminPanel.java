@@ -72,18 +72,16 @@ public class ElepyAdminPanel implements ElepyModule {
         };
         this.baseAdminAuthenticationFilter = context -> {
             if (userCrud.count() == 0) {
-                noUserFoundHandler.handle(context, userCrud);
+                noUserFoundHandler.handle(context, (Crud<UserInterface>) userCrud);
             }
             final UserInterface user = authenticator.authenticate(context.request());
 
             if (user != null) {
                 context.request().attribute(ADMIN_USER, user);
             } else {
-
                 context.request().session().attribute("redirectUrl", context.request().uri());
                 context.response().redirect("/elepy-login", 301);
                 halt();
-
             }
 
         };
@@ -150,8 +148,6 @@ public class ElepyAdminPanel implements ElepyModule {
             response.result(renderWithDefaults(request, model, "admin-templates/base.peb"));
         });
         http.get("/admin-logout", (request, response) -> {
-
-
             response.removeCookie("ELEPY_TOKEN");
             request.session().invalidate();
             response.redirect("/elepy-login");
@@ -168,10 +164,9 @@ public class ElepyAdminPanel implements ElepyModule {
 
         http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb")));
 
-        http.before("/elepy-login", (request, response) -> {
+        http.before("/elepy-login", ctx -> {
             if (userCrud.count() <= 0) {
-                response.redirect("/elepy-initial-user", 301);
-                halt();
+                noUserFoundHandler.handle(ctx, (Crud<UserInterface>) userCrud);
             }
         });
 

@@ -6,5 +6,5 @@ import com.elepy.http.HttpContext;
 
 public interface NoUserFoundHandler {
 
-    void handle(HttpContext context, Crud<? extends UserInterface> crud);
+    void handle(HttpContext context, Crud<UserInterface> crud);
 }
