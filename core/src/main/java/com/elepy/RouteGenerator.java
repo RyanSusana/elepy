@@ -38,7 +38,7 @@ public class RouteGenerator<T> {
 
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
-            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, baseSlug + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
+            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, (baseSlug.endsWith("/") ? "" : "/") + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
             elepy.putModelDescription(modelDescription);
             Map<String, Object> jsonDescription = modelDescription.getJsonDescription();
 
