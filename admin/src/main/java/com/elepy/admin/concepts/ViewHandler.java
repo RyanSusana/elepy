@@ -3,17 +3,19 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
-import com.elepy.utils.ClassUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ViewHandler {
     private List<Map<String, Object>> descriptors;
     private Map<Class<?>, Map<String, Object>> descriptorMap;
     private Map<ResourceView, Map<String, Object>> customViews;
     private ElepyAdminPanel adminPanel;
+    private ElepyPostConfiguration elepyPostConfiguration;
 
     public ViewHandler(ElepyAdminPanel adminPanel) {
         this.adminPanel = adminPanel;
@@ -27,6 +29,7 @@ public class ViewHandler {
         this.descriptorMap = mapDescriptors();
         this.customViews = customViews();
 
+        this.elepyPostConfiguration = elepyPostConfiguration;
         for (ResourceView resourceView : customViews.keySet()) {
             resourceView.setup(adminPanel);
         }
@@ -79,13 +82,11 @@ public class ViewHandler {
         });
         for (Class<?> cls : descriptorMap.keySet()) {
             if (cls.isAnnotationPresent(View.class)) {
-                Map<ResourceView, Map<String, Object>> map = new HashMap<>();
 
                 final View annotation = cls.getAnnotation(View.class);
 
-                final Optional<Constructor<?>> emptyConstructor = ClassUtils.getEmptyConstructor(annotation.value());
 
-                final ResourceView resourceView = (ResourceView) emptyConstructor.get().newInstance();
+                final ResourceView resourceView = elepyPostConfiguration.initializeElepyObject(annotation.value());
                 resourceView.setDescriptor(descriptorMap.get(cls));
                 classes.add(cls);
                 views.put(resourceView, descriptorMap.get(cls));
