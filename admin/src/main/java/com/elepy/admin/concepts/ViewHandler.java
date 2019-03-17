@@ -3,19 +3,16 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
+import com.elepy.describers.ModelDescription;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ViewHandler {
-    private List<Map<String, Object>> descriptors;
-    private Map<Class<?>, Map<String, Object>> descriptorMap;
-    private Map<ResourceView, Map<String, Object>> customViews;
     private ElepyAdminPanel adminPanel;
-    private ElepyPostConfiguration elepyPostConfiguration;
+
+    private Map<ModelDescription<?>, RestModelView> models;
 
     public ViewHandler(ElepyAdminPanel adminPanel) {
         this.adminPanel = adminPanel;
@@ -24,93 +21,64 @@ public class ViewHandler {
 
     public void setup(ElepyPostConfiguration elepyPostConfiguration) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
 
-
-        this.elepyPostConfiguration = elepyPostConfiguration;
-        this.descriptors = elepyPostConfiguration.getDescriptors();
-        this.descriptorMap = mapDescriptors();
-        this.customViews = customViews();
-
-        for (ResourceView resourceView : customViews.keySet()) {
-            resourceView.setup(adminPanel);
-        }
+        this.models = mapModels(elepyPostConfiguration);
     }
 
+
     public void routes(ElepyPostConfiguration elepyPostConfiguration) {
-        for (Map<String, Object> descriptor : descriptors) {
-            adminPanel.http().get("/admin/config" + descriptor.get("slug"), (request, response) -> {
+
+        for (ModelDescription<?> descriptor : models.keySet()) {
+            adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
                 response.type("application/json");
                 response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
-                        descriptor
+                        descriptor.getJsonDescription()
                 ));
             });
         }
-        for (ResourceView resourceView : customViews.keySet()) {
-            adminPanel.http().get("/admin" + resourceView.getDescriptor().get("slug"), (request, response) -> {
 
-                Map<String, Object> model = new HashMap<>();
+        models.forEach((modelDescription, restModelView) -> {
+            if (restModelView == null) {
 
-                model.put("content", resourceView.renderView(resourceView.getDescriptor()));
-                model.put("headers", resourceView.renderHeaders());
+                //Default View
+                adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
-                model.put("currentDescriptor", resourceView.getDescriptor());
-                response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
-            });
-        }
-        for (Map<String, Object> descriptor : descriptors) {
-            defaultDescriptorPanel(descriptor, descriptors);
-        }
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("currentDescriptor", modelDescription.getJsonDescription());
+                    response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
+                });
+            } else {
 
-    }
+                //Custom View
+                adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
-    private Map<Class<?>, Map<String, Object>> mapDescriptors() throws ClassNotFoundException {
-        Map<Class<?>, Map<String, Object>> newDescriptorMap = new HashMap<>();
-        for (Map<String, Object> descriptor : descriptors) {
-            final Class<?> javaClass = Class.forName((String) descriptor.get("javaClass"));
+                    Map<String, Object> model = new HashMap<>();
 
-            newDescriptorMap.put(javaClass, descriptor);
-        }
+                    model.put("content", restModelView.renderView(modelDescription));
 
-        return newDescriptorMap;
-    }
+                    // TODO parse stylesheets
+                    model.put("headers", null);
 
-    private Map<ResourceView, Map<String, Object>> customViews() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        Map<ResourceView, Map<String, Object>> views = new HashMap<>();
-        List<Class<?>> classes = new ArrayList<>();
-
-        descriptorMap.forEach((cls, description) -> {
-
+                    model.put("currentDescriptor", modelDescription.getJsonDescription());
+                    response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
+                });
+            }
         });
-        for (Class<?> cls : descriptorMap.keySet()) {
-            if (cls.isAnnotationPresent(View.class)) {
+    }
 
-                final View annotation = cls.getAnnotation(View.class);
+    private Map<ModelDescription<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        Map<ModelDescription<?>, RestModelView> modelsToReturn = new HashMap<>();
+        for (ModelDescription<?> modelDescription : elepyPostConfiguration.getModelDescriptions()) {
 
+            if (modelDescription.getModelType().isAnnotationPresent(View.class)) {
 
-                final ResourceView resourceView = elepyPostConfiguration.initializeElepyObject(annotation.value());
-                resourceView.setDescriptor(descriptorMap.get(cls));
-                classes.add(cls);
-                views.put(resourceView, descriptorMap.get(cls));
+                final View annotation = modelDescription.getModelType().getAnnotation(View.class);
+                final RestModelView restModelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
+
+                modelsToReturn.put(modelDescription, restModelView);
+            } else {
+                modelsToReturn.put(modelDescription, null);
             }
         }
-        for (Class<?> cls : classes) {
-            descriptorMap.remove(cls);
-        }
-        return views;
-    }
-
-    private void defaultDescriptorPanel(Map<String, Object> descriptor, List<Map<String, Object>> descriptors) {
-
-        adminPanel.http().get("/admin" + descriptor.get("slug"), (request, response) -> {
-
-            Map<String, Object> model = new HashMap<>();
-
-            model.put("descriptors", descriptors);
-            model.put("currentDescriptor", descriptor);
-            response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
-        });
-    }
-
-    public List<Map<String, Object>> getDescriptors() {
-        return descriptors;
+        return modelsToReturn;
     }
 }

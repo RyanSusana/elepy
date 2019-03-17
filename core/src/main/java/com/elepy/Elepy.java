@@ -142,13 +142,6 @@ public class Elepy implements ElepyContext {
     }
 
 
-    /**
-     * @return List of JSON-descriptions of all the models. This is only valid after {@link #start()}
-     * has been called.
-     */
-    public List<Map<String, Object>> getDescriptors() {
-        return this.descriptors;
-    }
 
     /**
      * @return if Elepy is initiated or not
@@ -551,6 +544,12 @@ public class Elepy implements ElepyContext {
         return (ModelDescription<T>) classModelDescriptionMap.get(clazz);
     }
 
+    /**
+     * @return All ModelDescription
+     */
+    public List<ModelDescription<?>> getModelDescriptions() {
+        return new ArrayList<>(classModelDescriptionMap.values());
+    }
 
     void putModelDescription(ModelDescription<?> clazz) {
         classModelDescriptionMap.put(clazz.getModelType(), clazz);

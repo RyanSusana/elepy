@@ -10,6 +10,7 @@ import com.elepy.admin.concepts.auth.TokenHandler;
 import com.elepy.admin.models.*;
 import com.elepy.admin.services.UserService;
 import com.elepy.dao.Crud;
+import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Filter;
 import com.elepy.http.HttpService;
@@ -45,6 +46,8 @@ public class ElepyAdminPanel implements ElepyModule {
 
     private HttpService http;
     private PebbleEngine engine;
+
+    private List<ModelDescription<?>> modelDescriptions;
 
 
     private Class<? extends UserInterface> userClass;
@@ -110,6 +113,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
             this.attachmentHandler.setupAttachments(elepy);
             this.initiated = true;
+            this.modelDescriptions = elepy.getModelDescriptions();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -214,7 +218,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
-        model.put("descriptors", viewHandler.getDescriptors());
+        model.put("descriptors", modelDescriptions);
         model.put("plugins", pluginHandler.getPlugins());
         model.put("user", request.attribute(ADMIN_USER));
         model.put("links", links);

@@ -1,20 +1,14 @@
 package com.elepy;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ClassDescriber;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.http.AccessLevel;
 import com.elepy.http.HttpContext;
 import com.elepy.http.HttpMethod;
-import com.elepy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
@@ -36,28 +30,17 @@ public class RouteGenerator<T> {
 
     }
 
-    private String evaluateHasIdField(Class cls) {
-
-        Field field = ClassUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
-
-        if (!Arrays.asList(Long.class, String.class, Integer.class).contains(org.apache.commons.lang3.ClassUtils.primitivesToWrappers(field.getType())[0])) {
-            throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
-        }
-
-        return ClassUtils.getPropertyName(field);
-
-    }
-
 
     public Map<String, Object> setupPojo() {
-        evaluateHasIdField(clazz);
+
 
         try {
 
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
-            ModelDescription<T> modelDescription = new ModelDescription<>(baseSlug + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
+            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, baseSlug + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
             elepy.putModelDescription(modelDescription);
+            Map<String, Object> jsonDescription = modelDescription.getJsonDescription();
 
             //POST
             elepy.addRouting(anElepyRoute()
@@ -116,10 +99,12 @@ public class RouteGenerator<T> {
                     .build()
             );
 
+
+            return jsonDescription;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            throw new ElepyConfigException("Failed to generate routes for: " + clazz.getName());
         }
-        return getPojoDescriptor(restModel, clazz);
     }
 
     private HttpContext injectModelClassInHttpContext(HttpContext ctx) {
@@ -127,31 +112,5 @@ public class RouteGenerator<T> {
         return ctx;
     }
 
-    private Map<String, Object> getPojoDescriptor(ResourceDescriber restModel, Class<?> clazz) {
-        Map<String, Object> model = new HashMap<>();
-        if (baseSlug.equals("/")) {
-            model.put("slug", restModel.getSlug());
 
-        } else {
-            model.put("slug", baseSlug + restModel.getSlug());
-        }
-        model.put("name", restModel.getName());
-
-        model.put("javaClass", clazz.getName());
-
-        model.put("actions", getActions(restModel));
-        model.put("idField", evaluateHasIdField(clazz));
-        model.put("fields", new ClassDescriber(clazz).getStructure());
-        return model;
-    }
-
-    private Map<String, AccessLevel> getActions(ResourceDescriber restModel) {
-        Map<String, AccessLevel> actions = new HashMap<>();
-        actions.put("findOne", restModel.getFindAccessLevel());
-        actions.put("findAll", restModel.getFindAccessLevel());
-        actions.put("update", restModel.getUpdateAccessLevel());
-        actions.put("DELETE", restModel.getDeleteAccessLevel());
-        actions.put("singleCreate", restModel.getCreateAccessLevel());
-        return actions;
-    }
 }

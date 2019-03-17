@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Map;
 
 
 public class ElepyPostConfiguration {
@@ -240,19 +239,18 @@ public class ElepyPostConfiguration {
     }
 
     /**
-     * @return List of JSON-descriptions of all the models. This is only valid after {@link Elepy#start()}
-     * has been called.
-     */
-    public List<Map<String, Object>> getDescriptors() {
-        return elepy.getDescriptors();
-    }
-
-    /**
      * @param clazz The RestModel's class
      * @param <T>   The RestModel's type
      * @return a model description representing everything you need to know about a RestModel
      */
     public <T> ModelDescription<T> getModelDescriptionFor(Class<T> clazz) {
         return elepy.getModelDescriptionFor(clazz);
+    }
+
+    /**
+     * @return All ModelDescription
+     */
+    public List<ModelDescription<?>> getModelDescriptions() {
+        return elepy.getModelDescriptions();
     }
 }
