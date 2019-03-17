@@ -25,11 +25,11 @@ public class ViewHandler {
     public void setup(ElepyPostConfiguration elepyPostConfiguration) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
 
 
+        this.elepyPostConfiguration = elepyPostConfiguration;
         this.descriptors = elepyPostConfiguration.getDescriptors();
         this.descriptorMap = mapDescriptors();
         this.customViews = customViews();
 
-        this.elepyPostConfiguration = elepyPostConfiguration;
         for (ResourceView resourceView : customViews.keySet()) {
             resourceView.setup(adminPanel);
         }
