@@ -4,6 +4,7 @@ import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.IdentityProvider;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ModelDescription<T> {
 
@@ -41,5 +42,18 @@ public class ModelDescription<T> {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModelDescription<?> that = (ModelDescription<?>) o;
+        return modelType.equals(that.modelType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(modelType);
     }
 }
