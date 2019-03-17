@@ -1,5 +1,5 @@
 ![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
-# Version 2.0, on the way!
+# Version 2.0 is almost here!
 Elepy is [currently in beta-1 of its version 2 release](https://github.com/RyanSusana/elepy/projects/2). You can download it here:
 ``` xml
 <dependency>
