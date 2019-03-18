@@ -158,9 +158,13 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
         if (findAnnotation != null) {
             findAccessLevel = findAnnotation.accessLevel();
-            if (!findAnnotation.handler().equals(DefaultFind.class)) {
-                serviceBuilder.find(elepy.initializeElepyObject(findAnnotation.handler()));
+            if (!findAnnotation.findManyHandler().equals(DefaultFindMany.class)) {
+                serviceBuilder.findMany(elepy.initializeElepyObject(findAnnotation.findManyHandler()));
             }
+            if (!findAnnotation.findOneHandler().equals(DefaultFindOne.class)) {
+                serviceBuilder.findOne(elepy.initializeElepyObject(findAnnotation.findOneHandler()));
+            }
+
         }
 
         if (createAnnotation != null) {

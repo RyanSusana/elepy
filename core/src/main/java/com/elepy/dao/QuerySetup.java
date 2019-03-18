@@ -1,8 +1,10 @@
 package com.elepy.dao;
 
 
+import com.elepy.routes.FindManyHandler;
+
 /**
- * This object represents a query to a {@link com.elepy.routes.FindHandler}
+ * This object represents a query to a {@link FindManyHandler}
  */
 public class QuerySetup {
 

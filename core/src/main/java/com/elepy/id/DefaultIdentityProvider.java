@@ -16,7 +16,7 @@ public class DefaultIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public void provideId(T item, Crud<T> dao) {
-        Class<?> idType = ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
+        Class<?> idType = ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
 
         if (idType == String.class) {
             hexIdentityProvider.provideId(item, dao);

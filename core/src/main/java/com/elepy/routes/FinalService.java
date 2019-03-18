@@ -7,14 +7,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FinalService<T> implements ServiceHandler<T> {
 
-    private final FindHandler<T> find;
+    private final FindManyHandler<T> findMany;
+    private final FindOneHandler<T> findOne;
     private final CreateHandler<T> create;
     private final UpdateHandler<T> update;
     private final DeleteHandler<T> delete;
 
 
-    FinalService(FindHandler<T> find, CreateHandler<T> create, UpdateHandler<T> update, DeleteHandler<T> delete) {
-        this.find = find;
+    FinalService(FindManyHandler<T> findMany, FindOneHandler<T> findOne, CreateHandler<T> create, UpdateHandler<T> update, DeleteHandler<T> delete) {
+        this.findMany = findMany;
+        this.findOne = findOne;
         this.create = create;
         this.update = update;
         this.delete = delete;
@@ -22,12 +24,12 @@ public class FinalService<T> implements ServiceHandler<T> {
 
     @Override
     public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        find.handleFindMany(context, crud, modelDescription, objectMapper);
+        findMany.handleFindMany(context, crud, modelDescription, objectMapper);
     }
 
     @Override
     public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        find.handleFindOne(context, crud, modelDescription, objectMapper);
+        findOne.handleFindOne(context, crud, modelDescription, objectMapper);
     }
 
     @Override

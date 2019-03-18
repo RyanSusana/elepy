@@ -28,7 +28,7 @@ public @interface Update {
     /**
      * The class that handles the functionality of deletes on this Resource.
      *
-     * @return the route handler
+     * @return the route updateHandler
      * @see com.elepy.routes.SimpleUpdate
      * @see DefaultUpdate
      * @see com.elepy.routes.UpdateHandler

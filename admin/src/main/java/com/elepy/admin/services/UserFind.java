@@ -9,14 +9,15 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.routes.FindHandler;
+import com.elepy.routes.FindManyHandler;
+import com.elepy.routes.FindOneHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class UserFind implements FindHandler<User> {
+public class UserFind implements FindManyHandler<User>, FindOneHandler<User> {
     public void find(Request request, Response response, Crud<User> dao, ObjectMapper objectMapper) throws JsonProcessingException {
 
         response.type("application/json");

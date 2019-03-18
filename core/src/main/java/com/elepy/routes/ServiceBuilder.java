@@ -1,7 +1,8 @@
 package com.elepy.routes;
 
 public final class ServiceBuilder<T> {
-    private FindHandler<T> find;
+    private FindOneHandler<T> findOne;
+    private FindManyHandler<T> findMany;
     private CreateHandler<T> create;
     private UpdateHandler<T> update;
     private DeleteHandler<T> delete;
@@ -10,15 +11,16 @@ public final class ServiceBuilder<T> {
         delete = new DefaultDelete<>();
         create = new DefaultCreate<>();
         update = new DefaultUpdate<>();
-        find = new DefaultFind<>();
+        findMany = new DefaultFindMany<>();
+        findOne = new DefaultFindOne<>();
     }
 
     public ServiceBuilder<T> defaultFunctionality(ServiceHandler<T> service) {
-        return find(service).create(service).update(service).delete(service);
+        return findMany(service).create(service).update(service).delete(service);
     }
 
-    public ServiceBuilder<T> find(FindHandler<T> find) {
-        this.find = find;
+    public ServiceBuilder<T> findMany(FindManyHandler<T> find) {
+        this.findMany = find;
         return this;
     }
 
@@ -37,7 +39,14 @@ public final class ServiceBuilder<T> {
         return this;
     }
 
-    public FinalService<T> build() {
-        return new FinalService<>(find, create, update, delete);
+    public ServiceBuilder<T> findOne(FindOneHandler<T> findOne) {
+        this.findOne = findOne;
+        return this;
     }
+
+    public FinalService<T> build() {
+        return new FinalService<>(findMany, findOne, create, update, delete);
+    }
+
+
 }

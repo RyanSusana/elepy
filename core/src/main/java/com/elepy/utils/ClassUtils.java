@@ -107,7 +107,7 @@ public class ClassUtils {
     }
 
     public static Object toObjectIdFromString(Class tClass, String value) {
-        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
+        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
 
         return toObject(idType, value);
     }

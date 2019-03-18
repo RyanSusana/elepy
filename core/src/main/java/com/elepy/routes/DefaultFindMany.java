@@ -10,9 +10,12 @@ import com.elepy.http.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Optional;
+public class DefaultFindMany<T> implements FindManyHandler<T> {
 
-public class DefaultFind<T> implements FindHandler<T> {
+    @Override
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+        find(context.request(), context.response(), crud, objectMapper);
+    }
 
     public void find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
 
@@ -35,29 +38,5 @@ public class DefaultFind<T> implements FindHandler<T> {
 
     }
 
-    public void findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, Class<T> clazz) throws JsonProcessingException {
-        response.type("application/json");
 
-        Object paramId = request.modelId();
-
-        final Optional<T> id = dao.getById(paramId);
-        if (id.isPresent()) {
-            response.status(200);
-            response.result(objectMapper.writeValueAsString(id.get()));
-        } else {
-            response.status(404);
-            response.result("");
-        }
-    }
-
-
-    @Override
-    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        find(context.request(), context.response(), crud, objectMapper);
-    }
-
-    @Override
-    public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        findOne(context.request(), context.response(), crud, objectMapper, modelDescription.getModelType());
-    }
 }

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public interface UpdateHandler<T> {
     /**
      * This handles the functionality of model updates.
-     *
+     * <p>
      * e.g PUT /model/:id
      *
      * @param crud The crud implementation
@@ -22,7 +22,7 @@ public interface UpdateHandler<T> {
 
     /**
      * This handles the functionality of partial model updates.
-     *
+     * <p>
      * e.g PATCH /model/:id
      *
      * @param crud The crud implementation

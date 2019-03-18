@@ -28,7 +28,7 @@ public @interface Create {
     /**
      * The class that handles the functionality of creates on this Resource.
      *
-     * @return the route handler
+     * @return the route createHandler
      * @see DefaultCreate
      * @see com.elepy.routes.CreateHandler
      */

@@ -2,8 +2,10 @@ package com.elepy.annotations;
 
 
 import com.elepy.http.AccessLevel;
-import com.elepy.routes.DefaultFind;
-import com.elepy.routes.FindHandler;
+import com.elepy.routes.DefaultFindMany;
+import com.elepy.routes.DefaultFindOne;
+import com.elepy.routes.FindManyHandler;
+import com.elepy.routes.FindOneHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,9 +30,18 @@ public @interface Find {
     /**
      * The class that handles the functionality of finds on this Resource.
      *
-     * @return the route handler
-     * @see DefaultFind
-     * @see com.elepy.routes.FindHandler
+     * @return the route findManyHandler
+     * @see DefaultFindMany
+     * @see FindManyHandler
      */
-    Class<? extends FindHandler> handler() default DefaultFind.class;
+    Class<? extends FindManyHandler> findManyHandler() default DefaultFindMany.class;
+
+    /**
+     * The class that handles the functionality of finds on this Resource.
+     *
+     * @return the route findOneHandler
+     * @see DefaultFindMany
+     * @see FindManyHandler
+     */
+    Class<? extends FindOneHandler> findOneHandler() default DefaultFindOne.class;
 }

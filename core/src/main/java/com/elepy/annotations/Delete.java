@@ -27,7 +27,7 @@ public @interface Delete {
     /**
      * The class that handles the functionality of deletes on this Resource.
      *
-     * @return the route handler
+     * @return the route deleteHandler
      * @see DefaultDelete
      * @see com.elepy.routes.DeleteHandler
      */
