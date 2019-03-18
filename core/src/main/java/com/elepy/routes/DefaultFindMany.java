@@ -1,6 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
+import com.elepy.dao.Page;
 import com.elepy.dao.QuerySetup;
 import com.elepy.dao.SortOption;
 import com.elepy.describers.ModelDescription;
@@ -14,10 +15,12 @@ public class DefaultFindMany<T> implements FindManyHandler<T> {
 
     @Override
     public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        find(context.request(), context.response(), crud, objectMapper);
+        Page<T> page = find(context.request(), context.response(), crud, objectMapper);
+
+        context.response().result(objectMapper.writeValueAsString(page));
     }
 
-    public void find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
+    public Page<T> find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
 
         response.type("application/json");
         String q = request.queryParams("q");
@@ -34,8 +37,7 @@ public class DefaultFindMany<T> implements FindManyHandler<T> {
 
 
         response.status(200);
-        response.result(objectMapper.writeValueAsString(dao.search(new QuerySetup(q, fieldSort, ((fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageNumber, pageSize))));
-
+        return dao.search(new QuerySetup(q, fieldSort, ((fieldDirection != null && fieldDirection.toLowerCase().contains("desc")) ? SortOption.DESCENDING : SortOption.ASCENDING), pageNumber, pageSize));
     }
 
 

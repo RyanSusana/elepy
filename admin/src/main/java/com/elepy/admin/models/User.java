@@ -78,7 +78,7 @@ public class User implements UserInterface {
     }
 
     @Transient
-    public User emptyWord() {
+    public User withEmptyPassword() {
         return new User(id, username, "", email, userType);
     }
 
