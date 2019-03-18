@@ -1,6 +1,5 @@
 package com.elepy.describers;
 
-import com.elepy.annotations.Boolean;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
@@ -50,7 +49,7 @@ public class MethodDescriber {
         fieldMap.put("generated", true);
 
         if (fieldType.equals(FieldType.BOOLEAN)) {
-            final Boolean annotation = method.getAnnotation(Boolean.class);
+            final TrueFalse annotation = method.getAnnotation(TrueFalse.class);
             fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
             fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
         } else if (fieldType.equals(FieldType.ENUM)) {

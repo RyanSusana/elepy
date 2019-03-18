@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface Boolean {
+public @interface TrueFalse {
 
     /**
      * @return What to display in the CMS to describe true
