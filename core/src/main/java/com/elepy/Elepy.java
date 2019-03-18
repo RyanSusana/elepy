@@ -610,8 +610,9 @@ public class Elepy implements ElepyContext {
 
     private void setupExtraRoutes() {
         try {
-            for (Class<?> model : models) {
-                final ExtraRoutes extraRoutesAnnotation = model.getAnnotation(ExtraRoutes.class);
+
+            for (ModelDescription<?> model : getModelDescriptions()) {
+                final ExtraRoutes extraRoutesAnnotation = model.getModelType().getAnnotation(ExtraRoutes.class);
 
                 if (extraRoutesAnnotation != null) {
                     for (Class<?> aClass : extraRoutesAnnotation.value()) {
