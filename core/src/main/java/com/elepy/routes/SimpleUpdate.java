@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 
 /**
- * A helper class for developers to easily authenticate the update of objects.
+ * A helper class for developers to easily handle the update of objects.
  *
  * @param <T> the model you're updating
  * @see com.elepy.annotations.Update

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * A helper class for developers to easily authenticate the creation of objects.
+ * A helper class for developers to easily handle the creation of objects.
  *
  * @param <T> the model you're updating
  * @see com.elepy.annotations.Create
