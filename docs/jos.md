@@ -1,2 +1,0 @@
-# jos
-content
