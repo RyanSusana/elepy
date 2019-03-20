@@ -5,7 +5,7 @@ Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSus
 <dependency>
     <groupId>com.elepy</groupId>
     <artifactId>elepy-*</artifactId>
-    <version>2.0.0-beta-2</version>
+    <version>2.0.0-beta-3</version>
 </dependency>
 ```
 
