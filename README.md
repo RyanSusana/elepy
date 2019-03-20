@@ -8,6 +8,7 @@ Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSus
     <version>2.0.0-beta-3</version>
 </dependency>
 ```
+Docs can be found at: https://docs.elepy.com
 
 # About Elepy
 
