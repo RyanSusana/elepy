@@ -175,7 +175,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
             boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
 
-            int durationInSeconds = keepLoggedIn ? Integer.MAX_VALUE : 60 * 60;
+            int durationInSeconds = keepLoggedIn ? -1 : 60 * 60;
 
             Token token = tokenHandler.createToken(request.queryParamOrDefault("username", "invalid"),
                     request.queryParamOrDefault("password", "invalid"), durationInSeconds * 1000L);
@@ -183,6 +183,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
             response.status(200);
             request.session().removeAttribute("redirectUrl");
+
 
             response.cookie("ELEPY_TOKEN", token.getId(), durationInSeconds);
             response.result(redirectUrl);
