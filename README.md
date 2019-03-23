@@ -18,26 +18,7 @@ It's able to handle extremely complex objects with ease.
 Read this article: https://medium.com/@ryansusana/rapidly-create-a-customized-cms-with-this-awesome-java-framework-e04ef2ea7810
 
 ## Downloads
-The latest versions of elepy can be found at: https://elepy.com/#DOWNLOADS
-### Elepy Core
-The core module of Elepy, can be installed with maven. This includes the API generation and the core functionality of Elepy. For the CMS you must include the `elepy-admin` dependency.
-``` xml
-<dependency>
-    <groupId>com.elepy</groupId>
-    <artifactId>elepy-core</artifactId>
-    <version>LATEST VERSION</version>
-</dependency>
-```
-
-### Elepy Admin
-This is the admin module of Elepy. It contains the powerful content management system.
-``` xml
-<dependency>
-    <groupId>com.elepy</groupId>
-    <artifactId>elepy-admin</artifactId>
-    <version>LATEST VERSION</version>
-</dependency>
-```
+The latest versions of elepy can be found at: https://elepy.com/docs/download
 
 ## Quick Start
 ### Step One: Create and annotate your POJO's
