@@ -14,7 +14,6 @@ import com.elepy.id.IdentityProvider;
 import com.elepy.routes.*;
 import com.elepy.utils.ClassUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +88,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void setupEvaluators() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         objectEvaluators = new ArrayList<>();
 
@@ -98,8 +98,8 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         if (annotation != null) {
             for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {
                 if (objectEvaluatorClass != null) {
-                    final Constructor<? extends ObjectEvaluator> constructor = ClassUtils.emptyConstructor(objectEvaluatorClass);
-                    objectEvaluators.add(constructor.newInstance());
+                    final ObjectEvaluator<T> constructor = elepy.initializeElepyObject(objectEvaluatorClass);
+                    objectEvaluators.add(constructor);
                 }
             }
         }

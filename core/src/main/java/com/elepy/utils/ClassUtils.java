@@ -122,16 +122,6 @@ public class ClassUtils {
         }
     }
 
-    public static <T> Constructor<? extends T> emptyConstructor(Class<T> cls) {
-        final Optional<Constructor<? extends T>> emptyConstructor = getEmptyConstructor(cls);
-
-        if (emptyConstructor.isPresent()) {
-            return emptyConstructor.get();
-        }
-        throw new ElepyConfigException("Elepy Object Constructor must be empty, with no parameters.");
-
-    }
-
     public static Optional<Field> findFieldWithName(Class cls, String name) {
         for (Field field : cls.getDeclaredFields()) {
             if (field.isAnnotationPresent(JsonProperty.class)) {
