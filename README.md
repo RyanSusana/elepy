@@ -69,6 +69,6 @@ public static void main(String[] args) {
 ```
 ### Step Three: Enjoy!
 
-You can now login to the Elepy CMS by going to http://localhost:7777/admin. The username and password is `admin`. You can change at the 'Users' interface.
+You can now login to the Elepy CMS by going to http://localhost:7777/admin.
 
 Visit https://github.com/RyanSusana/elepy-basic-example for an example
