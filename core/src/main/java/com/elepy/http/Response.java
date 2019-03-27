@@ -12,7 +12,7 @@ public interface Response {
 
     String result();
 
-    HttpServletResponse raw();
+    HttpServletResponse servletResponse();
 
     void type(String type);
 

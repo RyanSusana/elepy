@@ -55,7 +55,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
             final Optional<GridFSDBFile> image = imageDao.getGridFile(request.params("id"));
             if (image.isPresent()) {
                 response.type(image.get().getContentType());
-                HttpServletResponse raw = response.raw();
+                HttpServletResponse raw = response.servletResponse();
 
 
                 raw.getOutputStream().write(IOUtils.toByteArray(image.get().getInputStream()));

@@ -154,7 +154,7 @@ public interface HttpContext {
     }
 
     default HttpServletResponse servletResponse() {
-        return response().raw();
+        return response().servletResponse();
     }
 
     default void type(String type) {

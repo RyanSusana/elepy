@@ -34,7 +34,7 @@ public class AttachmentHandler {
         for (Attachment attachment : attachments) {
             adminPanel.http().get(elepyPostConfiguration.getBaseSlug() + attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
                 response.type(attachment.getContentType());
-                HttpServletResponse raw = response.raw();
+                HttpServletResponse raw = response.servletResponse();
 
                 raw.getOutputStream().write(attachment.getSrc());
                 raw.getOutputStream().flush();

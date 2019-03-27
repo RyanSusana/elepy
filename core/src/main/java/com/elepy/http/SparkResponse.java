@@ -41,7 +41,7 @@ public class SparkResponse implements Response {
     }
 
     @Override
-    public HttpServletResponse raw() {
+    public HttpServletResponse servletResponse() {
         return response.raw();
     }
 
