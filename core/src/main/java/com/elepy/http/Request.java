@@ -24,7 +24,7 @@ public interface Request {
 
     String body();
 
-    HttpServletRequest raw();
+    HttpServletRequest servletRequest();
 
     byte[] bodyAsBytes();
 

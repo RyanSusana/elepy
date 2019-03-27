@@ -38,7 +38,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
             try {
                 request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
 
-                final Part part = request.raw().getPart("image");
+                final Part part = request.servletRequest().getPart("image");
                 imageDao.upload(part);
                 response.result("You have succesfully uploaded an image");
             } catch (Exception e) {

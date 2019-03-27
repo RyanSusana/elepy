@@ -58,7 +58,7 @@ public interface HttpContext {
     }
 
     default HttpServletRequest servletRequest() {
-        return request().raw();
+        return request().servletRequest();
     }
 
     default byte[] bodyAsBytes() {

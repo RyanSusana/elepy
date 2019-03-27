@@ -134,7 +134,7 @@ public class SparkRequest implements Request {
         return request.attributes();
     }
 
-    public HttpServletRequest raw() {
+    public HttpServletRequest servletRequest() {
         return request.raw();
     }
 
