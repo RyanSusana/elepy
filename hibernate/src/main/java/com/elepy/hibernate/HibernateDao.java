@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HibernateDao<T> implements Crud<T> {
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
@@ -169,21 +170,13 @@ public class HibernateDao<T> implements Crud<T> {
             if (StringUtils.isEmpty(q)) {
                 return count();
             }
-            StringBuilder sb = new StringBuilder();
 
             List<Field> searchables = ClassUtils.searchForFieldsWithAnnotation(aClass, Searchable.class);
             searchables.add(ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", aClass.getName()))));
-            for (Field searchable : searchables) {
-                sb.append(searchable.getName());
-                sb.append(" LIKE ");
-                sb.append(":searchTerm");
 
-                sb.append(" OR ");
-            }
 
-            sb.delete(sb.length() - 4, sb.length() - 1);
-
-            String hql = "select count(*) from " + aClass.getName() + " WHERE " + sb.toString().replaceAll("false OR", "");
+            String hql = "select count(*) from " + aClass.getName() +
+                    (searchables.isEmpty() ? "" : (" WHERE " + searchables.stream().map(field -> field.getName() + " LIKE :searchTerm").collect(Collectors.joining(" OR "))));
 
 
             return session.createQuery(hql, Long.class).setParameter("searchTerm", "%" + q + "%")
