@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -24,8 +25,9 @@ public class ObjectEvaluateTest extends Base {
 
 
     @Test
-    public void testValidObject() throws Exception {
-        resourceObjectEvaluator.evaluate(validObject(), Resource.class);
+    public void testValidObject() {
+        assertDoesNotThrow(() -> resourceObjectEvaluator.evaluate(validObject(), Resource.class));
+
     }
 
     @Test

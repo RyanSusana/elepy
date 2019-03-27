@@ -8,12 +8,13 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class ObjectUpdateTest extends Base {
 
     @Test
-    public void testSuccessfulUpdate() throws Exception {
+    public void testSuccessfulUpdate() {
         ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
         Resource updatedEditable = validObject();
@@ -21,7 +22,8 @@ public class ObjectUpdateTest extends Base {
 
         Resource resource = validObject();
         resource.setId(updatedEditable.getId());
-        resourceObjectUpdateEvaluator.evaluate(resource, updatedEditable);
+
+        assertDoesNotThrow(() -> resourceObjectUpdateEvaluator.evaluate(resource, updatedEditable));
     }
 
     @Test
