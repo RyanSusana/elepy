@@ -3,8 +3,10 @@ package com.elepy.dao.jongo;
 import com.elepy.dao.FilterableField;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
+import com.elepy.utils.DateUtils;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class MongoFilterTemplate {
     private final String operator;
@@ -24,6 +26,15 @@ public class MongoFilterTemplate {
                 this.value = Long.parseLong(value);
             } else {
                 this.value = Float.parseFloat(value);
+            }
+        } else if (field.getFieldType().equals(FieldType.DATE)) {
+
+            Date date = DateUtils.guessDate(value);
+
+            if (date == null) {
+                this.value = value;
+            } else {
+                this.value = date;
             }
         } else {
             this.value = value;

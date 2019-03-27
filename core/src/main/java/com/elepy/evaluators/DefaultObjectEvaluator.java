@@ -3,10 +3,10 @@ package com.elepy.evaluators;
 import com.elepy.annotations.DateTime;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
-import com.elepy.describers.ClassDescriber;
 import com.elepy.describers.FieldDescriber;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
+import com.elepy.utils.DateUtils;
 
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -72,8 +72,8 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
             DateTime dateTimeAnnotation = fieldDescriber.getField().getAnnotation(DateTime.class);
 
             if (dateTimeAnnotation != null && date != null) {
-                Date min = ClassDescriber.guessDate(dateTimeAnnotation.minimumDate());
-                Date max = ClassDescriber.guessDate(dateTimeAnnotation.maximumDate());
+                Date min = DateUtils.guessDate(dateTimeAnnotation.minimumDate());
+                Date max = DateUtils.guessDate(dateTimeAnnotation.maximumDate());
 
                 if (date.before(min) || date.after(max)) {
                     throw new ElepyException(String.format("%s must be between '%s' and '%s'", fieldDescriber.getPrettyName(), dateTimeAnnotation.minimumDate(), dateTimeAnnotation.maximumDate()));

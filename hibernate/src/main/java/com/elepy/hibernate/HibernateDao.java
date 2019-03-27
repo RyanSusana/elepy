@@ -2,6 +2,7 @@ package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
 import com.elepy.dao.Crud;
+import com.elepy.dao.FilterQuery;
 import com.elepy.dao.Page;
 import com.elepy.dao.SearchQuery;
 import com.elepy.exceptions.ElepyConfigException;
@@ -194,6 +195,23 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public Class<T> getType() {
         return aClass;
+    }
+
+    @Override
+    public long count(List<FilterQuery> filterQueries) {
+
+        // TODO
+        return 0;
+    }
+
+    @Override
+    public Page<T> filter(int pageNumber, int pageSize, List<FilterQuery> filterQueries) {
+        if (filterQueries.size() == 0) {
+            return search(new SearchQuery("", null, null, (long) pageSize, pageSize));
+        }
+
+        // TODO
+        return null;
     }
 
     @Override

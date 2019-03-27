@@ -79,7 +79,7 @@ public class ElepyEndToEndTest extends Base {
         resource.setId(4);
         defaultMongoDao.create(resource);
         defaultMongoDao.create(validObject());
-        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?id_equals=4&unique_equals=filterUnique&numberMax40_equals=25").asString();
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?id_equals=4&unique_contains=filter&numberMax40_equals=25").asString();
 
 
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {

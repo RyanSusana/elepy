@@ -6,6 +6,7 @@ import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.elepy.utils.ClassUtils;
+import com.elepy.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -103,8 +104,8 @@ public class FieldDescriber {
 
             if (annotation != null) {
                 fieldMap.put("includeTime", annotation.includeTime());
-                fieldMap.put("minimumDate", cmsFormat.format(ClassDescriber.guessDate(annotation.minimumDate())));
-                fieldMap.put("maximumDate", cmsFormat.format(ClassDescriber.guessDate(annotation.maximumDate())));
+                fieldMap.put("minimumDate", cmsFormat.format(DateUtils.guessDate(annotation.minimumDate())));
+                fieldMap.put("maximumDate", cmsFormat.format(DateUtils.guessDate(annotation.maximumDate())));
             } else {
                 fieldMap.put("includeTime", true);
                 fieldMap.put("minimumDate", null);
