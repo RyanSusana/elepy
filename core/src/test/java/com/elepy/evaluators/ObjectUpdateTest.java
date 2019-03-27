@@ -1,7 +1,6 @@
 package com.elepy.evaluators;
 
 import com.elepy.Base;
-import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Resource;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ObjectUpdateTest extends Base {
 
@@ -27,19 +26,13 @@ public class ObjectUpdateTest extends Base {
     }
 
     @Test
-    public void testCantChangeNonEditable() throws Exception {
+    public void testCantChangeNonEditable() {
+        ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new DefaultObjectUpdateEvaluator<>();
 
-        try {
-            ObjectUpdateEvaluator<Resource> resourceObjectUpdateEvaluator = new DefaultObjectUpdateEvaluator<>();
+        Resource updatedNonEditable = validObject();
+        updatedNonEditable.setNonEditable(UUID.randomUUID().toString());
 
-            Resource updatedNonEditable = validObject();
-            updatedNonEditable.setNonEditable(UUID.randomUUID().toString());
-            resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable);
-
-            fail("Should not be able to update nonEditable");
-        } catch (ElepyException e) {
-
-        }
+        assertThrows(Exception.class, () -> resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable));
     }
 
 
