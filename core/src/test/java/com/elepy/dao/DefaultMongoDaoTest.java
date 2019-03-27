@@ -61,7 +61,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultMongoDao.create(resource);
 
 
-        final Page<Resource> searchable = defaultMongoDao.search(new QuerySetup("searchable", null, null, 1L, 1));
+        final Page<Resource> searchable = defaultMongoDao.search(new SearchQuery("searchable", null, null, 1L, 1));
         assertEquals(1, searchable.getValues().size());
 
     }

@@ -3,7 +3,7 @@ package com.elepy.hibernate;
 import com.elepy.annotations.Searchable;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
-import com.elepy.dao.QuerySetup;
+import com.elepy.dao.SearchQuery;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
@@ -42,7 +42,7 @@ public class HibernateDao<T> implements Crud<T> {
 
 
     @Override
-    public Page<T> search(QuerySetup querySetup) {
+    public Page<T> search(SearchQuery searchQuery) {
         try (Session session = sessionFactory.openSession()) {
 
             CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -50,7 +50,7 @@ public class HibernateDao<T> implements Crud<T> {
 
             final Root<T> root = criteriaQuery.from(aClass);
             final long count;
-            if (StringUtils.isEmpty(querySetup.getQuery())) {
+            if (StringUtils.isEmpty(searchQuery.getQuery())) {
                 criteriaQuery.select(root);
                 count = count();
             } else {
@@ -60,24 +60,24 @@ public class HibernateDao<T> implements Crud<T> {
 
                 final List<Predicate> predicatelist = new ArrayList<>();
                 for (Field searchableField : searchableFields) {
-                    final Predicate like = cb.like(root.get(searchableField.getName()), "%" + querySetup.getQuery() + "%");
+                    final Predicate like = cb.like(root.get(searchableField.getName()), "%" + searchQuery.getQuery() + "%");
                     predicatelist.add(like);
 
                 }
                 criteriaQuery.where(cb.or(predicatelist.toArray(new Predicate[0])));
-                count = count(querySetup.getQuery());
+                count = count(searchQuery.getQuery());
 
             }
 
             Query<T> query = session.createQuery(criteriaQuery);
 
 
-            return toPage(query, querySetup, count);
+            return toPage(query, searchQuery, count);
         }
     }
 
 
-    private Page<T> toPage(Query<T> query, QuerySetup pageSearch, long amountOfResultsWithThatQuery) {
+    private Page<T> toPage(Query<T> query, SearchQuery pageSearch, long amountOfResultsWithThatQuery) {
         final List<T> values = query.setMaxResults(pageSearch.getPageSize()).setFirstResult(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).list();
 
         loadLazyCollections(values);

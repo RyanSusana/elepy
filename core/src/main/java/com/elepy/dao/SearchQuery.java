@@ -6,7 +6,7 @@ import com.elepy.routes.FindManyHandler;
 /**
  * This object represents a query to a {@link FindManyHandler}
  */
-public class QuerySetup {
+public class SearchQuery {
 
     /**
      * The search team. The request parameter is called 'q'
@@ -37,7 +37,7 @@ public class QuerySetup {
      */
     private final int pageSize;
 
-    public QuerySetup(String query, String sortBy, SortOption sortOption, Long pageNumber, Integer pageSize) {
+    public SearchQuery(String query, String sortBy, SortOption sortOption, Long pageNumber, Integer pageSize) {
 
         this.query = query == null ? "" : query;
         this.pageNumber = pageNumber == null ? 1 : pageNumber;

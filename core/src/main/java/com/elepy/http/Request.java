@@ -1,10 +1,12 @@
 package com.elepy.http;
 
+import com.elepy.dao.FilterQuery;
+import com.elepy.dao.FilterType;
+import com.elepy.dao.FilterableField;
 import com.elepy.utils.ClassUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public interface Request {
 
@@ -89,6 +91,27 @@ public interface Request {
         } else {
             return ClassUtils.toObjectIdFromString(cls, id);
         }
+    }
+
+    default List<FilterQuery> filtersForModel(Class restModelType) {
+        final List<FilterQuery> filterQueries = new ArrayList<>();
+        for (String queryParam : queryParams()) {
+            if (queryParam.contains("_")) {
+                String[] propertyNameFilter = queryParam.split("_");
+
+                //Get the property name like this, incase you have a property called 'customer_type'
+                List<String> propertyNameList = new ArrayList<>(Arrays.asList(propertyNameFilter));
+                propertyNameList.remove(propertyNameFilter.length - 1);
+                String propertyName = String.join("_", propertyNameList);
+
+                FilterType.getByQueryString(propertyNameFilter[propertyNameFilter.length - 1]).ifPresent(filterType1 -> {
+                    FilterableField filterableField = new FilterableField(restModelType, propertyName);
+                    FilterQuery filterQuery = new FilterQuery(filterableField, filterType1, queryParams(queryParam));
+                    filterQueries.add(filterQuery);
+                });
+            }
+        }
+        return filterQueries;
     }
 
 }

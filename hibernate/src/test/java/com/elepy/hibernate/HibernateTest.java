@@ -2,7 +2,7 @@ package com.elepy.hibernate;
 
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
-import com.elepy.dao.QuerySetup;
+import com.elepy.dao.SearchQuery;
 import com.elepy.di.DefaultElepyContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -67,7 +67,7 @@ public class HibernateTest {
         resourceCrud.create(resource);
 
 
-        final Page<Resource> searchable = resourceCrud.search(new QuerySetup("searchab", null, null, 1L, 1));
+        final Page<Resource> searchable = resourceCrud.search(new SearchQuery("searchab", null, null, 1L, 1));
         assertEquals(1, searchable.getValues().size());
 
     }
