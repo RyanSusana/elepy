@@ -16,7 +16,7 @@ public abstract class MappedFindOne<T, R> extends DefaultFindOne<T> {
 
     @Override
     public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        T object = findOne(context.request(), context.response(), crud, objectMapper, modelDescription);
+        T object = findOne(context.request(), context.response(), crud, modelDescription);
 
         R mapped = map(object, context.request(), crud);
 

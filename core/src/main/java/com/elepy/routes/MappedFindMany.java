@@ -19,7 +19,7 @@ public abstract class MappedFindMany<T, R> extends DefaultFindMany<T> {
 
     @Override
     public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        Page<T> page = find(context.request(), context.response(), crud, objectMapper);
+        Page<T> page = find(context.request(), context.response(), crud);
 
         List<R> filteredValues = mapValues(page.getValues(), context.request(), crud);
 

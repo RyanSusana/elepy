@@ -11,6 +11,6 @@ import com.elepy.dao.Crud;
 public class NoIdentityProvider<T> implements IdentityProvider<T> {
     @Override
     public void provideId(T item, Crud<T> dao) {
-
+        //The whole point of this is to provide no id ;P
     }
 }

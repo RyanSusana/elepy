@@ -105,7 +105,7 @@ public class ClassDescriber {
             try {
                 declaredField = enumClass.getDeclaredField(((Enum) enumConstant).name());
             } catch (NoSuchFieldException ignored) {
-                //this exception will never be thrown
+                throw new ElepyConfigException("Enum field not found");
             }
 
             PrettyName annotation = declaredField.getAnnotation(PrettyName.class);
@@ -124,29 +124,26 @@ public class ClassDescriber {
     public static Date guessDate(String string) {
         String dateFormat = guessDateFormat(string);
 
-        if (dateFormat == null) {
-            try {
+        try {
+            if (dateFormat == null) {
                 return new Date(Long.parseLong(string));
-            } catch (NumberFormatException ignored) {
-
-            }
-        } else {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-            try {
+            } else {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
                 return simpleDateFormat.parse(string);
-            } catch (ParseException ignored) {
-
             }
+        } catch (NumberFormatException | ParseException e) {
+
+            throw new ElepyConfigException(String.format("Can't parse the date '%s'.", string));
+
         }
 
-        throw new ElepyConfigException(String.format("Can't parse the date '%s'.", string));
 
     }
 
     private static String guessDateFormat(String dateString) {
-        for (String regexp : DATE_FORMATS.keySet()) {
-            if (dateString.toLowerCase().matches(regexp)) {
-                return DATE_FORMATS.get(regexp);
+        for (Map.Entry<String, String> regexp : DATE_FORMATS.entrySet()) {
+            if (dateString.toLowerCase().matches(regexp.getKey())) {
+                return DATE_FORMATS.get(regexp.getValue());
             }
         }
         return null;

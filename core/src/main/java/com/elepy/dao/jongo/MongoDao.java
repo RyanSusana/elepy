@@ -208,7 +208,6 @@ public abstract class MongoDao<T> implements Crud<T> {
             final T[] ts = Iterables.toArray(items, getType());
             collection().insert((Object[]) ts);
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }
@@ -219,7 +218,6 @@ public abstract class MongoDao<T> implements Crud<T> {
         try {
             collection().insert(item);
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
         }

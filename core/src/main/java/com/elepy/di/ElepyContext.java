@@ -50,10 +50,9 @@ public interface ElepyContext {
                     }
                 }
             } catch (ClassCastException ignored) {
-
+                return null;
             }
         }
-
         return null;
     }
 
@@ -202,10 +201,10 @@ public interface ElepyContext {
         Inject inject = parameter.getAnnotation(Inject.class);
 
         if (inject != null) {
-            if (Crud.class.isAssignableFrom(((Parameter) parameter).getType())) {
+            if (Crud.class.isAssignableFrom(parameter.getType())) {
                 return this.getDependency(Crud.class, getTag(parameter));
             } else {
-                return this.getDependency(((Parameter) parameter).getType(), getTag(parameter));
+                return this.getDependency(parameter.getType(), getTag(parameter));
             }
         }
         return getDependency(parameter.getType(), null);

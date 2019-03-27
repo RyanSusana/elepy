@@ -6,7 +6,6 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
@@ -15,11 +14,11 @@ public class DefaultFindOne<T> implements FindOneHandler<T> {
 
     @Override
     public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        T object = findOne(context.request(), context.response(), crud, objectMapper, modelDescription);
+        T object = findOne(context.request(), context.response(), crud, modelDescription);
         context.response().result(objectMapper.writeValueAsString(object));
     }
 
-    public T findOne(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper, ModelDescription<T> modelDescription) throws JsonProcessingException {
+    public T findOne(Request request, Response response, Crud<T> dao, ModelDescription<T> modelDescription) {
         response.type("application/json");
 
         Object paramId = request.modelId();

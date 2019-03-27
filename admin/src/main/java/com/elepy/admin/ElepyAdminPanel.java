@@ -16,8 +16,6 @@ import com.elepy.http.Filter;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.mitchellbosecke.pebble.PebbleEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -31,14 +29,12 @@ import static spark.Spark.halt;
 
 public class ElepyAdminPanel implements ElepyModule {
     public static final String ADMIN_USER = "adminUser";
-    private static final Logger logger = LoggerFactory.getLogger(ElepyAdminPanel.class);
     private final AttachmentHandler attachmentHandler;
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;
     private final List<Link> links;
     private TokenHandler tokenHandler;
     private Filter baseAdminAuthenticationFilter;
-    private SetupHandler setupHandler;
     private Authenticator authenticator;
     private UserService userService;
     private boolean initiated = false;
@@ -86,9 +82,6 @@ public class ElepyAdminPanel implements ElepyModule {
 
         };
 
-        this.setupHandler = elepy -> {
-        };
-
         this.links = new ArrayList<>();
 
         this.engine = new PebbleEngine.Builder().build();
@@ -129,7 +122,7 @@ public class ElepyAdminPanel implements ElepyModule {
     }
 
 
-    private void setupAdmin(ElepyPostConfiguration elepy) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void setupAdmin(ElepyPostConfiguration elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
         http.before("/admin/*/*", ctx -> elepy.getAllAdminFilters().authenticate(ctx));
@@ -271,7 +264,6 @@ public class ElepyAdminPanel implements ElepyModule {
 
 
     public ElepyAdminPanel onFirstTime(SetupHandler setupHandler) {
-        this.setupHandler = setupHandler;
         return this;
     }
 

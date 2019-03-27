@@ -133,7 +133,7 @@ public class SparkService implements HttpService {
                     elepy.getAllAdminFilters().authenticate(sparkContext);
                 }
                 extraRoute.getBeforeFilter().handle(sparkContext);
-                extraRoute.getRoute().handle(sparkContext);
+                extraRoute.getHttpContextHandler().handle(sparkContext);
 
                 return response.body();
             }));

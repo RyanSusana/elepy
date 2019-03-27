@@ -1,9 +1,12 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
+import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -16,6 +19,8 @@ class UnsatisfiedDependencies {
     private final Set<Class> scannedClasses = new HashSet<>();
     private Set<ContextKey> unsatisfiedKeys = new HashSet<>();
     private Set<ContextKey> allDependencies = new HashSet<>();
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
+
 
     UnsatisfiedDependencies(DefaultElepyContext elepyContext) {
         this.elepyContext = elepyContext;
@@ -114,10 +119,12 @@ class UnsatisfiedDependencies {
 
 
                 toAdd.put(objectContextKey, o);
+            } catch (ElepyErrorMessage e) {
+
+                logger.debug("Elepy error msg", e);
             } catch (Exception e) {
-                if (!(e instanceof ElepyErrorMessage)) {
-                    e.printStackTrace();
-                }
+
+                logger.error("Dependency injection error", e);
             }
             if (elepyContext.getDependencyKeys().contains(contextKey)) {
                 alreadyTried = false;

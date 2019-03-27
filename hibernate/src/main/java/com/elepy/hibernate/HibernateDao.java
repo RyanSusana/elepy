@@ -55,9 +55,7 @@ public class HibernateDao<T> implements Crud<T> {
             final long count;
             if (StringUtils.isEmpty(querySetup.getQuery())) {
                 criteriaQuery.select(root);
-                final CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
                 count = count();
-
             } else {
                 criteriaQuery.select(root);
 
@@ -132,9 +130,7 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-    private void create(Session session, T item) throws IllegalAccessException {
-        final Optional<Object> id = com.elepy.utils.ClassUtils.getId(item);
-
+    private void create(Session session, T item) {
         session.save(item);
     }
 

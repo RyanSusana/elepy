@@ -46,7 +46,7 @@ public class TokenHandler implements AuthHandler {
         final String username = credentials.get()[0];
         final String password = credentials.get()[1];
 
-        return createToken(username, password, 1000 * 60 * 60 * 3);
+        return createToken(username, password, 1000L * 60L * 60L * 3L);
     }
 
     public Token createToken(String username, String password, long duration) {

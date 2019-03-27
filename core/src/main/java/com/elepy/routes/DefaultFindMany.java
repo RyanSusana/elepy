@@ -8,19 +8,18 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DefaultFindMany<T> implements FindManyHandler<T> {
 
     @Override
     public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        Page<T> page = find(context.request(), context.response(), crud, objectMapper);
+        Page<T> page = find(context.request(), context.response(), crud);
 
         context.response().result(objectMapper.writeValueAsString(page));
     }
 
-    public Page<T> find(Request request, Response response, Crud<T> dao, ObjectMapper objectMapper) throws JsonProcessingException {
+    public Page<T> find(Request request, Response response, Crud<T> dao) {
 
         response.type("application/json");
         String q = request.queryParams("q");

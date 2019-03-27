@@ -23,6 +23,6 @@ public class MongoProvider implements CrudProvider {
 
         final String[] split = slug.split("/");
 
-        return new DefaultMongoDao<>(elepy, split[split.length - 1], type, null, objectMapper);
+        return new DefaultMongoDao<>(elepy, split[split.length - 1], type, objectMapper);
     }
 }

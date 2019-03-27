@@ -34,7 +34,7 @@ public class FieldDescriber {
 
     private final boolean idField;
 
-    private static SimpleDateFormat cmsFormat = new SimpleDateFormat("YYYY-MM-dd");
+    private SimpleDateFormat cmsFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public FieldDescriber(Field field) {
         this.field = field;
