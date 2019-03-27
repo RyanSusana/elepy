@@ -13,10 +13,6 @@ import java.util.*;
 
 public class ClassDescriber {
 
-    private final Class cls;
-
-    private final List<Map<String, Object>> structure;
-
     private static final Map<String, String> DATE_FORMATS = new HashMap<>();
 
     static {
@@ -45,52 +41,12 @@ public class ClassDescriber {
         DATE_FORMATS.put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
     }
 
+    private final Class cls;
+    private final List<Map<String, Object>> structure;
+
     public ClassDescriber(Class cls) {
         this.cls = cls;
         this.structure = describe();
-    }
-
-    private List<Map<String, Object>> describe() {
-        List<Map<String, Object>> fields = new ArrayList<>();
-
-        fields.addAll(describeFields());
-        fields.addAll(describeMethods());
-
-        fields.sort((a, b) -> {
-            final Integer importanceA = (Integer) a.getOrDefault("importance", 0);
-            final Integer importanceB = (Integer) b.getOrDefault("importance", 0);
-
-
-            return importanceB.compareTo(importanceA);
-        });
-        return fields;
-    }
-
-    private List<Map<String, Object>> describeFields() {
-        List<Map<String, Object>> fields = new ArrayList<>();
-        for (Field field : cls.getDeclaredFields()) {
-            if (!field.isAnnotationPresent(Hidden.class))
-                fields.add(new FieldDescriber(field).getFieldMap());
-        }
-
-        return fields;
-
-    }
-
-    private List<Map<String, Object>> describeMethods() {
-        List<Map<String, Object>> methods = new ArrayList<>();
-
-        for (Method method : cls.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Generated.class)) {
-                methods.add(new MethodDescriber(method).getFieldMap());
-            }
-        }
-
-        return methods;
-    }
-
-    public List<Map<String, Object>> getStructure() {
-        return structure;
     }
 
     static List<Map<String, Object>> getEnumMap(Class<?> enumClass) {
@@ -147,5 +103,48 @@ public class ClassDescriber {
             }
         }
         return null;
+    }
+
+    private List<Map<String, Object>> describe() {
+        List<Map<String, Object>> fields = new ArrayList<>();
+
+        fields.addAll(describeFields());
+        fields.addAll(describeMethods());
+
+        fields.sort((a, b) -> {
+            final Integer importanceA = (Integer) a.getOrDefault("importance", 0);
+            final Integer importanceB = (Integer) b.getOrDefault("importance", 0);
+
+
+            return importanceB.compareTo(importanceA);
+        });
+        return fields;
+    }
+
+    private List<Map<String, Object>> describeFields() {
+        List<Map<String, Object>> fields = new ArrayList<>();
+        for (Field field : cls.getDeclaredFields()) {
+            if (!field.isAnnotationPresent(Hidden.class))
+                fields.add(new FieldDescriber(field).getFieldMap());
+        }
+
+        return fields;
+
+    }
+
+    private List<Map<String, Object>> describeMethods() {
+        List<Map<String, Object>> methods = new ArrayList<>();
+
+        for (Method method : cls.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Generated.class)) {
+                methods.add(new MethodDescriber(method).getFieldMap());
+            }
+        }
+
+        return methods;
+    }
+
+    public List<Map<String, Object>> getStructure() {
+        return structure;
     }
 }

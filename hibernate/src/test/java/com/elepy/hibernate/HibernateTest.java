@@ -21,11 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HibernateTest {
 
-    private Crud<Resource> resourceCrud;
-
-    private SessionFactory sessionFactory;
-
     private static int resourceCounter = -100;
+    private Crud<Resource> resourceCrud;
+    private SessionFactory sessionFactory;
 
     @BeforeEach
     public void setUp() throws Exception {

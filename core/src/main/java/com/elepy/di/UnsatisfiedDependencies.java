@@ -15,11 +15,11 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 class UnsatisfiedDependencies {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
     private final DefaultElepyContext elepyContext;
     private final Set<Class> scannedClasses = new HashSet<>();
     private Set<ContextKey> unsatisfiedKeys = new HashSet<>();
     private Set<ContextKey> allDependencies = new HashSet<>();
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
 
 
     UnsatisfiedDependencies(DefaultElepyContext elepyContext) {

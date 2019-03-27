@@ -41,21 +41,17 @@ public class Elepy implements ElepyContext {
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
+    private final Map<Class<?>, ModelDescription<?>> classModelDescriptionMap;
     private String baseSlug;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
-
     private MultiFilter adminFilters;
     private List<Class<? extends Filter>> adminFilterClasses;
     private List<Map<String, Object>> descriptors;
-
     private List<Route> routes;
     private boolean initialized = false;
-
     private Class<? extends CrudProvider> defaultCrudProvider;
     private List<Class<?>> routingClasses;
-
-    private final Map<Class<?>, ModelDescription<?>> classModelDescriptionMap;
 
     public Elepy() {
         this(Service.ignite().port(1337));
@@ -140,7 +136,6 @@ public class Elepy implements ElepyContext {
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {
         return this.baseObjectEvaluator;
     }
-
 
 
     /**

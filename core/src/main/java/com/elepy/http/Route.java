@@ -16,12 +16,12 @@ public class Route {
     private final String acceptType;
 
     /**
-     * @param path         The URI path
-     * @param method       The HTTP method
-     * @param beforeFilter What happens before a httpContextHandler is executed
-     * @param accessLevel  Who is allowed to see the httpContextHandler
-     * @param httpContextHandler        The Spark httpContextHandler interface
-     * @param acceptType   The accept type of the httpContextHandler
+     * @param path               The URI path
+     * @param method             The HTTP method
+     * @param beforeFilter       What happens before a httpContextHandler is executed
+     * @param accessLevel        Who is allowed to see the httpContextHandler
+     * @param httpContextHandler The Spark httpContextHandler interface
+     * @param acceptType         The accept type of the httpContextHandler
      */
     public Route(String path, HttpMethod method, HttpContextHandler beforeFilter, AccessLevel accessLevel, HttpContextHandler httpContextHandler, String acceptType) {
         this.beforeFilter = beforeFilter == null ? ctx -> {

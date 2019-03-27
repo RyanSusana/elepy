@@ -56,6 +56,15 @@ public interface ElepyContext {
         return null;
     }
 
+    static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
+        for (Constructor constructor : cls.getConstructors()) {
+            if (constructor.isAnnotationPresent(ElepyConstructor.class)) {
+                return Optional.of((Constructor<T>) constructor);
+            }
+        }
+        return Optional.empty();
+    }
+
     /**
      * Tries to GET a dependency with a null tag
      *
@@ -94,7 +103,6 @@ public interface ElepyContext {
         return (Crud<T>) getDependency(Crud.class, annotation.slug());
     }
 
-
     default ObjectMapper getObjectMapper() {
         return getDependency(ObjectMapper.class);
     }
@@ -102,15 +110,6 @@ public interface ElepyContext {
     default <T> Optional<Constructor<? extends T>> getElepyConstructor(Class<?> cls) {
         for (Constructor constructor : cls.getConstructors()) {
             if (constructor.getParameterCount() == 1 && (constructor.getParameterTypes()[0].equals(ElepyContext.class))) {
-                return Optional.of((Constructor<T>) constructor);
-            }
-        }
-        return Optional.empty();
-    }
-
-    static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
-        for (Constructor constructor : cls.getConstructors()) {
-            if (constructor.isAnnotationPresent(ElepyConstructor.class)) {
                 return Optional.of((Constructor<T>) constructor);
             }
         }

@@ -29,12 +29,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class HibernateDao<T> implements Crud<T> {
+    private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
     private final SessionFactory sessionFactory;
     private final Class<T> aClass;
-
-    private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
-
-
     private final ObjectMapper objectMapper;
 
     public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Class<T> aClass) {

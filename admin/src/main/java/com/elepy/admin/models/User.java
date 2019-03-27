@@ -104,13 +104,13 @@ public class User implements UserInterface {
         return this.password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean passwordEquals(String otherPassword) {
         return BCrypt.checkpw(otherPassword, password);
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getEmail() {
