@@ -69,10 +69,6 @@ public class ElepyEndToEndTest extends Base {
 
     @Test
     public void testFilter() throws IOException, UnirestException {
-
-
-        final long count = defaultMongoDao.count();
-
         Resource resource = validObject();
         resource.setUnique("filterUnique");
         resource.setNumberMax40(BigDecimal.valueOf(25));
@@ -85,7 +81,7 @@ public class ElepyEndToEndTest extends Base {
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
-        assertEquals(count + 1, resourcePage.getValues().size());
+        assertEquals(1, resourcePage.getValues().size());
 
         assertEquals(200, getRequest.getStatus());
         assertEquals("filterUnique", resourcePage.getValues().get(0).getUnique());
