@@ -220,7 +220,7 @@ public abstract class MongoDao<T> implements Crud<T> {
                 .as(modelClassType())
                 .iterator());
 
-        long amountOfResultsWithThatQuery = count(mongoFilters);
+        long amountOfResultsWithThatQuery = values.size();
         final long remainder = amountOfResultsWithThatQuery % pageSize;
         long amountOfPages = amountOfResultsWithThatQuery / pageSize;
         if (remainder > 0) amountOfPages++;
