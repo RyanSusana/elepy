@@ -1,13 +1,13 @@
 package com.elepy.hibernate;
 
-import com.elepy.Elepy;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.SearchQuery;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import com.elepy.di.DefaultElepyContext;
+import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -17,11 +17,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class HibernateTest {
@@ -29,28 +31,21 @@ public class HibernateTest {
     private static int resourceCounter = -100;
     private Crud<Resource> resourceCrud;
     private SessionFactory sessionFactory;
-    Elepy elepy;
 
     @BeforeEach
     public void setUp() throws Exception {
 
-        elepy = new Elepy();
         Configuration hibernateConfiguration = new Configuration().configure();
 
 
         sessionFactory = hibernateConfiguration.buildSessionFactory();
-
-        elepy.registerDependency(SessionFactory.class, sessionFactory);
-
-        elepy.addModel(Resource.class);
-
-        elepy.onPort(8358);
-
-        elepy.withDefaultCrudProvider(HibernateProvider.class);
-        elepy.start();
+        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
+        defaultElepyContext.registerDependency(SessionFactory.class, sessionFactory);
+        defaultElepyContext.registerDependency(new ObjectMapper());
 
 
-        resourceCrud = elepy.getCrudFor(Resource.class);
+        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(Resource.class);
+
 
     }
 
@@ -65,7 +60,7 @@ public class HibernateTest {
     }
 
     @Test
-    public void testFilterEndToEnd() throws IOException, UnirestException {
+    public void testFilterEndToEnd() throws IOException {
         Resource resource = validObject();
         resource.setUniqueField("filterUnique");
         resource.setId(4);
@@ -74,15 +69,20 @@ public class HibernateTest {
 
         long tenSecondsFromNow = Calendar.getInstance().getTimeInMillis() + 10000;
         long tenSecondsBefore = Calendar.getInstance().getTimeInMillis() - 10000;
-        final HttpResponse<String> getRequest = Unirest.get(String.format("http://localhost:8358/resources?id_equals=4&uniqueField_contains=filter&date_lte=%d&date_gt=%d", tenSecondsFromNow, tenSecondsBefore)).asString();
 
+        Map<String, String> map = new HashMap<>();
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
-        });
+        map.put("id_equals", "4");
+        map.put("date_gt", "" + tenSecondsBefore);
+        map.put("date_lte", "" + tenSecondsFromNow);
+        map.put("uniqueField_contains", "filt");
+
+        Request request = mockedContextWithQueryMap(map).request();
+
+        Page<Resource> resourcePage = resourceCrud.filter(1, 20, request.filtersForModel(Resource.class));
 
         assertEquals(1, resourcePage.getValues().size());
 
-        assertEquals(200, getRequest.getStatus());
         assertEquals("filterUnique", resourcePage.getValues().get(0).getUniqueField());
     }
 
@@ -162,5 +162,28 @@ public class HibernateTest {
         resource.setDate(Calendar.getInstance().getTime());
 
         return resource;
+    }
+
+    private HttpContext mockedContextWithQueryMap(Map<String, String> map) {
+        HttpContext mockedContext = mockedContext();
+        when(mockedContext.request().queryParams()).thenReturn(map.keySet());
+
+        when(mockedContext.request().queryParams(anyString())).thenAnswer(invocationOnMock -> map.get(invocationOnMock.getArgument(0)));
+
+        when(mockedContext.request().filtersForModel(any())).thenCallRealMethod();
+        return mockedContext;
+    }
+
+    private HttpContext mockedContext() {
+        HttpContext context = mock(HttpContext.class);
+        Request request = mock(Request.class);
+        Response response = mock(Response.class);
+
+
+        when(context.response()).thenReturn(response);
+        when(context.request()).thenReturn(request);
+
+
+        return context;
     }
 }
