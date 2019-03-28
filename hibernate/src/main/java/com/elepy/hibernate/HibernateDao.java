@@ -80,15 +80,22 @@ public class HibernateDao<T> implements Crud<T> {
 
 
     private Page<T> toPage(Query<T> query, SearchQuery pageSearch, long amountOfResultsWithThatQuery) {
-        final List<T> values = query.setMaxResults(pageSearch.getPageSize()).setFirstResult(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).list();
+        return toPage(query, pageSearch.getPageSize(), pageSearch.getPageNumber(), amountOfResultsWithThatQuery);
+    }
 
+    private Page<T> toPage(Query<T> query, int pageSize, long pageNumber, long amountOfResultsWithThatQuery) {
+        final List<T> values = query.setMaxResults(pageSize).setFirstResult(((int) pageNumber - 1) * pageSize).list();
+
+        if (amountOfResultsWithThatQuery == -1) {
+            amountOfResultsWithThatQuery = values.size();
+        }
         loadLazyCollections(values);
 
-        final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
-        long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
+        final long remainder = amountOfResultsWithThatQuery % pageSize;
+        long amountOfPages = amountOfResultsWithThatQuery / pageNumber;
         if (remainder > 0) amountOfPages++;
 
-        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
+        return new Page<>(pageNumber, amountOfPages, values);
     }
 
     @Override
@@ -193,8 +200,12 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public long count(List<FilterQuery> filterQueries) {
 
-        // TODO
-        return 0;
+        if (filterQueries.isEmpty()) {
+            return count();
+        } else {
+            //Should probably do an optimization here.
+            return filter(1, Integer.MAX_VALUE, filterQueries).getValues().size();
+        }
     }
 
     @Override
@@ -203,8 +214,27 @@ public class HibernateDao<T> implements Crud<T> {
             return search(new SearchQuery("", null, null, (long) pageSize, pageSize));
         }
 
-        // TODO
-        return null;
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
+
+            final Root<T> root = criteriaQuery.from(aClass);
+
+            criteriaQuery.select(root);
+
+
+            final List<Predicate> predicatelist = new ArrayList<>();
+            for (FilterQuery filterQuery : filterQueries) {
+
+                predicatelist.add(HibernatePredicateFactory.fromFilter(root, cb, filterQuery));
+            }
+            criteriaQuery.where(cb.and(predicatelist.toArray(new Predicate[0])));
+
+
+            Query<T> query = session.createQuery(criteriaQuery);
+
+            return toPage(query, pageSize, pageNumber, -1);
+        }
     }
 
     @Override

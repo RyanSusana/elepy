@@ -1,10 +1,13 @@
 package com.elepy.hibernate;
 
+import com.elepy.Elepy;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.SearchQuery;
-import com.elepy.di.DefaultElepyContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -12,8 +15,10 @@ import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,20 +29,28 @@ public class HibernateTest {
     private static int resourceCounter = -100;
     private Crud<Resource> resourceCrud;
     private SessionFactory sessionFactory;
+    Elepy elepy;
 
     @BeforeEach
     public void setUp() throws Exception {
 
+        elepy = new Elepy();
         Configuration hibernateConfiguration = new Configuration().configure();
 
 
         sessionFactory = hibernateConfiguration.buildSessionFactory();
-        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
-        defaultElepyContext.registerDependency(SessionFactory.class, sessionFactory);
-        defaultElepyContext.registerDependency(new ObjectMapper());
+
+        elepy.registerDependency(SessionFactory.class, sessionFactory);
+
+        elepy.addModel(Resource.class);
+
+        elepy.onPort(8358);
+
+        elepy.withDefaultCrudProvider(HibernateProvider.class);
+        elepy.start();
 
 
-        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(Resource.class);
+        resourceCrud = elepy.getCrudFor(Resource.class);
 
     }
 
@@ -49,6 +62,28 @@ public class HibernateTest {
 
 
         assertEquals(2, count());
+    }
+
+    @Test
+    public void testFilterEndToEnd() throws IOException, UnirestException {
+        Resource resource = validObject();
+        resource.setUniqueField("filterUnique");
+        resource.setId(4);
+        resourceCrud.create(resource);
+        resourceCrud.create(validObject());
+
+        long tenSecondsFromNow = Calendar.getInstance().getTimeInMillis() + 10000;
+        long tenSecondsBefore = Calendar.getInstance().getTimeInMillis() - 10000;
+        final HttpResponse<String> getRequest = Unirest.get(String.format("http://localhost:8358/resources?id_equals=4&uniqueField_contains=filter&date_lte=%d&date_gt=%d", tenSecondsFromNow, tenSecondsBefore)).asString();
+
+
+        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        });
+
+        assertEquals(1, resourcePage.getValues().size());
+
+        assertEquals(200, getRequest.getStatus());
+        assertEquals("filterUnique", resourcePage.getValues().get(0).getUniqueField());
     }
 
     @Test
@@ -124,6 +159,7 @@ public class HibernateTest {
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
         resource.setUniqueField("unique");
+        resource.setDate(Calendar.getInstance().getTime());
 
         return resource;
     }
