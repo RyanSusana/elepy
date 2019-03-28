@@ -2,8 +2,9 @@ package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
 import com.elepy.dao.Crud;
+import com.elepy.dao.FilterQuery;
 import com.elepy.dao.Page;
-import com.elepy.dao.QuerySetup;
+import com.elepy.dao.SearchQuery;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
@@ -27,6 +28,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HibernateDao<T> implements Crud<T> {
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
@@ -42,7 +44,7 @@ public class HibernateDao<T> implements Crud<T> {
 
 
     @Override
-    public Page<T> search(QuerySetup querySetup) {
+    public Page<T> search(SearchQuery searchQuery) {
         try (Session session = sessionFactory.openSession()) {
 
             CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -50,7 +52,7 @@ public class HibernateDao<T> implements Crud<T> {
 
             final Root<T> root = criteriaQuery.from(aClass);
             final long count;
-            if (StringUtils.isEmpty(querySetup.getQuery())) {
+            if (StringUtils.isEmpty(searchQuery.getQuery())) {
                 criteriaQuery.select(root);
                 count = count();
             } else {
@@ -60,33 +62,40 @@ public class HibernateDao<T> implements Crud<T> {
 
                 final List<Predicate> predicatelist = new ArrayList<>();
                 for (Field searchableField : searchableFields) {
-                    final Predicate like = cb.like(root.get(searchableField.getName()), "%" + querySetup.getQuery() + "%");
+                    final Predicate like = cb.like(root.get(searchableField.getName()), "%" + searchQuery.getQuery() + "%");
                     predicatelist.add(like);
 
                 }
                 criteriaQuery.where(cb.or(predicatelist.toArray(new Predicate[0])));
-                count = count(querySetup.getQuery());
+                count = count(searchQuery.getQuery());
 
             }
 
             Query<T> query = session.createQuery(criteriaQuery);
 
 
-            return toPage(query, querySetup, count);
+            return toPage(query, searchQuery, count);
         }
     }
 
 
-    private Page<T> toPage(Query<T> query, QuerySetup pageSearch, long amountOfResultsWithThatQuery) {
-        final List<T> values = query.setMaxResults(pageSearch.getPageSize()).setFirstResult(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).list();
+    private Page<T> toPage(Query<T> query, SearchQuery pageSearch, long amountOfResultsWithThatQuery) {
+        return toPage(query, pageSearch.getPageSize(), pageSearch.getPageNumber(), amountOfResultsWithThatQuery);
+    }
 
+    private Page<T> toPage(Query<T> query, int pageSize, long pageNumber, long amountOfResultsWithThatQuery) {
+        final List<T> values = query.setMaxResults(pageSize).setFirstResult(((int) pageNumber - 1) * pageSize).list();
+
+        if (amountOfResultsWithThatQuery == -1) {
+            amountOfResultsWithThatQuery = values.size();
+        }
         loadLazyCollections(values);
 
-        final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
-        long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
+        final long remainder = amountOfResultsWithThatQuery % pageSize;
+        long amountOfPages = amountOfResultsWithThatQuery / pageNumber;
         if (remainder > 0) amountOfPages++;
 
-        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
+        return new Page<>(pageNumber, amountOfPages, values);
     }
 
     @Override
@@ -168,21 +177,13 @@ public class HibernateDao<T> implements Crud<T> {
             if (StringUtils.isEmpty(q)) {
                 return count();
             }
-            StringBuilder sb = new StringBuilder();
 
             List<Field> searchables = ClassUtils.searchForFieldsWithAnnotation(aClass, Searchable.class);
             searchables.add(ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", aClass.getName()))));
-            for (Field searchable : searchables) {
-                sb.append(searchable.getName());
-                sb.append(" LIKE ");
-                sb.append(":searchTerm");
 
-                sb.append(" OR ");
-            }
 
-            sb.delete(sb.length() - 4, sb.length() - 1);
-
-            String hql = "select count(*) from " + aClass.getName() + " WHERE " + sb.toString().replaceAll("false OR", "");
+            String hql = "select count(*) from " + aClass.getName() +
+                    (searchables.isEmpty() ? "" : (" WHERE " + searchables.stream().map(field -> field.getName() + " LIKE :searchTerm").collect(Collectors.joining(" OR "))));
 
 
             return session.createQuery(hql, Long.class).setParameter("searchTerm", "%" + q + "%")
@@ -194,6 +195,46 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public Class<T> getType() {
         return aClass;
+    }
+
+    @Override
+    public long count(List<FilterQuery> filterQueries) {
+
+        if (filterQueries.isEmpty()) {
+            return count();
+        } else {
+            //Should probably do an optimization here.
+            return filter(1, Integer.MAX_VALUE, filterQueries).getValues().size();
+        }
+    }
+
+    @Override
+    public Page<T> filter(int pageNumber, int pageSize, List<FilterQuery> filterQueries) {
+        if (filterQueries.size() == 0) {
+            return search(new SearchQuery("", null, null, (long) pageSize, pageSize));
+        }
+
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
+
+            final Root<T> root = criteriaQuery.from(aClass);
+
+            criteriaQuery.select(root);
+
+
+            final List<Predicate> predicatelist = new ArrayList<>();
+            for (FilterQuery filterQuery : filterQueries) {
+
+                predicatelist.add(HibernatePredicateFactory.fromFilter(root, cb, filterQuery));
+            }
+            criteriaQuery.where(cb.and(predicatelist.toArray(new Predicate[0])));
+
+
+            Query<T> query = session.createQuery(criteriaQuery);
+
+            return toPage(query, pageSize, pageNumber, -1);
+        }
     }
 
     @Override

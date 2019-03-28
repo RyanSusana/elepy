@@ -2,7 +2,7 @@ package com.elepy.plugins.gallery;
 
 
 import com.elepy.dao.Page;
-import com.elepy.dao.QuerySetup;
+import com.elepy.dao.SearchQuery;
 import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
@@ -85,7 +85,7 @@ public class ImageDao extends DefaultMongoDao<Image> {
     }
 
     @Override
-    public Page<Image> search(QuerySetup querySetup) {
+    public Page<Image> search(SearchQuery searchQuery) {
 
         return new Page<>(1, 1, Lists.newArrayList(collection().find().as(modelClassType()).iterator()));
     }

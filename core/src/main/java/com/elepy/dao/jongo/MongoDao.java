@@ -4,10 +4,7 @@ import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
-import com.elepy.dao.Crud;
-import com.elepy.dao.Page;
-import com.elepy.dao.QuerySetup;
-import com.elepy.dao.SortOption;
+import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +23,7 @@ import spark.utils.StringUtils;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class MongoDao<T> implements Crud<T> {
 
@@ -57,7 +55,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     @Override
     public List<T> searchInField(Field field, String qry) {
         final String propertyName = ClassUtils.getPropertyName(field);
-        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new QuerySetup(null, null, null, 1L, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
+        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new SearchQuery(null, null, null, 1L, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
     }
 
     private Find addDefaultSort(Find find) {
@@ -117,25 +115,11 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
 
-    private Page<T> toPage(Find find, QuerySetup pageSearch, int amountOfResultsWithThatQuery) {
-
-
-        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(modelClassType()).iterator());
-
-        final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
-        long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
-        if (remainder > 0) amountOfPages++;
-
-
-        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
-    }
-
-
-    public Page<T> search(QuerySetup querySetup) {
+    public Page<T> search(SearchQuery searchQuery) {
         final Find find;
         final long amountResultsTotal;
         try {
-            if (!StringUtils.isEmpty(querySetup.getQuery())) {
+            if (!StringUtils.isEmpty(searchQuery.getQuery())) {
                 final List<Field> searchableFields = getSearchableFields();
 
                 List<Map<String, String>> expressions = new ArrayList<>();
@@ -144,7 +128,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
                 Pattern[] patterns = new Pattern[searchableFields.size()];
 
-                final Pattern pattern = Pattern.compile(".*" + querySetup.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
+                final Pattern pattern = Pattern.compile(".*" + searchQuery.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
                 for (int i = 0; i < patterns.length; i++) {
                     patterns[i] = pattern;
                 }
@@ -154,7 +138,7 @@ public abstract class MongoDao<T> implements Crud<T> {
                     expressions.add(keyValue);
                 }
                 qmap.put("$or", expressions);
-                find = querySetup.getQuery() != null ? collection().find(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
+                find = searchQuery.getQuery() != null ? collection().find(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
 
                 amountResultsTotal = collection().count(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
             } else {
@@ -165,10 +149,10 @@ public abstract class MongoDao<T> implements Crud<T> {
             final AbstractMap.SimpleEntry<String, SortOption> defaultSort = defaultSort();
 
             find.sort(String.format("{%s: %d}",
-                    querySetup.getSortBy() == null ? defaultSort.getKey() : querySetup.getSortBy(),
-                    querySetup.getSortOption() == null ? defaultSort.getValue().getVal() : querySetup.getSortOption().getVal()));
+                    searchQuery.getSortBy() == null ? defaultSort.getKey() : searchQuery.getSortBy(),
+                    searchQuery.getSortOption() == null ? defaultSort.getValue().getVal() : searchQuery.getSortOption().getVal()));
 
-            return toPage(find, querySetup, (int) amountResultsTotal);
+            return toPage(find, searchQuery, (int) amountResultsTotal);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
@@ -213,6 +197,37 @@ public abstract class MongoDao<T> implements Crud<T> {
         }
     }
 
+    public long count(List<FilterQuery> filterQueries) {
+        MongoFilters mongoFilters = fromQueryFilters(filterQueries);
+
+        return count(mongoFilters);
+
+    }
+
+
+    public Page<T> filter(int pageNumber, int pageSize, List<FilterQuery> filterQueries) {
+
+        if (filterQueries.size() == 0) {
+            return search(new SearchQuery("", null, null, (long) pageSize, pageSize));
+        }
+        MongoFilters mongoFilters = fromQueryFilters(filterQueries);
+
+        mongoFilters.compile();
+        mongoFilters.getHashtagsForJongo();
+        ArrayList<T> values = Lists.newArrayList(collection().find(mongoFilters.compile(), (Object[]) mongoFilters.getHashtagsForJongo())
+                .limit(pageSize)
+                .skip((pageNumber - 1) * pageSize)
+                .as(modelClassType())
+                .iterator());
+
+        long amountOfResultsWithThatQuery = values.size();
+        final long remainder = amountOfResultsWithThatQuery % pageSize;
+        long amountOfPages = amountOfResultsWithThatQuery / pageSize;
+        if (remainder > 0) amountOfPages++;
+
+        return new Page<>(pageNumber, amountOfPages, values);
+    }
+
     @Override
     public void create(T item) {
         try {
@@ -231,5 +246,32 @@ public abstract class MongoDao<T> implements Crud<T> {
             throw new ElepyException("No Identifier provided to the object.");
         }
         return id.get();
+    }
+
+    private MongoFilters fromQueryFilters(List<FilterQuery> filterQueries) {
+        return new MongoFilters(
+                filterQueries
+                        .stream()
+                        .map(MongoFilterTemplateFactory::fromFilter)
+                        .collect(Collectors.toList()
+                        )
+        );
+    }
+
+    private Page<T> toPage(Find find, SearchQuery pageSearch, int amountOfResultsWithThatQuery) {
+
+
+        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(modelClassType()).iterator());
+
+        final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
+        long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
+        if (remainder > 0) amountOfPages++;
+
+
+        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
+    }
+
+    private long count(MongoFilters mongoFilters) {
+        return collection().count(mongoFilters.compile(), (Object[]) mongoFilters.getHashtagsForJongo());
     }
 }

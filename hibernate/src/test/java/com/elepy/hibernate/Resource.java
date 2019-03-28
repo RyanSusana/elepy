@@ -9,6 +9,7 @@ import com.elepy.models.TextType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "resources")
@@ -26,6 +27,8 @@ public class Resource {
 
     @Unique
     private String uniqueField;
+
+    private Date date;
 
     public String getTextField() {
         return textField;
@@ -57,5 +60,13 @@ public class Resource {
 
     public void setUniqueField(String uniqueField) {
         this.uniqueField = uniqueField;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

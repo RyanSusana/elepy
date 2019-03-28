@@ -4,6 +4,7 @@ import com.elepy.dao.Page;
 import com.elepy.dao.ResourceDao;
 import com.elepy.models.Resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,6 +65,26 @@ public class ElepyEndToEndTest extends Base {
         assertEquals(count + 1, resourcePage.getValues().size());
 
         assertEquals(200, getRequest.getStatus());
+    }
+
+    @Test
+    public void testFilter() throws IOException, UnirestException {
+        Resource resource = validObject();
+        resource.setUnique("filterUnique");
+        resource.setNumberMax40(BigDecimal.valueOf(25));
+        resource.setId(4);
+        defaultMongoDao.create(resource);
+        defaultMongoDao.create(validObject());
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?id_equals=4&unique_contains=filter&numberMax40_equals=25").asString();
+
+
+        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        });
+
+        assertEquals(1, resourcePage.getValues().size());
+
+        assertEquals(200, getRequest.getStatus());
+        assertEquals("filterUnique", resourcePage.getValues().get(0).getUnique());
     }
 
     @Test

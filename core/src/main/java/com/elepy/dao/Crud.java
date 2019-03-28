@@ -18,12 +18,12 @@ import java.util.Optional;
 public interface Crud<T> {
 
     /**
-     * Search is how Elepy queries a database based on a {@link QuerySetup} it should provide basic functionality for a search that stays database agnostic.
+     * Search is how Elepy queries a database based on a {@link SearchQuery} it should provide basic functionality for a search that stays database agnostic.
      *
-     * @param querySetup A query beforeElepyConstruction including all information needed to return the results of a search
+     * @param searchQuery A query beforeElepyConstruction including all information needed to return the results of a search
      * @return a {@link Page} with objects
      */
-    Page<T> search(QuerySetup querySetup);
+    Page<T> search(SearchQuery searchQuery);
 
     /**
      * Queries a database in search of a model item with a specific ID
@@ -74,7 +74,7 @@ public interface Crud<T> {
      * @return all the items from the Database
      */
     default List<T> getAll() {
-        return search(new QuerySetup(null, null, null, null, null)).getValues();
+        return search(new SearchQuery(null, null, null, null, null)).getValues();
     }
 
     /**
@@ -169,4 +169,9 @@ public interface Crud<T> {
         }
         return new AbstractMap.SimpleEntry<>(annotation.defaultSortField(), annotation.defaultSortDirection());
     }
+
+    long count(List<FilterQuery> filterQueries);
+
+
+    Page<T> filter(int pageNumber, int pageSize, List<FilterQuery> filterQueries);
 }
