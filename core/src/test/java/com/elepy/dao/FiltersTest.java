@@ -1,6 +1,5 @@
 package com.elepy.dao;
 
-import com.elepy.dao.jongo.MongoFilterTemplateFactory;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
@@ -65,7 +64,6 @@ public class FiltersTest {
         List<FilterQuery> filterQueries = request.filtersForModel(resourceClass);
 
         assertEquals(1, filterQueries.size());
-        System.out.println(MongoFilterTemplateFactory.fromFilter(filterQueries.get(0)).compile());
     }
 
     @Test
