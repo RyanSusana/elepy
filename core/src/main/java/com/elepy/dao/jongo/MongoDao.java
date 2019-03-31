@@ -1,10 +1,10 @@
 package com.elepy.dao.jongo;
 
-import com.elepy.annotations.Identifier;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.dao.*;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -162,7 +162,11 @@ public abstract class MongoDao<T> implements Crud<T> {
 
 
     private List<Field> getSearchableFields() {
-        return ClassUtils.searchForFieldsWithAnnotation(modelClassType(), Identifier.class, Searchable.class, MongoId.class, Unique.class);
+        List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(modelClassType(), Searchable.class, MongoId.class, Unique.class);
+
+        fields.add(ClassUtils.getIdField(modelClassType()).orElseThrow(() -> new ElepyConfigException("No id field")));
+
+        return fields;
     }
 
 
