@@ -703,6 +703,7 @@ public class Elepy implements ElepyContext {
 
             if (elepyErrorMessage.getStatus() == 500) {
                 logger.error(exception.getMessage(), exception);
+                exception.printStackTrace();
             }
             response.type("application/json");
 
