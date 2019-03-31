@@ -22,7 +22,7 @@ The latest versions of elepy can be found at: https://elepy.com/docs/download
 
 ## Quick Start
 ### Step One: Create and annotate your POJO's
-Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and /slug of your model. You should also take a look at [the awesome collection of Elepy annotations](#annotations). 
+Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and /slug of your model. You should also take a look at [the awesome collection of Elepy annotations](https://elepy.com/docs/annotations). 
 ``` java
 @RestModel(name = "Products", slug = "/products")
 public class Product {
