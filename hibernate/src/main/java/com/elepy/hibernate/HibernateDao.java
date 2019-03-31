@@ -233,7 +233,8 @@ public class HibernateDao<T> implements Crud<T> {
 
             Query<T> query = session.createQuery(criteriaQuery);
 
-            return toPage(query, pageSize, pageNumber, count(filterQueries));
+
+            return toPage(query, pageSize, pageNumber, pageSize == Integer.MAX_VALUE ? -1 : count(filterQueries));
         }
     }
 
