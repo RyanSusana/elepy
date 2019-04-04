@@ -101,7 +101,7 @@ public interface Request {
 
 
         if (sorts == null || sorts.length == 0) {
-            propertySorts.add(new PropertySort(restModelType.getRestModelAnnotation().defaultSortField(), restModelType.getRestModelAnnotation().defaultSortDirection()));
+            propertySorts.add(new PropertySort(restModelType.getDefaultSortField(), restModelType.getRestModelAnnotation().defaultSortDirection()));
         } else {
             for (String sort : sorts) {
                 String[] split = sort.split(",");

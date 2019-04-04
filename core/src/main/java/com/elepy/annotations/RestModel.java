@@ -40,6 +40,6 @@ public @interface RestModel {
     /**
      * @return What field do you search on by default?
      */
-    String defaultSortField() default "_id";
+    String defaultSortField() default "";
 
 }

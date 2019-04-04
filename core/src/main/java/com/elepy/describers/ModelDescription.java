@@ -41,6 +41,16 @@ public class ModelDescription<T> {
         return restModelAnnotation;
     }
 
+    public String getDefaultSortField() {
+        final String s = restModelAnnotation.defaultSortField();
+
+        if (s.isEmpty()) {
+            return ClassUtils.getPropertyName(ClassUtils.getIdField(modelType).orElseThrow(() -> new ElepyConfigException("No ID field found")));
+        } else {
+            return s;
+        }
+    }
+
     public Class<T> getModelType() {
         return modelType;
     }
