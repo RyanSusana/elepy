@@ -130,6 +130,11 @@ public interface Crud<T> {
      */
     void deleteById(final Serializable id);
 
+    default void delete(Iterable<Serializable> id) {
+        id.forEach(this::deleteById);
+    }
+
+
     /**
      * @param query The searchTerm
      * @return The number of items in the search.
