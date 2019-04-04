@@ -249,7 +249,7 @@ var template = `
 <div>
         <div v-for="(field, index) in selectedmodel.fields" v-if="field.type != 'OBJECT' "
              class="uk-margin">
-            <label class="uk-form-label" v-if="!(selectedmodel.idField === field.name && creating && field.generated)">((field.pretty_name))</label>
+            <label class="uk-form-label" v-if="!(selectedmodel.idField === field.name && creating && field.generated)">((field.prettyName))</label>
             <div class="uk-form-controls">
                 <!-- TEXTFIELD -->
                 <input class="uk-input"
@@ -344,11 +344,11 @@ var template = `
         <ul class="uk-margin-top" uk-accordion>
             <li v-for="(fieldOuter, index) in selectedmodel.fields"
                 v-if="fieldOuter.type == 'OBJECT' ">
-                <a class="uk-accordion-title" href="#">((fieldOuter.pretty_name))</a>
+                <a class="uk-accordion-title" href="#">((fieldOuter.prettyName))</a>
                 <div class="uk-accordion-content">
                     <div v-for="(field, index) in fieldOuter.fields"
                          class="uk-form-controls">
-                        <label class="uk-form-label">((field.pretty_name))</label>
+                        <label class="uk-form-label">((field.prettyName))</label>
                         <!-- TEXTFIELD -->
                         <input class="uk-input"
                                v-if="field.type == 'STRING' || (field.type == 'TEXT' && field.textType == 'TEXTFIELD') || (field.type == 'TEXT' && field.textType == 'IMAGE_LINK')"

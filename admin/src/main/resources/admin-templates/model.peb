@@ -62,7 +62,7 @@
                     <tr>
                         <th v-for="field in selectedModel.fields"
                             v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">
-                            ((field.pretty_name))
+                            ((field.prettyName))
                         </th>
                     </tr>
                     </thead>
@@ -70,7 +70,7 @@
                     <tbody>
                     <tr v-for="data in modelData"
                         v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editModal()">
-                        <td :uk-tooltip="'title:'+ field.pretty_name+'; pos: top-left'"
+                        <td :uk-tooltip="'title:'+ field.prettyName+'; pos: top-left'"
                             v-for="field in selectedModel.fields"
 
                             v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">

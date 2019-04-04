@@ -75,7 +75,7 @@ public class MethodDescriber {
 
         newFieldMap.put("name", getName());
 
-        newFieldMap.put("pretty_name", getPrettyName());
+        newFieldMap.put("prettyName", getPrettyName());
         mapMethodAnnotations(method, newFieldMap);
         mapMethodTypeInfo(method, newFieldMap);
 

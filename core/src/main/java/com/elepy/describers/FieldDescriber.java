@@ -153,7 +153,7 @@ public class FieldDescriber {
 
         newFieldMap.put("name", getName());
 
-        newFieldMap.put("pretty_name", getPrettyName());
+        newFieldMap.put("prettyName", getPrettyName());
         mapFieldAnnotations(field, newFieldMap);
         mapFieldTypeInformation(field, newFieldMap);
 
