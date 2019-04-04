@@ -16,9 +16,15 @@ public class MongoSearch {
     private final String qry;
     private final Class<?> cls;
 
+    private String compiled;
+
     public MongoSearch(String qry, Class<?> cls) {
         this.qry = qry;
         this.cls = cls;
+    }
+
+    public String getQuery() {
+        return qry;
     }
 
     private List<Field> getSearchableFields() {
@@ -29,19 +35,23 @@ public class MongoSearch {
     }
 
     public String compile() {
-        final Pattern pattern = Pattern.compile(".*" + qry + ".*", Pattern.CASE_INSENSITIVE);
+        if (compiled == null) {
+            final Pattern pattern = Pattern.compile(".*" + qry + ".*", Pattern.CASE_INSENSITIVE);
 
-        String patternCompiled = pattern.toString();
-        String searchRegex = getSearchableFields().stream().map(field -> {
+            String patternCompiled = pattern.toString();
+            String searchRegex = getSearchableFields().stream().map(field -> {
 
-            String propertyName = ClassUtils.getPropertyName(field);
-
-
-            return String.format("{%s: {$regex: '%s'}}", propertyName, patternCompiled);
-        }).collect(Collectors.joining(","));
+                String propertyName = ClassUtils.getPropertyName(field);
 
 
-        return String.format("{$or: [%s]}", searchRegex);
+                return String.format("{%s: {$regex: '%s', $options: 'i'}}", propertyName, patternCompiled);
+
+            }).collect(Collectors.joining(","));
+
+
+            compiled = String.format("{$or: [%s]}", searchRegex);
+        }
+        return compiled;
     }
 
 } 

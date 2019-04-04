@@ -1,8 +1,7 @@
 package com.elepy.http;
 
-import com.elepy.dao.FilterQuery;
-import com.elepy.dao.FilterType;
-import com.elepy.dao.FilterableField;
+import com.elepy.dao.*;
+import com.elepy.describers.ModelDescription;
 import com.elepy.utils.ClassUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +59,8 @@ public interface Request {
 
     Map<String, String> params();
 
+    String[] queryParamValues(String key);
+
     String[] splat();
 
     void attribute(String attribute, Object value);
@@ -91,6 +92,30 @@ public interface Request {
         } else {
             return ClassUtils.toObjectIdFromString(cls, id);
         }
+    }
+
+    default List<PropertySort> sortingForModel(ModelDescription<?> restModelType) {
+        String[] sorts = queryParamValues("sort");
+
+        List<PropertySort> propertySorts = new ArrayList<>();
+
+
+        if (sorts == null || sorts.length == 0) {
+            propertySorts.add(new PropertySort(restModelType.getRestModelAnnotation().defaultSortField(), restModelType.getRestModelAnnotation().defaultSortDirection()));
+        } else {
+            for (String sort : sorts) {
+                String[] split = sort.split(",");
+
+                if (split.length == 1) {
+                    propertySorts.add(new PropertySort(split[0], SortOption.ASCENDING));
+                } else {
+                    propertySorts.add(new PropertySort(split[0], SortOption.get(split[1])));
+                }
+            }
+        }
+
+
+        return propertySorts;
     }
 
     default List<FilterQuery> filtersForModel(Class restModelType) {

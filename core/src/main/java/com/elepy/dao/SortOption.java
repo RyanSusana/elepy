@@ -9,6 +9,13 @@ public enum SortOption {
         this.val = val;
     }
 
+    public static SortOption get(String s) {
+        if (s.toLowerCase().contains("des")) {
+            return DESCENDING;
+        }
+        return ASCENDING;
+    }
+
     public int getVal() {
         return val;
     }

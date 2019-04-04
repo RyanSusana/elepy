@@ -10,6 +10,7 @@ import org.jongo.Jongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,7 +62,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultMongoDao.create(resource);
 
 
-        final Page<Resource> searchable = defaultMongoDao.search(new SearchQuery("searchable", null, null, 1L, 1));
+        final Page<Resource> searchable = defaultMongoDao.search(new Query("sear", new ArrayList<>()), new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>()));
         assertEquals(1, searchable.getValues().size());
 
     }

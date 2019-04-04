@@ -1,5 +1,6 @@
 package com.elepy.describers;
 
+import com.elepy.annotations.RestModel;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.AccessLevel;
@@ -18,6 +19,7 @@ public class ModelDescription<T> {
     private final String name;
     private final ResourceDescriber<T> resourceDescriber;
     private final Map<String, Object> jsonDescription;
+    private final RestModel restModelAnnotation;
 
 
     public ModelDescription(ResourceDescriber<T> resourceDescriber, String slug, String name, Class<T> modelType, IdentityProvider<T> identityProvider, List<ObjectEvaluator<T>> objectEvaluators) {
@@ -28,8 +30,16 @@ public class ModelDescription<T> {
         this.name = name;
         this.resourceDescriber = resourceDescriber;
         this.jsonDescription = generateJsonDescription();
+
+        this.restModelAnnotation = resourceDescriber.getClassType().getAnnotation(RestModel.class);
+
+
     }
 
+
+    public RestModel getRestModelAnnotation() {
+        return restModelAnnotation;
+    }
 
     public Class<T> getModelType() {
         return modelType;

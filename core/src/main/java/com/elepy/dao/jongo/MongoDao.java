@@ -68,6 +68,10 @@ public abstract class MongoDao<T> implements Crud<T> {
         return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelClassType()));
     }
 
+    @Override
+    public List<T> getAll() {
+        return Lists.newArrayList(collection().find().as(modelClassType()).iterator());
+    }
 
     @Override
     public long count(String query) {
@@ -145,37 +149,6 @@ public abstract class MongoDao<T> implements Crud<T> {
         }
     }
 
-    public long count(List<FilterQuery> filterQueries) {
-        MongoFilters mongoFilters = fromQueryFilters(filterQueries);
-
-        return count(mongoFilters);
-
-    }
-
-
-    public Page<T> filter(int pageNumber, int pageSize, List<FilterQuery> filterQueries) {
-
-        if (filterQueries.size() == 0) {
-            return search(new SearchQuery("", null, null, (long) pageSize, pageSize));
-        }
-        MongoFilters mongoFilters = fromQueryFilters(filterQueries);
-
-        ArrayList<T> values = Lists.newArrayList(collection()
-                .find(mongoFilters.compile(), (Object[]) mongoFilters.getHashtagsForJongo())
-
-                .limit(pageSize)
-                .skip((pageNumber - 1) * pageSize)
-                .as(modelClassType())
-                .iterator());
-
-        long amountOfResultsWithThatQuery = count(mongoFilters);
-        final long remainder = amountOfResultsWithThatQuery % pageSize;
-        long amountOfPages = amountOfResultsWithThatQuery / pageSize;
-        if (remainder > 0) amountOfPages++;
-
-        return new Page<>(pageNumber, amountOfPages, values);
-    }
-
     @Override
     public void create(T item) {
         try {
@@ -219,7 +192,37 @@ public abstract class MongoDao<T> implements Crud<T> {
         return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
     }
 
-    private long count(MongoFilters mongoFilters) {
-        return collection().count(mongoFilters.compile(), (Object[]) mongoFilters.getHashtagsForJongo());
+    @Override
+    public Page<T> search(Query query, PageSettings settings) {
+        MongoFilters mongoFilters = fromQueryFilters(query.getFilterQueries());
+
+        MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), modelClassType());
+
+        MongoQuery mongoQuery = new MongoQuery(mongoSearch, mongoFilters);
+
+        String sort = settings.getPropertySortList()
+                .stream()
+                .map(propertySort -> String.format("'%s': %d", propertySort.getProperty(), propertySort.getSortOption().getVal()))
+                .collect(Collectors.joining(","));
+
+        final ArrayList<T> values = Lists.newArrayList(collection()
+                .find(mongoQuery.compile(), (Object[]) mongoQuery.getParameters())
+                .limit(settings.getPageSize())
+                .skip((int) ((settings.getPageNumber() - 1) * settings.getPageSize()))
+                .sort(String.format("{%s}", sort))
+                .as(modelClassType())
+                .iterator());
+
+
+        long amountOfResultsWithThatQuery = count(mongoQuery);
+        final long remainder = amountOfResultsWithThatQuery % settings.getPageSize();
+        long amountOfPages = amountOfResultsWithThatQuery / settings.getPageSize();
+        if (remainder > 0) amountOfPages++;
+
+        return new Page<>(settings.getPageNumber(), amountOfPages, values);
+    }
+
+    private long count(MongoQuery query) {
+        return collection().count(query.compile(), (Object[]) query.getParameters());
     }
 }

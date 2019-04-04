@@ -68,14 +68,14 @@ public class ElepyEndToEndTest extends Base {
     }
 
     @Test
-    public void testFilter() throws IOException, UnirestException {
+    public void testFilterAndSearch() throws IOException, UnirestException {
         Resource resource = validObject();
         resource.setUnique("filterUnique");
         resource.setNumberMax40(BigDecimal.valueOf(25));
         resource.setId(4);
         defaultMongoDao.create(resource);
         defaultMongoDao.create(validObject());
-        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?id_equals=4&unique_contains=filter&numberMax40_equals=25").asString();
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?id_equals=4&unique_contains=filter&numberMax40_equals=25&q=ilterUni").asString();
 
 
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
@@ -85,6 +85,42 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(200, getRequest.getStatus());
         assertEquals("filterUnique", resourcePage.getValues().get(0).getUnique());
+    }
+
+    @Test
+    public void testSearchNotFindingAnything() throws IOException, UnirestException {
+        Resource resource = validObject();
+        resource.setUnique("testSearchNotFindingAnything");
+        resource.setNumberMax40(BigDecimal.valueOf(25));
+        defaultMongoDao.create(resource);
+        defaultMongoDao.create(validObject());
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?q=ilterUni").asString();
+
+
+        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        });
+
+        assertEquals(0, resourcePage.getValues().size());
+
+        assertEquals(200, getRequest.getStatus());
+    }
+
+    @Test
+    public void testSearch() throws IOException, UnirestException {
+        Resource resource = validObject();
+        resource.setUnique("testSearchTo2");
+        resource.setNumberMax40(BigDecimal.valueOf(25));
+        defaultMongoDao.create(resource);
+        defaultMongoDao.create(validObject());
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources?q=testsearchto").asString();
+
+
+        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        });
+
+        assertEquals(1, resourcePage.getValues().size());
+
+        assertEquals(200, getRequest.getStatus());
     }
 
     @Test

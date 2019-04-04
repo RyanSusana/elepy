@@ -18,6 +18,11 @@ public class SparkRequest implements Request {
     }
 
     @Override
+    public String[] queryParamValues(String key) {
+        return request.queryParamsValues(key);
+    }
+
+    @Override
     public String params(String param) {
         return request.params(param);
     }

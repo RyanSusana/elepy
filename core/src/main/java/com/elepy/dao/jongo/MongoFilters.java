@@ -7,9 +7,12 @@ import java.util.stream.Collectors;
 public class MongoFilters {
     private final List<MongoFilterTemplate> mongoFilterTemplates;
 
-
     public MongoFilters(List<MongoFilterTemplate> mongoFilterTemplates) {
         this.mongoFilterTemplates = mongoFilterTemplates;
+    }
+
+    public List<MongoFilterTemplate> getMongoFilterTemplates() {
+        return mongoFilterTemplates;
     }
 
     public String compile() {
@@ -17,12 +20,11 @@ public class MongoFilters {
                 mongoFilterTemplates
                         .stream()
                         .map(MongoFilterTemplate::compile)
-                        .collect(Collectors.joining(",")
-                        ) +
+                        .collect(Collectors.joining(",")) +
                 "]}";
     }
 
-    public Serializable[] getHashtagsForJongo() {
+    public Serializable[] getParameters() {
         Serializable[] toReturn = new Serializable[mongoFilterTemplates.size()];
 
         for (int i = 0; i < mongoFilterTemplates.size(); i++) {
