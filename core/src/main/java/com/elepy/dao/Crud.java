@@ -7,6 +7,7 @@ import com.elepy.utils.ClassUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,10 +131,13 @@ public interface Crud<T> {
      */
     void deleteById(final Serializable id);
 
-    default void delete(Iterable<Serializable> id) {
-        id.forEach(this::deleteById);
+    default void delete(Iterable<Serializable> ids) {
+        ids.forEach(this::deleteById);
     }
 
+    default void delete(Serializable... ids) {
+        delete(Arrays.asList(ids));
+    }
 
     /**
      * @param query The searchTerm
