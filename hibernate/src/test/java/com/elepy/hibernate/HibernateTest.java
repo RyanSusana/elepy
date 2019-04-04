@@ -93,7 +93,7 @@ public class HibernateTest {
     public void testDelete() {
         final Resource resource = validObject();
         resourceCrud.create(resource);
-        resourceCrud.delete(resource.getId());
+        resourceCrud.deleteById(resource.getId());
         assertEquals(0, count());
     }
 

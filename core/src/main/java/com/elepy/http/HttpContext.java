@@ -2,6 +2,7 @@ package com.elepy.http;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public interface HttpContext {
     /**
      * @return The ID of the model a.k.a request.params("id)
      */
-    default Object modelId() {
+    default Serializable modelId() {
         return request().modelId();
     }
 

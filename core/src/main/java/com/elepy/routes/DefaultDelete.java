@@ -6,15 +6,17 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
+
 public class DefaultDelete<T> implements DeleteHandler<T> {
 
     @Override
     public void handleDelete(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        Object paramId = context.modelId();
+        Serializable paramId = context.modelId();
 
         dao.getById(paramId).orElseThrow(() -> new ElepyException(String.format("No %s found", modelDescription.getName()), 404));
 
-        dao.delete(paramId);
+        dao.deleteById(paramId);
 
         context.response().status(200);
         context.response().result("OK");

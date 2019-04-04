@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 
 public class ImageDao extends DefaultMongoDao<Image> {
@@ -77,8 +78,8 @@ public class ImageDao extends DefaultMongoDao<Image> {
     }
 
     @Override
-    public void delete(Object id) {
-        super.delete(id);
+    public void deleteById(Serializable id) {
+        super.deleteById(id);
         final GridFS images = new GridFS(db, "images");
         images.remove(id + "-original");
         images.remove(id + "-caption");

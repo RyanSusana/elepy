@@ -25,6 +25,6 @@ public class UserDelete implements DeleteHandler<User> {
         if (!loggedInUser.getUserType().hasMoreRightsThan(toDelete.get().getUserType())) {
             throw new ElepyException("You can't DELETE users with an equal or greater rank than you!");
         }
-        crud.delete(toDelete.get().getId());
+        crud.deleteById(toDelete.get().getId());
     }
 }

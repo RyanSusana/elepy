@@ -112,10 +112,10 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
-    public Optional<T> getById(Object id) {
+    public Optional<T> getById(Serializable id) {
         try (Session session = sessionFactory.openSession()) {
 
-            final T t = session.get(modelClassType, (Serializable) id);
+            final T t = session.get(modelClassType, id);
 
             loadLazyCollections(t);
             return Optional.ofNullable(t);
@@ -250,10 +250,10 @@ public class HibernateDao<T> implements Crud<T> {
 
 
     @Override
-    public void delete(Object id) {
+    public void deleteById(Serializable id) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
-            final T item = session.get(modelClassType, (Serializable) id);
+            final T item = session.get(modelClassType, id);
             if (item != null) {
                 session.delete(item);
             }

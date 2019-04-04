@@ -11,6 +11,7 @@ import org.jongo.marshall.jackson.oid.MongoId;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -82,12 +83,12 @@ public class ClassUtils {
         return field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
     }
 
-    public static Optional<Object> getId(Object object) {
+    public static Optional<Serializable> getId(Object object) {
 
         try {
             Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
             field.setAccessible(true);
-            return Optional.ofNullable(field.get(object));
+            return Optional.ofNullable((Serializable) field.get(object));
         } catch (IllegalAccessException e) {
             throw new ElepyException("Illegally accessing id field");
         }
@@ -95,7 +96,7 @@ public class ClassUtils {
     }
 
 
-    public static Object toObject(Class clazz, String value) {
+    public static Serializable toObject(Class clazz, String value) {
         if (Boolean.class == clazz || boolean.class == clazz) return Boolean.valueOf(value);
         if (Byte.class == clazz || byte.class == clazz) return Byte.valueOf(value);
         if (Short.class == clazz || short.class == clazz) return Short.valueOf(value);
@@ -106,7 +107,7 @@ public class ClassUtils {
         return value;
     }
 
-    public static Object toObjectIdFromString(Class tClass, String value) {
+    public static Serializable toObjectIdFromString(Class tClass, String value) {
         Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
 
         return toObject(idType, value);

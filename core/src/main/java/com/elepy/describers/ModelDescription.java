@@ -115,7 +115,7 @@ public class ModelDescription<T> {
         actions.put("findOne", resourceDescriber.getFindAccessLevel());
         actions.put("findAll", resourceDescriber.getFindAccessLevel());
         actions.put("update", resourceDescriber.getUpdateAccessLevel());
-        actions.put("delete", resourceDescriber.getDeleteAccessLevel());
+        actions.put("deleteById", resourceDescriber.getDeleteAccessLevel());
         actions.put("create", resourceDescriber.getCreateAccessLevel());
         return actions;
     }

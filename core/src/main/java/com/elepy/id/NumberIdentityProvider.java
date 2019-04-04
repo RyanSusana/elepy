@@ -4,6 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Random;
 
@@ -27,7 +28,7 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
 
         idField.setAccessible(true);
         try {
-            Object id = idField.get(item);
+            Serializable id = (Serializable) idField.get(item);
 
 
             long longId = id == null ? -1 : Long.parseLong(id.toString());
@@ -42,7 +43,7 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
     }
 
     private Object generateId(Crud<T> dao, Class<?> wrappedIdType) {
-        Object randomId;
+        Serializable randomId;
         if (wrappedIdType.equals(Long.class)) {
             randomId = random.nextLong();
         } else {

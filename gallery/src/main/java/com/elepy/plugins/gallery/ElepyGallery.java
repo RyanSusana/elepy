@@ -69,7 +69,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
             final Optional<Image> image = imageDao.getById(request.params("id"));
 
             if (image.isPresent()) {
-                imageDao.delete(request.params("id"));
+                imageDao.deleteById(request.params("id"));
 
                 response.result("Successfully deleted image!");
 

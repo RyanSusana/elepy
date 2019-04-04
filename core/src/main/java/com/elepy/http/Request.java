@@ -5,6 +5,7 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.utils.ClassUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.*;
 
 public interface Request {
@@ -68,14 +69,14 @@ public interface Request {
     /**
      * @return The ID of the model a.k.a request.params("id)
      */
-    default Object modelId() {
+    default Serializable modelId() {
         return modelId(attribute("modelClass"));
     }
 
     /**
      * @return The ID of the model a.k.a request.params("id)
      */
-    default Object modelId(Class cls) {
+    default Serializable modelId(Class cls) {
 
         String id = params("id");
         if (cls == null) {
@@ -93,6 +94,7 @@ public interface Request {
             return ClassUtils.toObjectIdFromString(cls, id);
         }
     }
+
 
     default List<PropertySort> sortingForModel(ModelDescription<?> restModelType) {
         String[] sorts = queryParamValues("sort");

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     @Override
-    public Optional<T> getById(final Object id) {
+    public Optional<T> getById(final Serializable id) {
         return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelClassType()));
     }
 
@@ -119,7 +120,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
 
     @Override
-    public void delete(Object id) {
+    public void deleteById(Serializable id) {
         collection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
     }
 
@@ -161,8 +162,8 @@ public abstract class MongoDao<T> implements Crud<T> {
 
 
     @Override
-    public Object getId(T item) {
-        Optional<Object> id = ClassUtils.getId(item);
+    public Serializable getId(T item) {
+        Optional<Serializable> id = ClassUtils.getId(item);
         if (!id.isPresent()) {
             throw new ElepyException("No Identifier provided to the object.");
         }

@@ -4,6 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
         List<Field> uniqueFields = ClassUtils.getUniqueFields(item.getClass());
 
 
-        Optional<Object> id = ClassUtils.getId(item);
+        Optional<Serializable> id = ClassUtils.getId(item);
 
         if (insert && id.isPresent() && dao.getById(id.get()).isPresent()) {
             throw new ElepyException("Duplicate ID's", 400);
@@ -41,7 +42,7 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
                 }
 
                 T foundRecord = foundItems.get(0);
-                final Optional<Object> foundId = ClassUtils.getId(foundRecord);
+                final Optional<Serializable> foundId = ClassUtils.getId(foundRecord);
                 if ((id.isPresent() || foundId.isPresent()) && !id.equals(foundId)) {
                     throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
                 }

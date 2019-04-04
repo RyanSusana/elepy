@@ -50,7 +50,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
     public void testDelete() {
         final Resource resource = validObject();
         defaultMongoDao.create(resource);
-        defaultMongoDao.delete(resource.getId());
+        defaultMongoDao.deleteById(resource.getId());
         assertEquals(0, count());
     }
 

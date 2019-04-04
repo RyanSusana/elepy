@@ -4,6 +4,7 @@ import com.elepy.annotations.RestModel;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ClassUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.List;
@@ -26,7 +27,7 @@ public interface Crud<T> {
      * @param id The id of the model item
      * @return An optional item.
      */
-    Optional<T> getById(final Object id);
+    Optional<T> getById(final Serializable id);
 
     /**
      * This method is used to look for model items based on a specific field name. It is used to help Elepy authenticate
@@ -77,8 +78,8 @@ public interface Crud<T> {
      * @return The found ID
      * @throws ElepyConfigException gets thrown when no ID has been found
      */
-    default Object getId(final T item) {
-        Optional<Object> id = ClassUtils.getId(item);
+    default Serializable getId(final T item) {
+        Optional<Serializable> id = ClassUtils.getId(item);
 
         if (id.isPresent()) {
             return id.get();
@@ -127,7 +128,7 @@ public interface Crud<T> {
      *
      * @param id The ID of the item that you want to DELETE
      */
-    void delete(final Object id);
+    void deleteById(final Serializable id);
 
     /**
      * @param query The searchTerm

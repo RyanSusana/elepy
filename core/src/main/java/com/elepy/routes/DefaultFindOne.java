@@ -8,6 +8,7 @@ import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 public class DefaultFindOne<T> implements FindOneHandler<T> {
@@ -21,7 +22,7 @@ public class DefaultFindOne<T> implements FindOneHandler<T> {
     public T findOne(Request request, Response response, Crud<T> dao, ModelDescription<T> modelDescription) {
         response.type("application/json");
 
-        Object paramId = request.modelId();
+        Serializable paramId = request.modelId();
 
         final Optional<T> id = dao.getById(paramId);
         if (id.isPresent()) {
