@@ -3,6 +3,8 @@ package com.elepy.dao.jongo;
 import com.elepy.dao.FilterQuery;
 import com.elepy.exceptions.ElepyException;
 
+import java.util.regex.Pattern;
+
 public class MongoFilterTemplateFactory {
 
     public static MongoFilterTemplate fromFilter(FilterQuery filterQuery) {
@@ -21,7 +23,8 @@ public class MongoFilterTemplateFactory {
             case LESSER_THAN_OR_EQUALS:
                 return new MongoFilterTemplate("$lte", filterQuery.getFilterableField(), filterQuery.getFilterValue());
             case CONTAINS:
-                return new MongoFilterTemplate("$regex", filterQuery.getFilterableField(), String.format(".*%s.*", filterQuery.getFilterValue()));
+                final Pattern pattern = Pattern.compile(".*" + filterQuery.getFilterValue() + ".*", Pattern.CASE_INSENSITIVE);
+                return new MongoFilterTemplate("$regex", filterQuery.getFilterableField(), pattern.toString());
         }
         throw new ElepyException("Mongo does not support: " + filterQuery.getFilterType().getQueryName());
     }

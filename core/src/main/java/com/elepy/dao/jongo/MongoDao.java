@@ -118,45 +118,24 @@ public abstract class MongoDao<T> implements Crud<T> {
     public Page<T> search(SearchQuery searchQuery) {
         final Find find;
         final long amountResultsTotal;
-        try {
-            if (!StringUtils.isEmpty(searchQuery.getQuery())) {
-                final List<Field> searchableFields = getSearchableFields();
+        if (!StringUtils.isEmpty(searchQuery.getQuery())) {
 
-                List<Map<String, String>> expressions = new ArrayList<>();
-                Map<String, Object> qmap = new HashMap<>();
+            String query = new MongoSearch(searchQuery.getQuery(), modelClassType()).compile();
+            find = searchQuery.getQuery() != null ? collection().find(query) : collection().find();
 
-
-                Pattern[] patterns = new Pattern[searchableFields.size()];
-
-                final Pattern pattern = Pattern.compile(".*" + searchQuery.getQuery() + ".*", Pattern.CASE_INSENSITIVE);
-                for (int i = 0; i < patterns.length; i++) {
-                    patterns[i] = pattern;
-                }
-                for (Field field : searchableFields) {
-                    Map<String, String> keyValue = new HashMap<>();
-                    keyValue.put(ClassUtils.getPropertyName(field), "#");
-                    expressions.add(keyValue);
-                }
-                qmap.put("$or", expressions);
-                find = searchQuery.getQuery() != null ? collection().find(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns) : collection().find();
-
-                amountResultsTotal = collection().count(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
-            } else {
-                find = collection().find();
-                amountResultsTotal = collection().count();
-            }
-
-            final AbstractMap.SimpleEntry<String, SortOption> defaultSort = defaultSort();
-
-            find.sort(String.format("{%s: %d}",
-                    searchQuery.getSortBy() == null ? defaultSort.getKey() : searchQuery.getSortBy(),
-                    searchQuery.getSortOption() == null ? defaultSort.getValue().getVal() : searchQuery.getSortOption().getVal()));
-
-            return toPage(find, searchQuery, (int) amountResultsTotal);
-        } catch (JsonProcessingException e) {
-            logger.error(e.getMessage(), e);
-            throw new ElepyException(e.getMessage());
+            amountResultsTotal = collection().count(query);
+        } else {
+            find = collection().find();
+            amountResultsTotal = collection().count();
         }
+
+        final AbstractMap.SimpleEntry<String, SortOption> defaultSort = defaultSort();
+
+        find.sort(String.format("{%s: %d}",
+                searchQuery.getSortBy() == null ? defaultSort.getKey() : searchQuery.getSortBy(),
+                searchQuery.getSortOption() == null ? defaultSort.getValue().getVal() : searchQuery.getSortOption().getVal()));
+
+        return toPage(find, searchQuery, (int) amountResultsTotal);
 
     }
 
@@ -216,9 +195,9 @@ public abstract class MongoDao<T> implements Crud<T> {
         }
         MongoFilters mongoFilters = fromQueryFilters(filterQueries);
 
-        mongoFilters.compile();
-        mongoFilters.getHashtagsForJongo();
-        ArrayList<T> values = Lists.newArrayList(collection().find(mongoFilters.compile(), (Object[]) mongoFilters.getHashtagsForJongo())
+        ArrayList<T> values = Lists.newArrayList(collection()
+                .find(mongoFilters.compile(), (Object[]) mongoFilters.getHashtagsForJongo())
+
                 .limit(pageSize)
                 .skip((pageNumber - 1) * pageSize)
                 .as(modelClassType())
