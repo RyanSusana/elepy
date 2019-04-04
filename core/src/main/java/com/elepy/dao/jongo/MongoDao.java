@@ -7,7 +7,6 @@ import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -21,8 +20,10 @@ import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class MongoDao<T> implements Crud<T> {
@@ -80,33 +81,10 @@ public abstract class MongoDao<T> implements Crud<T> {
         if (query.startsWith("{") && query.endsWith("}")) {
             return collection().count(query);
         } else {
-            final List<Field> searchableFields = getSearchableFields();
+            String queryCompiled = new MongoSearch(query, modelClassType()).compile();
 
-            List<Map<String, String>> expressions = new ArrayList<>();
-            Map<String, Object> qmap = new HashMap<>();
-
-
-            Pattern[] patterns = new Pattern[searchableFields.size()];
-
-            final Pattern pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
-            for (int i = 0; i < patterns.length; i++) {
-                patterns[i] = pattern;
-            }
-            for (Field field : searchableFields) {
-                Map<String, String> keyValue = new HashMap<>();
-                keyValue.put(ClassUtils.getPropertyName(field), "#");
-                expressions.add(keyValue);
-            }
-            qmap.put("$or", expressions);
-
-            try {
-                return collection().count(objectMapper().writeValueAsString(qmap).replaceAll("\"#\"", "#"), (Object[]) patterns);
-            } catch (JsonProcessingException e) {
-                logger.error(e.getMessage(), e);
-                throw new ElepyException(e.getMessage());
-            }
+            return collection().count(queryCompiled);
         }
-
     }
 
     @Override
