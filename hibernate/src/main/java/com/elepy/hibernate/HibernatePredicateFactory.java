@@ -51,7 +51,7 @@ public class HibernatePredicateFactory {
                     return cb.le(root.get(filterQuery.getFilterableField().getName()), (Number) value);
                 }
         }
-        throw new ElepyException("Hibernate does not support the query: " + filterQuery.getFilterType().getQueryName());
+        throw new ElepyException("Hibernate does not support the filter: " + filterQuery.getFilterType().getQueryName());
     }
 
     private static Serializable value(FilterableField field, String value) {

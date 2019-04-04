@@ -2,7 +2,7 @@ package com.elepy.hibernate;
 
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
-import com.elepy.dao.SearchQuery;
+import com.elepy.dao.PageSettings;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
@@ -79,7 +79,10 @@ public class HibernateTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        Page<Resource> resourcePage = resourceCrud.filter(1, 20, request.filtersForModel(Resource.class));
+        Page<Resource> resourcePage = resourceCrud.search(
+                new com.elepy.dao.Query(null, request.filtersForModel(Resource.class)),
+                new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>())
+        );
 
         assertEquals(1, resourcePage.getValues().size());
 
@@ -102,7 +105,10 @@ public class HibernateTest {
         resourceCrud.create(resource);
 
 
-        final Page<Resource> searchable = resourceCrud.search(new SearchQuery("searchab", null, null, 1L, 1));
+        final Page<Resource> searchable = resourceCrud.search(
+                new com.elepy.dao.Query("searchab", new ArrayList<>()),
+                new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>())
+        );
         assertEquals(1, searchable.getValues().size());
 
     }

@@ -1,10 +1,8 @@
 package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
-import com.elepy.dao.Crud;
-import com.elepy.dao.FilterQuery;
-import com.elepy.dao.Page;
-import com.elepy.dao.SearchQuery;
+import com.elepy.annotations.Unique;
+import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
@@ -19,13 +17,11 @@ import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
 import javax.persistence.Column;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,58 +29,20 @@ import java.util.stream.Collectors;
 public class HibernateDao<T> implements Crud<T> {
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
     private final SessionFactory sessionFactory;
-    private final Class<T> aClass;
+    private final Class<T> modelClassType;
     private final ObjectMapper objectMapper;
 
-    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Class<T> aClass) {
+    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Class<T> modelClassType) {
         this.sessionFactory = sessionFactory;
-        this.aClass = aClass;
+        this.modelClassType = modelClassType;
         this.objectMapper = objectMapper;
     }
 
 
-    @Override
-    public Page<T> search(SearchQuery searchQuery) {
-        try (Session session = sessionFactory.openSession()) {
-
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
-
-            final Root<T> root = criteriaQuery.from(aClass);
-            final long count;
-            if (StringUtils.isEmpty(searchQuery.getQuery())) {
-                criteriaQuery.select(root);
-                count = count();
-            } else {
-                criteriaQuery.select(root);
-
-                final List<Field> searchableFields = com.elepy.utils.ClassUtils.searchForFieldsWithAnnotation(aClass, Searchable.class);
-
-                final List<Predicate> predicatelist = new ArrayList<>();
-                for (Field searchableField : searchableFields) {
-                    final Predicate like = cb.like(root.get(searchableField.getName()), "%" + searchQuery.getQuery() + "%");
-                    predicatelist.add(like);
-
-                }
-                criteriaQuery.where(cb.or(predicatelist.toArray(new Predicate[0])));
-                count = count(searchQuery.getQuery());
-
-            }
-
-            Query<T> query = session.createQuery(criteriaQuery);
-
-
-            return toPage(query, searchQuery, count);
-        }
-    }
-
-
-    private Page<T> toPage(Query<T> query, SearchQuery pageSearch, long amountOfResultsWithThatQuery) {
-        return toPage(query, pageSearch.getPageSize(), pageSearch.getPageNumber(), amountOfResultsWithThatQuery);
-    }
-
     private Page<T> toPage(Query<T> query, int pageSize, long pageNumber, long amountOfResultsWithThatQuery) {
-        final List<T> values = query.setMaxResults(pageSize).setFirstResult(((int) pageNumber - 1) * pageSize).list();
+        final Query<T> q = query.setMaxResults(pageSize).setFirstResult(((int) pageNumber - 1) * pageSize);
+
+        final List<T> values = q.list();
 
         if (amountOfResultsWithThatQuery == -1) {
             amountOfResultsWithThatQuery = values.size();
@@ -99,24 +57,80 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
+    public Page<T> search(com.elepy.dao.Query query, PageSettings settings) {
+        try (Session session = sessionFactory.openSession()) {
+
+
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(modelClassType);
+
+            final Root<T> root = criteriaQuery.from(modelClassType);
+
+            Predicate predicate = generateSearchQuery(cb, root, query);
+
+            final List<Order> orders = generateOrderBy(cb, root, settings);
+
+            Query<T> qry = session.createQuery(criteriaQuery.select(root).where(predicate).orderBy(orders));
+
+
+            return toPage(qry, settings.getPageSize(), settings.getPageNumber(), count(query));
+        }
+    }
+
+    private List<Order> generateOrderBy(CriteriaBuilder cb, Root<T> root, PageSettings settings) {
+        return settings.getPropertySortList().stream().map(propertySort -> {
+            if (propertySort.getSortOption().equals(SortOption.ASCENDING)) {
+                return cb.asc(root.get(propertySort.getProperty()));
+            } else {
+                return cb.desc(root.get(propertySort.getProperty()));
+            }
+        }).collect(Collectors.toList());
+    }
+
+    private Predicate generateSearchQuery(CriteriaBuilder cb, Root<T> root, com.elepy.dao.Query query) {
+
+
+        final List<Predicate> filterList = new ArrayList<>();
+        for (FilterQuery filterQuery : query.getFilterQueries()) {
+            filterList.add(HibernatePredicateFactory.fromFilter(root, cb, filterQuery));
+        }
+
+
+        return cb.and(cb.and(filterList.toArray(new Predicate[0])), cb.or(getSearchPredicates(root, cb, query.getSearchQuery()).toArray(new Predicate[0])));
+    }
+
+    private List<Predicate> getSearchPredicates(Root<T> root, CriteriaBuilder cb, String term) {
+
+
+        if (term == null || term.trim().isEmpty()) {
+            //Always true
+            return Collections.singletonList(cb.and());
+        }
+        return getSearchableFields().stream().map(field -> cb.like(root.get(getJPAFieldName(field)), "%" + term + "%"))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
     public Optional<T> getById(Object id) {
         try (Session session = sessionFactory.openSession()) {
 
-            final T t = session.get(aClass, (Serializable) id);
+            final T t = session.get(modelClassType, (Serializable) id);
 
             loadLazyCollections(t);
             return Optional.ofNullable(t);
         }
     }
 
+
     @Override
     public List<T> searchInField(Field field, String qry) {
         try (Session session = sessionFactory.openSession()) {
 
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(modelClassType);
 
-            final Root<T> root = criteriaQuery.from(aClass);
+            final Root<T> root = criteriaQuery.from(modelClassType);
 
             criteriaQuery.select(root).where(cb.like(root.get(getJPAFieldName(field)), qry));
 
@@ -155,6 +169,18 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
+    public List<T> getAll() {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(modelClassType);
+
+            final Root<T> root = criteriaQuery.from(modelClassType);
+
+            return session.createQuery(criteriaQuery.select(root)).getResultList();
+        }
+    }
+
+    @Override
     public void create(Iterable<T> items) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
@@ -178,11 +204,11 @@ public class HibernateDao<T> implements Crud<T> {
                 return count();
             }
 
-            List<Field> searchables = ClassUtils.searchForFieldsWithAnnotation(aClass, Searchable.class);
-            searchables.add(ClassUtils.getIdField(aClass).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", aClass.getName()))));
+            List<Field> searchables = ClassUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class);
+            searchables.add(ClassUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", modelClassType.getName()))));
 
 
-            String hql = "select count(*) from " + aClass.getName() +
+            String hql = "select count(*) from " + modelClassType.getName() +
                     (searchables.isEmpty() ? "" : (" WHERE " + searchables.stream().map(field -> field.getName() + " LIKE :searchTerm").collect(Collectors.joining(" OR "))));
 
 
@@ -194,55 +220,40 @@ public class HibernateDao<T> implements Crud<T> {
 
     @Override
     public Class<T> getType() {
-        return aClass;
+        return modelClassType;
     }
 
-    @Override
-    public long count(List<FilterQuery> filterQueries) {
-
-        if (filterQueries.isEmpty()) {
-            return count();
-        } else {
-            //Should probably do an optimization here.
-            return filter(1, Integer.MAX_VALUE, filterQueries).getValues().size();
-        }
-    }
-
-    @Override
-    public Page<T> filter(int pageNumber, int pageSize, List<FilterQuery> filterQueries) {
-        if (filterQueries.size() == 0) {
-            return search(new SearchQuery("", null, null, (long) pageSize, pageSize));
-        }
+    public long count(com.elepy.dao.Query query) {
 
         try (Session session = sessionFactory.openSession()) {
+
+
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(aClass);
-
-            final Root<T> root = criteriaQuery.from(aClass);
-
-            criteriaQuery.select(root);
+            CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
 
 
-            final List<Predicate> predicatelist = new ArrayList<>();
-            for (FilterQuery filterQuery : filterQueries) {
+            final Root<T> root = criteriaQuery.from(modelClassType);
 
-                predicatelist.add(HibernatePredicateFactory.fromFilter(root, cb, filterQuery));
-            }
-            criteriaQuery.where(cb.and(predicatelist.toArray(new Predicate[0])));
+            criteriaQuery.select(cb.count(root));
+            Predicate predicate = generateSearchQuery(cb, root, query);
 
-
-            Query<T> query = session.createQuery(criteriaQuery);
+            criteriaQuery.where(predicate);
 
 
-            return toPage(query, pageSize, pageNumber, pageSize == Integer.MAX_VALUE ? -1 : count(filterQueries));
+            Query<Long> query1 = session.createQuery(criteriaQuery);
+
+
+            query1.getResultList();
+            return query1.getSingleResult();
         }
     }
+
 
     @Override
     public void delete(Object id) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
-            final T item = session.get(aClass, (Serializable) id);
+            final T item = session.get(modelClassType, (Serializable) id);
             if (item != null) {
                 session.delete(item);
             }
@@ -255,7 +266,7 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public long count() {
         try (Session session = sessionFactory.openSession()) {
-            final Query<Long> query = session.createQuery("select count(*) from " + aClass.getName(), Long.class);
+            final Query<Long> query = session.createQuery("select count(*) from " + modelClassType.getName(), Long.class);
             return query.getSingleResult();
         }
     }
@@ -281,5 +292,14 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
+    private List<Field> getSearchableFields() {
+        List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class, Unique.class);
 
+        Field idField = ClassUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException("No id idField"));
+        fields.add(idField);
+
+
+        fields.removeIf(field -> !field.getType().equals(String.class));
+        return fields;
+    }
 }
