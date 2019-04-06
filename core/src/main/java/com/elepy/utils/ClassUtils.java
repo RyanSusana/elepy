@@ -108,9 +108,13 @@ public class ClassUtils {
     }
 
     public static Serializable toObjectIdFromString(Class tClass, String value) {
-        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
+        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
 
-        return toObject(idType, value);
+        try {
+            return toObject(idType, value);
+        } catch (NumberFormatException e) {
+            throw new ElepyException(String.format("'%s' is not a number", value));
+        }
     }
 
     public static Optional<Field> getIdField(Class cls) {
