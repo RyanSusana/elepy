@@ -39,7 +39,8 @@ public class HttpAction {
         return level;
     }
 
-    public HttpMethod getHttpMethod() {
+
+    public HttpMethod getMethod() {
         return method;
     }
 
