@@ -62,7 +62,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     public T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Class<T> clazz) throws IOException {
 
         final String body = request.body();
-        if (request.requestMethod().equals("PUT")) {
+        if (request.method().equals("PUT")) {
             if (body.startsWith("{")) {
                 return objectMapper.readValue(body, clazz);
             } else {

@@ -14,7 +14,7 @@ public @interface Action {
 
     String name();
 
-    HttpMethod httpMethod();
+    HttpMethod method();
 
     Class<? extends ActionHandler> handler();
 

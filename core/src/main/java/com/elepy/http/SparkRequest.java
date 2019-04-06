@@ -32,8 +32,8 @@ public class SparkRequest implements Request {
     }
 
     @Override
-    public String requestMethod() {
-        return request.requestMethod();
+    public String method() {
+        return request.method();
     }
 
     @Override

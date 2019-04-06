@@ -42,14 +42,14 @@ public class ActionIgniter<T> {
                 final String baseSlug = modelDescription.getSlug() + "/actions" + (actionAnnotation.slug().isEmpty() ? "/" + slugify.slugify(actionAnnotation.name()) : actionAnnotation.slug());
                 final String slug = baseSlug + "/:id";
 
-                HttpAction action = HttpAction.of(actionAnnotation.name(), baseSlug, actionAnnotation.accessLevel(), actionAnnotation.httpMethod(), actionAnnotation.actionType());
+                HttpAction action = HttpAction.of(actionAnnotation.name(), baseSlug, actionAnnotation.accessLevel(), actionAnnotation.method(), actionAnnotation.actionType());
 
                 actions.add(action);
                 final ActionHandler<T> actionHandler = elepy.initializeElepyObject(actionAnnotation.handler());
                 final RouteBuilder route = anElepyRoute()
                         .accessLevel(actionAnnotation.accessLevel())
                         .path(slug)
-                        .method(actionAnnotation.httpMethod())
+                        .method(actionAnnotation.method())
                         .route(ctx -> {
                             ctx.attribute("action", action);
                             actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelDescription.getModelType()), crud, modelDescription, elepy.getObjectMapper());

@@ -14,7 +14,7 @@ public interface Request {
 
     String params(String param);
 
-    String requestMethod();
+    String method();
 
     String scheme();
 

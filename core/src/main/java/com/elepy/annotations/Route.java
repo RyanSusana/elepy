@@ -22,7 +22,7 @@ public @interface Route {
     /**
      * @return The HTTP request method of the route
      */
-    HttpMethod requestMethod();
+    HttpMethod method();
 
     /**
      * @return The accessLevel of the method.

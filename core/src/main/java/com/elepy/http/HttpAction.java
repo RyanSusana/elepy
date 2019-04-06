@@ -7,28 +7,28 @@ public class HttpAction {
     private final String name;
     private final String slug;
     private final AccessLevel level;
-    private final HttpMethod httpMethod;
+    private final HttpMethod method;
     private final ActionType actionType;
 
     @JsonCreator
     public HttpAction(@JsonProperty("name") String name,
                       @JsonProperty("slug") String slug,
                       @JsonProperty("accessLevel") AccessLevel level,
-                      @JsonProperty("requestMethod") HttpMethod httpMethod,
+                      @JsonProperty("method") HttpMethod method,
                       @JsonProperty("type") ActionType actionType) {
         this.name = name;
         this.slug = slug;
         this.level = level;
-        this.httpMethod = httpMethod;
+        this.method = method;
         this.actionType = actionType;
     }
 
     public static HttpAction of(@JsonProperty("name") String name,
                                 @JsonProperty("slug") String slug,
                                 @JsonProperty("accessLevel") AccessLevel level,
-                                @JsonProperty("requestMethod") HttpMethod httpMethod,
+                                @JsonProperty("method") HttpMethod method,
                                 @JsonProperty("type") ActionType actionType) {
-        return new HttpAction(name, slug, level, httpMethod, actionType);
+        return new HttpAction(name, slug, level, method, actionType);
     }
 
     public String getSlug() {
@@ -40,7 +40,7 @@ public class HttpAction {
     }
 
     public HttpMethod getHttpMethod() {
-        return httpMethod;
+        return method;
     }
 
     public ActionType getActionType() {

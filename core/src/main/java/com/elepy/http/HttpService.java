@@ -12,21 +12,21 @@ public interface HttpService {
 
     void stop();
 
-    default void addRoute(HttpMethod httpMethod, String path, AccessLevel accessLevel, HttpContextHandler contextHandler) {
+    default void addRoute(HttpMethod method, String path, AccessLevel accessLevel, HttpContextHandler contextHandler) {
         addRoute(RouteBuilder
                 .anElepyRoute()
                 .route(contextHandler)
-                .method(httpMethod)
+                .method(method)
                 .path(path)
                 .accessLevel(accessLevel)
                 .build());
     }
 
-    default void addRoute(HttpMethod httpMethod, String path, AccessLevel accessLevel, RequestResponseHandler requestResponseHandler) {
+    default void addRoute(HttpMethod method, String path, AccessLevel accessLevel, RequestResponseHandler requestResponseHandler) {
         addRoute(RouteBuilder
                 .anElepyRoute()
                 .route(ctx -> requestResponseHandler.handle(ctx.request(), ctx.response()))
-                .method(httpMethod)
+                .method(method)
                 .path(path)
                 .accessLevel(accessLevel)
                 .build());

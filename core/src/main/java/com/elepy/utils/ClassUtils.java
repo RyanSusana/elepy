@@ -225,7 +225,7 @@ public class ClassUtils {
         return anElepyRoute()
                 .accessLevel(annotation.accessLevel())
                 .path(annotation.path())
-                .method(annotation.requestMethod())
+                .method(annotation.method())
                 .route(route)
                 .build();
     }

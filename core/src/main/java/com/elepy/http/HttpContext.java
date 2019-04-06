@@ -42,8 +42,8 @@ public interface HttpContext {
         return request().params(param);
     }
 
-    default String requestMethod() {
-        return request().requestMethod();
+    default String method() {
+        return request().method();
     }
 
     default String scheme() {

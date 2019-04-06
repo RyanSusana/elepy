@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Dao(ResourceDao.class)
 //@Update(accessLevel = AccessLevel.PUBLIC, findManyHandler = ResourceUpdate.class)
 @ExtraRoutes({ResourceExtraRoutes.class})
-@Action(name = "extra-action", httpMethod = HttpMethod.GET, handler = ResourceExtraAction.class)
+@Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
 public class Resource {
     @Identifier
     private int id;
