@@ -33,7 +33,7 @@ public class SparkRequest implements Request {
 
     @Override
     public String method() {
-        return request.method();
+        return request.requestMethod();
     }
 
     @Override
