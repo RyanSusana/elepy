@@ -32,7 +32,7 @@ class UnsatisfiedDependencies {
 
         final Class<?> type;
 
-        if (annotation == null || annotation.classType().equals(Object.class)) {
+        if (annotation == null || annotation.type().equals(Object.class)) {
             if (field instanceof Field) {
                 type = ((Field) field).getType();
             } else if (field instanceof Parameter) {
@@ -41,7 +41,7 @@ class UnsatisfiedDependencies {
                 throw new ElepyException("This should never be thrown: Annotated element is not a Field or Parameter", 500);
             }
         } else {
-            type = annotation.classType();
+            type = annotation.type();
         }
         return new ContextKey<>(type, ElepyContext.getTag(field));
 

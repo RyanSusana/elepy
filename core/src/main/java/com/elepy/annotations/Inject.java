@@ -19,7 +19,7 @@ public @interface Inject {
     String tag() default "";
 
     /**
-     * @return The specific classType. Leave blank unless you are working with inheritance trees.
+     * @return The specific type. Leave blank unless you are working with inheritance trees.
      */
-    Class classType() default Object.class;
+    Class type() default Object.class;
 }

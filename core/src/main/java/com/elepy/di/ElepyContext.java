@@ -137,7 +137,7 @@ public interface ElepyContext {
 
     default Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {
         Inject annotation = annotatedType.getAnnotation(Inject.class);
-        if (annotation.classType().equals(Object.class)) {
+        if (annotation.type().equals(Object.class)) {
             if (annotatedType instanceof Field) {
                 if (Crud.class.isAssignableFrom(((Field) annotatedType).getType())) {
                     return this.getDependency(Crud.class, getTag(annotatedType));
@@ -152,7 +152,7 @@ public interface ElepyContext {
                 }
             }
         }
-        return this.getDependency(annotation.classType(), annotation.tag());
+        return this.getDependency(annotation.type(), annotation.tag());
     }
 
 
