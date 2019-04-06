@@ -257,4 +257,12 @@ public class ElepyEndToEndTest extends Base {
         assertEquals(201, getRequest.getStatus());
         assertEquals("generated", getRequest.getBody());
     }
+
+    @Test
+    void testAction() throws UnirestException {
+        final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources/actions/extra-action?ids=999,777").asString();
+
+        assertEquals(200, getRequest.getStatus());
+        assertEquals("[999,777]", getRequest.getBody());
+    }
 }

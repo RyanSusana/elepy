@@ -2,11 +2,13 @@ package com.elepy.http;
 
 import com.elepy.dao.*;
 import com.elepy.describers.ModelDescription;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ClassUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public interface Request {
 
@@ -70,7 +72,40 @@ public interface Request {
      * @return The ID of the model a.k.a request.params("id)
      */
     default Serializable modelId() {
+
+        HttpAction action = attribute("action");
+        if (action != null) {
+            final String id = queryParams("id");
+
+            if (id != null) {
+                return ClassUtils.toObjectIdFromString(attribute("modelClass"), id);
+            }
+
+            final String ids = queryParams("ids");
+
+            if (ids != null) {
+                final String[] split = ids.split(",");
+
+                return ClassUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
+            }
+        }
         return modelId(attribute("modelClass"));
+    }
+
+    default Set<Serializable> modelIds() {
+
+        HttpAction action = attribute("action");
+        if (action != null) {
+            final String ids = queryParams("ids");
+
+            if (ids != null) {
+                final String[] split = ids.split(",");
+                return Arrays.stream(split).map(s -> ClassUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
+            }
+            return new HashSet<>(Collections.singletonList(modelId()));
+
+        }
+        throw new ElepyException("No ids found", 404);
     }
 
     /**
@@ -84,7 +119,6 @@ public interface Request {
                 return Integer.parseInt(id);
             } catch (Exception e) {
                 try {
-
                     return Long.parseLong(id);
                 } catch (Exception e1) {
                     return id;

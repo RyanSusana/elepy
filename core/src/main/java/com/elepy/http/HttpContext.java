@@ -25,6 +25,18 @@ public interface HttpContext {
         return request().modelId();
     }
 
+    /**
+     * @return The ID of the model a.k.a request.params("id)
+     */
+    default Set<Serializable> modelIds() {
+        return request().modelIds();
+    }
+
+    default HttpContext injectModelClassInHttpContext(Class<?> cls) {
+        request().attribute("modelClass", cls);
+        return this;
+    }
+
     ////////// REQUEST
     default String params(String param) {
         return request().params(param);

@@ -3,6 +3,7 @@ package com.elepy.models;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.dao.ResourceDao;
+import com.elepy.http.HttpMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Dao(ResourceDao.class)
 //@Update(accessLevel = AccessLevel.PUBLIC, findManyHandler = ResourceUpdate.class)
 @ExtraRoutes({ResourceExtraRoutes.class})
+@Action(name = "extra-action", httpMethod = HttpMethod.GET, handler = ResourceExtraAction.class)
 public class Resource {
     @Identifier
     private int id;

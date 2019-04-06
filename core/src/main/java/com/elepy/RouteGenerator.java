@@ -6,6 +6,7 @@ import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.HttpMethod;
+import com.elepy.init.ActionIgniter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +36,12 @@ public class RouteGenerator<T> {
 
 
         try {
-
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
             ModelDescription<T> modelDescription = new ModelDescription<>(restModel, (baseSlug.endsWith("/") ? "" : "/") + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
+
+            modelDescription.getActions().addAll(new ActionIgniter<>(modelDescription, dao, elepy).ignite());
+
             elepy.putModelDescription(modelDescription);
             Map<String, Object> jsonDescription = modelDescription.getJsonDescription();
 
@@ -108,8 +111,7 @@ public class RouteGenerator<T> {
     }
 
     private HttpContext injectModelClassInHttpContext(HttpContext ctx) {
-        ctx.request().attribute("modelClass", restModel.getClassType());
-        return ctx;
+        return ctx.injectModelClassInHttpContext(restModel.getClassType());
     }
 
 

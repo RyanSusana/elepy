@@ -3,7 +3,9 @@ package com.elepy.describers;
 import com.elepy.annotations.RestModel;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.http.AccessLevel;
+import com.elepy.http.ActionType;
+import com.elepy.http.HttpAction;
+import com.elepy.http.HttpMethod;
 import com.elepy.id.IdentityProvider;
 import com.elepy.utils.ClassUtils;
 
@@ -22,6 +24,9 @@ public class ModelDescription<T> {
     private final RestModel restModelAnnotation;
 
 
+    private final List<HttpAction> actions;
+
+
     public ModelDescription(ResourceDescriber<T> resourceDescriber, String slug, String name, Class<T> modelType, IdentityProvider<T> identityProvider, List<ObjectEvaluator<T>> objectEvaluators) {
         this.modelType = modelType;
         this.identityProvider = identityProvider;
@@ -29,6 +34,7 @@ public class ModelDescription<T> {
         this.slug = slug;
         this.name = name;
         this.resourceDescriber = resourceDescriber;
+        this.actions = new ArrayList<>();
         this.jsonDescription = generateJsonDescription();
 
         this.restModelAnnotation = resourceDescriber.getClassType().getAnnotation(RestModel.class);
@@ -78,12 +84,15 @@ public class ModelDescription<T> {
 
     private Map<String, Object> generateJsonDescription() {
         Map<String, Object> model = new HashMap<>();
+
+        model.put("defaultActions", getDefaultActions());
+        model.put("actions", getActions());
         model.put("slug", this.slug);
         model.put("name", this.name);
 
         model.put("javaClass", this.modelType.getName());
 
-        model.put("actions", getActions());
+
         model.put("idField", evaluateHasIdField(modelType));
         model.put("fields", new ClassDescriber(modelType).getStructure());
         return model;
@@ -110,16 +119,20 @@ public class ModelDescription<T> {
         return modelType.equals(that.modelType);
     }
 
-    private Map<String, AccessLevel> getActions() {
-        Map<String, AccessLevel> actions = new HashMap<>();
-        actions.put("findOne", resourceDescriber.getFindAccessLevel());
-        actions.put("findAll", resourceDescriber.getFindAccessLevel());
-        actions.put("update", resourceDescriber.getUpdateAccessLevel());
-        actions.put("deleteById", resourceDescriber.getDeleteAccessLevel());
-        actions.put("create", resourceDescriber.getCreateAccessLevel());
-        return actions;
+    private List<HttpAction> getDefaultActions() {
+        return Arrays.asList(
+                HttpAction.of("Find One", getSlug() + "/:id", resourceDescriber.getFindAccessLevel(), HttpMethod.GET, ActionType.SINGLE),
+                HttpAction.of("Find Many", getSlug(), resourceDescriber.getFindAccessLevel(), HttpMethod.GET, ActionType.MULTIPLE),
+                HttpAction.of("Update One", getSlug() + "/:id", resourceDescriber.getUpdateAccessLevel(), HttpMethod.PUT, ActionType.SINGLE),
+                HttpAction.of("Delete One", getSlug() + "/:id", resourceDescriber.getDeleteAccessLevel(), HttpMethod.DELETE, ActionType.SINGLE),
+                HttpAction.of("Create One", getSlug(), resourceDescriber.getCreateAccessLevel(), HttpMethod.POST, ActionType.MULTIPLE)
+        );
     }
 
+
+    public List<HttpAction> getActions() {
+        return actions;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(modelType);

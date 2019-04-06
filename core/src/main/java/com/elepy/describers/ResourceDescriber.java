@@ -35,7 +35,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     private String description;
     private String name;
 
-
     private ServiceHandler<T> service;
 
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
@@ -45,7 +44,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         try {
             this.baseAnnotations();
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new ElepyConfigException("Failed to setup @RestModel: " + e.getMessage());
+            throw new ElepyConfigException("(" + clazz.getName() + ") Failed to setup @RestModel: " + e.getMessage());
         }
 
     }
@@ -56,6 +55,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         try {
             routeAnnotations();
             setupEvaluators();
+
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new ElepyConfigException("Failed to setup annotations: " + e.getMessage());
         }
@@ -119,9 +119,15 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
             this.identityProvider = new DefaultIdentityProvider<>();
         }
 
+
         this.slug = annotation.slug();
         this.name = annotation.name();
         this.description = annotation.description();
+    }
+
+    private void setupActions() {
+
+
     }
 
 
