@@ -51,7 +51,7 @@ class UnsatisfiedDependencies {
         StringBuilder sb = new StringBuilder();
 
         for (ContextKey key : keys) {
-            sb.append("[").append(key.getClassType().getSimpleName());
+            sb.append("[").append(key.getType().getSimpleName());
 
 
             if (!key.getTag().isEmpty()) {
@@ -85,16 +85,16 @@ class UnsatisfiedDependencies {
         ContextKey contextKey = toKey(element);
         unsatisfiedKeys.add(contextKey);
 
-        if (!scannedClasses.contains(contextKey.getClassType())) {
-            scannedClasses.add(contextKey.getClassType());
+        if (!scannedClasses.contains(contextKey.getType())) {
+            scannedClasses.add(contextKey.getType());
 
-            getAllInnerUnsatisfiedDependencies(contextKey.getClassType());
+            getAllInnerUnsatisfiedDependencies(contextKey.getType());
         }
     }
 
     public void tryToSatisfy() {
         for (ContextKey unsatisfiedKey : new ArrayList<>(unsatisfiedKeys)) {
-            getAllInnerUnsatisfiedDependencies(unsatisfiedKey.getClassType());
+            getAllInnerUnsatisfiedDependencies(unsatisfiedKey.getType());
         }
         allDependencies.addAll(unsatisfiedKeys);
         tryToSatisfy(false);
@@ -113,9 +113,9 @@ class UnsatisfiedDependencies {
         Map<ContextKey, Object> toAdd = new HashMap<>();
         for (ContextKey contextKey : unsatisfiedKeys) {
             try {
-                Object o = elepyContext.initializeElepyObject(contextKey.getClassType());
-                ContextKey objectContextKey = new ContextKey<>(contextKey.getClassType(), ElepyContext.getTag(contextKey.getClassType()));
-                elepyContext.registerDependency(objectContextKey.getClassType(), objectContextKey.getTag(), o);
+                Object o = elepyContext.initializeElepyObject(contextKey.getType());
+                ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), ElepyContext.getTag(contextKey.getType()));
+                elepyContext.registerDependency(objectContextKey.getType(), objectContextKey.getTag(), o);
 
 
                 toAdd.put(objectContextKey, o);

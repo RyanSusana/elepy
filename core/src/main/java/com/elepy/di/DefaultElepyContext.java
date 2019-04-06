@@ -54,7 +54,7 @@ public class DefaultElepyContext implements ElepyContext {
 
     private <T> void ensureUniqueDependency(ContextKey<T> key) {
         if (contextMap.containsKey(key)) {
-            throw new ElepyConfigException(String.format("Elepy already has a key with the class '%s' and the tag '%s'", key.getClassType(), key.getTag()));
+            throw new ElepyConfigException(String.format("Elepy already has a key with the class '%s' and the tag '%s'", key.getType(), key.getTag()));
         }
     }
 
@@ -79,7 +79,7 @@ public class DefaultElepyContext implements ElepyContext {
 
     private <T> ContextKey<T> getCrudDependencyKey(Class<T> cls) {
         List<Map.Entry<ContextKey, Object>> first = contextMap.entrySet().stream().filter(contextKeyObjectEntry ->
-                contextKeyObjectEntry.getKey().getClassType().equals(cls)).collect(Collectors.toList());
+                contextKeyObjectEntry.getKey().getType().equals(cls)).collect(Collectors.toList());
 
         if (first.size() == 1) {
             return first.get(0).getKey();
@@ -115,7 +115,7 @@ public class DefaultElepyContext implements ElepyContext {
 
     private void injectPreInitializedDependencies() {
         for (ContextKey preInitialisedDependency : preInitialisedDependencies) {
-            if (!ClassUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getClassType(), Inject.class).isEmpty()) {
+            if (!ClassUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getType(), Inject.class).isEmpty()) {
                 try {
                     this.injectFields(contextMap.get(preInitialisedDependency));
                 } catch (IllegalAccessException ignored) {

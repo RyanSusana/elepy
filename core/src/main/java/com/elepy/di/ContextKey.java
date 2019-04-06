@@ -11,7 +11,7 @@ public class ContextKey<T> {
         this.tag = tag == null ? "" : tag;
     }
 
-    public Class<T> getClassType() {
+    public Class<T> getType() {
         return classType;
     }
 
