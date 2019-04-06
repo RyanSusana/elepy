@@ -88,7 +88,7 @@ public class ImageDao extends DefaultMongoDao<Image> {
     @Override
     public Page<Image> search(SearchQuery searchQuery) {
 
-        return new Page<>(1, 1, Lists.newArrayList(collection().find().as(modelClassType()).iterator()));
+        return new Page<>(1, 1, Lists.newArrayList(collection().find().as(modelType()).iterator()));
     }
 
     @Override

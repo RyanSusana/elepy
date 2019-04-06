@@ -34,7 +34,7 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
     }
 
     @Override
-    public Class<T> modelClassType() {
+    public Class<T> modelType() {
         return classType;
     }
 

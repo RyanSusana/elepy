@@ -18,7 +18,7 @@ public class ResourceDao extends MongoDao<Resource> {
     }
 
     @Override
-    public Class<Resource> modelClassType() {
+    public Class<Resource> modelType() {
         return Resource.class;
     }
 

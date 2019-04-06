@@ -43,7 +43,7 @@ public class ContextTest extends Base {
         assertTrue(crudFor instanceof ResourceDao);
 
         ResourceDao newDefaultMongoDao = (ResourceDao) crudFor;
-        assertEquals(defaultMongoDao.modelClassType(), newDefaultMongoDao.modelClassType());
+        assertEquals(defaultMongoDao.modelType(), newDefaultMongoDao.modelType());
     }
 
     @Test

@@ -29,7 +29,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     private Jongo jongo;
 
-    public abstract Class<T> modelClassType();
+    public abstract Class<T> modelType();
 
     public abstract String mongoCollectionName();
 
@@ -57,7 +57,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private Find addDefaultSort(Find find) {
-        RestModel restModel = modelClassType().getAnnotation(RestModel.class);
+        RestModel restModel = modelType().getAnnotation(RestModel.class);
         if (restModel != null) {
             find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
         }
@@ -66,12 +66,12 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final Serializable id) {
-        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelClassType()));
+        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelType()));
     }
 
     @Override
     public List<T> getAll() {
-        return Lists.newArrayList(collection().find().as(modelClassType()).iterator());
+        return Lists.newArrayList(collection().find().as(modelType()).iterator());
     }
 
     @Override
@@ -82,7 +82,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         if (query.startsWith("{") && query.endsWith("}")) {
             return collection().count(query);
         } else {
-            String queryCompiled = new MongoSearch(query, modelClassType()).compile();
+            String queryCompiled = new MongoSearch(query, modelType()).compile();
 
             return collection().count(queryCompiled);
         }
@@ -90,7 +90,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public Class<T> getType() {
-        return modelClassType();
+        return modelType();
     }
 
 
@@ -99,7 +99,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         final long amountResultsTotal;
         if (!StringUtils.isEmpty(searchQuery.getQuery())) {
 
-            String query = new MongoSearch(searchQuery.getQuery(), modelClassType()).compile();
+            String query = new MongoSearch(searchQuery.getQuery(), modelType()).compile();
             find = searchQuery.getQuery() != null ? collection().find(query) : collection().find();
 
             amountResultsTotal = collection().count(query);
@@ -132,7 +132,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private String getIdFieldProp() {
-        Optional<Field> idField = ClassUtils.getIdField(modelClassType());
+        Optional<Field> idField = ClassUtils.getIdField(modelType());
         if (idField.isPresent()) {
             return ClassUtils.getPropertyName(idField.get());
         }
@@ -183,7 +183,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     private Page<T> toPage(Find find, SearchQuery pageSearch, int amountOfResultsWithThatQuery) {
 
 
-        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(modelClassType()).iterator());
+        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(modelType()).iterator());
 
         final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
@@ -197,7 +197,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     public Page<T> search(Query query, PageSettings settings) {
         MongoFilters mongoFilters = fromQueryFilters(query.getFilterQueries());
 
-        MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), modelClassType());
+        MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), modelType());
 
         MongoQuery mongoQuery = new MongoQuery(mongoSearch, mongoFilters);
 
@@ -211,7 +211,7 @@ public abstract class MongoDao<T> implements Crud<T> {
                 .limit(settings.getPageSize())
                 .skip((int) ((settings.getPageNumber() - 1) * settings.getPageSize()))
                 .sort(String.format("{%s}", sort))
-                .as(modelClassType())
+                .as(modelType())
                 .iterator());
 
 
