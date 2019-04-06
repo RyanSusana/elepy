@@ -187,7 +187,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         return slug;
     }
 
-    public Class<T> getClassType() {
+    public Class<T> getModelType() {
         return classType;
     }
 

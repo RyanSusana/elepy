@@ -659,7 +659,7 @@ public class Elepy implements ElepyContext {
         modelDescribers.forEach(ResourceDescriber::setupAnnotations);
 
         modelDescribers.forEach(restModel -> {
-            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, restModel.getClassType());
+            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, restModel.getModelType());
             descriptorList.add(routeGenerator.setupPojo());
         });
 

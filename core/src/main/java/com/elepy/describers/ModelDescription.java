@@ -37,7 +37,7 @@ public class ModelDescription<T> {
         this.actions = new ArrayList<>();
         this.jsonDescription = generateJsonDescription();
 
-        this.restModelAnnotation = resourceDescriber.getClassType().getAnnotation(RestModel.class);
+        this.restModelAnnotation = resourceDescriber.getModelType().getAnnotation(RestModel.class);
 
 
     }

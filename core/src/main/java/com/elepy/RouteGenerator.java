@@ -38,7 +38,7 @@ public class RouteGenerator<T> {
         try {
             final Crud<T> dao = elepy.getCrudFor(clazz);
 
-            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, (baseSlug.endsWith("/") ? "" : "/") + restModel.getSlug(), restModel.getName(), restModel.getClassType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
+            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, (baseSlug.endsWith("/") ? "" : "/") + restModel.getSlug(), restModel.getName(), restModel.getModelType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
 
             modelDescription.getActions().addAll(new ActionIgniter<>(modelDescription, dao, elepy).ignite());
 
@@ -69,7 +69,7 @@ public class RouteGenerator<T> {
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PATCH)
                     .route(ctx -> {
-                        ctx.request().attribute("modelClass", restModel.getClassType());
+                        ctx.request().attribute("modelClass", restModel.getModelType());
                         restModel.getService().handleUpdatePatch(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper());
                     })
                     .build()
@@ -111,7 +111,7 @@ public class RouteGenerator<T> {
     }
 
     private HttpContext injectModelClassInHttpContext(HttpContext ctx) {
-        return ctx.injectModelClassInHttpContext(restModel.getClassType());
+        return ctx.injectModelClassInHttpContext(restModel.getModelType());
     }
 
 
