@@ -123,9 +123,9 @@ public class ModelDescription<T> {
         return Arrays.asList(
                 HttpAction.of("Find One", getSlug() + "/:id", resourceDescriber.getFindAccessLevel(), HttpMethod.GET, ActionType.SINGLE),
                 HttpAction.of("Find Many", getSlug(), resourceDescriber.getFindAccessLevel(), HttpMethod.GET, ActionType.MULTIPLE),
-                HttpAction.of("Update One", getSlug() + "/:id", resourceDescriber.getUpdateAccessLevel(), HttpMethod.PUT, ActionType.SINGLE),
-                HttpAction.of("Delete One", getSlug() + "/:id", resourceDescriber.getDeleteAccessLevel(), HttpMethod.DELETE, ActionType.SINGLE),
-                HttpAction.of("Create One", getSlug(), resourceDescriber.getCreateAccessLevel(), HttpMethod.POST, ActionType.MULTIPLE)
+                HttpAction.of("Update", getSlug() + "/:id", resourceDescriber.getUpdateAccessLevel(), HttpMethod.PUT, ActionType.SINGLE),
+                HttpAction.of("Delete", getSlug() + "/:id", resourceDescriber.getDeleteAccessLevel(), HttpMethod.DELETE, ActionType.SINGLE),
+                HttpAction.of("Create", getSlug(), resourceDescriber.getCreateAccessLevel(), HttpMethod.POST, ActionType.MULTIPLE)
         );
     }
 
