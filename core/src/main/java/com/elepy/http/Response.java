@@ -31,7 +31,8 @@ public interface Response {
     void redirect(String location, int httpStatusCode);
 
     default void result(Message message) {
-        result(String.format("{status:%d,message:\"%s\"}", message.getStatus(), message.getMessage()), message.getStatus());
+        result(String.format("{\"status\":%d,\"message\":\"%s\"}", message.getStatus(), message.getMessage()), message.getStatus());
+        type("application/json");
     }
 
     default void result(String message, int status) {

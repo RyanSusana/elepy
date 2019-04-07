@@ -5,6 +5,7 @@ import com.elepy.annotations.Action;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpAction;
 import com.elepy.http.RouteBuilder;
 import com.elepy.routes.ActionHandler;
@@ -52,6 +53,7 @@ public class ActionIgniter<T> {
                         .method(actionAnnotation.method())
                         .route(ctx -> {
                             ctx.attribute("action", action);
+                            ctx.result(Message.of("Executed action", 200));
                             actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelDescription.getModelType()), crud, modelDescription, elepy.getObjectMapper());
                         });
 

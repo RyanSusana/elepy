@@ -13,7 +13,7 @@ public class FilterQuery {
         this.filterValue = filterValue;
 
         if (!filterType.canBeUsedBy(filterableField)) {
-            throw new ElepyException(String.format("%s can't be applied to the field '%s'", filterType.getQueryName(), filterableField.getName()), 400);
+            throw new ElepyException(String.format("'%s' can't be applied to the field '%s'", filterType.getFilterName(), filterableField.getName()), 400);
         }
     }
 

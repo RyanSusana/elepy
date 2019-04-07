@@ -28,7 +28,6 @@ public class Message {
     }
 
     public static Message of(String message, int status) {
-        return
-        new Message(message, status);
+        return new Message(message, status);
     }
 }
