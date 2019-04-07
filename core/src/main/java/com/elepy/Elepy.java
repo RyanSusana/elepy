@@ -13,8 +13,8 @@ import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
-import com.elepy.exceptions.ElepyMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
+import com.elepy.exceptions.Message;
 import com.elepy.http.*;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -680,7 +680,7 @@ public class Elepy implements ElepyContext {
         http.notFound((request, response) -> {
 
             response.type("application/json");
-            return getObjectMapper().writeValueAsString(new ElepyMessage(ErrorMessageBuilder
+            return getObjectMapper().writeValueAsString(new Message(ErrorMessageBuilder
                     .anElepyErrorMessage()
                     .withMessage("Not found")
                     .withStatus(404).build()));
@@ -709,7 +709,7 @@ public class Elepy implements ElepyContext {
 
             response.status(elepyErrorMessage.getStatus());
             try {
-                response.body(getObjectMapper().writeValueAsString(new ElepyMessage(elepyErrorMessage)));
+                response.body(getObjectMapper().writeValueAsString(new Message(elepyErrorMessage)));
             } catch (JsonProcessingException e) {
                 logger.error(e.getMessage(), e);
             }

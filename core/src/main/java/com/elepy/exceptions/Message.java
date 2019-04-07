@@ -3,18 +3,18 @@ package com.elepy.exceptions;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ElepyMessage {
+public class Message {
 
     private final String message;
     private final int status;
 
     @JsonCreator
-    public ElepyMessage(@JsonProperty("message") String message, @JsonProperty("status") int status) {
+    public Message(@JsonProperty("message") String message, @JsonProperty("status") int status) {
         this.message = message;
         this.status = status;
     }
 
-    public ElepyMessage(ElepyErrorMessage elepyErrorMessage) {
+    public Message(ElepyErrorMessage elepyErrorMessage) {
         this.status = elepyErrorMessage.getStatus();
         this.message = elepyErrorMessage.getMessage();
     }
@@ -25,5 +25,10 @@ public class ElepyMessage {
 
     public int getStatus() {
         return status;
+    }
+
+    public static void of(String message, int status) {
+        return;
+        new Message(message, status);
     }
 }

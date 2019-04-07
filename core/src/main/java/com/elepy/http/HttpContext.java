@@ -1,5 +1,7 @@
 package com.elepy.http;
 
+import com.elepy.exceptions.Message;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -196,6 +198,22 @@ public interface HttpContext {
 
     default void redirect(String location, int httpStatusCode) {
         response().redirect(location, httpStatusCode);
+    }
+
+    default void result(Message message) {
+        response().result(message);
+    }
+
+    default void result(String message, int status) {
+        response().result(message, status);
+    }
+
+    default void terminateWithResult(String message, int status) {
+        response().terminateWithResult(message, status);
+    }
+
+    default void terminateWithResult(Message message) {
+        response().terminateWithResult(message);
     }
 
 }
