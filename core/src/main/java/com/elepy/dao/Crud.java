@@ -1,6 +1,7 @@
 package com.elepy.dao;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
@@ -109,6 +110,12 @@ public interface Crud<T> {
     default void updateWithPrototype(Map<String, Object> prototype, ObjectMapper objectMapper, Serializable... ids) {
         List<T> toUpdate = new ArrayList<>();
 
+        // remove unique keys from prototype
+        ReflectionUtils
+                .searchForFieldsWithAnnotation(getType(), Unique.class)
+                .stream()
+                .map(ReflectionUtils::getPropertyName)
+                .forEach(prototype::remove);
 
         for (Serializable id : ids) {
             getById(id).ifPresent(item -> {
