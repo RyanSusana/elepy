@@ -162,7 +162,7 @@ const app = new Vue({
                 }).then(function (response) {
 
                     UIkit.modal(document.getElementById("edit-modal"), {stack: true, 'bg-close': false}).hide();
-                    UIkit.notification(response.data, {status: 'success'});
+                    UIkit.notification(response.data.message, {status: 'success'});
                     ref.getModelData();
                 })
                     .catch(function (error) {

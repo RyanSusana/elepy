@@ -3,6 +3,7 @@ package com.elepy.routes;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.utils.ClassUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,7 +55,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         afterUpdate(before.get(), updated, dao);
 
         context.response().status(200);
-        context.response().result("OK");
+        context.response().result(Message.of("Successfully updated item", 200));
     }
 
     @Override

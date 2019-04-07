@@ -6,6 +6,7 @@ import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
@@ -98,8 +99,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         this.beforeUpdate = before.get();
         update(beforeUpdate, updated, dao, objectEvaluators, clazz);
 
-        response.status(200);
-        response.result("OK");
+        response.result(Message.of("Successfully updated item", 200));
         return updated;
     }
 

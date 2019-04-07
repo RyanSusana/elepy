@@ -3,6 +3,7 @@ package com.elepy.routes;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,7 +21,7 @@ public abstract class SimpleDelete<T> implements DeleteHandler<T> {
         afterDelete(itemToDelete, dao);
 
         context.response().status(200);
-        context.response().result("OK");
+        context.response().result(Message.of("Successfully deleted item", 200));
     }
 
     public abstract void afterDelete(T itemToDelete, Crud<T> dao);

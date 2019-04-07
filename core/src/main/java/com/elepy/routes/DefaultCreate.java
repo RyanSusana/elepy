@@ -5,6 +5,7 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.evaluators.AtomicIntegrityEvaluator;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Response;
 import com.elepy.utils.ClassUtils;
@@ -52,7 +53,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
     private void create(Response response, Crud<T> dao, Iterable<T> items) {
         dao.create(items);
         response.status(200);
-        response.result("OK");
+        response.result(Message.of("Successfully created item", 201));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.elepy.routes;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,7 +19,6 @@ public class DefaultDelete<T> implements DeleteHandler<T> {
 
         dao.deleteById(paramId);
 
-        context.response().status(200);
-        context.response().result("OK");
+        context.result(Message.of("Successfully deleted item", 200));
     }
 }

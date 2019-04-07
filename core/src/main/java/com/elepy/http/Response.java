@@ -31,11 +31,11 @@ public interface Response {
     void redirect(String location, int httpStatusCode);
 
     default void result(Message message) {
-        result(message.getMessage(), message.getStatus());
+        result(String.format("{status:%d,message:\"%s\"}", message.getStatus(), message.getMessage()), message.getStatus());
     }
 
     default void result(String message, int status) {
-        result(String.format("{status:%d,message:\"%s\"}", status, message));
+        result(message);
         status(status);
     }
 
