@@ -4,7 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import org.bson.types.ObjectId;
 
 import java.lang.reflect.Constructor;
@@ -23,13 +23,13 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public boolean mustGenerateObjectId(Object pojo) {
-        return ClassUtils.getId(pojo).map(o -> o instanceof String && ((String) o).trim().isEmpty()).orElse(true);
+        return ReflectionUtils.getId(pojo).map(o -> o instanceof String && ((String) o).trim().isEmpty()).orElse(true);
 
     }
 
     @Override
     public Object getId(Object pojo) {
-        return ClassUtils.getId(pojo).orElseThrow(() -> new ElepyException("No ID found"));
+        return ReflectionUtils.getId(pojo).orElseThrow(() -> new ElepyException("No ID found"));
     }
 
     @Override
@@ -43,11 +43,11 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     private IdentityProvider provider(Object item) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (identityProvider == null) {
-            ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("No ID found"));
+            ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("No ID found"));
             final com.elepy.annotations.IdProvider annotation = item.getClass().getAnnotation(com.elepy.annotations.IdProvider.class);
 
             if (annotation != null) {
-                final Optional<Constructor<?>> o = ClassUtils.getEmptyConstructor(annotation.value());
+                final Optional<Constructor<?>> o = ReflectionUtils.getEmptyConstructor(annotation.value());
                 if (!o.isPresent()) {
                     throw new IllegalStateException(annotation.value() + " has no empty constructor.");
                 }

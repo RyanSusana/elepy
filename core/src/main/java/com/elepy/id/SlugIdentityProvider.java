@@ -2,7 +2,7 @@ package com.elepy.id;
 
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.github.slugify.Slugify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         final String slug = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property. This must be a String."));
         String generatedSlug = generateSlug(slug, 0, dao);
 
-        Field field = ClassUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+        Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
 
         field.setAccessible(true);
 

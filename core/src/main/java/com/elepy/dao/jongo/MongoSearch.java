@@ -3,7 +3,7 @@ package com.elepy.dao.jongo;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.lang.reflect.Field;
@@ -28,9 +28,9 @@ public class MongoSearch {
     }
 
     private List<Field> getSearchableFields() {
-        List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(cls, Searchable.class, MongoId.class, Unique.class);
+        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(cls, Searchable.class, MongoId.class, Unique.class);
 
-        fields.add(ClassUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException("No id field")));
+        fields.add(ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException("No id field")));
         return fields;
     }
 
@@ -41,7 +41,7 @@ public class MongoSearch {
             String patternCompiled = pattern.toString();
             String searchRegex = getSearchableFields().stream().map(field -> {
 
-                String propertyName = ClassUtils.getPropertyName(field);
+                String propertyName = ReflectionUtils.getPropertyName(field);
 
 
                 return String.format("{%s: {$regex: '%s', $options: 'i'}}", propertyName, patternCompiled);

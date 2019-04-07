@@ -1,7 +1,7 @@
 package com.elepy.evaluators;
 
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +28,8 @@ public class AtomicIntegrityEvaluator<T> {
     }
 
     private void checkUniqueness(T item, List<T> theRest) throws IllegalAccessException {
-        List<Field> uniqueFields = ClassUtils.getUniqueFields(item.getClass());
-        Optional<Serializable> id = ClassUtils.getId(item);
+        List<Field> uniqueFields = ReflectionUtils.getUniqueFields(item.getClass());
+        Optional<Serializable> id = ReflectionUtils.getId(item);
 
         for (Field field : uniqueFields) {
 
@@ -56,17 +56,17 @@ public class AtomicIntegrityEvaluator<T> {
 
 
             if (foundItems.size() > 1) {
-                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ReflectionUtils.getPrettyName(field), String.valueOf(prop)));
             }
 
             T foundRecord = foundItems.get(0);
-            final Optional<Serializable> foundId = ClassUtils.getId(foundRecord);
+            final Optional<Serializable> foundId = ReflectionUtils.getId(foundRecord);
             if (id.isPresent() || foundId.isPresent()) {
                 if (!id.equals(foundId)) {
-                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ReflectionUtils.getPrettyName(field), String.valueOf(prop)));
                 }
             } else {
-                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ClassUtils.getPrettyName(field), String.valueOf(prop)));
+                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ReflectionUtils.getPrettyName(field), String.valueOf(prop)));
 
             }
         }

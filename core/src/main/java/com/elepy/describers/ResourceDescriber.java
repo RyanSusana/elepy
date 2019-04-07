@@ -12,7 +12,7 @@ import com.elepy.http.AccessLevel;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
 import com.elepy.routes.*;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -144,7 +144,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
         if (serviceAnnotation != null) {
             ServiceHandler<T> initialService = elepy.initializeElepyObject(serviceAnnotation.value());
-            elepy.addRouting(ClassUtils.scanForRoutes(initialService));
+            elepy.addRouting(ReflectionUtils.scanForRoutes(initialService));
             serviceBuilder.defaultFunctionality(initialService);
         }
         if (deleteAnnotation != null) {

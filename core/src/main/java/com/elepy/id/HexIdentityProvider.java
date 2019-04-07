@@ -3,7 +3,7 @@ package com.elepy.id;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.elepy.utils.StringUtils;
 
 import java.lang.reflect.Field;
@@ -39,13 +39,13 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
     public void provideId(T item, Crud<T> dao) {
 
 
-        String currentId = (String) ClassUtils.getId(item).orElse("");
+        String currentId = (String) ReflectionUtils.getId(item).orElse("");
 
 
         if (currentId.isEmpty() || dao.getById(currentId).isPresent()) {
             String id = generateId(dao);
 
-            Field field = ClassUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+            Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
 
             field.setAccessible(true);
 

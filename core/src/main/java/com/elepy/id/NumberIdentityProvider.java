@@ -2,7 +2,7 @@ package com.elepy.id;
 
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -18,13 +18,13 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public void provideId(T item, Crud<T> dao) {
-        Class<?> idType = ClassUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
+        Class<?> idType = ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
 
         provideId(item, dao, idType);
     }
 
     public void provideId(T item, Crud<T> dao, Class<?> idType) {
-        Field idField = ClassUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+        Field idField = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
 
         idField.setAccessible(true);
         try {

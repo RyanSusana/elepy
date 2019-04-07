@@ -3,7 +3,7 @@ package com.elepy.dao.jongo;
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -51,7 +51,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public List<T> searchInField(Field field, String qry) {
-        final String propertyName = ClassUtils.getPropertyName(field);
+        final String propertyName = ReflectionUtils.getPropertyName(field);
         return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new SearchQuery(null, null, null, 1L, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
     }
 
@@ -109,9 +109,9 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private String getIdFieldProp() {
-        Optional<Field> idField = ClassUtils.getIdField(modelType());
+        Optional<Field> idField = ReflectionUtils.getIdField(modelType());
         if (idField.isPresent()) {
-            return ClassUtils.getPropertyName(idField.get());
+            return ReflectionUtils.getPropertyName(idField.get());
         }
         return "id";
     }
@@ -140,7 +140,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public Serializable getId(T item) {
-        Optional<Serializable> id = ClassUtils.getId(item);
+        Optional<Serializable> id = ReflectionUtils.getId(item);
         if (!id.isPresent()) {
             throw new ElepyException("No Identifier provided to the object.");
         }

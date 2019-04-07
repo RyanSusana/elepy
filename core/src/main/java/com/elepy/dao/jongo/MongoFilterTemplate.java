@@ -4,7 +4,7 @@ import com.elepy.dao.FilterableField;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.elepy.utils.DateUtils;
 
 import java.io.Serializable;
@@ -43,7 +43,7 @@ public class MongoFilterTemplate {
                 this.value = value;
             }
         } catch (NumberFormatException e) {
-            throw new ElepyException(String.format("%s can only be compared to numbers", ClassUtils.getPrettyName(field.getField())));
+            throw new ElepyException(String.format("%s can only be compared to numbers", ReflectionUtils.getPrettyName(field.getField())));
         }
 
 

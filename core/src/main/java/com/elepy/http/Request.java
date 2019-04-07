@@ -3,7 +3,7 @@ package com.elepy.http;
 import com.elepy.dao.*;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -78,7 +78,7 @@ public interface Request {
             final String id = queryParams("id");
 
             if (id != null) {
-                return ClassUtils.toObjectIdFromString(attribute("modelClass"), id);
+                return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), id);
             }
 
             final String ids = queryParams("ids");
@@ -86,7 +86,7 @@ public interface Request {
             if (ids != null) {
                 final String[] split = ids.split(",");
 
-                return ClassUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
+                return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
             }
         }
         return modelId(attribute("modelClass"));
@@ -100,7 +100,7 @@ public interface Request {
 
             if (ids != null) {
                 final String[] split = ids.split(",");
-                return Arrays.stream(split).map(s -> ClassUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
+                return Arrays.stream(split).map(s -> ReflectionUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
             }
             return new HashSet<>(Collections.singletonList(modelId()));
 
@@ -125,7 +125,7 @@ public interface Request {
                 }
             }
         } else {
-            return ClassUtils.toObjectIdFromString(cls, id);
+            return ReflectionUtils.toObjectIdFromString(cls, id);
         }
     }
 

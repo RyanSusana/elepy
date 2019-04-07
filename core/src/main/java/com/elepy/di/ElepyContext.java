@@ -6,7 +6,7 @@ import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Tag;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.*;
@@ -157,7 +157,7 @@ public interface ElepyContext {
 
 
     default void injectFields(Object object) throws IllegalAccessException {
-        List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class);
+        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class);
 
         for (Field field : fields) {
             if (field.get(object) == null) {
@@ -169,7 +169,7 @@ public interface ElepyContext {
     default <T> T initializeElepyObjectConstructor(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         Optional<Constructor<? extends T>> emptyConstructor =
-                ClassUtils.getEmptyConstructor(cls);
+                ReflectionUtils.getEmptyConstructor(cls);
 
         if (emptyConstructor.isPresent()) {
             return emptyConstructor.get().newInstance();

@@ -2,7 +2,7 @@ package com.elepy.dao;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -50,7 +50,7 @@ public interface Crud<T> {
      * @see #searchInField(Field, String)
      */
     default List<T> searchInField(String fieldName, String qry) {
-        return searchInField(ClassUtils.getPropertyField(getType(), fieldName), qry);
+        return searchInField(ReflectionUtils.getPropertyField(getType(), fieldName), qry);
     }
 
     /**
@@ -80,7 +80,7 @@ public interface Crud<T> {
      * @throws ElepyConfigException gets thrown when no ID has been found
      */
     default Serializable getId(final T item) {
-        Optional<Serializable> id = ClassUtils.getId(item);
+        Optional<Serializable> id = ReflectionUtils.getId(item);
 
         if (id.isPresent()) {
             return id.get();
@@ -166,8 +166,8 @@ public interface Crud<T> {
         final RestModel annotation = type.getAnnotation(RestModel.class);
 
         if (annotation == null) {
-            Optional<Field> idField = ClassUtils.getIdField(type);
-            return idField.map(field -> new AbstractMap.SimpleEntry<>(ClassUtils.getPropertyName(field), SortOption.ASCENDING))
+            Optional<Field> idField = ReflectionUtils.getIdField(type);
+            return idField.map(field -> new AbstractMap.SimpleEntry<>(ReflectionUtils.getPropertyName(field), SortOption.ASCENDING))
                     .orElseGet(() -> new AbstractMap.SimpleEntry<>("_id", SortOption.ASCENDING));
         }
         return new AbstractMap.SimpleEntry<>(annotation.defaultSortField(), annotation.defaultSortDirection());

@@ -2,7 +2,7 @@ package com.elepy.admin;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
@@ -27,9 +27,9 @@ public class AdminSetupEvaluation {
         if (!annotation.slug().equals("/users")) {
             throw new ElepyConfigException("The user class must be located at the slug /users");
         }
-        Field username = ClassUtils.getPropertyField(userClass, "username");
+        Field username = ReflectionUtils.getPropertyField(userClass, "username");
 
-        Field password = ClassUtils.getPropertyField(userClass, "password");
+        Field password = ReflectionUtils.getPropertyField(userClass, "password");
 
         if (username == null || password == null) {
             throw new ElepyConfigException("A User Class must include a username and a password field.");

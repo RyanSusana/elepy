@@ -5,7 +5,7 @@ import com.elepy.annotations.Unique;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -204,8 +204,8 @@ public class HibernateDao<T> implements Crud<T> {
                 return count();
             }
 
-            List<Field> searchables = ClassUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class);
-            searchables.add(ClassUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", modelClassType.getName()))));
+            List<Field> searchables = ReflectionUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class);
+            searchables.add(ReflectionUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", modelClassType.getName()))));
 
 
             String hql = "select count(*) from " + modelClassType.getName() +
@@ -293,9 +293,9 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     private List<Field> getSearchableFields() {
-        List<Field> fields = ClassUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class, Unique.class);
+        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class, Unique.class);
 
-        Field idField = ClassUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException("No id idField"));
+        Field idField = ReflectionUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException("No id idField"));
         fields.add(idField);
 
 

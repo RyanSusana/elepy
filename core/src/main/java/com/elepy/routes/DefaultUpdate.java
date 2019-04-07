@@ -11,7 +11,7 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.FieldType;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             if (body.startsWith("{")) {
                 final Map<String, Object> beforeMap = objectMapper.convertValue(before, Map.class);
                 final Map<String, Object> changesMap = objectMapper.readValue(request.body(), Map.class);
-                ClassUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
+                ReflectionUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
                 return objectFromMaps(beforeMap, changesMap, objectMapper, clazz);
             } else {
                 return setParamsOnObject(request, objectMapper, before);
@@ -107,7 +107,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
 
         fieldsToAdd.forEach((fieldName, fieldObject) -> {
-            final Optional<Field> fieldWithName = ClassUtils.findFieldWithName(cls, fieldName);
+            final Optional<Field> fieldWithName = ReflectionUtils.findFieldWithName(cls, fieldName);
 
             if (fieldWithName.isPresent()) {
                 Field field = fieldWithName.get();

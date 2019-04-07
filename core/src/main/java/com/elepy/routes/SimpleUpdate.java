@@ -5,7 +5,7 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
@@ -28,7 +28,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
         T item = objectMapper.readValue(body, modelDescription.getModelType());
 
-        final Optional<Serializable> id = ClassUtils.getId(item);
+        final Optional<Serializable> id = ReflectionUtils.getId(item);
         if (!id.isPresent()) {
             throw new ElepyException("This item doesn't can't be identified.");
         }

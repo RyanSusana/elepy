@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 
-public class ClassUtils {
+public class ReflectionUtils {
 
-    private ClassUtils() {
+    private ReflectionUtils() {
     }
 
     @SafeVarargs
@@ -108,7 +108,7 @@ public class ClassUtils {
     }
 
     public static Serializable toObjectIdFromString(Class tClass, String value) {
-        Class<?> idType = ClassUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
+        Class<?> idType = ReflectionUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
 
         try {
             return toObject(idType, value);

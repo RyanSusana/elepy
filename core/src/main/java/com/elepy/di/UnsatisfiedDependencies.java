@@ -4,7 +4,7 @@ import com.elepy.annotations.Inject;
 import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ class UnsatisfiedDependencies {
         }
 
 
-        for (Field field : ClassUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
+        for (Field field : ReflectionUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
             addAnnotatedElementDependency(field);
 
         }

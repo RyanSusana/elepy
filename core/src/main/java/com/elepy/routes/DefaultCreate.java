@@ -8,7 +8,7 @@ import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Response;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
 
 
     public void multipleCreate(Response response, List<T> items, Crud<T> dao, ModelDescription<T> modelDescription) throws Exception {
-        if (ClassUtils.hasIntegrityRules(dao.getType())) {
+        if (ReflectionUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
 

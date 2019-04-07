@@ -3,7 +3,7 @@ package com.elepy.di;
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -115,7 +115,7 @@ public class DefaultElepyContext implements ElepyContext {
 
     private void injectPreInitializedDependencies() {
         for (ContextKey preInitialisedDependency : preInitialisedDependencies) {
-            if (!ClassUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getType(), Inject.class).isEmpty()) {
+            if (!ReflectionUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getType(), Inject.class).isEmpty()) {
                 try {
                     this.injectFields(contextMap.get(preInitialisedDependency));
                 } catch (IllegalAccessException ignored) {

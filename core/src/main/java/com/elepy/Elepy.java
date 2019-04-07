@@ -16,7 +16,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
-import com.elepy.utils.ClassUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -611,12 +611,12 @@ public class Elepy implements ElepyContext {
 
                 if (extraRoutesAnnotation != null) {
                     for (Class<?> aClass : extraRoutesAnnotation.value()) {
-                        addRouting(ClassUtils.scanForRoutes(initializeElepyObject(aClass)));
+                        addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(aClass)));
                     }
                 }
             }
             for (Class<?> routingClass : routingClasses) {
-                addRouting(ClassUtils.scanForRoutes(initializeElepyObject(routingClass)));
+                addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(routingClass)));
             }
 
 
@@ -629,12 +629,12 @@ public class Elepy implements ElepyContext {
         try {
             for (Filter adminFilter : adminFilters) {
                 context.injectFields(adminFilter);
-                addRouting(ClassUtils.scanForRoutes(adminFilter));
+                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
             }
             for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
                 Filter filter = initializeElepyObject(adminFilterClass);
                 adminFilters.add(filter);
-                addRouting(ClassUtils.scanForRoutes(filter));
+                addRouting(ReflectionUtils.scanForRoutes(filter));
             }
 
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
