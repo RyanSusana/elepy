@@ -6,10 +6,12 @@ import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the CRUD interface of Elepy. It is the Core of the Data Access Layer. A crud can be anything from
@@ -29,6 +31,10 @@ public interface Crud<T> {
      * @return An optional item.
      */
     Optional<T> getById(final Serializable id);
+
+    default List<T> getByIds(final Iterable<Serializable> ids) {
+        return Lists.newArrayList(ids).stream().map(this::getById).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+    }
 
     /**
      * This method is used to look for model items based on a specific field name. It is used to help Elepy authenticate
