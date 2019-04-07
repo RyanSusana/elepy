@@ -28,13 +28,12 @@ public class ResourceDao extends MongoDao<Resource> {
     }
 
     @Override
-    public ObjectMapper objectMapper() {
-        return objectMapper;
-    }
-
-    @Override
     public DB db() {
         return db;
     }
 
+    @Override
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 }

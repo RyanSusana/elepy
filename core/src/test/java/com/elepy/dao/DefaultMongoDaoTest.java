@@ -105,7 +105,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
         prototype.put("textField", "NEW_VALUE");
         prototype.put("unique", "NEW_UNIQUE_VAL");
-        defaultMongoDao.updateWithPrototype(prototype, new ObjectMapper(), resource.getId(), resource2.getId());
+        defaultMongoDao.updateWithPrototype(prototype, resource.getId(), resource2.getId());
 
         final List<Resource> updatedTextFieldResources = defaultMongoDao.searchInField("textField", "NEW_VALUE");
         final List<Resource> updatedUniqueResources = defaultMongoDao.searchInField("unique", "NEW_UNIQUE_VAL");

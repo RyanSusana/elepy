@@ -107,7 +107,7 @@ public interface Crud<T> {
         }
     }
 
-    default void updateWithPrototype(Map<String, Object> prototype, ObjectMapper objectMapper, Serializable... ids) {
+    default void updateWithPrototype(Map<String, Object> prototype, Serializable... ids) {
         List<T> toUpdate = new ArrayList<>();
 
         // remove unique keys from prototype
@@ -119,10 +119,10 @@ public interface Crud<T> {
 
         for (Serializable id : ids) {
             getById(id).ifPresent(item -> {
-                final Map<String, Object> beforeMap = objectMapper.convertValue(item, new TypeReference<Map<String, Object>>() {
+                final Map<String, Object> beforeMap = getObjectMapper().convertValue(item, new TypeReference<Map<String, Object>>() {
                 });
 
-                final T t = MapperUtils.objectFromMaps(objectMapper, beforeMap, prototype, getType());
+                final T t = MapperUtils.objectFromMaps(getObjectMapper(), beforeMap, prototype, getType());
 
                 toUpdate.add(t);
             });
@@ -202,4 +202,6 @@ public interface Crud<T> {
         }
         return new AbstractMap.SimpleEntry<>(annotation.defaultSortField(), annotation.defaultSortDirection());
     }
+
+    ObjectMapper getObjectMapper();
 }

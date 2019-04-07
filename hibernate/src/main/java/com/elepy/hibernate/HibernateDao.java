@@ -223,6 +223,11 @@ public class HibernateDao<T> implements Crud<T> {
         return modelClassType;
     }
 
+    @Override
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
     public long count(com.elepy.dao.Query query) {
 
         try (Session session = sessionFactory.openSession()) {

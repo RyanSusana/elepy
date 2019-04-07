@@ -44,7 +44,7 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
     }
 
     @Override
-    public ObjectMapper objectMapper() {
+    public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 

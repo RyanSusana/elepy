@@ -4,7 +4,6 @@ import com.elepy.annotations.RestModel;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
@@ -32,7 +31,6 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     public abstract String mongoCollectionName();
 
-    public abstract ObjectMapper objectMapper();
 
     public abstract DB db();
 
