@@ -17,7 +17,6 @@ import spark.utils.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,29 +93,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
 
-    public Page<T> search(SearchQuery searchQuery) {
-        final Find find;
-        final long amountResultsTotal;
-        if (!StringUtils.isEmpty(searchQuery.getQuery())) {
 
-            String query = new MongoSearch(searchQuery.getQuery(), modelType()).compile();
-            find = searchQuery.getQuery() != null ? collection().find(query) : collection().find();
-
-            amountResultsTotal = collection().count(query);
-        } else {
-            find = collection().find();
-            amountResultsTotal = collection().count();
-        }
-
-        final AbstractMap.SimpleEntry<String, SortOption> defaultSort = defaultSort();
-
-        find.sort(String.format("{%s: %d}",
-                searchQuery.getSortBy() == null ? defaultSort.getKey() : searchQuery.getSortBy(),
-                searchQuery.getSortOption() == null ? defaultSort.getValue().getVal() : searchQuery.getSortOption().getVal()));
-
-        return toPage(find, searchQuery, (int) amountResultsTotal);
-
-    }
 
 
     @Override

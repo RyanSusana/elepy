@@ -3,8 +3,6 @@ package com.elepy.plugins.gallery;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
-import com.elepy.dao.SearchQuery;
-import com.elepy.dao.SortOption;
 import com.elepy.http.HttpService;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
@@ -48,7 +46,7 @@ public class ElepyGallery extends ElepyAdminPanelPlugin {
         });
 
         http.get(elepy.getBaseSlug() + "/images/gallery", (request, response) -> {
-            List<Image> images = new ArrayList<>(imageDao.search(new SearchQuery("", "", SortOption.ASCENDING, 1L, Integer.MAX_VALUE)).getValues());
+            List<Image> images = new ArrayList<>(imageDao.getAll());
             response.result(elepy.getObjectMapper().writeValueAsString(images));
         });
         http.get(elepy.getBaseSlug() + "/images/:id", (request, response) -> {

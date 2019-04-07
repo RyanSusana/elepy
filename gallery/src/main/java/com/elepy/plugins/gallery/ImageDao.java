@@ -1,12 +1,9 @@
 package com.elepy.plugins.gallery;
 
 
-import com.elepy.dao.Page;
-import com.elepy.dao.SearchQuery;
 import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.utils.StringUtils;
 import com.github.slugify.Slugify;
-import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -83,12 +80,6 @@ public class ImageDao extends DefaultMongoDao<Image> {
         final GridFS images = new GridFS(db, "images");
         images.remove(id + "-original");
         images.remove(id + "-caption");
-    }
-
-    @Override
-    public Page<Image> search(SearchQuery searchQuery) {
-
-        return new Page<>(1, 1, Lists.newArrayList(collection().find().as(modelType()).iterator()));
     }
 
     @Override
