@@ -10,13 +10,12 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.models.FieldType;
+import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -67,16 +66,16 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             if (body.startsWith("{")) {
                 return objectMapper.readValue(body, clazz);
             } else {
-                return objectFromMaps(new HashMap<>(), splitQuery(request.body()), objectMapper, clazz);
+                return MapperUtils.objectFromMaps(objectMapper, new HashMap<>(), splitQuery(request.body()), clazz);
             }
         } else {
             if (body.startsWith("{")) {
                 final Map<String, Object> beforeMap = objectMapper.convertValue(before, Map.class);
                 final Map<String, Object> changesMap = objectMapper.readValue(request.body(), Map.class);
                 ReflectionUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
-                return objectFromMaps(beforeMap, changesMap, objectMapper, clazz);
+                return MapperUtils.objectFromMaps(objectMapper, beforeMap, changesMap, clazz);
             } else {
-                return setParamsOnObject(request, objectMapper, before);
+                return setParamsOnObject(request, objectMapper, before, clazz);
             }
         }
     }
@@ -103,32 +102,14 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return updated;
     }
 
-    @SuppressWarnings("unchecked")
-    public T objectFromMaps(Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, ObjectMapper objectMapper, Class cls) {
-
-        fieldsToAdd.forEach((fieldName, fieldObject) -> {
-            final Optional<Field> fieldWithName = ReflectionUtils.findFieldWithName(cls, fieldName);
-
-            if (fieldWithName.isPresent()) {
-                Field field = fieldWithName.get();
-                FieldType fieldType = FieldType.guessType(field);
-                if (fieldType.isPrimitive()) {
-                    objectAsMap.put(fieldName, fieldObject);
-                }
-            } else {
-                throw new ElepyException(String.format("Unknown field: %s", fieldName));
-            }
-        });
-        return (T) objectMapper.convertValue(objectAsMap, cls);
-    }
 
     @SuppressWarnings("unchecked")
-    public T setParamsOnObject(Request request, ObjectMapper objectMapper, T object) throws UnsupportedEncodingException {
+    public T setParamsOnObject(Request request, ObjectMapper objectMapper, T object, Class<T> modelClass) throws UnsupportedEncodingException {
 
         Map<String, Object> map = objectMapper.convertValue(object, Map.class);
         Map<String, Object> splitQuery = splitQuery(request.body());
 
-        return objectFromMaps(map, splitQuery, objectMapper, object.getClass());
+        return MapperUtils.objectFromMaps(objectMapper, map, splitQuery, modelClass);
     }
 
     @Override

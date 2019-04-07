@@ -2,14 +2,14 @@ package com.elepy.dao;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * This is the CRUD interface of Elepy. It is the Core of the Data Access Layer. A crud can be anything from
@@ -100,6 +100,23 @@ public interface Crud<T> {
         }
     }
 
+    default void updateWithPrototype(Map<String, Object> prototype, ObjectMapper objectMapper, Serializable... ids) {
+        List<T> toUpdate = new ArrayList<>();
+
+
+        for (Serializable id : ids) {
+            getById(id).ifPresent(item -> {
+                final Map<String, Object> beforeMap = objectMapper.convertValue(item, new TypeReference<Map<String, Object>>() {
+                });
+
+                final T t = MapperUtils.objectFromMaps(objectMapper, beforeMap, prototype, getType());
+
+                toUpdate.add(t);
+            });
+        }
+
+        update(toUpdate);
+    }
 
     /**
      * Creates multiple items in the CRUD.

@@ -10,8 +10,7 @@ import org.jongo.Jongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -90,6 +89,29 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
         assertEquals(2, count());
 
+
+    }
+
+    @Test
+    void testUpdateWithPrototype() {
+        final Resource resource = validObject();
+        final Resource resource2 = validObject();
+
+        resource2.setUnique("Unique2");
+
+        defaultMongoDao.create(Arrays.asList(resource, resource2));
+
+        final Map<String, Object> prototype = new HashMap<>();
+
+        prototype.put("textField", "NEW_VALUE");
+        prototype.put("unique", "NEW_UNIQUE_VAL");
+        defaultMongoDao.updateWithPrototype(prototype, new ObjectMapper(), resource.getId(), resource2.getId());
+
+        final List<Resource> updatedTextFieldResources = defaultMongoDao.searchInField("textField", "NEW_VALUE");
+        final List<Resource> updatedUniqueResources = defaultMongoDao.searchInField("unique", "NEW_UNIQUE_VAL");
+
+        assertEquals(2, updatedTextFieldResources.size());
+        assertEquals(0, updatedUniqueResources.size());
 
     }
 
