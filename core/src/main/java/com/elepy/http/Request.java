@@ -2,7 +2,6 @@ package com.elepy.http;
 
 import com.elepy.dao.*;
 import com.elepy.describers.ModelDescription;
-import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,39 +72,31 @@ public interface Request {
      */
     default Serializable modelId() {
 
-        HttpAction action = attribute("action");
-        if (action != null) {
-            final String id = queryParams("id");
+        final String id = queryParams("id");
 
-            if (id != null) {
-                return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), id);
-            }
-
-            final String ids = queryParams("ids");
-
-            if (ids != null) {
-                final String[] split = ids.split(",");
-
-                return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
-            }
+        if (id != null) {
+            return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), id);
         }
+
+        final String ids = queryParams("ids");
+
+        if (ids != null) {
+            final String[] split = ids.split(",");
+
+            return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
+        }
+
         return modelId(attribute("modelClass"));
     }
 
     default Set<Serializable> modelIds() {
+        final String ids = queryParams("ids");
 
-        HttpAction action = attribute("action");
-        if (action != null) {
-            final String ids = queryParams("ids");
-
-            if (ids != null) {
-                final String[] split = ids.split(",");
-                return Arrays.stream(split).map(s -> ReflectionUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
-            }
-            return new HashSet<>(Collections.singletonList(modelId()));
-
+        if (ids != null) {
+            final String[] split = ids.split(",");
+            return Arrays.stream(split).map(s -> ReflectionUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
         }
-        throw new ElepyException("No ids found", 404);
+        return new HashSet<>(Collections.singletonList(modelId()));
     }
 
     /**

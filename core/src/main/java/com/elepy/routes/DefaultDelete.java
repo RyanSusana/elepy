@@ -8,17 +8,27 @@ import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class DefaultDelete<T> implements DeleteHandler<T> {
 
     @Override
     public void handleDelete(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        Serializable paramId = context.modelId();
+        Set<Serializable> paramIds = context.modelIds();
 
-        dao.getById(paramId).orElseThrow(() -> new ElepyException(String.format("No %s found", modelDescription.getName()), 404));
+        delete(paramIds, dao, context, modelDescription);
+    }
 
-        dao.deleteById(paramId);
+    protected void delete(Set<Serializable> paramIds, Crud<T> dao, HttpContext context, ModelDescription<T> modelDescription) {
+        if (paramIds.size() == 1) {
+            dao.getById(paramIds.iterator().next()).orElseThrow(() -> new ElepyException(String.format("No %s found", modelDescription.getName()), 404));
 
-        context.result(Message.of("Successfully deleted item", 200));
+            dao.deleteById(paramIds.iterator().next());
+
+            context.result(Message.of("Successfully deleted item", 200));
+        } else if (paramIds.size() > 1) {
+            dao.delete(paramIds);
+            context.result(Message.of("Successfully deleted items", 200));
+        }
     }
 }

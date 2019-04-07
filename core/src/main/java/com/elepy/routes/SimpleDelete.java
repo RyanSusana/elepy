@@ -12,6 +12,11 @@ import java.io.Serializable;
 public abstract class SimpleDelete<T> implements DeleteHandler<T> {
     @Override
     public void handleDelete(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+
+        if (context.modelIds().size() > 1) {
+            throw new ElepyException(String.format("SimpleDelete<%s> does not support multiple id deletions", modelDescription.getModelType().getSimpleName()), 400);
+        }
+
         Serializable paramId = context.modelId();
 
         T itemToDelete = dao.getById(paramId).orElseThrow(() -> new ElepyException(String.format("No %s found", modelDescription.getName()), 404));

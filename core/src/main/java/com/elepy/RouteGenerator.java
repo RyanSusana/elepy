@@ -83,6 +83,13 @@ public class RouteGenerator<T> {
                     .route(ctx -> restModel.getService().handleDelete(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
+            elepy.addRouting(anElepyRoute()
+                    .accessLevel(restModel.getDeleteAccessLevel())
+                    .path(baseSlug + restModel.getSlug())
+                    .method(HttpMethod.DELETE)
+                    .route(ctx -> restModel.getService().handleDelete(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
+                    .build()
+            );
 
             //GET PAGE
             elepy.addRouting(anElepyRoute()
