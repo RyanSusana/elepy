@@ -667,7 +667,10 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupLoggingAndExceptions() {
-        http.before((request, response) -> request.attribute("start", System.currentTimeMillis()));
+        http.before((request, response) -> {
+            request.attribute("elepyContext", this);
+            request.attribute("start", System.currentTimeMillis());
+        });
         http.afterAfter((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");

@@ -25,6 +25,11 @@ public class Message {
         this(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus(), new HashMap<>());
     }
 
+    @JsonProperty
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
     public String getMessage() {
         return message;
     }
