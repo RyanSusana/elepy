@@ -2,10 +2,13 @@ package com.elepy.http;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletResponse;
 
 public interface Response {
+
     void status(int statusCode);
 
     int status();
@@ -31,8 +34,14 @@ public interface Response {
     void redirect(String location, int httpStatusCode);
 
     default void result(Message message) {
-        result(String.format("{\"status\":%d,\"message\":\"%s\"}", message.getStatus(), message.getMessage()), message.getStatus());
-        type("application/json");
+        try {
+            final String s = new ObjectMapper().writeValueAsString(message);
+            result(s, message.getStatus());
+            type("application/json");
+        } catch (JsonProcessingException e) {
+            throw new ElepyException("Error writing json", 500);
+        }
+
     }
 
     default void result(String message, int status) {
