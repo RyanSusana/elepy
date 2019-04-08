@@ -14,9 +14,10 @@ public @interface Action {
 
     String name();
 
-    HttpMethod method();
-
     Class<? extends ActionHandler> handler();
+
+
+    HttpMethod method() default HttpMethod.GET;
 
     String slug() default "";
 
