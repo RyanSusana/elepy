@@ -7,144 +7,20 @@
 {% block headers %}
             {% autoescape false %}
             {{ customHeaders }}
+            <link rel="stylesheet" href="https://unpkg.com/elepy-vue@0.1.2/dist/ElepyVue.css">
             {% endautoescape %}
 {% endblock %}
 
 
 {% block main %}
 {% if customView is null %}
+
+
 <div id="app">
-    <div v-if="selectedModel!=null"
-         class="uk-container uk-container-expand uk-position-relative placeholder uk-margin-large-top" v-cloak>
-
-        <div class="content">
-            <div class="header">
 
 
-                <div class="uk-clearfix">
-                    <div class="uk-flex">
-
-                        <h3 class="uk-card-title">{{currentDescriptor.name}}</h3>
-
-                    </div>
-
-
-                </div>
-            </div>
-            <div class="uk-flex uk-margin-small-top">
-                <button v-on:click="createModal()" class="uk-button uk-button-primary"><i
-                        class="fas fa-plus"></i>Add
-                    to {{currentDescriptor.name}}</button>
-
-
-                <input class="uk-search-input " type="search" v-model="searchQuery"
-                       v-on:keyup="search()" placeholder="Search {{currentDescriptor.name}}...">
-            </div>
-
-            <ul class="uk-pagination uk-flex-center" uk-margin>
-                <li>
-                    <button v-on:click="previous()" class="uk-link uk-link-reset"><span uk-pagination-previous></span>
-                    </button>
-                </li>
-                <li v-for="link in lastPageNumber" :class="{'uk-active': link == curPage.currentPageNumber}"><a
-                        v-on:click="page(link)">((link))</a></li>
-                <li>
-                    <button v-on:click="next()" class="uk-link uk-link-reset"><span uk-pagination-next></span></button>
-                </li>
-            </ul>
-            <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
-
-
-            <div class="data-section">
-
-                <table id="table-data" class="uk-table uk-table-hover uk-table-divider uk-table-middle">
-                    <thead>
-                    <tr>
-                        <th v-for="field in selectedModel.fields"
-                            v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">
-                            ((field.prettyName))
-                        </th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr v-for="data in modelData"
-                        v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editModal()">
-                        <td :uk-tooltip="'title:'+ field.prettyName+'; pos: top-left'"
-                            v-for="field in selectedModel.fields"
-
-                            v-if="field.type != 'OBJECT' && field.importance >= 0 && field.importance <= 100">
-                            (( (field.type == 'DATE'? toDate(data[field.name]) : field.type == 'BOOLEAN'?
-                            toBoolean(field, data[field.name]):field.type == 'ENUM'? toEnum(field, data[field.name]):
-                            data[field.name]) | truncate(90) ))
-                        </td>
-
-                    </tr>
-                    </tbody>
-
-                </table>
-            </div>
-
-            <div id="edit-modal" class="uk-modal-container" uk-modal="stack: true;,'bg-close': false">
-                <div class="uk-modal-dialog">
-
-                    <div class="uk-modal-header">
-                        <h2 class="uk-modal-title">Edit</h2>
-                    </div>
-                    <div class="uk-modal-body edit-modal-body" uk-overflow-auto>
-                        <form id="content-form" v-if="selectedData!=null" class="uk-form-stacked ">
-                            <div class="uk-width-1-1">
-
-                                <elepy-form :selectedModel="selectedModel" :creating="false"
-                                            :selectedData="selectedData"></elepy-form>
-                            </div>
-
-
-                        </form>
-                    </div>
-                    <div class="uk-modal-footer uk-text-right">
-                        <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                        <button class="uk-button uk-button-danger" v-on:click="deleteData()" type="button"><i
-                                class="fas fa-trash"></i>Delete
-                        </button>
-                        <button class="uk-button uk-button-primary" v-on:click="saveData()" type="button"><i
-                                class="fas fa-save"></i>Save
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div id="add-modal" class="uk-modal-container" uk-modal="stack: true;,'bg-close': false">
-                <div class="uk-modal-dialog">
-
-                    <div class="uk-modal-header">
-                        <h2 class="uk-modal-title">Add to {{currentDescriptor.name}}</h2>
-                    </div>
-                    <div class="uk-modal-body edit-modal-body" uk-overflow-auto>
-                        <form id="content-form" v-if="newData!=null" class="uk-form-stacked ">
-                            <div class="uk-width-1-1">
-
-                                <elepy-form :creating="true" :selectedModel="selectedModel"
-                                            :selectedData="newData"></elepy-form>
-
-                            </div>
-
-
-                        </form>
-                    </div>
-                    <div class="uk-modal-footer uk-text-right">
-                        <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                        <button class="uk-button uk-button-primary" v-on:click="createData()" type="button"><i
-                                class="fas fa-save"></i>Save
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
+    <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
+    <Elepy v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 {%else%}
 
@@ -160,14 +36,8 @@
 
 {% if customView is null %}
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.3"></script>
-<script src="https://cdn.jsdelivr.net/npm/trumbowyg@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-trumbowyg@3"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
-<script src="/admin-resources/js/vue-truncate.min.js"></script>
-<script src="https://unpkg.com/marked@0.3.6"></script>
-<script src="/admin-resources/js/vue-color.min.js"></script>
-<script src="/admin-resources/js/vue-ctk-date-time-picker.min.js"></script>
+
+<script src="https://unpkg.com/elepy-vue@0.1.2/dist/ElepyVue.umd.js"></script>
 <script src="/admin-resources/js/model.js"></script>
 {% endif %}
 
