@@ -1,11 +1,12 @@
 ![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
 # Version 2.0 is almost here!
 Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSusana/elepy/projects/2). You can download it here:
+The latest version can be found at https://elepy.com/docs/download
 ``` xml
 <dependency>
     <groupId>com.elepy</groupId>
     <artifactId>elepy-basic</artifactId>
-    <version>2.0.0-beta-7</version>
+    <version>LATEST_VERSION</version>
 </dependency>
 ```
 Docs can be found at: https://docs.elepy.com
