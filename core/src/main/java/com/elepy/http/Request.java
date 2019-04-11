@@ -2,6 +2,7 @@ package com.elepy.http;
 
 import com.elepy.dao.*;
 import com.elepy.describers.ModelDescription;
+import com.elepy.models.UploadedFile;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,6 +65,15 @@ public interface Request {
     String[] queryParamValues(String key);
 
     String[] splat();
+
+    List<UploadedFile> uploadedFiles(String key);
+
+    default UploadedFile uploadedFile(String key) {
+
+        final List<UploadedFile> uploadedFiles = uploadedFiles(key);
+
+        return uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
+    }
 
     void attribute(String attribute, Object value);
 

@@ -1,10 +1,18 @@
 package com.elepy.http;
 
+import com.elepy.exceptions.ElepyException;
+import com.elepy.models.UploadedFile;
 import spark.QueryParamsMap;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SparkRequest implements Request {
     private final spark.Request request;
@@ -30,6 +38,7 @@ public class SparkRequest implements Request {
     public String[] splat() {
         return request.splat();
     }
+
 
     @Override
     public String method() {
@@ -176,5 +185,36 @@ public class SparkRequest implements Request {
 
     public String protocol() {
         return request.protocol();
+    }
+
+
+    @Override
+    public List<UploadedFile> uploadedFiles(String key) {
+        final String contentType = headers("Content-Type");
+
+        if (contentType != null && contentType.toLowerCase().contains("multipart/form-data")) {
+
+            HttpServletRequest servletRequest = servletRequest();
+
+            servletRequest.setAttribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+            // Oh java, how I love your checked exceptions.
+            try {
+                return servletRequest.getParts().stream().filter(part -> part.getSubmittedFileName() != null && part.getName().equals(key)).map(part -> {
+                            try {
+                                final String submittedFileName = part.getSubmittedFileName();
+
+                                final String[] split = submittedFileName.split("\\.");
+                                return UploadedFile.of(part.getContentType(), part.getInputStream(), part.getSubmittedFileName(), split[split.length - 1]);
+                            } catch (IOException e) {
+                                throw new ElepyException("File upload failed", 500);
+                            }
+                        }
+                ).collect(Collectors.toList());
+            } catch (ServletException | IOException e) {
+                throw new ElepyException("File upload failed", 500);
+            }
+        }
+        return Collections.emptyList();
     }
 }
