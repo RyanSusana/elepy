@@ -5,13 +5,12 @@ import com.elepy.admin.dto.CollectedToken;
 import com.elepy.admin.dto.Resource;
 import com.elepy.admin.models.User;
 import com.elepy.dao.Crud;
+import com.elepy.mongo.MongoConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mongodb.DB;
-import com.mongodb.FongoDB;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +31,8 @@ public class TokenTest {
     public static void beforeAll() throws Exception {
         elepy = new Elepy();
         Fongo fongo = new Fongo("test");
-        final FongoDB db = fongo.getDB("test");
-        elepy.registerDependency(DB.class, db);
+
+        elepy.addConfiguration(MongoConfiguration.of(fongo.getDB("test")));
         elepy.addModel(Resource.class);
         elepy.onPort(PORT);
 
