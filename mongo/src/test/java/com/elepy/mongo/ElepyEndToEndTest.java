@@ -9,7 +9,6 @@ import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mongodb.DB;
 import com.mongodb.FongoDB;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,23 +31,17 @@ public class ElepyEndToEndTest extends Base {
     public static void beforeAll() throws Exception {
 
 
-        elepy = new Elepy();
         Fongo fongo = new Fongo("test");
 
 
         final FongoDB db = fongo.getDB("test");
+        elepy = new Elepy()
+                .addConfiguration(MongoConfiguration.of(db))
+                .addModel(Resource.class)
+                .onPort(7357);
 
-
-        elepy.registerDependency(DB.class, db);
-
-
-        elepy.addModel(Resource.class);
-
-        elepy.onPort(7357);
-        elepy.withDefaultCrudProvider(MongoProvider.class);
 
         elepy.start();
-
         defaultMongoDao = elepy.getCrudFor(Resource.class);
     }
 
