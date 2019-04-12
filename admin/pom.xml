@@ -84,6 +84,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-mongo</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
