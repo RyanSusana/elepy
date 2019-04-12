@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import spark.utils.IOUtils;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class UploadTest {
@@ -32,7 +35,7 @@ public class UploadTest {
     @AfterEach
     void tearDown() throws IOException {
 
-        Path pathToBeDeleted = Paths.get("src/test/resources/uploads");
+        Path pathToBeDeleted = Paths.get(UPLOAD_DIR);
 
         Files.walkFileTree(pathToBeDeleted,
                 new SimpleFileVisitor<Path>() {
@@ -79,7 +82,13 @@ public class UploadTest {
     }
 
     @Test
-    void name() {
-        System.out.println("hi");
+    void testReadText() throws IOException {
+        Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
+
+        final UploadedFile uploadedFile = directoryFileService.readFile("textFileToUpload.txt");
+        assertNotNull(uploadedFile);
+
+        assertEquals("textFileToUpload.txt", uploadedFile.getName());
+        assertEquals("TEST", IOUtils.toString(uploadedFile.getContent()));
     }
 }

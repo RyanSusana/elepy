@@ -6,6 +6,7 @@ import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Filter;
 import com.elepy.http.Route;
+import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -236,6 +237,15 @@ public class ElepyPreConfiguration {
      */
     public void withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
         elepy.withDefaultCrudProvider(defaultCrudProvider);
+    }
+
+    /**
+     * Enables file upload on Elepy.
+     *
+     * @param fileService The file service
+     */
+    public void withUploads(FileService fileService) {
+        elepy.withUploads(fileService);
     }
 
     /**

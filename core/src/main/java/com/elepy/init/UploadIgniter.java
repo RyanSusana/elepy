@@ -1,5 +1,6 @@
 package com.elepy.init;
 
+import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.http.UploadedFile;
 import com.elepy.uploads.FileService;
@@ -39,20 +40,24 @@ public class UploadIgniter {
             map.put("message", "Uploaded files");
             response.status(200);
             response.result(objectMapper.writeValueAsString(map));
+
         });
 
         httpService.get("/uploads/:fileName", (request, response) -> {
 
             final UploadedFile file = fileService.readFile(request.params("fileName"));
 
+            if (file != null) {
+                response.type(file.getContentType());
+                HttpServletResponse raw = response.servletResponse();
 
-            response.type(file.getContentType());
-            HttpServletResponse raw = response.servletResponse();
 
+                raw.getOutputStream().write(IOUtils.toByteArray(file.getContent()));
+                raw.getOutputStream().flush();
+                raw.getOutputStream().close();
+            }
+            throw new ElepyException("Not found", 404);
 
-            raw.getOutputStream().write(IOUtils.toByteArray(file.getContent()));
-            raw.getOutputStream().flush();
-            raw.getOutputStream().close();
         });
     }
 }

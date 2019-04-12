@@ -3,6 +3,7 @@ package com.elepy.uploads;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.UploadedFile;
+import org.apache.tika.Tika;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,11 @@ public class DirectoryFileService implements FileService {
 
     private final String rootFolderLocation;
 
+    private final Tika tika = new Tika();
+
     public DirectoryFileService(String rootFolderLocation) {
         this.rootFolderLocation = rootFolderLocation;
+        ensureDirsMade();
     }
 
 
@@ -31,27 +35,23 @@ public class DirectoryFileService implements FileService {
 
     @Override
     public synchronized void uploadFile(UploadedFile file) {
+        final Path name = Paths.get(rootFolderLocation + File.separator + file.getName());
         try {
-            Files.copy(file.getContent(), Paths.get(rootFolderLocation + File.separator + file.getName()));
+            Files.copy(file.getContent(), name);
         } catch (Exception e) {
             throw new ElepyException("Failed to upload file: " + file.getName());
         }
     }
 
     @Override
-    public UploadedFile readFile(String name) {
+    public synchronized UploadedFile readFile(String name) {
         final Path path = Paths.get(rootFolderLocation + File.separator + name);
-
-        throw new ElepyException("Failed at retrieving file: " + name, 500);
-
-
-//        try {
-//
-//            UploadedFile.of()
-//            return Files.newInputStream(path);
-//        } catch (IOException e) {
-//            throw new ElepyException("Failed at retrieving file: " + name, 500);
-//        }
+        try {
+            final String[] split = name.split("\\.");
+            return UploadedFile.of(tika.detect(path), Files.newInputStream(path), name, split[split.length - 1]);
+        } catch (IOException e) {
+            throw new ElepyException("Failed at retrieving file: " + name, 500);
+        }
     }
 
     @Override
