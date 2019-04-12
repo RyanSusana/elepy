@@ -551,7 +551,7 @@ public class Elepy implements ElepyContext {
      * Adds a configuration to Elepy
      *
      * @param configuration The configuration to add
-     * @return
+     * @return The elepy instance
      */
     public Elepy addConfiguration(Configuration configuration) {
         configurations.add(configuration);
