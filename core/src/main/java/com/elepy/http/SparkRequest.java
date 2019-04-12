@@ -1,7 +1,6 @@
 package com.elepy.http;
 
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.UploadedFile;
 import spark.QueryParamsMap;
 
 import javax.servlet.MultipartConfigElement;

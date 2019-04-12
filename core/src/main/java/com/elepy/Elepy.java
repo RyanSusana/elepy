@@ -3,7 +3,6 @@ package com.elepy;
 import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.CrudProvider;
-import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.di.ContextKey;
@@ -16,6 +15,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
+import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -53,6 +53,8 @@ public class Elepy implements ElepyContext {
     private Class<? extends CrudProvider> defaultCrudProvider;
     private List<Class<?>> routingClasses;
 
+    private FileService fileService = null;
+
     public Elepy() {
         this(Service.ignite().port(1337));
     }
@@ -65,7 +67,7 @@ public class Elepy implements ElepyContext {
         this.adminFilters = new MultiFilter();
         this.http = new SparkService(http, this);
 
-        this.defaultCrudProvider = MongoProvider.class;
+        this.defaultCrudProvider = null;
         this.baseSlug = "/";
 
         this.models = new ArrayList<>();
@@ -171,11 +173,9 @@ public class Elepy implements ElepyContext {
     /**
      * The default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
-     * using the default {@link MongoProvider}
      *
      * @return the provider
      * @see CrudProvider
-     * @see MongoProvider
      * @see com.elepy.dao.Crud
      */
     public Class<? extends CrudProvider> getDefaultCrudProvider() {
@@ -468,12 +468,10 @@ public class Elepy implements ElepyContext {
     /**
      * Changes the default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
-     * using the default {@link MongoProvider}
      *
      * @param defaultCrudProvider the default crud provider
      * @return The {@link com.elepy.Elepy} instance
      * @see CrudProvider
-     * @see MongoProvider
      * @see com.elepy.dao.Crud
      */
     public Elepy withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
@@ -544,6 +542,19 @@ public class Elepy implements ElepyContext {
      */
     public List<ModelDescription<?>> getModelDescriptions() {
         return new ArrayList<>(classModelDescriptionMap.values());
+    }
+
+
+    /**
+     * Enables file upload on Elepy.
+     *
+     * @param fileService The file service
+     * @return the Elepy instance
+     */
+    public Elepy withUploads(FileService fileService) {
+        this.fileService = fileService;
+
+        return this;
     }
 
     void putModelDescription(ModelDescription<?> clazz) {

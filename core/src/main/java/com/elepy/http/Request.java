@@ -2,7 +2,6 @@ package com.elepy.http;
 
 import com.elepy.dao.*;
 import com.elepy.describers.ModelDescription;
-import com.elepy.models.UploadedFile;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
