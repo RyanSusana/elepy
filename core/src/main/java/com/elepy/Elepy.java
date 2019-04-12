@@ -597,11 +597,12 @@ public class Elepy implements ElepyContext {
     }
 
     private void init() {
-        validateConfig();
         setupLoggingAndExceptions();
         retrievePackageModels();
 
         beforeConfiguration();
+
+        validateConfig();
         Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
 
         for (Class<?> model : models) {
