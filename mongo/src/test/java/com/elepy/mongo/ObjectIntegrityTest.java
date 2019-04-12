@@ -1,9 +1,7 @@
-package com.elepy.evaluators;
+package com.elepy.mongo;
 
-import com.elepy.BaseFongo;
-import com.elepy.dao.jongo.DefaultMongoDao;
+import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Resource;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;

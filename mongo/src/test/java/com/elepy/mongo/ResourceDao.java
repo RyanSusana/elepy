@@ -1,7 +1,6 @@
 package com.elepy.mongo;
 
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.dao.jongo.MongoDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 

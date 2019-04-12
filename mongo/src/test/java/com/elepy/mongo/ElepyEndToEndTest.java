@@ -1,8 +1,8 @@
-package com.elepy;
+package com.elepy.mongo;
 
+import com.elepy.Elepy;
+import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
-import com.elepy.dao.ResourceDao;
-import com.elepy.models.Resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.fakemongo.Fongo;
@@ -11,6 +11,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.DB;
 import com.mongodb.FongoDB;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ElepyEndToEndTest extends Base {
@@ -64,7 +64,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(count + 1, resourcePage.getValues().size());
 
-        assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(1, resourcePage.getValues().size());
 
-        assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals(200, getRequest.getStatus());
         assertEquals("filterUnique", resourcePage.getValues().get(0).getUnique());
     }
 
@@ -102,7 +102,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(0, resourcePage.getValues().size());
 
-        assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(1, resourcePage.getValues().size());
 
-        assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class ElepyEndToEndTest extends Base {
 
         assertEquals(foundResource.getId(), resource.getId());
 
-        assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class ElepyEndToEndTest extends Base {
         final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
 
         assertEquals(count + 1, defaultMongoDao.count());
-        assertEquals(201, postRequest.getStatus());
+        Assertions.assertEquals(201, postRequest.getStatus());
     }
 
 
@@ -190,7 +190,7 @@ public class ElepyEndToEndTest extends Base {
         final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
 
         assertEquals(count + 2, defaultMongoDao.count());
-        assertEquals(201, postRequest.getStatus());
+        Assertions.assertEquals(201, postRequest.getStatus());
     }
 
     @Test
@@ -207,7 +207,7 @@ public class ElepyEndToEndTest extends Base {
         final HttpResponse<String> delete = Unirest.delete("http://localhost:7357/resources/55").asString();
 
         assertEquals(beginningCount, defaultMongoDao.count());
-        assertEquals(200, delete.getStatus());
+        Assertions.assertEquals(200, delete.getStatus());
 
     }
 
@@ -233,7 +233,7 @@ public class ElepyEndToEndTest extends Base {
         assertTrue(updatePartialId.isPresent());
         assertEquals("uniqueUpdate", updatePartialId.get().getUnique());
         assertEquals("ryan", updatePartialId.get().getMARKDOWN());
-        assertEquals(200, patch.getStatus());
+        Assertions.assertEquals(200, patch.getStatus());
     }
 
     @Test
@@ -246,23 +246,42 @@ public class ElepyEndToEndTest extends Base {
         defaultMongoDao.create(resource1);
         final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources/" + resource1.getId() + "/extra").asString();
 
-        assertEquals(200, getRequest.getStatus());
-        assertEquals(shouldReturn, getRequest.getBody());
+        Assertions.assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals(shouldReturn, getRequest.getBody());
     }
 
     @Test
     void testExtraRoute() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources-extra").asString();
 
-        assertEquals(201, getRequest.getStatus());
-        assertEquals("generated", getRequest.getBody());
+        Assertions.assertEquals(201, getRequest.getStatus());
+        Assertions.assertEquals("generated", getRequest.getBody());
     }
 
     @Test
     void testAction() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get("http://localhost:7357/resources/actions/extra-action?ids=999,777").asString();
 
-        assertEquals(200, getRequest.getStatus());
-        assertEquals("[999,777]", getRequest.getBody());
+        Assertions.assertEquals(200, getRequest.getStatus());
+        Assertions.assertEquals("[999,777]", getRequest.getBody());
+    }
+
+    @Test
+    void testCrudFor() {
+        Elepy elepy = new Elepy();
+        Fongo fongo = new Fongo("test");
+        final FongoDB db = fongo.getDB("test");
+        DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(db, "resources", Resource.class);
+
+
+        elepy.registerDependency(DB.class, db).addModel(Resource.class).onPort(1111).start();
+
+        Crud<Resource> crudFor = elepy.getContext().getCrudFor(Resource.class);
+
+        assertNotNull(crudFor);
+        assertTrue(crudFor instanceof ResourceDao);
+
+        ResourceDao newDefaultMongoDao = (ResourceDao) crudFor;
+        assertEquals(defaultMongoDao.modelType(), newDefaultMongoDao.modelType());
     }
 }
