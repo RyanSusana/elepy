@@ -15,6 +15,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
+import com.elepy.init.UploadIgniter;
 import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -603,6 +604,9 @@ public class Elepy implements ElepyContext {
         beforeConfiguration();
 
         validateConfig();
+
+        new UploadIgniter(this.http, getObjectMapper(), this.fileService).ignite();
+
         Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
 
         for (Class<?> model : models) {
