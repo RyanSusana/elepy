@@ -30,7 +30,7 @@ public class UploadIgniter {
             files.forEach(fileService::uploadFile);
 
 
-            final List<String> fileNames = files.stream().map(UploadedFile::getName).collect(Collectors.toList());
+            final List<String> fileNames = files.stream().map(f -> "/uploads/" + f.getName()).collect(Collectors.toList());
 
 
             Map<String, Object> map = new HashMap<>();
