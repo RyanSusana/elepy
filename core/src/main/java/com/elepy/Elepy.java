@@ -587,7 +587,17 @@ public class Elepy implements ElepyContext {
         }
     }
 
+    private void validateConfig() {
+        if (this.fileService == null) {
+            logger.warn("No upload service available.");
+        }
+        if (this.defaultCrudProvider == null) {
+            throw new ElepyConfigException("No default database selected, please configure one.");
+        }
+    }
+
     private void init() {
+        validateConfig();
         setupLoggingAndExceptions();
         retrievePackageModels();
 
