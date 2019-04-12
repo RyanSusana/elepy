@@ -7,7 +7,6 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jongo.marshall.jackson.oid.MongoId;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -80,7 +79,7 @@ public class ReflectionUtils {
     }
 
     private static boolean hasId(Field field) {
-        return field.isAnnotationPresent(MongoId.class) || field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
+        return field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
     }
 
     public static Optional<Serializable> getId(Object object) {
@@ -118,7 +117,7 @@ public class ReflectionUtils {
     }
 
     public static Optional<Field> getIdField(Class cls) {
-        Optional<Field> annotated = searchForFieldWithAnnotation(cls, Identifier.class, MongoId.class, Id.class);
+        Optional<Field> annotated = searchForFieldWithAnnotation(cls, Identifier.class, Id.class);
 
         if (annotated.isPresent()) {
             return annotated;

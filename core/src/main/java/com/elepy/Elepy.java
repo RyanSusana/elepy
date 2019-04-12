@@ -20,7 +20,6 @@ import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DB;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,19 +192,6 @@ public class Elepy implements ElepyContext {
 
     public String getBaseSlug() {
         return this.baseSlug;
-    }
-
-
-    /**
-     * Attaches a MongoDB to Elepy.
-     *
-     * @param db the MongoDB
-     * @return The {@link com.elepy.Elepy} instance
-     * @see #registerDependency(Class, Object)
-     */
-    public Elepy connectDB(DB db) {
-        this.registerDependency(DB.class, db);
-        return this;
     }
 
     /**
