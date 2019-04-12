@@ -560,6 +560,17 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    /**
+     * Adds a configuration to Elepy
+     *
+     * @param configuration The configuration to add
+     * @return
+     */
+    public Elepy withConfiguration(Configuration configuration) {
+        configurations.add(configuration);
+        return this;
+    }
+
     void putModelDescription(ModelDescription<?> clazz) {
         classModelDescriptionMap.put(clazz.getModelType(), clazz);
     }
