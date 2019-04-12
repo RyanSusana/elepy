@@ -14,21 +14,10 @@ public class BaseFongo extends Base {
     private Fongo fongo;
 
     public void setUp() throws Exception {
-
-
         fongo = new Fongo("test");
-
-
     }
-
-    protected void tearDown() throws Exception {
-
-    }
-
 
     public DB getDb() throws IOException {
-
-
         return fongo.getDB("test");
     }
 }
