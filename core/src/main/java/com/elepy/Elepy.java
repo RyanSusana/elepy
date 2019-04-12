@@ -557,29 +557,43 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    /**
+     * @return the list of Elepy RestModels
+     */
+    public List<Class<?>> getModels() {
+        return models;
+    }
+
     void putModelDescription(ModelDescription<?> clazz) {
         classModelDescriptionMap.put(clazz.getModelType(), clazz);
     }
 
-    private void init() {
+    private void retrievePackageModels() {
 
+        if (!packages.isEmpty()) {
+            Reflections reflections = new Reflections(packages);
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
 
+            models.addAll(annotated);
+        }
+    }
+
+    private void beforeConfiguration() {
         for (Configuration configuration : configurations) {
             configuration.before(new ElepyPreConfiguration(this));
         }
         for (ElepyModule module : modules) {
             module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
         }
-        setupLoggingAndExceptions();
+    }
 
+    private void init() {
+        setupLoggingAndExceptions();
+        retrievePackageModels();
+
+        beforeConfiguration();
         Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
 
-        if (!packages.isEmpty()) {
-            Reflections reflections = new Reflections(packages);
-            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
-
-            annotated.forEach(claszz -> resourceDescribers.add(new ResourceDescriber<>(this, claszz)));
-        }
         for (Class<?> model : models) {
             resourceDescribers.add(new ResourceDescriber<>(this, model));
         }

@@ -8,6 +8,8 @@ import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 /**
  * This is a class dedicated to the safe configuration of Elepy in Modules
  */
@@ -234,5 +236,12 @@ public class ElepyPreConfiguration {
      */
     public void withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
         elepy.withDefaultCrudProvider(defaultCrudProvider);
+    }
+
+    /**
+     * @return the list of Elepy RestModels
+     */
+    public List<Class<?>> getModels() {
+        return elepy.getModels();
     }
 }
