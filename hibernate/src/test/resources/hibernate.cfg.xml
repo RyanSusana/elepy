@@ -12,8 +12,5 @@
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
-
-
-        <mapping class="com.elepy.hibernate.Resource"/>
     </session-factory>
 </hibernate-configuration>
