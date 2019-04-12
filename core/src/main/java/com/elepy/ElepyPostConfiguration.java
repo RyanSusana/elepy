@@ -190,9 +190,9 @@ public class ElepyPostConfiguration {
     }
 
     /**
-     * Adds afterElepyConstruction to be late initialized by Elepy.
+     * Adds after to be late initialized by Elepy.
      *
-     * @param elepyRoutes the afterElepyConstruction to add
+     * @param elepyRoutes the after to add
      */
     public void addRouting(Iterable<Route> elepyRoutes) {
         elepy.addRouting(elepyRoutes);

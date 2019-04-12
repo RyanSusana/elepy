@@ -55,11 +55,14 @@ public class Elepy implements ElepyContext {
 
     private FileService fileService = null;
 
+    private List<Configuration> configurations;
+
     public Elepy() {
         this(Service.ignite().port(1337));
     }
 
     public Elepy(Service http) {
+        this.configurations = new ArrayList<>();
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
         this.context = new DefaultElepyContext();
@@ -502,9 +505,9 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Adds afterElepyConstruction to be late initialized by Elepy.
+     * Adds after to be late initialized by Elepy.
      *
-     * @param elepyRoutes the afterElepyConstruction to add
+     * @param elepyRoutes the after to add
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy addRouting(Iterable<Route> elepyRoutes) {
@@ -564,6 +567,9 @@ public class Elepy implements ElepyContext {
     private void init() {
 
 
+        for (Configuration configuration : configurations) {
+            configuration.before(new ElepyPreConfiguration(this));
+        }
         for (ElepyModule module : modules) {
             module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
         }
@@ -599,6 +605,9 @@ public class Elepy implements ElepyContext {
         initialized = true;
         for (ElepyModule module : modules) {
             module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
+        }
+        for (Configuration configuration : configurations) {
+            configuration.after(new ElepyPostConfiguration(this));
         }
         context.strictMode(true);
 

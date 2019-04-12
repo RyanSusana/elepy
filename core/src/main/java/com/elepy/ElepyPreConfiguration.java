@@ -1,6 +1,7 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.dao.CrudProvider;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Filter;
@@ -52,7 +53,7 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * Adds a Spark {@link Filter} to controlled afterElepyConstruction.
+     * Adds a Spark {@link Filter} to controlled after.
      *
      * @param filter the {@link Filter}
      * @see Filter
@@ -198,9 +199,9 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * Adds afterElepyConstruction to be late initialized by Elepy.
+     * Adds after to be late initialized by Elepy.
      *
-     * @param elepyRoutes the afterElepyConstruction to add
+     * @param elepyRoutes the after to add
      */
     public void addRouting(Iterable<Route> elepyRoutes) {
         elepy.addRouting(elepyRoutes);
@@ -221,5 +222,17 @@ public class ElepyPreConfiguration {
      */
     public Filter getAllAdminFilters() {
         return elepy.getAllAdminFilters();
+    }
+
+    /**
+     * Changes the default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
+     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     *
+     * @param defaultCrudProvider the default crud provider
+     * @see CrudProvider
+     * @see com.elepy.dao.Crud
+     */
+    public void withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
+        elepy.withDefaultCrudProvider(defaultCrudProvider);
     }
 }
