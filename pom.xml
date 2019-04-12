@@ -39,6 +39,7 @@
         <module>hibernate</module>
         <module>mongo</module>
         <module>basic</module>
+        <module>file-uploads</module>
     </modules>
 
     <distributionManagement>
