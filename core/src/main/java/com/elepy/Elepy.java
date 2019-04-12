@@ -702,13 +702,13 @@ public class Elepy implements ElepyContext {
             request.attribute("elepyContext", this);
             request.attribute("start", System.currentTimeMillis());
         });
-        http.afterAfter((request, response) -> {
+        http.after((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
-            if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+            if (!request.method().equalsIgnoreCase("OPTIONS") && response.status() != 404)
+                logger.info(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> response.result(""));
         http.notFound((request, response) -> {
