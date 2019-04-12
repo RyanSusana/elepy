@@ -1,9 +1,6 @@
 package com.elepy.di;
 
 import com.elepy.Base;
-import com.elepy.Elepy;
-import com.elepy.dao.Crud;
-import com.elepy.dao.ResourceDao;
 import com.elepy.di.circular.Circular1;
 import com.elepy.di.circular.Circular2;
 import com.elepy.di.circular.Circular3;
@@ -16,35 +13,13 @@ import com.elepy.di.threeway.Dependency3;
 import com.elepy.di.threeway.Unsatisfiable;
 import com.elepy.di.tree.*;
 import com.elepy.di.unsatisfiedconstructor.DelegationAssistant;
-import com.elepy.models.Resource;
-import com.elepy.mongo.DefaultMongoDao;
-import com.github.fakemongo.Fongo;
-import com.mongodb.DB;
-import com.mongodb.FongoDB;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextTest extends Base {
 
-    @Test
-    void testCrudFor() {
-        Elepy elepy = new Elepy();
-        Fongo fongo = new Fongo("test");
-        final FongoDB db = fongo.getDB("test");
-        DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(db, "resources", Resource.class);
 
-
-        elepy.registerDependency(DB.class, db).addModel(Resource.class).onPort(1111).start();
-
-        Crud<Resource> crudFor = elepy.getContext().getCrudFor(Resource.class);
-
-        assertNotNull(crudFor);
-        assertTrue(crudFor instanceof ResourceDao);
-
-        ResourceDao newDefaultMongoDao = (ResourceDao) crudFor;
-        assertEquals(defaultMongoDao.modelType(), newDefaultMongoDao.modelType());
-    }
 
     @Test
     void testDISuccessful() {

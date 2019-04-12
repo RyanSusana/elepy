@@ -19,13 +19,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ElepyEndToEndTest extends Base {
 
     private static Elepy elepy;
-    private static ResourceDao defaultMongoDao;
+    private static Crud<Resource> defaultMongoDao;
 
     @BeforeAll
     public static void beforeAll() throws Exception {
@@ -44,10 +45,11 @@ public class ElepyEndToEndTest extends Base {
         elepy.addModel(Resource.class);
 
         elepy.onPort(7357);
+        elepy.withDefaultCrudProvider(MongoProvider.class);
 
         elepy.start();
 
-        defaultMongoDao = (ResourceDao) elepy.getCrudFor(Resource.class);
+        defaultMongoDao = elepy.getCrudFor(Resource.class);
     }
 
 
@@ -264,24 +266,5 @@ public class ElepyEndToEndTest extends Base {
 
         Assertions.assertEquals(200, getRequest.getStatus());
         Assertions.assertEquals("[999,777]", getRequest.getBody());
-    }
-
-    @Test
-    void testCrudFor() {
-        Elepy elepy = new Elepy();
-        Fongo fongo = new Fongo("test");
-        final FongoDB db = fongo.getDB("test");
-        DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(db, "resources", Resource.class);
-
-
-        elepy.registerDependency(DB.class, db).addModel(Resource.class).onPort(1111).start();
-
-        Crud<Resource> crudFor = elepy.getContext().getCrudFor(Resource.class);
-
-        assertNotNull(crudFor);
-        assertTrue(crudFor instanceof ResourceDao);
-
-        ResourceDao newDefaultMongoDao = (ResourceDao) crudFor;
-        assertEquals(defaultMongoDao.modelType(), newDefaultMongoDao.modelType());
     }
 }

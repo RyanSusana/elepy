@@ -1,9 +1,8 @@
-package com.elepy.models;
+package com.elepy.mongo;
 
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
 import com.elepy.dao.Crud;
-import com.elepy.dao.ResourceDao;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
@@ -14,7 +13,7 @@ import java.util.Optional;
 public class ResourceService extends DefaultService<Resource> {
 
     @Inject(tag = "/resources", type = Crud.class)
-    private ResourceDao crud;
+    private Crud<Resource> crud;
 
     @Route(path = "/resources/:id/extra", method = HttpMethod.GET)
     public void extraRoute(Request request, Response response) {

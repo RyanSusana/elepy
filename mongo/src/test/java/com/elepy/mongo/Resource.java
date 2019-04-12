@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 @RestModel(name = "Test Resource", slug = "/resources")
+@ExtraRoutes({ResourceExtraRoutes.class})
+@Service(value = ResourceService.class)
+@Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
 @Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
 public class Resource {
     @Identifier

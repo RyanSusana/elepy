@@ -1,4 +1,4 @@
-package com.elepy.models;
+package com.elepy.mongo;
 
 
 import com.elepy.annotations.ElepyConstructor;
