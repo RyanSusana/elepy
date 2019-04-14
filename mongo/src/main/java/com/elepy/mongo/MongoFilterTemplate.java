@@ -1,5 +1,6 @@
 package com.elepy.mongo;
 
+import com.elepy.annotations.TrueFalse;
 import com.elepy.dao.FilterableField;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
@@ -19,34 +20,42 @@ public class MongoFilterTemplate {
     public MongoFilterTemplate(String operator, FilterableField field, String value) {
         this.operator = operator;
         this.field = field;
+        this.value = toRecognizableData(value);
+    }
 
-
+    private Serializable toRecognizableData(String value) {
         try {
+            if (field.getFieldType().equals(FieldType.BOOLEAN)) {
+                final TrueFalse annotation = field.getField().getAnnotation(TrueFalse.class);
+
+                if (annotation != null && value.equalsIgnoreCase(annotation.trueValue())) {
+                    return true;
+                }
+                return Boolean.parseBoolean(value);
+            }
             if (field.getFieldType().equals(FieldType.NUMBER)) {
 
                 NumberType numberType = NumberType.guessType(field.getField());
                 if (numberType.equals(NumberType.INTEGER)) {
-                    this.value = Long.parseLong(value);
+                    return Long.parseLong(value);
                 } else {
-                    this.value = Float.parseFloat(value);
+                    return Float.parseFloat(value);
                 }
             } else if (field.getFieldType().equals(FieldType.DATE)) {
 
                 Date date = DateUtils.guessDate(value);
 
                 if (date == null) {
-                    this.value = value;
+                    return value;
                 } else {
-                    this.value = date;
+                    return date;
                 }
             } else {
-                this.value = value;
+                return value;
             }
         } catch (NumberFormatException e) {
             throw new ElepyException(String.format("%s can only be compared to numbers", ReflectionUtils.getPrettyName(field.getField())));
         }
-
-
     }
 
     public String compile() {
