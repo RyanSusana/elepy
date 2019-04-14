@@ -729,10 +729,7 @@ public class Elepy implements ElepyContext {
         http.notFound((request, response) -> {
 
             response.type("application/json");
-            return getObjectMapper().writeValueAsString(new Message(ErrorMessageBuilder
-                    .anElepyErrorMessage()
-                    .withMessage("Not found")
-                    .withStatus(404).build()));
+            return getObjectMapper().writeValueAsString(Message.of("Not found", 404));
 
         });
 
@@ -758,7 +755,9 @@ public class Elepy implements ElepyContext {
 
             response.status(elepyErrorMessage.getStatus());
             try {
-                response.body(getObjectMapper().writeValueAsString(new Message(elepyErrorMessage)));
+                response.body(getObjectMapper()
+                        .writeValueAsString(Message.of(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus())));
+
             } catch (JsonProcessingException e) {
                 logger.error(e.getMessage(), e);
             }
