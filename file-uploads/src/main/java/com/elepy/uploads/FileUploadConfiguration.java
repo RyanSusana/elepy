@@ -20,4 +20,8 @@ public class FileUploadConfiguration implements Configuration {
     public void after(ElepyPostConfiguration elepy) {
 
     }
+
+    public static FileUploadConfiguration of(String rootFolder) {
+        return new FileUploadConfiguration(rootFolder);
+    }
 }
