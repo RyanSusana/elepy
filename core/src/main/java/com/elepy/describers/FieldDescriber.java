@@ -5,10 +5,9 @@ import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
-import com.elepy.utils.ReflectionUtils;
 import com.elepy.utils.DateUtils;
+import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jongo.marshall.jackson.oid.MongoId;
 
 import javax.persistence.Column;
 import java.lang.reflect.Field;
@@ -62,11 +61,10 @@ public class FieldDescriber {
 
     private String name() {
         JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
-        MongoId mongoId = field.getAnnotation(MongoId.class);
         final Identifier identifier = field.getAnnotation(Identifier.class);
         if (jsonProperty != null) {
             return jsonProperty.value();
-        } else if (mongoId != null || identifier != null) {
+        } else if (identifier != null) {
             return "id";
         } else {
             return field.getName();

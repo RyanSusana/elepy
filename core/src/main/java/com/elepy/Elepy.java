@@ -3,7 +3,6 @@ package com.elepy;
 import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.CrudProvider;
-import com.elepy.dao.jongo.MongoProvider;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.di.ContextKey;
@@ -16,11 +15,12 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
+import com.elepy.init.UploadIgniter;
+import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DB;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +53,16 @@ public class Elepy implements ElepyContext {
     private Class<? extends CrudProvider> defaultCrudProvider;
     private List<Class<?>> routingClasses;
 
+    private FileService fileService = null;
+
+    private List<Configuration> configurations;
+
     public Elepy() {
         this(Service.ignite().port(1337));
     }
 
     public Elepy(Service http) {
+        this.configurations = new ArrayList<>();
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
         this.context = new DefaultElepyContext();
@@ -65,7 +70,7 @@ public class Elepy implements ElepyContext {
         this.adminFilters = new MultiFilter();
         this.http = new SparkService(http, this);
 
-        this.defaultCrudProvider = MongoProvider.class;
+        this.defaultCrudProvider = null;
         this.baseSlug = "/";
 
         this.models = new ArrayList<>();
@@ -171,11 +176,9 @@ public class Elepy implements ElepyContext {
     /**
      * The default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
-     * using the default {@link MongoProvider}
      *
      * @return the provider
      * @see CrudProvider
-     * @see MongoProvider
      * @see com.elepy.dao.Crud
      */
     public Class<? extends CrudProvider> getDefaultCrudProvider() {
@@ -190,19 +193,6 @@ public class Elepy implements ElepyContext {
 
     public String getBaseSlug() {
         return this.baseSlug;
-    }
-
-
-    /**
-     * Attaches a MongoDB to Elepy.
-     *
-     * @param db the MongoDB
-     * @return The {@link com.elepy.Elepy} instance
-     * @see #registerDependency(Class, Object)
-     */
-    public Elepy connectDB(DB db) {
-        this.registerDependency(DB.class, db);
-        return this;
     }
 
     /**
@@ -468,12 +458,10 @@ public class Elepy implements ElepyContext {
     /**
      * Changes the default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
-     * using the default {@link MongoProvider}
      *
      * @param defaultCrudProvider the default crud provider
      * @return The {@link com.elepy.Elepy} instance
      * @see CrudProvider
-     * @see MongoProvider
      * @see com.elepy.dao.Crud
      */
     public Elepy withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
@@ -504,9 +492,9 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Adds afterElepyConstruction to be late initialized by Elepy.
+     * Adds after to be late initialized by Elepy.
      *
-     * @param elepyRoutes the afterElepyConstruction to add
+     * @param elepyRoutes the after to add
      * @return The {@link com.elepy.Elepy} instance
      */
     public Elepy addRouting(Iterable<Route> elepyRoutes) {
@@ -546,26 +534,81 @@ public class Elepy implements ElepyContext {
         return new ArrayList<>(classModelDescriptionMap.values());
     }
 
+
+    /**
+     * Enables file upload on Elepy.
+     *
+     * @param fileService The file service
+     * @return the Elepy instance
+     */
+    public Elepy withUploads(FileService fileService) {
+        this.fileService = fileService;
+
+        return this;
+    }
+
+    /**
+     * Adds a configuration to Elepy
+     *
+     * @param configuration The configuration to add
+     * @return The elepy instance
+     */
+    public Elepy addConfiguration(Configuration configuration) {
+        configurations.add(configuration);
+        return this;
+    }
+
+    /**
+     * @return the list of Elepy RestModels
+     */
+    public List<Class<?>> getModels() {
+        return models;
+    }
+
     void putModelDescription(ModelDescription<?> clazz) {
         classModelDescriptionMap.put(clazz.getModelType(), clazz);
     }
 
-    private void init() {
-
-
-        for (ElepyModule module : modules) {
-            module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
-        }
-        setupLoggingAndExceptions();
-
-        Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
+    private void retrievePackageModels() {
 
         if (!packages.isEmpty()) {
             Reflections reflections = new Reflections(packages);
             Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
 
-            annotated.forEach(claszz -> resourceDescribers.add(new ResourceDescriber<>(this, claszz)));
+            models.addAll(annotated);
         }
+    }
+
+    private void beforeConfiguration() {
+        for (Configuration configuration : configurations) {
+            configuration.before(new ElepyPreConfiguration(this));
+        }
+        for (ElepyModule module : modules) {
+            module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
+        }
+    }
+
+    private void validateConfig() {
+        if (this.fileService == null) {
+            logger.warn("No upload service available.");
+        }
+        if (this.defaultCrudProvider == null) {
+            throw new ElepyConfigException("No default database selected, please configure one.");
+        }
+    }
+
+    private void init() {
+        setupLoggingAndExceptions();
+        retrievePackageModels();
+
+        beforeConfiguration();
+
+        validateConfig();
+
+        new UploadIgniter(this.http, getObjectMapper(), this.fileService).ignite();
+
+        Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
+
         for (Class<?> model : models) {
             resourceDescribers.add(new ResourceDescriber<>(this, model));
         }
@@ -588,6 +631,9 @@ public class Elepy implements ElepyContext {
         initialized = true;
         for (ElepyModule module : modules) {
             module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
+        }
+        for (Configuration configuration : configurations) {
+            configuration.after(new ElepyPostConfiguration(this));
         }
         context.strictMode(true);
 
@@ -671,13 +717,13 @@ public class Elepy implements ElepyContext {
             request.attribute("elepyContext", this);
             request.attribute("start", System.currentTimeMillis());
         });
-        http.afterAfter((request, response) -> {
+        http.after((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
-            if (!request.requestMethod().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.info(request.requestMethod() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+            if (!request.method().equalsIgnoreCase("OPTIONS") && response.status() != 404)
+                logger.info(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> response.result(""));
         http.notFound((request, response) -> {

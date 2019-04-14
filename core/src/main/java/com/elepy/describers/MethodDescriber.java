@@ -6,7 +6,6 @@ import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -93,11 +92,8 @@ public class MethodDescriber {
 
     private String name() {
         JsonProperty jsonProperty = method.getAnnotation(JsonProperty.class);
-        MongoId mongoId = method.getAnnotation(MongoId.class);
         if (jsonProperty != null) {
             return jsonProperty.value();
-        } else if (mongoId != null) {
-            return "id";
         } else {
             return method.getName();
         }

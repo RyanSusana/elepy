@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class DateUtils {
 
+
     private static final Map<String, String> DATE_FORMATS = new HashMap<>();
 
     static {
@@ -42,28 +43,25 @@ public class DateUtils {
     }
 
     public static Date guessDate(String string) {
-        String dateFormat = guessDateFormat(string);
+        final SimpleDateFormat dateFormat = guessDateFormat(string);
 
         try {
             if (dateFormat == null) {
                 return new Date(Long.parseLong(string));
             } else {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-                return simpleDateFormat.parse(string);
+                return dateFormat.parse(string);
             }
         } catch (NumberFormatException | ParseException e) {
 
             throw new ElepyConfigException(String.format("Can't parse the date '%s'.", string));
 
         }
-
-
     }
 
-    private static String guessDateFormat(String dateString) {
-        for (Map.Entry<String, String> regexp : DATE_FORMATS.entrySet()) {
-            if (dateString.toLowerCase().matches(regexp.getKey())) {
-                return DATE_FORMATS.get(regexp.getValue());
+    private static SimpleDateFormat guessDateFormat(String dateString) {
+        for (Map.Entry<String, String> entry : DATE_FORMATS.entrySet()) {
+            if (dateString.toLowerCase().matches(entry.getKey())) {
+                return new SimpleDateFormat(entry.getValue());
             }
         }
         return null;

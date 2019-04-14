@@ -56,4 +56,6 @@ public interface Response {
     default void terminateWithResult(Message message) {
         terminateWithResult(message.getMessage(), message.getStatus());
     }
+
+    void header(String s, String s1);
 }

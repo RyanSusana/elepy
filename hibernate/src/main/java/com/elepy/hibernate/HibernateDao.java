@@ -72,7 +72,6 @@ public class HibernateDao<T> implements Crud<T> {
 
             Query<T> qry = session.createQuery(criteriaQuery.select(root).where(predicate).orderBy(orders));
 
-
             return toPage(qry, settings.getPageSize(), settings.getPageNumber(), count(query));
         }
     }
@@ -106,9 +105,9 @@ public class HibernateDao<T> implements Crud<T> {
             //Always true
             return Collections.singletonList(cb.and());
         }
-        return getSearchableFields().stream().map(field -> cb.like(root.get(getJPAFieldName(field)), "%" + term + "%"))
+        return getSearchableFields().stream()
+                .map(field -> cb.like(cb.lower(root.get(getJPAFieldName(field))), cb.literal("%" + term.toLowerCase() + "%")))
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -132,8 +131,11 @@ public class HibernateDao<T> implements Crud<T> {
 
             final Root<T> root = criteriaQuery.from(modelClassType);
 
-            criteriaQuery.select(root).where(cb.like(root.get(getJPAFieldName(field)), qry));
-
+            if (field.getType().equals(String.class)) {
+                criteriaQuery.select(root).where(cb.like(root.get(getJPAFieldName(field)), qry));
+            } else {
+                criteriaQuery.select(root).where(cb.equal(root.get(getJPAFieldName(field)), Long.parseLong(qry)));
+            }
             Query<T> query = session.createQuery(criteriaQuery);
             final List<T> resultList = query.list();
             loadLazyCollections(resultList);

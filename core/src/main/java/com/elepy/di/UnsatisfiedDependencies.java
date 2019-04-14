@@ -1,7 +1,6 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
-import com.elepy.dao.jongo.DefaultMongoDao;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
@@ -15,7 +14,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 class UnsatisfiedDependencies {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(UnsatisfiedDependencies.class);
     private final DefaultElepyContext elepyContext;
     private final Set<Class> scannedClasses = new HashSet<>();
     private Set<ContextKey> unsatisfiedKeys = new HashSet<>();

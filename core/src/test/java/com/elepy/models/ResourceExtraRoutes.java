@@ -4,17 +4,17 @@ package com.elepy.models;
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
-import com.elepy.dao.ResourceDao;
+import com.elepy.dao.Crud;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 
 public class ResourceExtraRoutes {
 
-    private ResourceDao resourceCrud;
+    private Crud<Resource> resourceCrud;
 
     @ElepyConstructor
-    public ResourceExtraRoutes(@Inject ResourceDao resourceCrud) {
+    public ResourceExtraRoutes(@Inject(tag = "/resources") Crud<Resource> resourceCrud) {
         this.resourceCrud = resourceCrud;
     }
 

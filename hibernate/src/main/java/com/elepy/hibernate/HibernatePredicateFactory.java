@@ -18,37 +18,39 @@ public class HibernatePredicateFactory {
     public static Predicate fromFilter(Root root, CriteriaBuilder cb, FilterQuery filterQuery) {
         final Serializable value = value(filterQuery.getFilterableField(), filterQuery.getFilterValue());
         final FieldType fieldType = filterQuery.getFilterableField().getFieldType();
+
+        final String fieldName = filterQuery.getFilterableField().getField().getName();
         switch (filterQuery.getFilterType()) {
             case EQUALS:
-                return cb.equal(root.get(filterQuery.getFilterableField().getName()), value);
+                return cb.equal(root.get(fieldName), value);
             case NOT_EQUALS:
-                return cb.notEqual(root.get(filterQuery.getFilterableField().getName()), value);
+                return cb.notEqual(root.get(fieldName), value);
             case CONTAINS:
-                return cb.like(root.get(filterQuery.getFilterableField().getName()), "%" + value + "%");
+                return cb.like(root.get(fieldName), "%" + value + "%");
             case GREATER_THAN:
                 if (fieldType.equals(FieldType.DATE)) {
-                    return cb.greaterThan(root.get(filterQuery.getFilterableField().getName()).as(Date.class), (Date) value);
+                    return cb.greaterThan(root.get(fieldName).as(Date.class), (Date) value);
                 } else {
-                    return cb.gt(root.get(filterQuery.getFilterableField().getName()), (Number) value);
+                    return cb.gt(root.get(fieldName), (Number) value);
                 }
             case LESSER_THAN:
                 if (fieldType.equals(FieldType.DATE)) {
-                    return cb.lessThan(root.get(filterQuery.getFilterableField().getName()).as(Date.class), (Date) value);
+                    return cb.lessThan(root.get(fieldName).as(Date.class), (Date) value);
                 } else {
-                    return cb.lt(root.get(filterQuery.getFilterableField().getName()), (Number) value);
+                    return cb.lt(root.get(fieldName), (Number) value);
                 }
             case GREATER_THAN_OR_EQUALS:
 
                 if (fieldType.equals(FieldType.DATE)) {
-                    return cb.greaterThanOrEqualTo(root.get(filterQuery.getFilterableField().getName()).as(Date.class), (Date) value);
+                    return cb.greaterThanOrEqualTo(root.get(fieldName).as(Date.class), (Date) value);
                 } else {
-                    return cb.ge(root.get(filterQuery.getFilterableField().getName()), (Number) value);
+                    return cb.ge(root.get(fieldName), (Number) value);
                 }
             case LESSER_THAN_OR_EQUALS:
                 if (fieldType.equals(FieldType.DATE)) {
-                    return cb.lessThanOrEqualTo(root.get(filterQuery.getFilterableField().getName()).as(Date.class), (Date) value);
+                    return cb.lessThanOrEqualTo(root.get(fieldName).as(Date.class), (Date) value);
                 } else {
-                    return cb.le(root.get(filterQuery.getFilterableField().getName()), (Number) value);
+                    return cb.le(root.get(fieldName), (Number) value);
                 }
         }
         throw new ElepyException("Hibernate does not support the filter: " + filterQuery.getFilterType().getQueryName());

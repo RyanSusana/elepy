@@ -45,9 +45,9 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
     private Object generateId(Crud<T> dao, Class<?> wrappedIdType) {
         Serializable randomId;
         if (wrappedIdType.equals(Long.class)) {
-            randomId = random.nextLong();
+            randomId = Math.abs(random.nextLong());
         } else {
-            randomId = random.nextInt();
+            randomId = Math.abs(random.nextInt());
         }
         if (dao.getById(randomId).isPresent()) {
             return generateId(dao, wrappedIdType);

@@ -65,6 +65,15 @@ public interface Request {
 
     String[] splat();
 
+    List<UploadedFile> uploadedFiles(String key);
+
+    default UploadedFile uploadedFile(String key) {
+
+        final List<UploadedFile> uploadedFiles = uploadedFiles(key);
+
+        return uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
+    }
+
     void attribute(String attribute, Object value);
 
     /**

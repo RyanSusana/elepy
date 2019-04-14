@@ -37,6 +37,7 @@ public class HibernateTest {
 
         Configuration hibernateConfiguration = new Configuration().configure();
 
+        hibernateConfiguration.addAnnotatedClass(Resource.class);
 
         sessionFactory = hibernateConfiguration.buildSessionFactory();
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
@@ -62,7 +63,7 @@ public class HibernateTest {
     @Test
     public void testFilterEndToEnd() throws IOException {
         Resource resource = validObject();
-        resource.setUniqueField("filterUnique");
+        resource.setUnique("filterUnique");
         resource.setId(4);
         resourceCrud.create(resource);
         resourceCrud.create(validObject());
@@ -75,7 +76,7 @@ public class HibernateTest {
         map.put("id_equals", "4");
         map.put("date_gt", "" + tenSecondsBefore);
         map.put("date_lte", "" + tenSecondsFromNow);
-        map.put("uniqueField_contains", "filt");
+        map.put("unique_contains", "filt");
 
         Request request = mockedContextWithQueryMap(map).request();
 
@@ -86,7 +87,7 @@ public class HibernateTest {
 
         assertEquals(1, resourcePage.getValues().size());
 
-        assertEquals("filterUnique", resourcePage.getValues().get(0).getUniqueField());
+        assertEquals("filterUnique", resourcePage.getValues().get(0).getUnique());
     }
 
     @Test
@@ -164,7 +165,7 @@ public class HibernateTest {
         resource.setId(resourceCounter++);
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
-        resource.setUniqueField("unique");
+        resource.setUnique("unique");
         resource.setDate(Calendar.getInstance().getTime());
 
         return resource;

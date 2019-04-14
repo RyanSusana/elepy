@@ -188,20 +188,5 @@ public interface Crud<T> {
     Class<T> getType();
 
 
-    /**
-     * @return The default sorting. DO NOT OVERRIDE THIS.
-     */
-    default AbstractMap.SimpleEntry<String, SortOption> defaultSort() {
-        final Class<T> type = getType();
-        final RestModel annotation = type.getAnnotation(RestModel.class);
-
-        if (annotation == null) {
-            Optional<Field> idField = ReflectionUtils.getIdField(type);
-            return idField.map(field -> new AbstractMap.SimpleEntry<>(ReflectionUtils.getPropertyName(field), SortOption.ASCENDING))
-                    .orElseGet(() -> new AbstractMap.SimpleEntry<>("_id", SortOption.ASCENDING));
-        }
-        return new AbstractMap.SimpleEntry<>(annotation.defaultSortField(), annotation.defaultSortDirection());
-    }
-
     ObjectMapper getObjectMapper();
 }
