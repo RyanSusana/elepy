@@ -21,9 +21,6 @@ public class Message {
         this.properties = properties;
     }
 
-    public Message(ElepyErrorMessage elepyErrorMessage) {
-        this(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus(), new HashMap<>());
-    }
 
     @JsonProperty
     public Map<String, Object> getProperties() {

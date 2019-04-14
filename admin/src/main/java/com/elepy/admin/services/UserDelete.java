@@ -5,6 +5,7 @@ import com.elepy.admin.models.User;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.routes.DeleteHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,5 +27,7 @@ public class UserDelete implements DeleteHandler<User> {
             throw new ElepyException("You can't DELETE users with an equal or greater rank than you!");
         }
         crud.deleteById(toDelete.get().getId());
+
+        context.response().result(Message.of("Successfully deleted user", 200));
     }
 }
