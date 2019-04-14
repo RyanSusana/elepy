@@ -9,6 +9,7 @@ import com.elepy.describers.ModelDescription;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.Filter;
 import com.elepy.http.HttpContext;
 import com.elepy.routes.CreateHandler;
@@ -44,7 +45,7 @@ public class UserCreate implements CreateHandler<User> {
             }
             user = user.hashWord();
             crud.create(user);
-            context.response().result(context.request().body());
+            context.response().result(Message.of("Successfully created user", 200));
         } else {
 
 
@@ -60,7 +61,8 @@ public class UserCreate implements CreateHandler<User> {
                 throw new ElepyException("Passwords must be more than 4 characters long!", 400);
             }
             crud.create(user.hashWord());
-            context.response().result("Successfully created the user");
+            context.response().result();
+            context.response().result(Message.of("Successfully created the user", 200));
 
         }
 

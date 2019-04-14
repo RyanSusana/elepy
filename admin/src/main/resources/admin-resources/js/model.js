@@ -4,13 +4,14 @@ const app = new Vue({
     delimiters: ['((', '))'],
     components: {"Elepy": ElepyVue},
     data() {
-        return {selectedModel: null, url: "http://localhost:8989"};
+        return {selectedModel: null};
     },
     methods: {
         getModel() {
-            axios.get(this.url + "/config").then(response => {
-                this.selectedModel = response.data[0];
-                this.selectedModel.url = this.url;
+            axios.get("/config").then(response => {
+                this.selectedModel = response.data.filter(function (model) {
+                    return model.slug === document.getElementById('slug').innerText
+                })[0];
             });
         }
     },
