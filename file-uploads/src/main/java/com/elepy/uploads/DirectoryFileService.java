@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DirectoryFileService implements FileService {
 
@@ -24,7 +26,7 @@ public class DirectoryFileService implements FileService {
     }
 
 
-    public void ensureDirsMade() {
+    private void ensureDirsMade() {
         Path path = Paths.get(rootFolderLocation);
         try {
             Files.createDirectories(path);
@@ -56,7 +58,25 @@ public class DirectoryFileService implements FileService {
 
     @Override
     public List<String> listFiles() {
-        return null;
+
+        final Path path = Paths.get(rootFolderLocation);
+
+        try (Stream<Path> files = Files.list(path)) {
+            return files.map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new ElepyException("Failed to list files", 500);
+        }
+    }
+
+    @Override
+    public void deleteFile(String name) {
+        final Path path = Paths.get(rootFolderLocation + File.separator + name);
+
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new ElepyException("Failed to delete file: " + name, 500);
+        }
     }
 
 }

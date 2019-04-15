@@ -10,4 +10,6 @@ public interface FileService {
     UploadedFile readFile(String name);
 
     List<String> listFiles();
+
+    void deleteFile(String name);
 }
