@@ -8,6 +8,7 @@ import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.routes.UpdateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,7 +60,7 @@ public class UserUpdate implements UpdateHandler<User> {
 
         crud.update(updated);
         context.response().status(200);
-        context.response().result("The item is updated");
+        context.response().result(Message.of("The user has been updated", 200));
     }
 
     @Override
