@@ -26,7 +26,7 @@ public class DirectoryFileService implements FileService {
     }
 
 
-    private void ensureDirsMade() {
+    void ensureDirsMade() {
         Path path = Paths.get(rootFolderLocation);
         try {
             Files.createDirectories(path);
