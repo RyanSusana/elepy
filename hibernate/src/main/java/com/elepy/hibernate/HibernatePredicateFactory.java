@@ -4,8 +4,7 @@ import com.elepy.dao.FilterQuery;
 import com.elepy.dao.FilterableField;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
-import com.elepy.models.NumberType;
-import com.elepy.utils.DateUtils;
+import com.elepy.utils.MapperUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -57,24 +56,6 @@ public class HibernatePredicateFactory {
     }
 
     private static Serializable value(FilterableField field, String value) {
-        if (field.getFieldType().equals(FieldType.NUMBER)) {
-            NumberType numberType = NumberType.guessType(field.getField());
-            if (numberType.equals(NumberType.INTEGER)) {
-                return Long.parseLong(value);
-            } else {
-                return Float.parseFloat(value);
-            }
-        } else if (field.getFieldType().equals(FieldType.DATE)) {
-
-            Date date = DateUtils.guessDate(value);
-
-            if (date == null) {
-                return value;
-            } else {
-                return date;
-            }
-        } else {
-            return value;
-        }
+        return MapperUtils.toValueFromString(field.getField(), field.getFieldType(), value);
     }
 }

@@ -5,6 +5,7 @@ import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
+import com.elepy.utils.MapperUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Method;
@@ -52,7 +53,7 @@ public class MethodDescriber {
             fieldMap.put("trueValue", annotation == null ? "true" : annotation.trueValue());
             fieldMap.put("falseValue", annotation == null ? "false" : annotation.falseValue());
         } else if (fieldType.equals(FieldType.ENUM)) {
-            fieldMap.put("availableValues", ClassDescriber.getEnumMap(method.getReturnType()));
+            fieldMap.put("availableValues", MapperUtils.getEnumMapValues((Class<? extends Enum<?>>) method.getReturnType()));
         } else if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", method.getReturnType().getSimpleName());
 

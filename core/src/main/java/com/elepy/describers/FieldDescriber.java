@@ -6,6 +6,7 @@ import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.elepy.utils.DateUtils;
+import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -95,7 +96,7 @@ public class FieldDescriber {
         fieldMap.put("type", fieldType);
 
         if (fieldType.equals(FieldType.ENUM)) {
-            fieldMap.put("availableValues", ClassDescriber.getEnumMap(field.getType()));
+            fieldMap.put("availableValues", MapperUtils.getEnumMapValues((Class<? extends Enum<?>>) field.getType()));
         }
         if (fieldType.equals(FieldType.DATE)) {
             DateTime annotation = field.getAnnotation(DateTime.class);
@@ -136,7 +137,7 @@ public class FieldDescriber {
         }
         if (fieldType.equals(FieldType.ENUM_ARRAY)) {
             final Class<?> array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-            fieldMap.put("availableValues", ClassDescriber.getEnumMap(array));
+            fieldMap.put("availableValues", MapperUtils.getEnumMapValues((Class<? extends Enum<?>>) array));
         }
         if (fieldType.equals(FieldType.PRIMITIVE_ARRAY)) {
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
