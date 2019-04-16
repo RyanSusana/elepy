@@ -8,6 +8,7 @@ import org.apache.tika.Tika;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -51,6 +52,8 @@ public class DirectoryFileService implements FileService {
         try {
             final String[] split = name.split("\\.");
             return UploadedFile.of(tika.detect(path), Files.newInputStream(path), name, split[split.length - 1]);
+        } catch (NoSuchFileException e) {
+            throw new ElepyException("File not found", 404);
         } catch (IOException e) {
             throw new ElepyException("Failed at retrieving file: " + name, 500);
         }

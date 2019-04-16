@@ -1,5 +1,6 @@
 package com.elepy.uploads;
 
+import com.elepy.exceptions.ElepyException;
 import com.elepy.http.UploadedFile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -14,8 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class UploadTest {
@@ -90,6 +90,7 @@ public class UploadTest {
 
         assertEquals("textFileToUpload.txt", uploadedFile.getName());
         assertEquals("TEST", IOUtils.toString(uploadedFile.getContent()));
+        assertEquals("text/plain", uploadedFile.getContentType());
     }
 
     @Test
@@ -109,5 +110,16 @@ public class UploadTest {
 
         directoryFileService.deleteFile("textFileToUpload.txt");
         assertEquals(0, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());
+    }
+
+    @Test
+    void testReadFileNonExistentThrows04() throws IOException {
+        Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
+
+        final ElepyException elepyException = assertThrows(ElepyException.class, () -> directoryFileService.readFile("nonExistent.txt"));
+
+        assertEquals(404, elepyException.getStatus());
+        assertEquals(1, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());
+
     }
 }
