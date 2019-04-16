@@ -91,4 +91,23 @@ public class UploadTest {
         assertEquals("textFileToUpload.txt", uploadedFile.getName());
         assertEquals("TEST", IOUtils.toString(uploadedFile.getContent()));
     }
+
+    @Test
+    void testListFiles() throws IOException {
+
+        Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
+
+        final List<String> list = directoryFileService.listFiles();
+        assertEquals(1, list.size());
+
+        assertEquals("textFileToUpload.txt", list.get(0));
+    }
+
+    @Test
+    void testDeleteFile() throws IOException {
+        Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
+
+        directoryFileService.deleteFile("textFileToUpload.txt");
+        assertEquals(0, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());
+    }
 }
