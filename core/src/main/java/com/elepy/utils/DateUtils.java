@@ -1,6 +1,6 @@
 package com.elepy.utils;
 
-import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.exceptions.ElepyException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,7 +53,7 @@ public class DateUtils {
             }
         } catch (NumberFormatException | ParseException e) {
 
-            throw new ElepyConfigException(String.format("Can't parse the date '%s'.", string));
+            throw new ElepyException(String.format("Can't parse the date '%s'.", string));
 
         }
     }
