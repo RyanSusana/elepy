@@ -1,16 +1,14 @@
-package com.elepy;
+package com.elepy.init;
 
+import com.elepy.Elepy;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.HttpMethod;
-import com.elepy.init.ActionIgniter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 
@@ -22,17 +20,17 @@ public class RouteGenerator<T> {
     private final Elepy elepy;
 
 
-    public RouteGenerator(Elepy elepy, ResourceDescriber<T> resourceDescriber, Class<T> tClass) {
+    public RouteGenerator(Elepy elepy, ResourceDescriber<T> resourceDescriber) {
         this.restModel = resourceDescriber;
 
-        this.clazz = tClass;
+        this.clazz = resourceDescriber.getModelType();
         this.baseSlug = elepy.getBaseSlug();
         this.elepy = elepy;
 
     }
 
 
-    public Map<String, Object> setupPojo() {
+    public ModelDescription<T> setupPojo() {
 
 
         try {
@@ -44,9 +42,6 @@ public class RouteGenerator<T> {
             ModelDescription<T> modelDescription = new ModelDescription<>(restModel, slug, restModel.getName(), restModel.getModelType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
 
             modelDescription.getActions().addAll(new ActionIgniter<>(modelDescription, dao, elepy).ignite());
-
-            elepy.putModelDescription(modelDescription);
-            Map<String, Object> jsonDescription = modelDescription.getJsonDescription();
 
             //POST
             elepy.addRouting(anElepyRoute()
@@ -113,7 +108,7 @@ public class RouteGenerator<T> {
             );
 
 
-            return jsonDescription;
+            return modelDescription;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ElepyConfigException("Failed to generate routes for: " + clazz.getName());

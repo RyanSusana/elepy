@@ -15,6 +15,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
+import com.elepy.init.RouteGenerator;
 import com.elepy.init.UploadIgniter;
 import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
@@ -28,6 +29,7 @@ import spark.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -47,7 +49,6 @@ public class Elepy implements ElepyContext {
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
     private List<Class<? extends Filter>> adminFilterClasses;
-    private List<Map<String, Object>> descriptors;
     private List<Route> routes;
     private boolean initialized = false;
     private Class<? extends CrudProvider> defaultCrudProvider;
@@ -66,7 +67,6 @@ public class Elepy implements ElepyContext {
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
         this.context = new DefaultElepyContext();
-        this.descriptors = new ArrayList<>();
         this.adminFilters = new MultiFilter();
         this.http = new SparkService(http, this);
 
@@ -614,13 +614,12 @@ public class Elepy implements ElepyContext {
         }
 
         registerDependency(Filter.class, "protected", adminFilters);
-        final List<Map<String, Object>> maps = setupPojos(resourceDescribers);
+        final List<ModelDescription> descriptions = setupPojos(resourceDescribers);
 
-        descriptors.addAll(maps);
 
         context.resolveDependencies();
 
-        setupDescriptors(descriptors);
+        setupDescriptors(descriptions);
 
 
         setupFilters();
@@ -697,16 +696,19 @@ public class Elepy implements ElepyContext {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> setupPojos(Set<ResourceDescriber> modelDescribers) {
-        List<Map<String, Object>> descriptorList = new ArrayList<>();
+    private List<ModelDescription> setupPojos(Set<ResourceDescriber> modelDescribers) {
+        List<ModelDescription> descriptorList = new ArrayList<>();
 
 
         modelDescribers.forEach(ResourceDescriber::setupDao);
         modelDescribers.forEach(ResourceDescriber::setupAnnotations);
 
         modelDescribers.forEach(restModel -> {
-            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel, restModel.getModelType());
-            descriptorList.add(routeGenerator.setupPojo());
+            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel);
+            final ModelDescription map = routeGenerator.setupPojo();
+            descriptorList.add(map);
+
+            Elepy.this.putModelDescription(map);
         });
 
         return descriptorList;
@@ -764,11 +766,11 @@ public class Elepy implements ElepyContext {
         });
     }
 
-    private void setupDescriptors(List<Map<String, Object>> descriptors) {
+    private void setupDescriptors(List<ModelDescription> descriptors) {
         http.before(configSlug, ctx -> getAllAdminFilters().authenticate(ctx));
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
-            response.result(context.getObjectMapper().writeValueAsString(descriptors));
+            response.result(context.getObjectMapper().writeValueAsString(descriptors.stream().map(ModelDescription::getJsonDescription).collect(Collectors.toList())));
         });
     }
 
