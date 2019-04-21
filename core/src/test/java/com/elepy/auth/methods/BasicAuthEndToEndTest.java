@@ -38,7 +38,7 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
         elepy.start();
 
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:1337/test")
+        final HttpResponse<String> response = Unirest.get("http://localhost:1997/test")
                 .basicAuth("admin", "admin").asString();
 
         assertEquals(200, response.getStatus());
@@ -65,7 +65,7 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
         elepy.start();
 
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:1337/test")
+        final HttpResponse<String> response = Unirest.get("http://localhost:1997/test")
                 .basicAuth("admin", "wrongPassword").asString();
 
         assertEquals(401, response.getStatus());
@@ -92,7 +92,7 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
         elepy.start();
 
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:1337/test")
+        final HttpResponse<String> response = Unirest.get("http://localhost:1997/test")
                 .basicAuth("admin", "admin").asString();
 
         assertEquals(401, response.getStatus());
@@ -119,7 +119,7 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
         elepy.start();
 
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:1337/test").asString();
+        final HttpResponse<String> response = Unirest.get("http://localhost:1997/test").asString();
 
         assertEquals(401, response.getStatus());
     }

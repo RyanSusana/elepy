@@ -20,7 +20,7 @@ public class BaseMethodTest {
     @BeforeEach
     void setUp() {
 
-        elepy = new Elepy();
+        elepy = new Elepy().onPort(1997);
 
         elepy.withDefaultCrudProvider(MockCrudProvider.class);
 
