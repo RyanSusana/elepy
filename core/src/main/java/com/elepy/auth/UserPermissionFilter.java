@@ -1,4 +1,4 @@
-package com.elepy.routes;
+package com.elepy.auth;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Filter;

@@ -4,7 +4,6 @@ import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.models.User;
-import com.elepy.routes.UserPermissionFilter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
