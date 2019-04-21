@@ -1,7 +1,8 @@
-package com.elepy.models;
+package com.elepy.auth;
 
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
+import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

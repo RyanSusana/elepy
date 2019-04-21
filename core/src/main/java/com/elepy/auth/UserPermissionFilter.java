@@ -3,7 +3,6 @@ package com.elepy.auth;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Filter;
 import com.elepy.http.HttpContext;
-import com.elepy.models.User;
 
 import java.util.Collection;
 

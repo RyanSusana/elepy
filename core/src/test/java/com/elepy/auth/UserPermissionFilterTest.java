@@ -3,7 +3,6 @@ package com.elepy.auth;
 import com.elepy.Base;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
-import com.elepy.models.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
