@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 
-public class RouteGenerator<T> {
-    private static final Logger logger = LoggerFactory.getLogger(RouteGenerator.class);
+public class ModelRouteIgniter<T> {
+    private static final Logger logger = LoggerFactory.getLogger(ModelRouteIgniter.class);
     private final ResourceDescriber<T> restModel;
     private final Class<T> clazz;
     private final String baseSlug;
     private final Elepy elepy;
 
 
-    public RouteGenerator(Elepy elepy, ResourceDescriber<T> resourceDescriber) {
+    public ModelRouteIgniter(Elepy elepy, ResourceDescriber<T> resourceDescriber) {
         this.restModel = resourceDescriber;
 
         this.clazz = resourceDescriber.getModelType();
@@ -30,9 +30,7 @@ public class RouteGenerator<T> {
     }
 
 
-    public ModelDescription<T> setupPojo() {
-
-
+    public ModelDescription<T> ignite() {
         try {
             final Crud<T> dao = elepy.getCrudFor(clazz);
             String baseSlugWithoutTrailingSlash = baseSlug.substring(0, baseSlug.length() - (baseSlug.endsWith("/") ? 1 : 0));

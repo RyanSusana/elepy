@@ -15,7 +15,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
-import com.elepy.init.RouteGenerator;
+import com.elepy.init.ModelRouteIgniter;
 import com.elepy.init.UploadIgniter;
 import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
@@ -704,8 +704,8 @@ public class Elepy implements ElepyContext {
         modelDescribers.forEach(ResourceDescriber::setupAnnotations);
 
         modelDescribers.forEach(restModel -> {
-            RouteGenerator routeGenerator = new RouteGenerator(Elepy.this, restModel);
-            final ModelDescription map = routeGenerator.setupPojo();
+            ModelRouteIgniter modelRouteIgniter = new ModelRouteIgniter(Elepy.this, restModel);
+            final ModelDescription map = modelRouteIgniter.ignite();
             descriptorList.add(map);
 
             Elepy.this.putModelDescription(map);
