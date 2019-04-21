@@ -3,6 +3,7 @@ package com.elepy.http;
 import com.elepy.exceptions.ElepyConfigException;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A route that can be added to {@link com.elepy.Elepy}
@@ -14,6 +15,7 @@ public class Route {
     private final HttpMethod method;
     private final String path;
     private final String acceptType;
+    private final Set<String> permissions;
 
     /**
      * @param path               The URI path
@@ -22,12 +24,14 @@ public class Route {
      * @param accessLevel        Who is allowed to see the httpContextHandler
      * @param httpContextHandler The Spark httpContextHandler interface
      * @param acceptType         The accept type of the httpContextHandler
+     * @param permissions        The required permissions of the route.
      */
-    public Route(String path, HttpMethod method, HttpContextHandler beforeFilter, AccessLevel accessLevel, HttpContextHandler httpContextHandler, String acceptType) {
+    public Route(String path, HttpMethod method, HttpContextHandler beforeFilter, AccessLevel accessLevel, HttpContextHandler httpContextHandler, String acceptType, Set<String> permissions) {
         this.beforeFilter = beforeFilter == null ? ctx -> {
         } : beforeFilter;
         this.accessLevel = accessLevel == null ? AccessLevel.PUBLIC : accessLevel;
         this.acceptType = acceptType == null ? "*/*" : acceptType;
+        this.permissions = permissions;
         if (httpContextHandler == null || path == null || method == null) {
             throw new ElepyConfigException("An elepy httpContextHandler must have a path, method and httpContextHandler");
         }
@@ -36,6 +40,10 @@ public class Route {
         this.path = path;
     }
 
+
+    public Set<String> getPermissions() {
+        return permissions;
+    }
 
     public HttpContextHandler getBeforeFilter() {
         return beforeFilter;

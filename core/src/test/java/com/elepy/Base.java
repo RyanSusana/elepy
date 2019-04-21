@@ -1,8 +1,17 @@
 package com.elepy;
 
+import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 import com.elepy.models.Resource;
 
 import java.math.BigDecimal;
+import java.util.Map;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class Base {
 
@@ -28,6 +37,30 @@ public class Base {
         resource.setNonEditable("nonEditable");
 
         return resource;
+    }
+
+
+    protected HttpContext mockedContextWithQueryMap(Map<String, String> map) {
+        HttpContext mockedContext = mockedContext();
+        when(mockedContext.request().queryParams()).thenReturn(map.keySet());
+
+        when(mockedContext.request().queryParams(anyString())).thenAnswer(invocationOnMock -> map.get(invocationOnMock.getArgument(0)));
+
+        when(mockedContext.request().filtersForModel(any())).thenCallRealMethod();
+        return mockedContext;
+    }
+
+    protected HttpContext mockedContext() {
+        HttpContext context = mock(HttpContext.class);
+        Request request = mock(Request.class);
+        Response response = mock(Response.class);
+
+
+        when(context.response()).thenReturn(response);
+        when(context.request()).thenReturn(request);
+
+
+        return context;
     }
 
 }

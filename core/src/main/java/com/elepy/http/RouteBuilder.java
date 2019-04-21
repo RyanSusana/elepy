@@ -1,5 +1,9 @@
 package com.elepy.http;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
+
 public final class RouteBuilder {
     private HttpContextHandler beforeFilter;
     private AccessLevel accessLevel;
@@ -7,6 +11,7 @@ public final class RouteBuilder {
     private HttpMethod method;
     private String path;
     private String acceptType = "*/*";
+    private Set<String> permissions = new TreeSet<>();
 
     private RouteBuilder() {
     }
@@ -30,6 +35,11 @@ public final class RouteBuilder {
         return this;
     }
 
+    public RouteBuilder addPermissions(String... permissions) {
+        this.permissions.addAll(Arrays.asList(permissions));
+        return this;
+    }
+
     public RouteBuilder method(HttpMethod method) {
         this.method = method;
         return this;
@@ -46,6 +56,6 @@ public final class RouteBuilder {
     }
 
     public Route build() {
-        return new Route(path, method, beforeFilter, accessLevel, route, acceptType);
+        return new Route(path, method, beforeFilter, accessLevel, route, acceptType, permissions);
     }
 }
