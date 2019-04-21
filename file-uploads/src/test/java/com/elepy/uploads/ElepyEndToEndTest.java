@@ -1,7 +1,7 @@
 package com.elepy.uploads;
 
 import com.elepy.http.SparkService;
-import com.elepy.init.UploadIgniter;
+import com.elepy.igniters.UploadIgniter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;

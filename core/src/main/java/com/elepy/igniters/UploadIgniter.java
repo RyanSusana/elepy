@@ -1,4 +1,4 @@
-package com.elepy.init;
+package com.elepy.igniters;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;

@@ -1,4 +1,4 @@
-package com.elepy.init;
+package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.Action;
