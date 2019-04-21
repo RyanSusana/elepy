@@ -1,7 +1,5 @@
 package com.elepy.auth.methods;
 
-import com.elepy.Elepy;
-import com.elepy.auth.MockCrudProvider;
 import com.elepy.exceptions.Message;
 import com.elepy.http.AccessLevel;
 import com.elepy.http.HttpMethod;
@@ -9,8 +7,6 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -21,21 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BasicAuthEndToEndTest extends BaseMethodTest {
 
-    @BeforeEach
-    void setUp() {
-
-        elepy = new Elepy();
-        elepy.onPort(10293);
-
-        elepy.withDefaultCrudProvider(MockCrudProvider.class);
-
-
-    }
-
-    @AfterEach
-    void tearDown() {
-        elepy.stop();
-    }
 
     @Test
     void testSuccessfulLogin() throws UnirestException {
