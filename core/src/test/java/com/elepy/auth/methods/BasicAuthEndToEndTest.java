@@ -8,6 +8,7 @@ import com.elepy.http.HttpMethod;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
     void setUp() {
 
         elepy = new Elepy();
-        elepy.onPort(3997);
+        elepy.onPort(10293);
 
         elepy.withDefaultCrudProvider(MockCrudProvider.class);
 
@@ -56,8 +57,9 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
                 );
         elepy.start();
 
+        Awaitility.await().until(() -> elepy.isInitialized());
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:3997/test")
+        final HttpResponse<String> response = Unirest.get("http://localhost:10293/test")
                 .basicAuth("admin", "admin").asString();
 
         assertEquals(200, response.getStatus());
@@ -83,8 +85,9 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
                 );
         elepy.start();
 
+        Awaitility.await().until(() -> elepy.isInitialized());
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:3997/test")
+        final HttpResponse<String> response = Unirest.get("http://localhost:10293/test")
                 .basicAuth("admin", "wrongPassword").asString();
 
         assertEquals(401, response.getStatus());
@@ -111,7 +114,9 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
         elepy.start();
 
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:3997/test")
+        Awaitility.await().until(() -> elepy.isInitialized());
+
+        final HttpResponse<String> response = Unirest.get("http://localhost:10293/test")
                 .basicAuth("admin", "admin").asString();
 
         assertEquals(401, response.getStatus());
@@ -136,9 +141,10 @@ public class BasicAuthEndToEndTest extends BaseMethodTest {
                         )
                 );
         elepy.start();
+        Awaitility.await().until(() -> elepy.isInitialized());
 
 
-        final HttpResponse<String> response = Unirest.get("http://localhost:3997/test").asString();
+        final HttpResponse<String> response = Unirest.get("http://localhost:10293/test").asString();
 
         assertEquals(401, response.getStatus());
     }
