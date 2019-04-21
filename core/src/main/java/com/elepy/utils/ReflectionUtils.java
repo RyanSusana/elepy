@@ -94,6 +94,18 @@ public class ReflectionUtils {
 
     }
 
+    public static Serializable getIdOrThrow(Object object) {
+
+        try {
+            Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
+            field.setAccessible(true);
+            return Optional.ofNullable((Serializable) field.get(object)).orElseThrow(() -> new ElepyException("No ID found", 404));
+        } catch (IllegalAccessException e) {
+            throw new ElepyException("Illegally accessing id field");
+        }
+
+    }
+
 
     public static Serializable toObject(Class clazz, String value) {
         if (Boolean.class == clazz || boolean.class == clazz) return Boolean.valueOf(value);
