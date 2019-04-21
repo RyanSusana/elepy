@@ -1,6 +1,8 @@
 package com.elepy.http;
 
 import com.elepy.Elepy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.ExceptionHandler;
 import spark.RouteImpl;
 import spark.Service;
@@ -20,6 +22,9 @@ public class SparkService implements HttpService {
     private int counter;
 
     private boolean ignitedOnce = false;
+
+
+    private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
 
     public SparkService(Service service, Elepy elepy) {
         this.http = service;
@@ -124,6 +129,7 @@ public class SparkService implements HttpService {
     }
 
     private void igniteRoute(Route extraRoute) {
+        logger.debug(String.format("Ignited Route: [%s] %s", extraRoute.getMethod().name(), extraRoute.getPath()));
         if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
             http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
 
