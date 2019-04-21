@@ -30,6 +30,11 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     private AccessLevel findAccessLevel = AccessLevel.PUBLIC;
     private AccessLevel updateAccessLevel = AccessLevel.PROTECTED;
     private AccessLevel createAccessLevel = AccessLevel.PROTECTED;
+
+    private String[] deletePermissions = {"PROTECTED"};
+    private String[] findPermissions = {};
+    private String[] createPermissions = {"PROTECTED"};
+    private String[] updatePermissions = {"PROTECTED"};
     private List<ObjectEvaluator<T>> objectEvaluators;
     private String slug;
     private String description;
@@ -150,6 +155,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         if (deleteAnnotation != null) {
             deleteAccessLevel = deleteAnnotation.accessLevel();
 
+            deletePermissions = deleteAnnotation.requiredPermissions();
             if (!deleteAnnotation.handler().equals(DefaultDelete.class)) {
                 serviceBuilder.delete(elepy.initializeElepyObject(deleteAnnotation.handler()));
             }
@@ -157,6 +163,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
         if (updateAnnotation != null) {
             updateAccessLevel = updateAnnotation.accessLevel();
+            updatePermissions = updateAnnotation.requiredPermissions();
             if (!updateAnnotation.handler().equals(DefaultUpdate.class)) {
                 serviceBuilder.update(elepy.initializeElepyObject(updateAnnotation.handler()));
             }
@@ -164,6 +171,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
         if (findAnnotation != null) {
             findAccessLevel = findAnnotation.accessLevel();
+            findPermissions = findAnnotation.requiredPermissions();
             if (!findAnnotation.findManyHandler().equals(DefaultFindMany.class)) {
                 serviceBuilder.findMany(elepy.initializeElepyObject(findAnnotation.findManyHandler()));
             }
@@ -174,6 +182,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         }
 
         if (createAnnotation != null) {
+            createPermissions = createAnnotation.requiredPermissions();
             createAccessLevel = createAnnotation.accessLevel();
             if (!createAnnotation.handler().equals(DefaultCreate.class)) {
                 serviceBuilder.create(elepy.initializeElepyObject(createAnnotation.handler()));
@@ -191,6 +200,22 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         return classType;
     }
 
+
+    public String[] getDeletePermissions() {
+        return deletePermissions;
+    }
+
+    public String[] getFindPermissions() {
+        return findPermissions;
+    }
+
+    public String[] getCreatePermissions() {
+        return createPermissions;
+    }
+
+    public String[] getUpdatePermissions() {
+        return updatePermissions;
+    }
 
     public ServiceHandler<T> getService() {
         return service;

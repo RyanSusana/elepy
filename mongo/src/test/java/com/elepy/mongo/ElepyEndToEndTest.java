@@ -184,6 +184,7 @@ public class ElepyEndToEndTest extends Base {
 
         final HttpResponse<String> postRequest = Unirest.post("http://localhost:7357/resources").body(s).asString();
 
+        System.out.println(postRequest.getBody());
         assertEquals(count + 2, defaultMongoDao.count());
         Assertions.assertEquals(201, postRequest.getStatus());
     }

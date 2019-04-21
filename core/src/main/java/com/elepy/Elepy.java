@@ -2,6 +2,7 @@ package com.elepy;
 
 import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
+import com.elepy.auth.UserAuthenticationCenter;
 import com.elepy.dao.CrudProvider;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
@@ -56,6 +57,8 @@ public class Elepy implements ElepyContext {
 
     private FileService fileService = null;
 
+    private UserAuthenticationCenter userAuthenticationCenter;
+
     private List<Configuration> configurations;
 
     public Elepy() {
@@ -63,6 +66,7 @@ public class Elepy implements ElepyContext {
     }
 
     public Elepy(Service http) {
+        this.userAuthenticationCenter = new UserAuthenticationCenter();
         this.configurations = new ArrayList<>();
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
@@ -778,5 +782,10 @@ public class Elepy implements ElepyContext {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling start()");
         }
+    }
+
+    public UserAuthenticationCenter userLogin() {
+
+        return this.userAuthenticationCenter;
     }
 }

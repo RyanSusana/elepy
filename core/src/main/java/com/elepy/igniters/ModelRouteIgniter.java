@@ -45,6 +45,7 @@ public class ModelRouteIgniter<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getCreateAccessLevel())
                     .path(baseSlug + restModel.getSlug())
+                    .addPermissions(restModel.getCreatePermissions())
                     .method(HttpMethod.POST)
                     .route(ctx -> restModel.getService().handleCreate(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
@@ -54,6 +55,7 @@ public class ModelRouteIgniter<T> {
             elepy.addRouting(anElepyRoute()
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
+                    .addPermissions(restModel.getUpdatePermissions())
                     .method(HttpMethod.PUT)
                     .route(ctx -> restModel.getService().handleUpdatePut(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
@@ -64,6 +66,7 @@ public class ModelRouteIgniter<T> {
                     .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PATCH)
+                    .addPermissions(restModel.getUpdatePermissions())
                     .route(ctx -> {
                         ctx.request().attribute("modelClass", restModel.getModelType());
                         restModel.getService().handleUpdatePatch(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper());
@@ -76,6 +79,7 @@ public class ModelRouteIgniter<T> {
                     .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.DELETE)
+                    .addPermissions(restModel.getDeletePermissions())
                     .route(ctx -> restModel.getService().handleDelete(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
@@ -83,6 +87,7 @@ public class ModelRouteIgniter<T> {
                     .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.DELETE)
+                    .addPermissions(restModel.getDeletePermissions())
                     .route(ctx -> restModel.getService().handleDelete(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
@@ -92,6 +97,7 @@ public class ModelRouteIgniter<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.GET)
+                    .addPermissions(restModel.getFindPermissions())
                     .route(ctx -> restModel.getService().handleFindMany(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );
@@ -101,6 +107,7 @@ public class ModelRouteIgniter<T> {
                     .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.GET)
+                    .addPermissions(restModel.getFindPermissions())
                     .route(ctx -> restModel.getService().handleFindOne(injectModelClassInHttpContext(ctx), dao, modelDescription, elepy.getObjectMapper()))
                     .build()
             );

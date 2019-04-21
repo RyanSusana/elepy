@@ -1,6 +1,7 @@
 package com.elepy.http;
 
 import com.elepy.Elepy;
+import com.elepy.auth.UserPermissionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ExceptionHandler;
@@ -131,10 +132,15 @@ public class SparkService implements HttpService {
     private void igniteRoute(Route extraRoute) {
         logger.debug(String.format("Ignited Route: [%s] %s", extraRoute.getMethod().name(), extraRoute.getPath()));
         if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
+
             http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
 
                 SparkContext sparkContext = new SparkContext(request, response);
 
+                if (!extraRoute.getPermissions().isEmpty()) {
+                    elepy.userLogin().tryToLogin(sparkContext.request());
+                    new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
+                }
                 if (extraRoute.getAccessLevel().equals(AccessLevel.PROTECTED)) {
                     elepy.getAllAdminFilters().authenticate(sparkContext);
                 }

@@ -14,6 +14,10 @@ import java.util.Date;
 @Entity
 @Table(name = "RESOURCES")
 @RestModel(name = "Test Resource", slug = "/resources")
+@Delete(requiredPermissions = {})
+@Create(requiredPermissions = {})
+@Update(requiredPermissions = {})
+@Find(requiredPermissions = {})
 public class Resource {
 
     @Id

@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 @RestModel(name = "Test Resource", slug = "/resources")
 @ExtraRoutes({ResourceExtraRoutes.class})
 @Service(value = ResourceService.class)
+@Delete(requiredPermissions = {})
+@Create(requiredPermissions = {})
+@Update(requiredPermissions = {})
+@Find(requiredPermissions = {})
 @Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
 @Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
 public class Resource {

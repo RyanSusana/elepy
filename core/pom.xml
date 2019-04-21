@@ -104,5 +104,12 @@
             <version>2.18.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

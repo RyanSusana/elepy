@@ -33,8 +33,9 @@ public class UserPermissionFilter implements Filter {
         }
         List<String> morePermissions = context.attribute("permissions");
 
-        loggedInPermissions.addAll(morePermissions);
-
+        if (morePermissions != null) {
+            loggedInPermissions.addAll(morePermissions);
+        }
         if (!requiredPermissions.isEmpty() && !loggedInPermissions.containsAll(requiredPermissions)) {
             throw new ElepyException("User is not authorized.", 401);
         }

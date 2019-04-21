@@ -8,6 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 @RestModel(name = "Test Resource", slug = "/resources")
+@Delete(requiredPermissions = {})
+@Create(requiredPermissions = {})
+@Update(requiredPermissions = {})
+@Find(requiredPermissions = {})
 public class Resource {
     @Identifier
     private int id;
