@@ -1,4 +1,4 @@
-package com.elepy.models;
+package com.elepy.mongo;
 
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
