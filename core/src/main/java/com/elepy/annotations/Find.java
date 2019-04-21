@@ -44,4 +44,9 @@ public @interface Find {
      * @see FindManyHandler
      */
     Class<? extends FindOneHandler> findOneHandler() default DefaultFindOne.class;
+
+    /**
+     * A list of required permissions to execute this A
+     */
+    String[] requiredPermissions() default {};
 }

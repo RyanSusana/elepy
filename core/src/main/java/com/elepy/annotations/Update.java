@@ -34,4 +34,9 @@ public @interface Update {
      * @see com.elepy.routes.UpdateHandler
      */
     Class<? extends UpdateHandler> handler() default DefaultUpdate.class;
+
+    /**
+     * A list of required permissions to execute this A
+     */
+    String[] requiredPermissions() default {"protected"};
 }

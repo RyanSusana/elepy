@@ -33,4 +33,9 @@ public @interface Create {
      * @see com.elepy.routes.CreateHandler
      */
     Class<? extends CreateHandler> handler() default DefaultCreate.class;
+
+    /**
+     * A list of required permissions to execute this A
+     */
+    String[] requiredPermissions() default {"protected"};
 }

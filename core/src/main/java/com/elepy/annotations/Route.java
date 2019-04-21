@@ -28,4 +28,9 @@ public @interface Route {
      * @return The accessLevel of the method.
      */
     AccessLevel accessLevel() default AccessLevel.PUBLIC;
+
+    /**
+     * A list of required permissions to execute this A
+     */
+    String[] requiredPermissions() default {"protected"};
 }

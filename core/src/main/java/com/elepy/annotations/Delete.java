@@ -33,4 +33,10 @@ public @interface Delete {
      */
     Class<? extends DeleteHandler> handler() default DefaultDelete.class;
 
+
+    /**
+     * A list of required permissions to execute this A
+     */
+    String[] requiredPermissions() default {"protected"};
+
 }
