@@ -7,7 +7,7 @@
 {% block headers %}
             {% autoescape false %}
             {{ customHeaders }}
-            <link rel="stylesheet" href="https://unpkg.com/elepy-vue@0.1.12/dist/ElepyVue.css">
+            <link rel="stylesheet" href="https://unpkg.com/elepy-vue@0.1.13/dist/ElepyVue.css">
             {% endautoescape %}
 {% endblock %}
 
@@ -37,7 +37,7 @@
 {% if customView is null %}
 
 
-<script src="https://unpkg.com/elepy-vue@0.1.12/dist/ElepyVue.umd.js"></script>
+<script src="https://unpkg.com/elepy-vue@0.1.13/dist/ElepyVue.umd.js"></script>
 <script src="/admin-resources/js/model.js"></script>
 {% endif %}
 
