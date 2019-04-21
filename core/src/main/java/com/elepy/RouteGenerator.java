@@ -37,8 +37,11 @@ public class RouteGenerator<T> {
 
         try {
             final Crud<T> dao = elepy.getCrudFor(clazz);
+            String baseSlugWithoutTrailingSlash = baseSlug.substring(0, baseSlug.length() - (baseSlug.endsWith("/") ? 1 : 0));
 
-            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, (baseSlug.endsWith("/") ? baseSlug : baseSlug + "/") + restModel.getSlug(), restModel.getName(), restModel.getModelType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
+            final String slug = baseSlugWithoutTrailingSlash + restModel.getSlug();
+
+            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, slug, restModel.getName(), restModel.getModelType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
 
             modelDescription.getActions().addAll(new ActionIgniter<>(modelDescription, dao, elepy).ignite());
 
