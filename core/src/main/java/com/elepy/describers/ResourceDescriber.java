@@ -8,7 +8,6 @@ import com.elepy.dao.CrudProvider;
 import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.http.AccessLevel;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
 import com.elepy.routes.*;
@@ -26,15 +25,11 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     private Class<T> classType;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
-    private AccessLevel deleteAccessLevel = AccessLevel.PROTECTED;
-    private AccessLevel findAccessLevel = AccessLevel.PUBLIC;
-    private AccessLevel updateAccessLevel = AccessLevel.PROTECTED;
-    private AccessLevel createAccessLevel = AccessLevel.PROTECTED;
 
-    private String[] deletePermissions = {"PROTECTED"};
+    private String[] deletePermissions = {"LOGGED_IN"};
     private String[] findPermissions = {};
-    private String[] createPermissions = {"PROTECTED"};
-    private String[] updatePermissions = {"PROTECTED"};
+    private String[] createPermissions = {"LOGGED_IN"};
+    private String[] updatePermissions = {"LOGGED_IN"};
     private List<ObjectEvaluator<T>> objectEvaluators;
     private String slug;
     private String description;
@@ -153,7 +148,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
             serviceBuilder.defaultFunctionality(initialService);
         }
         if (deleteAnnotation != null) {
-            deleteAccessLevel = deleteAnnotation.accessLevel();
 
             deletePermissions = deleteAnnotation.requiredPermissions();
             if (!deleteAnnotation.handler().equals(DefaultDelete.class)) {
@@ -162,7 +156,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         }
 
         if (updateAnnotation != null) {
-            updateAccessLevel = updateAnnotation.accessLevel();
             updatePermissions = updateAnnotation.requiredPermissions();
             if (!updateAnnotation.handler().equals(DefaultUpdate.class)) {
                 serviceBuilder.update(elepy.initializeElepyObject(updateAnnotation.handler()));
@@ -170,7 +163,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         }
 
         if (findAnnotation != null) {
-            findAccessLevel = findAnnotation.accessLevel();
             findPermissions = findAnnotation.requiredPermissions();
             if (!findAnnotation.findManyHandler().equals(DefaultFindMany.class)) {
                 serviceBuilder.findMany(elepy.initializeElepyObject(findAnnotation.findManyHandler()));
@@ -183,7 +175,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
         if (createAnnotation != null) {
             createPermissions = createAnnotation.requiredPermissions();
-            createAccessLevel = createAnnotation.accessLevel();
             if (!createAnnotation.handler().equals(DefaultCreate.class)) {
                 serviceBuilder.create(elepy.initializeElepyObject(createAnnotation.handler()));
             }
@@ -219,22 +210,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     public ServiceHandler<T> getService() {
         return service;
-    }
-
-    public AccessLevel getDeleteAccessLevel() {
-        return deleteAccessLevel;
-    }
-
-    public AccessLevel getFindAccessLevel() {
-        return findAccessLevel;
-    }
-
-    public AccessLevel getUpdateAccessLevel() {
-        return updateAccessLevel;
-    }
-
-    public AccessLevel getCreateAccessLevel() {
-        return createAccessLevel;
     }
 
     public String getName() {

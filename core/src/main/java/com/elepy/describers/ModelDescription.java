@@ -121,11 +121,11 @@ public class ModelDescription<T> {
 
     private List<HttpAction> getDefaultActions() {
         return Arrays.asList(
-                HttpAction.of("Find One", getSlug() + "/:id", resourceDescriber.getFindAccessLevel(), HttpMethod.GET, ActionType.SINGLE),
-                HttpAction.of("Find Many", getSlug(), resourceDescriber.getFindAccessLevel(), HttpMethod.GET, ActionType.MULTIPLE),
-                HttpAction.of("Update", getSlug() + "/:id", resourceDescriber.getUpdateAccessLevel(), HttpMethod.PUT, ActionType.SINGLE),
-                HttpAction.of("Delete", getSlug() + "/:id", resourceDescriber.getDeleteAccessLevel(), HttpMethod.DELETE, ActionType.SINGLE),
-                HttpAction.of("Create", getSlug(), resourceDescriber.getCreateAccessLevel(), HttpMethod.POST, ActionType.MULTIPLE)
+                HttpAction.of("Find One", getSlug() + "/:id", resourceDescriber.getFindPermissions(), HttpMethod.GET, ActionType.SINGLE),
+                HttpAction.of("Find Many", getSlug(), resourceDescriber.getFindPermissions(), HttpMethod.GET, ActionType.MULTIPLE),
+                HttpAction.of("Update", getSlug() + "/:id", resourceDescriber.getUpdatePermissions(), HttpMethod.PUT, ActionType.SINGLE),
+                HttpAction.of("Delete", getSlug() + "/:id", resourceDescriber.getDeletePermissions(), HttpMethod.DELETE, ActionType.SINGLE),
+                HttpAction.of("Create", getSlug(), resourceDescriber.getCreatePermissions(), HttpMethod.POST, ActionType.MULTIPLE)
         );
     }
 

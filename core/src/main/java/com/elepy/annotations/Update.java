@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
 
-import com.elepy.http.AccessLevel;
+import com.elepy.auth.Permissions;
 import com.elepy.routes.DefaultUpdate;
 import com.elepy.routes.UpdateHandler;
 
@@ -18,14 +18,6 @@ import java.lang.annotation.Target;
 public @interface Update {
 
     /**
-     * The protection of the PUT and PATCH requests on this resource.
-     *
-     * @return the access level
-     * @see AccessLevel
-     */
-    AccessLevel accessLevel() default AccessLevel.PROTECTED;
-
-    /**
      * The class that handles the functionality of deletes on this Resource.
      *
      * @return the route updateHandler
@@ -38,5 +30,5 @@ public @interface Update {
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default {"protected"};
+    String[] requiredPermissions() default Permissions.LOGGED_IN;
 }

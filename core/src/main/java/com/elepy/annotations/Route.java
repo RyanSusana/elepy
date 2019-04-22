@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.http.AccessLevel;
+import com.elepy.auth.Permissions;
 import com.elepy.http.HttpMethod;
 
 import java.lang.annotation.ElementType;
@@ -24,13 +24,9 @@ public @interface Route {
      */
     HttpMethod method();
 
-    /**
-     * @return The accessLevel of the method.
-     */
-    AccessLevel accessLevel() default AccessLevel.PUBLIC;
 
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default {"protected"};
+    String[] requiredPermissions() default Permissions.LOGGED_IN;
 }

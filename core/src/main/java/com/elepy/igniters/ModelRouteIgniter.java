@@ -43,7 +43,6 @@ public class ModelRouteIgniter<T> {
 
             //POST
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getCreateAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .addPermissions(restModel.getCreatePermissions())
                     .method(HttpMethod.POST)
@@ -53,7 +52,6 @@ public class ModelRouteIgniter<T> {
 
             // PUT
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .addPermissions(restModel.getUpdatePermissions())
                     .method(HttpMethod.PUT)
@@ -63,7 +61,6 @@ public class ModelRouteIgniter<T> {
 
             //PATCH
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getUpdateAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.PATCH)
                     .addPermissions(restModel.getUpdatePermissions())
@@ -76,7 +73,6 @@ public class ModelRouteIgniter<T> {
 
             // DELETE
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.DELETE)
                     .addPermissions(restModel.getDeletePermissions())
@@ -84,7 +80,6 @@ public class ModelRouteIgniter<T> {
                     .build()
             );
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getDeleteAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.DELETE)
                     .addPermissions(restModel.getDeletePermissions())
@@ -94,7 +89,6 @@ public class ModelRouteIgniter<T> {
 
             //GET PAGE
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug())
                     .method(HttpMethod.GET)
                     .addPermissions(restModel.getFindPermissions())
@@ -104,7 +98,6 @@ public class ModelRouteIgniter<T> {
 
             //GET ONE
             elepy.addRouting(anElepyRoute()
-                    .accessLevel(restModel.getFindAccessLevel())
                     .path(baseSlug + restModel.getSlug() + "/:id")
                     .method(HttpMethod.GET)
                     .addPermissions(restModel.getFindPermissions())

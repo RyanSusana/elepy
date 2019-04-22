@@ -1,7 +1,6 @@
 package com.elepy.annotations;
 
 
-import com.elepy.http.AccessLevel;
 import com.elepy.routes.DefaultFindMany;
 import com.elepy.routes.DefaultFindOne;
 import com.elepy.routes.FindManyHandler;
@@ -19,13 +18,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Find {
 
-    /**
-     * The protection of the GET request on this resource.
-     *
-     * @return the access level
-     * @see AccessLevel
-     */
-    AccessLevel accessLevel() default AccessLevel.PUBLIC;
 
     /**
      * The class that handles the functionality of finds on this Resource.

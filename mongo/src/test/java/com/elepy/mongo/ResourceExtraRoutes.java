@@ -18,7 +18,7 @@ public class ResourceExtraRoutes {
         this.resourceCrud = resourceCrud;
     }
 
-    @Route(path = "/resources-extra", method = HttpMethod.GET)
+    @Route(path = "/resources-extra", requiredPermissions = {}, method = HttpMethod.GET)
     public String newRoute(Request request, Response response) {
         response.status(201);
         return "generated";

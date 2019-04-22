@@ -16,8 +16,8 @@ import java.math.BigDecimal;
 @Create(requiredPermissions = {})
 @Update(requiredPermissions = {})
 @Find(requiredPermissions = {})
-@Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
-@Action(name = "extra-action", method = HttpMethod.GET, handler = ResourceExtraAction.class)
+@Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
+@Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
 public class Resource {
     @Identifier
     private int id;

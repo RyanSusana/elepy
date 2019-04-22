@@ -8,7 +8,8 @@ import java.util.TreeSet;
 public class Permissions {
     public static final String SUPER_USER = "SUPER_USER";
     public static final String CAN_ADMINISTRATE_USERS = "CAN_ADMIN_USERS";
-    public static final String PROTECTED = "PROTECTED";
+    public static final String LOGGED_IN = "LOGGED_IN";
+    public static final String[] PUBLIC = {};
 
     private final Set<String> grantedPermissions = new TreeSet<>();
 

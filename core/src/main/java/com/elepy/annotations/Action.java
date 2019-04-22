@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.http.AccessLevel;
+import com.elepy.auth.Permissions;
 import com.elepy.http.ActionType;
 import com.elepy.http.HttpMethod;
 import com.elepy.routes.ActionHandler;
@@ -21,12 +21,10 @@ public @interface Action {
 
     String slug() default "";
 
-    AccessLevel accessLevel() default AccessLevel.PROTECTED;
-
     ActionType actionType() default ActionType.MULTIPLE;
 
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default {"protected"};
+    String[] requiredPermissions() default Permissions.LOGGED_IN;
 }

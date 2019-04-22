@@ -15,7 +15,7 @@ public class ResourceService extends DefaultService<Resource> {
     @Inject(tag = "/resources", type = Crud.class)
     private Crud<Resource> crud;
 
-    @Route(path = "/resources/:id/extra", method = HttpMethod.GET)
+    @Route(path = "/resources/:id/extra", requiredPermissions = {}, method = HttpMethod.GET)
     public void extraRoute(Request request, Response response) {
 
         Optional<Resource> id = crud.getById(request.modelId());

@@ -234,7 +234,7 @@ public class ReflectionUtils {
             throw new ElepyConfigException("@HttpContextHandler annotated method must have no parameters or (Request, Response)");
         }
         return anElepyRoute()
-                .accessLevel(annotation.accessLevel())
+                .addPermissions(annotation.requiredPermissions())
                 .path(annotation.path())
                 .method(annotation.method())
                 .route(route)

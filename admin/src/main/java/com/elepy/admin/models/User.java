@@ -1,9 +1,8 @@
 package com.elepy.admin.models;
 
-import com.elepy.admin.services.*;
+import com.elepy.admin.services.UserEvaluator;
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
-import com.elepy.http.AccessLevel;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,10 +14,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 
-@Delete(accessLevel = AccessLevel.PROTECTED, handler = UserDelete.class)
-@Find(accessLevel = AccessLevel.PROTECTED, findManyHandler = UserFind.class, findOneHandler = UserFind.class)
-@Create(handler = UserCreate.class, accessLevel = AccessLevel.PUBLIC)
-@Update(accessLevel = AccessLevel.PROTECTED, handler = UserUpdate.class)
+//@Delete(accessLevel = AccessLevel.PROTECTED, handler = UserDelete.class)
+//@Find(accessLevel = AccessLevel.PROTECTED, findManyHandler = UserFind.class, findOneHandler = UserFind.class)
+//@Create(handler = UserCreate.class, accessLevel = AccessLevel.PUBLIC)
+//@Update(accessLevel = AccessLevel.PROTECTED, handler = UserUpdate.class)
 @Evaluators({UserEvaluator.class})
 @RestModel(
         slug = "/users",

@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
 
-import com.elepy.http.AccessLevel;
+import com.elepy.auth.Permissions;
 import com.elepy.routes.CreateHandler;
 import com.elepy.routes.DefaultCreate;
 
@@ -18,14 +18,6 @@ import java.lang.annotation.Target;
 public @interface Create {
 
     /**
-     * The protection of the POST request on this resource.
-     *
-     * @return the access level
-     * @see AccessLevel
-     */
-    AccessLevel accessLevel() default AccessLevel.PROTECTED;
-
-    /**
      * The class that handles the functionality of creates on this Resource.
      *
      * @return the route createHandler
@@ -37,5 +29,5 @@ public @interface Create {
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default {"protected"};
+    String[] requiredPermissions() default Permissions.LOGGED_IN;
 }
