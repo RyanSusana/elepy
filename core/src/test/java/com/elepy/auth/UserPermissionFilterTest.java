@@ -15,7 +15,7 @@ public class UserPermissionFilterTest extends Base {
     @Test
     void testSuccessfullyPermittedWithRequiredPermission() throws Exception {
         final HttpContext mockedContext = mockedContext();
-        when(mockedContext.attribute("user")).thenReturn(new User("", "", "", Arrays.asList("admin", "protected")));
+        when(mockedContext.request().attribute("user")).thenReturn(new User("", "", "", Arrays.asList("admin", "protected")));
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin"));
 
         assertDoesNotThrow(() -> filter.authenticate(mockedContext));
@@ -24,7 +24,7 @@ public class UserPermissionFilterTest extends Base {
     @Test
     void testSuccessfullyPermittedWithRequiredPermissions() throws Exception {
         final HttpContext mockedContext = mockedContext();
-        when(mockedContext.attribute("user")).thenReturn(new User("", "", "", Arrays.asList("admin", "protected")));
+        when(mockedContext.request().attribute("user")).thenReturn(new User("", "", "", Arrays.asList("admin", "protected")));
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin", "protected"));
 
         assertDoesNotThrow(() -> filter.authenticate(mockedContext));
@@ -33,7 +33,7 @@ public class UserPermissionFilterTest extends Base {
     @Test
     void testSuccessfullyPermittedWithoutRequiredPermission() throws Exception {
         final HttpContext mockedContext = mockedContext();
-        when(mockedContext.attribute("user")).thenReturn(new User("", "", "", Collections.singletonList("admin")));
+        when(mockedContext.request().attribute("user")).thenReturn(new User("", "", "", Collections.singletonList("admin")));
         final UserPermissionFilter filter = new UserPermissionFilter(Collections.emptyList());
 
         assertDoesNotThrow(() -> filter.authenticate(mockedContext));
@@ -60,7 +60,7 @@ public class UserPermissionFilterTest extends Base {
     @Test
     void testUnsuccessfullyPermittedWithUserWithWrongPermission() throws Exception {
         final HttpContext mockedContext = mockedContext();
-        when(mockedContext.attribute("user")).thenReturn(new User("", "", "", Collections.singletonList("adminOther")));
+        when(mockedContext.request().attribute("user")).thenReturn(new User("", "", "", Collections.singletonList("adminOther")));
 
 
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin"));
@@ -72,7 +72,7 @@ public class UserPermissionFilterTest extends Base {
     @Test
     void testUnsuccessfullyPermittedWithUserWithoutPermission() throws Exception {
         final HttpContext mockedContext = mockedContext();
-        when(mockedContext.attribute("user")).thenReturn(new User("", "", "", Collections.emptyList()));
+        when(mockedContext.request().attribute("user")).thenReturn(new User("", "", "", Collections.emptyList()));
 
 
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin"));

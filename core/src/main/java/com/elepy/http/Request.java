@@ -1,5 +1,7 @@
 package com.elepy.http;
 
+import com.elepy.auth.Permissions;
+import com.elepy.auth.User;
 import com.elepy.dao.*;
 import com.elepy.describers.ModelDescription;
 import com.elepy.utils.ReflectionUtils;
@@ -72,6 +74,27 @@ public interface Request {
         final List<UploadedFile> uploadedFiles = uploadedFiles(key);
 
         return uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
+    }
+
+    default User loggedInUser() {
+        return attribute("user");
+    }
+
+
+    default void addPermissions(String... permissions) {
+        permissions().addPermissions(permissions);
+    }
+
+    default Permissions permissions() {
+        Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
+
+        Optional.ofNullable(loggedInUser()).ifPresent(user -> {
+            permissions.addPermissions(user.getPermissions());
+        });
+
+        attribute("permissions", permissions);
+
+        return permissions;
     }
 
     void attribute(String attribute, Object value);

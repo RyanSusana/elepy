@@ -1,10 +1,14 @@
 package com.elepy.http;
 
+import com.elepy.auth.User;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -146,6 +150,24 @@ public interface HttpContext {
 
     default void attribute(String attribute, Object value) {
         request().attribute(attribute, value);
+    }
+
+    default boolean hasPermissions(Collection<String> requiredPermissions) {
+        return request().permissions().hasPermissions(requiredPermissions);
+    }
+
+    default void requirePermissions(String... requiredPermissions) {
+        requirePermissions(Arrays.asList(requiredPermissions));
+    }
+
+    default void requirePermissions(Collection<String> requiredPermissions) {
+        if (!hasPermissions(requiredPermissions)) {
+            throw new ElepyException("User is not authorized.", 401);
+        }
+    }
+
+    default User loggedInUser() {
+        return request().loggedInUser();
     }
 
 

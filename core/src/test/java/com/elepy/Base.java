@@ -10,8 +10,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class Base {
 
@@ -58,6 +57,12 @@ public class Base {
 
         when(context.response()).thenReturn(response);
         when(context.request()).thenReturn(request);
+        when(request.permissions()).thenCallRealMethod();
+
+        doCallRealMethod().when(context).requirePermissions(anyCollection());
+
+        when(context.hasPermissions(anyCollection())).thenCallRealMethod();
+        when(request.loggedInUser()).thenCallRealMethod();
 
 
         return context;

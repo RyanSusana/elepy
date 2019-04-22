@@ -41,6 +41,7 @@ public class BaseMethodTest {
         when(mock.login(any(), any())).thenReturn(Optional.empty());
         when(mock.login("admin", "admin")).thenReturn(Optional.of(new User("admin", "admin", "admin", permissionsOnLogin)));
 
+
         return mock;
     }
 
