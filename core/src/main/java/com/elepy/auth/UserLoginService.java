@@ -32,11 +32,6 @@ public class UserLoginService {
             }
         }
 
-        final List<? extends User> users = userDao.searchInField("email", usernameOrEmail);
-        if (users.size() > 0) {
-            return Optional.of(users.get(0));
-        }
-
         return Optional.empty();
     }
 
