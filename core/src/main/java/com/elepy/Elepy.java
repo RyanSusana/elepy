@@ -2,7 +2,10 @@ package com.elepy;
 
 import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
+import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationCenter;
+import com.elepy.auth.UserLoginService;
+import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.dao.CrudProvider;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
@@ -602,6 +605,9 @@ public class Elepy implements ElepyContext {
     }
 
     private void init() {
+        addModel(User.class);
+
+        this.registerDependency(userAuthenticationCenter);
         setupLoggingAndExceptions();
         retrievePackageModels();
 
@@ -630,7 +636,7 @@ public class Elepy implements ElepyContext {
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
-
+        setupAuth();
         initialized = true;
         for (ElepyModule module : modules) {
             module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
@@ -640,6 +646,16 @@ public class Elepy implements ElepyContext {
         }
         context.strictMode(true);
 
+    }
+
+    private void setupAuth() {
+        try {
+            this.registerDependency(this.initializeElepyObject(UserLoginService.class));
+
+            userLogin().addAuthenticationMethod(this.initializeElepyObject(BasicAuthenticationMethod.class));
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ElepyConfigException("Failed to add auth");
+        }
     }
 
     private void injectModules() {

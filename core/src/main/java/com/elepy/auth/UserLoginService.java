@@ -1,6 +1,7 @@
 package com.elepy.auth;
 
 
+import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -9,11 +10,8 @@ import java.util.Optional;
 
 public class UserLoginService {
 
-    private final Crud<User> userDao;
-
-    public UserLoginService(Crud<User> userDao) {
-        this.userDao = userDao;
-    }
+    @Inject
+    private Crud<User> userDao;
 
 
     public Optional<User> login(String usernameOrEmail, String password) {

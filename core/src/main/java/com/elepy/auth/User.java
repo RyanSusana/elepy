@@ -1,6 +1,7 @@
 package com.elepy.auth;
 
 import com.elepy.annotations.*;
+import com.elepy.auth.users.*;
 import com.elepy.dao.SortOption;
 import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -18,6 +19,14 @@ import java.util.List;
 )
 @Entity(name = "elepy_user")
 @Table(name = "elepy_users")
+@Create(handler = UserCreate.class, requiredPermissions = {})
+@Find(findManyHandler = UserFind.class,
+        findOneHandler = UserFind.class,
+        requiredPermissions = Permissions.LOGGED_IN
+)
+@Update(handler = UserUpdate.class)
+@Delete(handler = UserDelete.class)
+@Evaluators(UserEvaluator.class)
 public class User {
 
     @Identifier
@@ -48,7 +57,7 @@ public class User {
     }
 
     @JsonCreator
-    public User(@JsonProperty("_id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, List<String> permissions) {
+    public User(@JsonProperty("id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("permissions") List<String> permissions) {
         this.id = id;
         this.username = username;
         this.password = password;
