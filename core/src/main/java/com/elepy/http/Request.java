@@ -89,6 +89,7 @@ public interface Request {
         Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
 
         Optional.ofNullable(loggedInUser()).ifPresent(user -> {
+            permissions.addPermissions(Permissions.LOGGED_IN);
             permissions.addPermissions(user.getPermissions());
         });
 
