@@ -6,9 +6,7 @@ import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 
@@ -39,6 +37,9 @@ public class User {
     @Text(TextType.PASSWORD)
     private String password;
 
+    @ElementCollection
+    @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "permission")
     private List<String> permissions;
 
 
