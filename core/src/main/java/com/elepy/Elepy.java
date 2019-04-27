@@ -102,7 +102,7 @@ public class Elepy implements ElepyContext {
      *
      * @see #stop()
      */
-    public void start() {
+    public final void start() {
         this.init();
     }
 
@@ -111,7 +111,7 @@ public class Elepy implements ElepyContext {
      *
      * @see #start()
      */
-    public void stop() {
+    public final void stop() {
         http.stop();
     }
 
