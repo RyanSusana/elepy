@@ -7,6 +7,8 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.hibernate.HibernateConfiguration;
 import com.elepy.mongo.MongoConfiguration;
 import com.github.fakemongo.Fongo;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
 import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 
 import java.io.IOException;
@@ -51,7 +53,7 @@ public class DatabaseConfigurations {
 
     public static Configuration MongoDB = MongoConfiguration.of(new Fongo("test").getDB("test"));
 
-    public static WithSetupConfiguration MySQL = new WithSetupConfiguration(
+    public static WithSetupConfiguration MySQL5 = new WithSetupConfiguration(
             () -> {
                 try {
                     DB db = DB.newEmbeddedDB(3307);
@@ -86,7 +88,25 @@ public class DatabaseConfigurations {
                     "root")
     );
 
+    public static Configuration MSSQL = createTestContainerConfiguration(new MSSQLServerContainer(), "org.hibernate.dialect.MSSQLDialect");
+
     private DatabaseConfigurations() {
+    }
+
+    public static Configuration createTestContainerConfiguration(JdbcDatabaseContainer container, String dialect) {
+        container.start();
+
+        return new WithSetupConfiguration(
+                () -> {
+                },
+                createHibernateConfig(
+                        container.getDriverClassName(),
+                        container.getJdbcUrl(),
+                        dialect,
+                        container.getUsername(),
+                        container.getPassword()
+                ),
+                container::stop);
     }
 
     public static HibernateConfiguration createHibernateConfig(String driverClassName, String url, String dialect, String username, String password) {
