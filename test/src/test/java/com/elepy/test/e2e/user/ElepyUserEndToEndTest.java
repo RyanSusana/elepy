@@ -10,11 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,15 +37,7 @@ public abstract class ElepyUserEndToEndTest {
         url = String.format("http://localhost:%d/users", port);
     }
 
-    public static boolean hostAvailabilityCheck() {
 
-        try (Socket s = new Socket("localhost", 7359)) {
-            return true;
-        } catch (IOException ex) {
-            /* ignore */
-        }
-        return false;
-    }
 
     @BeforeAll
     public void beforeAll() {
@@ -65,7 +54,6 @@ public abstract class ElepyUserEndToEndTest {
     @AfterAll
     void tearDown() {
         elepy.stop();
-        Awaitility.await().until(() -> !hostAvailabilityCheck());
 
     }
 
