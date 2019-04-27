@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class ElepyUserEndToEndTest {
+public abstract class EndToEndTest {
 
     private static int counter = 7300;
     private final int port;
@@ -31,7 +31,7 @@ public abstract class ElepyUserEndToEndTest {
     private Crud<User> userCrud;
 
 
-    public ElepyUserEndToEndTest() {
+    public EndToEndTest() {
         port = counter++;
 
         url = String.format("http://localhost:%d/users", port);

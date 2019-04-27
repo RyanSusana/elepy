@@ -2,23 +2,22 @@ package com.elepy.test.e2e.user.slow;
 
 import com.elepy.Configuration;
 import com.elepy.database.DatabaseConfigurations;
-import com.elepy.test.e2e.user.ElepyUserEndToEndTest;
-import org.testcontainers.containers.JdbcDatabaseContainer;
-import org.testcontainers.containers.MariaDBContainer;
+import com.elepy.test.e2e.user.EndToEndTest;
+import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class MariaDBUserEndToEndTest extends ElepyUserEndToEndTest {
+public class MSSQLEndToEndTest extends EndToEndTest {
 
     @Container
-    private static final JdbcDatabaseContainer CONTAINER = new MariaDBContainer();
+    private static final MSSQLServerContainer MSSQL_SERVER_CONTAINER = new MSSQLServerContainer();
 
     @Override
     public Configuration configuration() {
         return DatabaseConfigurations.createTestContainerConfiguration(
-                CONTAINER,
-                "org.hibernate.dialect.MariaDBDialect"
+                MSSQL_SERVER_CONTAINER,
+                "org.hibernate.dialect.SQLServerDialect"
         );
     }
 }
