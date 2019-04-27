@@ -9,12 +9,8 @@ import com.elepy.mongo.MongoConfiguration;
 import com.github.fakemongo.Fongo;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 
-import java.io.IOException;
 import java.util.Properties;
-
-import static ru.yandex.qatools.embed.postgresql.distribution.Version.Main.V9_6;
 
 @Testcontainers
 public class DatabaseConfigurations {
@@ -70,23 +66,6 @@ public class DatabaseConfigurations {
                     "org.hibernate.dialect.MySQL5Dialect",
                     "root",
                     "")
-    );
-
-    public static WithSetupConfiguration PostgreSQL = new WithSetupConfiguration(
-            () -> {
-                final EmbeddedPostgres postgres = new EmbeddedPostgres(V9_6);
-                try {
-                    postgres.start("localhost", 3308, "test", "root", "root");
-                } catch (IOException e) {
-                    throw new ElepyConfigException("Failed to initialize PostgreSQL");
-                }
-            },
-            createHibernateConfig(
-                    "org.postgresql.Driver",
-                    "jdbc:postgresql://localhost:3308/test",
-                    "org.hibernate.dialect.PostgreSQLDialect",
-                    "root",
-                    "root")
     );
 
     private DatabaseConfigurations() {
