@@ -17,7 +17,7 @@ public class MSSQLUserEndToEndTest extends ElepyUserEndToEndTest {
     public Configuration configuration() {
         return DatabaseConfigurations.createTestContainerConfiguration(
                 MSSQL_SERVER_CONTAINER,
-                "org.hibernate.dialect.MSSQLDialect"
+                "org.hibernate.dialect.SQLServerDialect"
         );
     }
 }
