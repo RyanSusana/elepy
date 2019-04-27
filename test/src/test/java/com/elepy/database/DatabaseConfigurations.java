@@ -8,7 +8,7 @@ import com.elepy.hibernate.HibernateConfiguration;
 import com.elepy.mongo.MongoConfiguration;
 import com.github.fakemongo.Fongo;
 import org.testcontainers.containers.JdbcDatabaseContainer;
-import org.testcontainers.containers.MSSQLServerContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import static ru.yandex.qatools.embed.postgresql.distribution.Version.Main.V9_6;
 
+@Testcontainers
 public class DatabaseConfigurations {
 
 
@@ -88,23 +89,9 @@ public class DatabaseConfigurations {
                     "root")
     );
 
-    public static Configuration MSSQL = createTestContainerConfiguration(new MSSQLServerContainer(), "org.hibernate.dialect.MSSQLDialect");
-
     private DatabaseConfigurations() {
     }
 
-    public static Configuration createTestContainerConfiguration(JdbcDatabaseContainer container, String dialect) {
-        return new WithSetupConfiguration(
-                container::start,
-                createHibernateConfig(
-                        container.getDriverClassName(),
-                        container.getJdbcUrl(),
-                        dialect,
-                        container.getUsername(),
-                        container.getPassword()
-                ),
-                container::stop);
-    }
 
     public static HibernateConfiguration createHibernateConfig(String driverClassName, String url, String dialect, String username, String password) {
         Properties properties = new Properties();
@@ -119,5 +106,18 @@ public class DatabaseConfigurations {
 
         return HibernateConfiguration.of(new org.hibernate.cfg.Configuration().setProperties(properties));
 
+    }
+
+    public static Configuration createTestContainerConfiguration(JdbcDatabaseContainer container, String dialect) {
+        return new WithSetupConfiguration(
+                container::start,
+                DatabaseConfigurations.createHibernateConfig(
+                        container.getDriverClassName(),
+                        container.getJdbcUrl(),
+                        dialect,
+                        container.getUsername(),
+                        container.getPassword()
+                ),
+                container::stop);
     }
 } 
