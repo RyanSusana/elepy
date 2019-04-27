@@ -94,11 +94,8 @@ public class DatabaseConfigurations {
     }
 
     public static Configuration createTestContainerConfiguration(JdbcDatabaseContainer container, String dialect) {
-        container.start();
-
         return new WithSetupConfiguration(
-                () -> {
-                },
+                container::start,
                 createHibernateConfig(
                         container.getDriverClassName(),
                         container.getJdbcUrl(),
