@@ -63,6 +63,7 @@ public class Elepy implements ElepyContext {
     private UserAuthenticationCenter userAuthenticationCenter;
 
     private List<Configuration> configurations;
+    private List<EventHandler> stopEventHandlers;
 
     public Elepy() {
         this(Service.ignite().port(1337));
@@ -70,6 +71,7 @@ public class Elepy implements ElepyContext {
 
     public Elepy(Service http) {
         this.userAuthenticationCenter = new UserAuthenticationCenter();
+        this.stopEventHandlers = new ArrayList<>();
         this.configurations = new ArrayList<>();
         this.modules = new ArrayList<>();
         this.packages = new ArrayList<>();
@@ -113,6 +115,7 @@ public class Elepy implements ElepyContext {
      */
     public final void stop() {
         http.stop();
+        stopEventHandlers.forEach(EventHandler::handle);
     }
 
     /**
