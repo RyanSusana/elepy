@@ -13,6 +13,9 @@
     <description>A Restful API generator and Headless CMS</description>
     <url>https://elepy.com</url>
 
+    <properties>
+        <exclude.tests>nothing-to-exclude</exclude.tests>
+    </properties>
 
     <licenses>
         <license>
@@ -113,8 +116,27 @@
     </build>
 
     <profiles>
+
+        <profile>
+            <id>fast</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <exclude.tests>**/slow/**</exclude.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>slow</id>
+            <properties>
+                <exclude.tests>dont-exclude-anything</exclude.tests>
+            </properties>
+        </profile>
         <profile>
             <id>sign-artifacts</id>
+            <properties>
+                <exclude.tests>dont-exclude-anything</exclude.tests>
+            </properties>
             <activation>
                 <property>
                     <name>sign</name>
@@ -145,8 +167,6 @@
                         </executions>
                     </plugin>
                 </plugins>
-
-
             </build>
         </profile>
     </profiles>

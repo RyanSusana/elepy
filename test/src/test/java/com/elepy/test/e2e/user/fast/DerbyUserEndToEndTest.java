@@ -1,4 +1,4 @@
-package com.elepy.test.e2e.user.hibernate;
+package com.elepy.test.e2e.user.fast;
 
 import com.elepy.Configuration;
 import com.elepy.database.DatabaseConfigurations;
