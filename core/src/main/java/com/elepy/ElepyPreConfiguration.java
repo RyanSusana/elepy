@@ -254,4 +254,11 @@ public class ElepyPreConfiguration {
     public List<Class<?>> getModels() {
         return elepy.getModels();
     }
+
+    /**
+     * @param handler What to do when elepy stops gracefully
+     */
+    public void onStop(EventHandler handler) {
+        elepy.onStop(handler);
+    }
 }

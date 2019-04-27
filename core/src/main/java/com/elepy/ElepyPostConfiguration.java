@@ -253,4 +253,11 @@ public class ElepyPostConfiguration {
     public List<ModelDescription<?>> getModelDescriptions() {
         return elepy.getModelDescriptions();
     }
+
+    /**
+     * @param handler What to do when elepy stops gracefully
+     */
+    public void onStop(EventHandler handler) {
+        elepy.onStop(handler);
+    }
 }

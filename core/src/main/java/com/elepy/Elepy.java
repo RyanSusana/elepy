@@ -569,6 +569,15 @@ public class Elepy implements ElepyContext {
     }
 
     /**
+     * @param evt what to do when elepy stops gracefully
+     * @return the elepy instance
+     */
+    public Elepy onStop(EventHandler evt) {
+        stopEventHandlers.add(evt);
+        return this;
+    }
+
+    /**
      * @return the list of Elepy RestModels
      */
     public List<Class<?>> getModels() {
