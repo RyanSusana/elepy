@@ -200,7 +200,7 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    public void cannot_FindItems_when_QueryDoesntMatch() throws IOException, UnirestException {
+    public void canNot_FindItems_when_QueryDoesntMatch() throws IOException, UnirestException {
         Resource resource = validObject();
         resource.setUniqueField("testSearchNotFindingAnything");
         resource.setNumberMax40(BigDecimal.valueOf(25));
