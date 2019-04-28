@@ -36,7 +36,7 @@ public abstract class EndToEndTest {
     private Elepy elepy;
 
     private Crud<User> userCrud;
-    private Crud<Resource> defaultMongoDao;
+    private Crud<Resource> resourceCrud;
 
 
     public EndToEndTest() {
@@ -59,7 +59,7 @@ public abstract class EndToEndTest {
 
         elepy.start();
         userCrud = elepy.getCrudFor(User.class);
-        defaultMongoDao = elepy.getCrudFor(Resource.class);
+        resourceCrud = elepy.getCrudFor(Resource.class);
     }
 
     @AfterAll
@@ -73,10 +73,11 @@ public abstract class EndToEndTest {
     @BeforeEach
     void setUp() {
         userCrud.delete(userCrud.getAll().stream().map(User::getId).collect(Collectors.toList()));
+        resourceCrud.delete(resourceCrud.getAll().stream().map(Resource::getId).collect(Collectors.toList()));
     }
 
     @Test
-    void testCanCreateInitialUserAndBlockExtraCreations() throws UnirestException, JsonProcessingException, InterruptedException {
+    void can_CreateInitialUser_and_BlockExtraCreationsWithoutAuthentication() throws UnirestException, JsonProcessingException, InterruptedException {
 
         User user = new User("admin", "admin", "admin", Collections.emptyList());
 
@@ -98,7 +99,7 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    void testLoginAndFind() throws UnirestException, JsonProcessingException {
+    void can_Login_and_FindOtherUsers() throws UnirestException, JsonProcessingException {
         createInitialUsersViaHttp();
 
 
@@ -114,7 +115,7 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    void testLoginAndDelete() throws JsonProcessingException, UnirestException {
+    void can_Login_and_DeleteUsers() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
 
@@ -134,7 +135,7 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    void testLoginAndUpdatePermissions() throws JsonProcessingException, UnirestException {
+    void can_Login_and_UpdateOtherUserPermissions() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
         User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.SUPER_USER));
@@ -163,11 +164,11 @@ public abstract class EndToEndTest {
 
 
     @Test
-    public void testFind() throws IOException, UnirestException {
+    public void can_FindItems_as_Intended() throws IOException, UnirestException {
 
 
-        final long count = defaultMongoDao.count();
-        defaultMongoDao.create(validObject());
+        final long count = resourceCrud.count();
+        resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources").asString();
 
 
@@ -179,13 +180,13 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    public void testFilterAndSearch() throws IOException, UnirestException {
+    public void can_FilterAndSearchItems_as_Intended() throws IOException, UnirestException {
         Resource resource = validObject();
         resource.setUniqueField("filterUnique");
         resource.setNumberMax40(BigDecimal.valueOf(25));
         resource.setId(4);
-        defaultMongoDao.create(resource);
-        defaultMongoDao.create(validObject());
+        resourceCrud.create(resource);
+        resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?id_equals=4&uniqueField_contains=filter&numberMax40_equals=25&q=ilterUni").asString();
 
 
@@ -199,30 +200,31 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    public void testSearchNotFindingAnything() throws IOException, UnirestException {
+    public void cannot_FindItems_when_QueryDoesntMatch() throws IOException, UnirestException {
         Resource resource = validObject();
         resource.setUniqueField("testSearchNotFindingAnything");
         resource.setNumberMax40(BigDecimal.valueOf(25));
-        defaultMongoDao.create(resource);
-        defaultMongoDao.create(validObject());
+        resourceCrud.create(resource);
+        resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=ilterUni").asString();
 
 
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
+        System.out.println(getRequest.getBody());
         assertEquals(0, resourcePage.getValues().size());
 
         Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
-    public void testSearch() throws IOException, UnirestException {
+    public void can_SearchItems_as_Intended() throws IOException, UnirestException {
         Resource resource = validObject();
         resource.setUniqueField("testSearchTo2");
         resource.setNumberMax40(BigDecimal.valueOf(25));
-        defaultMongoDao.create(resource);
-        defaultMongoDao.create(validObject());
+        resourceCrud.create(resource);
+        resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=testsearchto").asString();
 
 
@@ -235,12 +237,10 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    public void testFindOne() throws IOException, UnirestException {
+    public void can_FindItem_byId() throws IOException, UnirestException {
+        resourceCrud.create(validObject());
 
-
-        defaultMongoDao.create(validObject());
-
-        final Resource resource = defaultMongoDao.getAll().get(0);
+        final Resource resource = resourceCrud.getAll().get(0);
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/" + resource.getId()).asString();
 
         Resource foundResource = elepy.getObjectMapper().readValue(getRequest.getBody(), Resource.class);
@@ -251,24 +251,24 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    public void testCreate() throws UnirestException, JsonProcessingException {
+    public void can_CreateItem() throws UnirestException, JsonProcessingException {
 
-        final long count = defaultMongoDao.count();
+        final long count = resourceCrud.count();
         final Resource resource = validObject();
         resource.setUniqueField("uniqueCreate");
         final String s = elepy.getObjectMapper().writeValueAsString(resource);
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
-        assertEquals(count + 1, defaultMongoDao.count());
+        assertEquals(count + 1, resourceCrud.count());
         Assertions.assertEquals(201, postRequest.getStatus());
     }
 
 
     @Test
-    public void testMultiCreate_atomicCreateInsertsNone_OnIntegrityFailure() throws UnirestException, JsonProcessingException {
+    public void doesNot_CreateMultipleItems_when_ThereAreIntegrityIssues() throws UnirestException, JsonProcessingException {
 
-        final long count = defaultMongoDao.count();
+        final long count = resourceCrud.count();
 
         final Resource resource = validObject();
 
@@ -282,13 +282,13 @@ public abstract class EndToEndTest {
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
-        assertEquals(count, defaultMongoDao.count());
+        assertEquals(count, resourceCrud.count());
     }
 
     @Test
-    public void testMultiCreate() throws UnirestException, JsonProcessingException {
+    public void can_CreateMultipleItems_inOneRequest() throws UnirestException, JsonProcessingException {
 
-        final long count = defaultMongoDao.count();
+        final long count = resourceCrud.count();
         final Resource resource = validObject();
 
         resource.setUniqueField("uniqueMultiCreate");
@@ -301,46 +301,46 @@ public abstract class EndToEndTest {
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
         System.out.println(postRequest.getBody());
-        assertEquals(count + 2, defaultMongoDao.count());
+        assertEquals(count + 2, resourceCrud.count());
         Assertions.assertEquals(201, postRequest.getStatus());
     }
 
     @Test
-    void testDelete() throws UnirestException {
+    void can_DeleteItem() throws UnirestException {
 
-        final long beginningCount = defaultMongoDao.count();
+        final long beginningCount = resourceCrud.count();
         final Resource resource = validObject();
 
         resource.setId(55);
 
-        defaultMongoDao.create(resource);
+        resourceCrud.create(resource);
 
-        assertEquals(beginningCount + 1, defaultMongoDao.count());
+        assertEquals(beginningCount + 1, resourceCrud.count());
         final HttpResponse<String> delete = Unirest.delete(url + "/resources/55").asString();
 
-        assertEquals(beginningCount, defaultMongoDao.count());
+        assertEquals(beginningCount, resourceCrud.count());
         Assertions.assertEquals(200, delete.getStatus());
 
     }
 
     @Test
-    void testUpdatePartial() throws UnirestException {
-        final long beginningCount = defaultMongoDao.count();
+    void can_UpdateItemPartially_without_AffectingOtherFields() throws UnirestException {
+        final long beginningCount = resourceCrud.count();
         final Resource resource = validObject();
 
         resource.setId(66);
         resource.setMARKDOWN("ryan");
 
 
-        defaultMongoDao.create(resource);
+        resourceCrud.create(resource);
 
-        assertEquals(beginningCount + 1, defaultMongoDao.count());
+        assertEquals(beginningCount + 1, resourceCrud.count());
         final HttpResponse<String> patch = Unirest.patch(url + "/resources/66").body("{\"id\":" + resource.getId() + ",\"uniqueField\": \"uniqueUpdate\"}").asString();
 
-        assertEquals(beginningCount + 1, defaultMongoDao.count());
+        assertEquals(beginningCount + 1, resourceCrud.count());
 
 
-        Optional<Resource> updatePartialId = defaultMongoDao.getById(66);
+        Optional<Resource> updatePartialId = resourceCrud.getById(66);
 
         assertTrue(updatePartialId.isPresent());
         assertEquals("uniqueUpdate", updatePartialId.get().getUniqueField());
@@ -349,13 +349,13 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    void testExtraRouteInService() throws UnirestException {
+    void can_AccessExtraRoutes_when_RoutesAreDefinedInAService() throws UnirestException {
 
         final String shouldReturn = "I am here";
         Resource resource1 = validObject();
         resource1.setId(77);
         resource1.setTextField(shouldReturn);
-        defaultMongoDao.create(resource1);
+        resourceCrud.create(resource1);
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/" + resource1.getId() + "/extra").asString();
 
         Assertions.assertEquals(200, getRequest.getStatus());
@@ -363,7 +363,7 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    void testExtraRoute() throws UnirestException {
+    void can_AccessExtraRoutes_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources-extra").asString();
 
         Assertions.assertEquals(201, getRequest.getStatus());
@@ -371,7 +371,7 @@ public abstract class EndToEndTest {
     }
 
     @Test
-    void testAction() throws UnirestException {
+    void can_AccessActions_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/actions/extra-action?ids=999,777").asString();
 
         Assertions.assertEquals(200, getRequest.getStatus());
@@ -402,7 +402,7 @@ public abstract class EndToEndTest {
         Assertions.assertEquals(200, response2.getStatus());
     }
 
-    public synchronized Resource validObject() {
+    private synchronized Resource validObject() {
         Resource resource = new Resource();
 
         resource.setId(resourceCounter++);
