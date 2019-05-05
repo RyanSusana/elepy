@@ -7,7 +7,7 @@ import java.util.Base64;
 import java.util.Optional;
 
 public interface AuthenticationMethod {
-    User login(Request request);
+    User getUserFromRequest(Request request);
 
 
     default Optional<String[]> basicCredentials(Request request) {

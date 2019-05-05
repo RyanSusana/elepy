@@ -18,7 +18,7 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
         this.userService = userService;
     }
 
-    public User login(Request request) {
+    public User getUserFromRequest(Request request) {
 
         final Optional<String[]> authorizationOpt = this.basicCredentials(request);
         if (!authorizationOpt.isPresent()) {

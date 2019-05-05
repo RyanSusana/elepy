@@ -3,7 +3,7 @@ package com.elepy.admin;
 import com.elepy.Elepy;
 import com.elepy.admin.dto.CollectedToken;
 import com.elepy.admin.dto.Resource;
-import com.elepy.admin.models.User;
+import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.mongo.MongoConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +13,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 
@@ -43,17 +44,18 @@ public class TokenTest {
         User defaultUser = new User();
 
         defaultUser.setUsername("admin");
-        defaultUser.setPassword("admin");
+        defaultUser.setPassword(BCrypt.hashpw("admin", BCrypt.gensalt()));
 
 
-        userCrud.create(defaultUser.hashWord());
+        userCrud.create(defaultUser);
     }
 
     @Test
     void testRetrieveToken() throws UnirestException, IOException {
-        HttpResponse<String> response = Unirest.post(BASE_URL + "/retrieve-token")
+        HttpResponse<String> response = Unirest.post(BASE_URL + "/elepy-token-login")
                 .basicAuth("admin", "admin").asString();
 
+        System.out.println(response.getBody());
         assertEquals(200, response.getStatus());
         CollectedToken token = objectMapper.readValue(response.getBody(), CollectedToken.class);
 

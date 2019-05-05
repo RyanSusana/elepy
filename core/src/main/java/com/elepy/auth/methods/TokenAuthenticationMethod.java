@@ -1,11 +1,13 @@
 package com.elepy.auth.methods;
 
+import com.elepy.annotations.ElepyConstructor;
 import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.Token;
 import com.elepy.auth.User;
 import com.elepy.auth.UserLoginService;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
+import com.elepy.http.Response;
 
 import java.util.Optional;
 import java.util.Set;
@@ -18,13 +20,15 @@ public class TokenAuthenticationMethod implements AuthenticationMethod {
     private final UserLoginService userService;
     private Set<Token> tokens;
 
+    @ElepyConstructor
     public TokenAuthenticationMethod(UserLoginService userService) {
         this.tokens = new TreeSet<>();
         this.userService = userService;
     }
 
     @Override
-    public User login(Request request) {
+    public User getUserFromRequest(Request request) {
+
 
         String cookieToken = request.cookie("ELEPY_TOKEN");
 
@@ -34,20 +38,33 @@ public class TokenAuthenticationMethod implements AuthenticationMethod {
         Optional<Token> validToken = getValidToken(elepyToken);
 
         return validToken.map(Token::getUser).orElse(null);
+
     }
 
-    public Token createToken(Request request) {
+    public void tokenLogin(Request request, Response response) {
+
+        boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
+
+        int durationInSeconds = keepLoggedIn ? -1 : 60 * 60;
 
         final Optional<String[]> credentials = basicCredentials(request);
 
-        if (!credentials.isPresent()) {
-            throw new ElepyException("Invalid username or password", 401);
+        final String username, password;
+        if (credentials.isPresent()) {
+            username = credentials.get()[0];
+            password = credentials.get()[1];
+        } else {
+            username = request.queryParamOrDefault("username", "invalid");
+            password = request.queryParamOrDefault("password", "invalid");
         }
+        Token token = createToken(username, password, durationInSeconds * 1000L);
 
-        final String username = credentials.get()[0];
-        final String password = credentials.get()[1];
+        response.status(200);
 
-        return createToken(username, password, 1000L * 60L * 60L * 3L);
+
+        response.cookie("ELEPY_TOKEN", token.getId(), durationInSeconds);
+        response.json(token);
+
     }
 
     public Token createToken(String username, String password, long duration) {

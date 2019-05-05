@@ -19,7 +19,7 @@ public class UserAuthenticationCenter {
 
     public void tryToLogin(Request request) {
         for (AuthenticationMethod authenticationMethod : authenticationMethods) {
-            final User login = authenticationMethod.login(request);
+            final User login = authenticationMethod.getUserFromRequest(request);
 
             if (login != null) {
                 request.attribute("user", login);

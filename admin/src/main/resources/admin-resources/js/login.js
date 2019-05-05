@@ -22,14 +22,14 @@ const app = new Vue({
         login: function () {
 
             let selfReference = this;
-            axios.post("/elepy-login", null, {
+            axios.post("/elepy-token-login", null, {
                 params: {
                     "username": selfReference.username,
                     "password": selfReference.password,
                     "keepLoggedIn": selfReference.keepLoggedIn
                 }
             }).then(function (response) {
-                window.location = response.data
+                window.location = "/admin"
 
             })
                 .catch(function (error) {

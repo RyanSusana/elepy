@@ -4,15 +4,18 @@ import com.elepy.ElepyModule;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
 import com.elepy.admin.concepts.*;
-import com.elepy.admin.concepts.auth.Authenticator;
-import com.elepy.admin.concepts.auth.BasicHandler;
-import com.elepy.admin.concepts.auth.TokenHandler;
-import com.elepy.admin.models.*;
-import com.elepy.admin.services.UserService;
+import com.elepy.admin.models.Attachment;
+import com.elepy.admin.models.AttachmentType;
+import com.elepy.admin.models.Link;
+import com.elepy.annotations.Inject;
+import com.elepy.auth.User;
+import com.elepy.auth.UserAuthenticationCenter;
+import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Filter;
+import com.elepy.http.HttpContextHandler;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -33,12 +36,11 @@ public class ElepyAdminPanel implements ElepyModule {
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;
     private final List<Link> links;
-    private TokenHandler tokenHandler;
     private Filter baseAdminAuthenticationFilter;
-    private Authenticator authenticator;
-    private UserService userService;
     private boolean initiated = false;
-    private Crud<? extends UserInterface> userCrud;
+
+    @Inject
+    private Crud<User> userCrud;
 
     private HttpService http;
     private PebbleEngine engine;
@@ -46,41 +48,29 @@ public class ElepyAdminPanel implements ElepyModule {
     private List<ModelDescription<?>> modelDescriptions;
 
 
-    private Class<? extends UserInterface> userClass;
-
     private NoUserFoundHandler noUserFoundHandler;
+
+    @Inject
+    private TokenAuthenticationMethod tokenHandler;
+
+    @Inject
+    private UserAuthenticationCenter userAuthenticationCenter;
 
     public ElepyAdminPanel() {
 
-        this.userClass = User.class;
 
         this.attachmentHandler = new AttachmentHandler(this);
         this.pluginHandler = new PluginHandler(this);
 
 
-        this.authenticator = new Authenticator();
         this.viewHandler = new ViewHandler(this);
 
 
-        this.noUserFoundHandler = (ctx, crud) -> {
+        this.noUserFoundHandler = (ctx) -> {
             ctx.response().redirect("/elepy-initial-user");
             halt();
         };
-        this.baseAdminAuthenticationFilter = context -> {
-            if (userCrud.count() == 0) {
-                noUserFoundHandler.handle(context, (Crud<UserInterface>) userCrud);
-            }
-            final UserInterface user = authenticator.authenticate(context.request());
 
-            if (user != null) {
-                context.request().attribute(ADMIN_USER, user);
-            } else {
-                context.request().session().attribute("redirectUrl", context.request().uri());
-                context.response().redirect("/elepy-login", 301);
-                halt();
-            }
-
-        };
 
         this.links = new ArrayList<>();
 
@@ -90,14 +80,7 @@ public class ElepyAdminPanel implements ElepyModule {
 
     @Override
     public void afterElepyConstruction(HttpService http, ElepyPostConfiguration elepy) {
-        new AdminSetupEvaluation(this).evaluate();
         try {
-            this.userCrud = elepy.getCrudFor(userClass);
-            this.userService = new UserService(userCrud);
-            this.tokenHandler = new TokenHandler(this.userService);
-            this.authenticator.addAuthenticationMethod(tokenHandler).addAuthenticationMethod(new BasicHandler(this.userService));
-
-
             attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin();
             setupAdmin(elepy);
@@ -116,23 +99,28 @@ public class ElepyAdminPanel implements ElepyModule {
 
         this.http = http;
 
-
-        elepy.addAdminFilter(this.baseAdminAuthenticationFilter);
-        elepy.addModel(this.userClass);
     }
 
+
+    public HttpContextHandler filter() {
+
+        return ctx -> {
+
+            try {
+                userAuthenticationCenter.tryToLogin(ctx.request());
+            } catch (ElepyException e) {
+
+                ctx.redirect("/elepy-login");
+            }
+        };
+    }
 
     private void setupAdmin(ElepyPostConfiguration elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
-        http.before("/admin/*/*", ctx -> elepy.getAllAdminFilters().authenticate(ctx));
-        http.before("/admin/*", ctx -> elepy.getAllAdminFilters().authenticate(ctx));
-        http.before("/admin", ctx -> elepy.getAllAdminFilters().authenticate(ctx));
-        http.post("/retrieve-token", (request, response) -> {
-            final Token token = tokenHandler.createToken(request);
-            response.result(elepy.getObjectMapper().writeValueAsString(token));
-        });
-
+        http.before("/admin/*/*", filter());
+        http.before("/admin/*", filter());
+        http.before("/admin", filter());
 
         http.get("/admin", (request, response) -> {
 
@@ -159,38 +147,8 @@ public class ElepyAdminPanel implements ElepyModule {
 
         http.before("/elepy-login", ctx -> {
             if (userCrud.count() <= 0) {
-                noUserFoundHandler.handle(ctx, (Crud<UserInterface>) userCrud);
+                noUserFoundHandler.handle(ctx);
             }
-        });
-
-        http.post("/elepy-login", (request, response) -> {
-
-
-            boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
-
-            int durationInSeconds = keepLoggedIn ? -1 : 60 * 60;
-
-            Token token = tokenHandler.createToken(request.queryParamOrDefault("username", "invalid"),
-                    request.queryParamOrDefault("password", "invalid"), durationInSeconds * 1000L);
-            final String redirectUrl = request.session().attribute("redirectUrl") == null ? "/admin" : request.session().attribute("redirectUrl");
-
-            response.status(200);
-            request.session().removeAttribute("redirectUrl");
-
-
-            response.cookie("ELEPY_TOKEN", token.getId(), durationInSeconds);
-            response.result(redirectUrl);
-
-        });
-
-        http.get("/elepy-login-check", ctx -> {
-            final UserInterface user = authenticator.authenticate(ctx.request());
-
-            if (user == null) {
-                throw new ElepyException("You are not logged in.", 401);
-            }
-            throw new ElepyException("Your are logged in", 200);
-
         });
 
 
@@ -229,11 +187,6 @@ public class ElepyAdminPanel implements ElepyModule {
 
     public ElepyAdminPanel attachSrc(Attachment attachment) {
         attachmentHandler.attachSrc(attachment);
-        return this;
-    }
-
-    public ElepyAdminPanel userClass(Class<? extends UserInterface> userClass) {
-        this.userClass = userClass;
         return this;
     }
 
@@ -303,9 +256,6 @@ public class ElepyAdminPanel implements ElepyModule {
         return initiated;
     }
 
-    Class<? extends UserInterface> getUserClass() {
-        return userClass;
-    }
 
     public AttachmentHandler getAttachmentHandler() {
         return attachmentHandler;

@@ -6,6 +6,7 @@ import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationCenter;
 import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
+import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.CrudProvider;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
@@ -639,6 +640,7 @@ public class Elepy implements ElepyContext {
         final List<ModelDescription> descriptions = setupPojos(resourceDescribers);
 
 
+        setupAuth();
         context.resolveDependencies();
 
         setupDescriptors(descriptions);
@@ -648,7 +650,6 @@ public class Elepy implements ElepyContext {
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
-        setupAuth();
         initialized = true;
         for (ElepyModule module : modules) {
             module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
@@ -660,10 +661,21 @@ public class Elepy implements ElepyContext {
 
     }
 
+    // TODO figure out a better way to handle authentication
     private void setupAuth() {
         try {
             this.registerDependency(this.initializeElepyObject(UserLoginService.class));
+            final TokenAuthenticationMethod tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
 
+            registerDependency(tokenAuthenticationMethod);
+            http.get("/elepy-login-check", ctx -> {
+                userAuthenticationCenter.tryToLogin(ctx.request());
+                ctx.result(Message.of("Your are logged in", 200));
+
+            });
+            userLogin().addAuthenticationMethod(tokenAuthenticationMethod);
+
+            http.post("elepy-token-login", tokenAuthenticationMethod::tokenLogin);
             userLogin().addAuthenticationMethod(this.initializeElepyObject(BasicAuthenticationMethod.class));
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new ElepyConfigException("Failed to add auth");
@@ -704,10 +716,10 @@ public class Elepy implements ElepyContext {
 
     private void setupFilters() {
         try {
-            for (Filter adminFilter : adminFilters) {
-                context.injectFields(adminFilter);
-                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
-            }
+//            for (Filter adminFilter : adminFilters) {
+//                //context.injectFields(adminFilter);
+//                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
+//            }
             for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
                 Filter filter = initializeElepyObject(adminFilterClass);
                 adminFilters.add(filter);

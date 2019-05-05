@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletResponse;
 
 public interface Response {
+    ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
     void status(int statusCode);
 
@@ -42,6 +43,16 @@ public interface Response {
             throw new ElepyException("Error writing json", 500);
         }
 
+    }
+
+    default void json(Object object) {
+        try {
+            type("application/json");
+            result(DEFAULT_MAPPER.writeValueAsString(object));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new ElepyException("Failed to parse json.");
+        }
     }
 
     default void result(String message, int status) {

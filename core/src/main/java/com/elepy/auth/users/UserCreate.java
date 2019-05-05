@@ -49,6 +49,7 @@ public class UserCreate implements CreateHandler<User> {
             }
             new DefaultIntegrityEvaluator<User>().evaluate(user, crud, true);
 
+
             user.getPermissions().add(Permissions.SUPER_USER);
 
             if (user.getPassword().length() < 5) {

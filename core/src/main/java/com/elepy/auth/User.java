@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,7 +50,7 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "permission")
-    private List<String> permissions;
+    private List<String> permissions = new ArrayList<>();
 
 
     public User() {
@@ -65,6 +66,9 @@ public class User {
     }
 
     public List<String> getPermissions() {
+        if (permissions == null) {
+            permissions = new ArrayList<>();
+        }
         return permissions;
     }
 
