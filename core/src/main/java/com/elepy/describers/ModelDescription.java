@@ -5,7 +5,7 @@ import com.elepy.http.HttpAction;
 import java.util.List;
 import java.util.Set;
 
-public class RestModelDesc {
+public class ModelDescription {
 
 
     private String name;
