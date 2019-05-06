@@ -1,9 +1,7 @@
 package com.elepy.describers;
 
-import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
-import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.elepy.utils.DateUtils;
 import com.elepy.utils.MapperUtils;
@@ -114,13 +112,13 @@ public class FieldDescriber {
         if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", field.getType().getSimpleName());
 
-            fieldMap.put("fields", new ClassDescriber(field.getType()).getStructure());
+            fieldMap.put("properties", new ClassDescriber(field.getType()).getStructure());
         }
         if (fieldType.equals(FieldType.TEXT)) {
             fieldMap.put("textType", field.getAnnotation(Text.class) != null ? field.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
         }
         if (fieldType.equals(FieldType.NUMBER)) {
-            fieldMap.put("numberType", field.getAnnotation(Number.class) != null ? field.getAnnotation(Number.class).value() : NumberType.guessType(field));
+//            fieldMap.setExtra("numberType", field.getAnnotation(Number.class) != null ? field.getAnnotation(Number.class).value() : NumberType.guessType(field));
         }
         if (fieldType.equals(FieldType.BOOLEAN)) {
             final TrueFalse annotation = field.getAnnotation(TrueFalse.class);
@@ -131,7 +129,7 @@ public class FieldDescriber {
 
             final Class array = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 
-            fieldMap.put("fields", new ClassDescriber(array));
+            fieldMap.put("properties", new ClassDescriber(array));
             fieldMap.put("arrayType", array.getSimpleName());
 
         }

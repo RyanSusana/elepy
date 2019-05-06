@@ -47,15 +47,6 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * The base URI of Elepy.
-     *
-     * @return the base slug, default: "/"
-     */
-    public String getBaseSlug() {
-        return elepy.getBaseSlug();
-    }
-
-    /**
      * Adds a Spark {@link Filter} to controlled after.
      *
      * @param filter the {@link Filter}

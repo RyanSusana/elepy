@@ -49,7 +49,6 @@ public class Elepy implements ElepyContext {
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
     private final Map<Class<?>, ModelDescription<?>> classModelDescriptionMap;
-    private String baseSlug;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
@@ -81,7 +80,6 @@ public class Elepy implements ElepyContext {
         this.http = new SparkService(http, this);
 
         this.defaultCrudProvider = null;
-        this.baseSlug = "/";
 
         this.models = new ArrayList<>();
         this.configSlug = "/config";
@@ -194,16 +192,6 @@ public class Elepy implements ElepyContext {
      */
     public Class<? extends CrudProvider> getDefaultCrudProvider() {
         return defaultCrudProvider;
-    }
-
-    /**
-     * The base URI of Elepy.
-     *
-     * @return the base slug, default: "/"
-     */
-
-    public String getBaseSlug() {
-        return this.baseSlug;
     }
 
     /**
@@ -412,18 +400,6 @@ public class Elepy implements ElepyContext {
     }
 
 
-    /**
-     * Changes the base URI of Elepy models.
-     *
-     * @param baseSlug the base URI of elepy
-     * @return The {@link com.elepy.Elepy} instance
-     * @see #withConfigSlug(String)
-     */
-    public Elepy withBaseSlug(String baseSlug) {
-        checkConfig();
-        this.baseSlug = baseSlug;
-        return this;
-    }
 
     /**
      * Change the port Elepy listens on.

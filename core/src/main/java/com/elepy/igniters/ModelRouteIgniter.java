@@ -5,10 +5,13 @@ import com.elepy.dao.Crud;
 import com.elepy.describers.ModelDescription;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.HttpAction;
 import com.elepy.http.HttpContext;
 import com.elepy.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 
@@ -24,7 +27,7 @@ public class ModelRouteIgniter<T> {
         this.restModel = resourceDescriber;
 
         this.clazz = resourceDescriber.getModelType();
-        this.baseSlug = elepy.getBaseSlug();
+        this.baseSlug = "/";
         this.elepy = elepy;
 
     }
@@ -36,10 +39,9 @@ public class ModelRouteIgniter<T> {
             String baseSlugWithoutTrailingSlash = baseSlug.substring(0, baseSlug.length() - (baseSlug.endsWith("/") ? 1 : 0));
 
             final String slug = baseSlugWithoutTrailingSlash + restModel.getSlug();
+            final List<HttpAction> actions = new ActionIgniter<>(clazz, slug, dao, elepy).ignite();
 
-            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, slug, restModel.getName(), restModel.getModelType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators());
-
-            modelDescription.getActions().addAll(new ActionIgniter<>(modelDescription, dao, elepy).ignite());
+            ModelDescription<T> modelDescription = new ModelDescription<>(restModel, slug, restModel.getName(), restModel.getModelType(), restModel.getIdentityProvider(), restModel.getObjectEvaluators(), actions);
 
             //POST
             elepy.addRouting(anElepyRoute()

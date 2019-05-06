@@ -21,7 +21,6 @@ import java.util.Objects;
 public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     private final Elepy elepy;
-    private final ClassDescriber classDescriber;
     private Class<T> classType;
     private IdentityProvider<T> identityProvider;
     private com.elepy.dao.CrudProvider crudProvider;
@@ -40,7 +39,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.classType = clazz;
         this.elepy = elepy;
-        this.classDescriber = new ClassDescriber(this.classType);
         try {
             this.baseAnnotations();
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -221,10 +219,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
 
     public com.elepy.dao.CrudProvider getCrudProvider() {
         return crudProvider;
-    }
-
-    public ClassDescriber getClassDescriber() {
-        return classDescriber;
     }
 
     @Override

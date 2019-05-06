@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -48,16 +49,20 @@ public class ReflectionUtils {
         return searchForFieldsWithAnnotation(cls, annotations).stream().findFirst();
     }
 
-    public static String getPropertyName(Field field) {
-        if (field.isAnnotationPresent(JsonProperty.class)) {
-            return field.getAnnotation(JsonProperty.class).value();
-
-        } else if (field.isAnnotationPresent(Column.class)) {
-            return field.getAnnotation(Column.class).columnDefinition();
-        } else if (hasId(field)) {
+    public static String getPropertyName(AccessibleObject property) {
+        JsonProperty jsonProperty = property.getAnnotation(JsonProperty.class);
+        final Identifier identifier = property.getAnnotation(Identifier.class);
+        if (jsonProperty != null) {
+            return jsonProperty.value();
+        } else if (identifier != null) {
             return "id";
         } else {
-            return field.getName();
+            if (property instanceof Field) {
+                return ((Field) property).getName();
+            } else if (property instanceof Method) {
+                return ((Method) property).getName();
+            }
+            throw new ElepyConfigException("Failed to get the name from AccessibleObject");
         }
     }
 
@@ -71,7 +76,7 @@ public class ReflectionUtils {
         return null;
     }
 
-    public static String getPrettyName(Field field) {
+    public static String getPrettyName(AccessibleObject field) {
         if (field.isAnnotationPresent(PrettyName.class)) {
             return field.getAnnotation(PrettyName.class).value();
         }
@@ -136,6 +141,10 @@ public class ReflectionUtils {
         } else {
             return findFieldWithName(cls, "id");
         }
+    }
+
+    public static Class<?> returnType(AccessibleObject field) {
+        return (field instanceof Field) ? ((Field) field).getType() : ((Method) field).getReturnType();
     }
 
     public static Optional<Field> findFieldWithName(Class cls, String name) {

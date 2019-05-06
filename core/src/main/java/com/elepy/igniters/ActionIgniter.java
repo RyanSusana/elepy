@@ -20,48 +20,55 @@ import static com.elepy.http.RouteBuilder.anElepyRoute;
 public class ActionIgniter<T> {
 
 
-    private final ModelDescription<T> modelDescription;
+    private static final Slugify slugify = new Slugify();
+    private final Class<T> modelType;
     private final Crud<T> crud;
     private final Elepy elepy;
+    private final String slug;
 
-    private final Slugify slugify = new Slugify();
 
-
-    public ActionIgniter(ModelDescription<T> modelDescription, Crud<T> crud, Elepy elepy) {
-        this.modelDescription = modelDescription;
+    public ActionIgniter(Class<T> modelType, String slug, Crud<T> crud, Elepy elepy) {
+        this.modelType = modelType;
+        this.slug = slug;
         this.crud = crud;
         this.elepy = elepy;
     }
 
+    public static HttpAction actionToHttpAction(String baseSlug, Action actionAnnotation) {
+        final String multiSlug = baseSlug + "/actions" + (actionAnnotation.slug().isEmpty() ? "/" + slugify.slugify(actionAnnotation.name()) : actionAnnotation.slug());
+
+        return HttpAction.of(actionAnnotation.name(), multiSlug, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
+
+    }
+
     public List<HttpAction> ignite() {
 
-        final Action[] actionAnnotations = modelDescription.getModelType().getAnnotationsByType(Action.class);
+        final Action[] actionAnnotations = modelType.getAnnotationsByType(Action.class);
         final List<HttpAction> actions = new ArrayList<>();
 
         for (Action actionAnnotation : actionAnnotations) {
             try {
-                final String baseSlug = modelDescription.getSlug() + "/actions" + (actionAnnotation.slug().isEmpty() ? "/" + slugify.slugify(actionAnnotation.name()) : actionAnnotation.slug());
-                final String slug = baseSlug + "/:id";
 
-                HttpAction action = HttpAction.of(actionAnnotation.name(), baseSlug, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
-
+                final HttpAction action = actionToHttpAction(this.slug, actionAnnotation);
                 actions.add(action);
                 final ActionHandler<T> actionHandler = elepy.initializeElepyObject(actionAnnotation.handler());
+
                 final RouteBuilder route = anElepyRoute()
                         .addPermissions(actionAnnotation.requiredPermissions())
-                        .path(slug)
+                        .path(action.getSlug() + "/:id")
                         .method(actionAnnotation.method())
                         .route(ctx -> {
                             ctx.attribute("action", action);
                             ctx.result(Message.of("Executed action", 200));
-                            actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelDescription.getModelType()), crud, modelDescription, elepy.getObjectMapper());
+                            final ModelDescription<T> modelDescription = elepy.getModelDescriptionFor(modelType);
+                            actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelType), crud, modelDescription, elepy.getObjectMapper());
                         });
 
                 //add two routes for multi select and single select.
                 elepy.addRouting(route.build());
-                elepy.addRouting(route.path(baseSlug).build());
+                elepy.addRouting(route.path(action.getSlug()).build());
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new ElepyConfigException(String.format("Error igniting action '%s' on %s", actionAnnotation.name(), modelDescription.getModelType().getName()));
+                throw new ElepyConfigException(String.format("Error igniting action '%s' on %s", actionAnnotation.name(), modelType.getName()));
             }
         }
         return actions;

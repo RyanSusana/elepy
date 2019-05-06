@@ -7,6 +7,7 @@ import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
@@ -23,6 +24,14 @@ public enum FieldType {
         this.baseClass = baseClass;
     }
 
+
+    public static FieldType guessType(AccessibleObject property) {
+        if (property instanceof Field) {
+            return guessType((Field) property);
+        } else {
+            return guessType((Method) property);
+        }
+    }
 
     public static FieldType guessType(Method method) {
         return getByAnnotation(method).orElse(getByClass(method.getReturnType()));

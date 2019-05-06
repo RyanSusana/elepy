@@ -43,15 +43,6 @@ public class ElepyPostConfiguration {
         return elepy.getObjectMapper();
     }
 
-    /**
-     * The base URI of Elepy.
-     *
-     * @return the base slug, default: "/"
-     */
-    public String getBaseSlug() {
-        return elepy.getBaseSlug();
-    }
-
 
     /**
      * Adds an extension to the Elepy. This module adds extra functionality to Elepy.

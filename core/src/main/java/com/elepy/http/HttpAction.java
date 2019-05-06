@@ -31,6 +31,7 @@ public class HttpAction {
         return new HttpAction(name, slug, requiredPermissions, method, actionType);
     }
 
+
     public String getSlug() {
         return slug;
     }

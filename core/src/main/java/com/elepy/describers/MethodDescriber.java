@@ -1,9 +1,7 @@
 package com.elepy.describers;
 
-import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
-import com.elepy.models.NumberType;
 import com.elepy.models.TextType;
 import com.elepy.utils.MapperUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -57,11 +55,11 @@ public class MethodDescriber {
         } else if (fieldType.equals(FieldType.OBJECT)) {
             fieldMap.put("objectName", method.getReturnType().getSimpleName());
 
-            fieldMap.put("fields", new ClassDescriber(method.getReturnType()).getStructure());
+            fieldMap.put("properties", new ClassDescriber(method.getReturnType()).getStructure());
         } else if (fieldType.equals(FieldType.TEXT)) {
             fieldMap.put("textType", method.getAnnotation(Text.class) != null ? method.getAnnotation(Text.class).value() : TextType.TEXTFIELD);
         } else if (fieldType.equals(FieldType.NUMBER)) {
-            fieldMap.put("numberType", method.getAnnotation(Number.class) != null ? method.getAnnotation(Number.class).value() : NumberType.guessType(method.getReturnType()));
+//            fieldMap.setExtra("numberType", method.getAnnotation(Number.class) != null ? method.getAnnotation(Number.class).value() : NumberType.guessType(method.getReturnType()));
         } else {
             throw new UnsupportedOperationException("Collections are not supported for method annotations.");
         }

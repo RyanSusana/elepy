@@ -10,32 +10,33 @@ import com.elepy.id.IdentityProvider;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class ModelDescription<T> {
 
     private final Class<T> modelType;
     private final IdentityProvider<T> identityProvider;
     private final List<ObjectEvaluator<T>> objectEvaluators;
-    private final String slug;
-    private final String name;
     private final ResourceDescriber<T> resourceDescriber;
-    private final Map<String, Object> jsonDescription;
+    private final RestModelDesc jsonDescription;
     private final RestModel restModelAnnotation;
 
-
     private final List<HttpAction> actions;
+    private final String slug;
+    private final String name;
 
 
-    public ModelDescription(ResourceDescriber<T> resourceDescriber, String slug, String name, Class<T> modelType, IdentityProvider<T> identityProvider, List<ObjectEvaluator<T>> objectEvaluators) {
+    public ModelDescription(ResourceDescriber<T> resourceDescriber, String slug, String name, Class<T> modelType, IdentityProvider<T> identityProvider, List<ObjectEvaluator<T>> objectEvaluators, List<HttpAction> actions) {
         this.modelType = modelType;
         this.identityProvider = identityProvider;
         this.objectEvaluators = objectEvaluators;
         this.slug = slug;
         this.name = name;
         this.resourceDescriber = resourceDescriber;
-        this.actions = new ArrayList<>();
-        this.jsonDescription = generateJsonDescription();
+        this.actions = actions;
+        this.jsonDescription = generateJsonDescription(actions, getDefaultActions());
 
         this.restModelAnnotation = resourceDescriber.getModelType().getAnnotation(RestModel.class);
 
@@ -78,23 +79,20 @@ public class ModelDescription<T> {
     }
 
 
-    public Map<String, Object> getJsonDescription() {
+    public RestModelDesc getJsonDescription() {
         return jsonDescription;
     }
 
-    private Map<String, Object> generateJsonDescription() {
-        Map<String, Object> model = new HashMap<>();
+    private RestModelDesc generateJsonDescription(List<HttpAction> actions, List<HttpAction> defaultActions) {
+        RestModelDesc model = new RestModelDesc();
 
-        model.put("defaultActions", getDefaultActions());
-        model.put("actions", getActions());
-        model.put("slug", this.slug);
-        model.put("name", this.name);
-
-        model.put("javaClass", this.modelType.getName());
-
-
-        model.put("idField", evaluateHasIdField(modelType));
-        model.put("fields", new ClassDescriber(modelType).getStructure());
+        model.setDefaultActions(defaultActions);
+        model.setActions(actions);
+        model.setSlug(this.slug);
+        model.setName(this.name);
+        model.setJavaClass(this.modelType.getName());
+        model.setIdField(evaluateHasIdField(modelType));
+        model.setProperties(StructureDescriber.describeClass(modelType));
         return model;
     }
 
@@ -133,6 +131,7 @@ public class ModelDescription<T> {
     public List<HttpAction> getActions() {
         return actions;
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(modelType);
