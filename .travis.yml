@@ -1,2 +1,4 @@
 language: java
+jdk:
+  - openjdk11
 script: mvn clean test -Pslow
