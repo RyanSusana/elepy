@@ -56,7 +56,7 @@ public class BasicAuthEndToEndTest {
 
     protected UserLoginService mockedLoginService(List<String> permissionsOnLogin) {
 
-        final UserLoginService mock = Mockito.mock(UserLoginService.class);
+        final var mock = Mockito.mock(UserLoginService.class);
 
         Mockito.when(mock.login(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Optional.empty());
         Mockito.when(mock.login("admin", "admin")).thenReturn(Optional.of(new User("admin", "admin", "admin", permissionsOnLogin)));
