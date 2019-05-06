@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,8 +27,8 @@ public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements Fi
     public abstract R map(T object, Request request, Crud<T> crud);
 
     @Override
-    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        mappedFindMany.handleFindMany(context, crud, modelDescription, objectMapper);
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+        mappedFindMany.handleFindMany(context, crud, modelContext, objectMapper);
     }
 
 

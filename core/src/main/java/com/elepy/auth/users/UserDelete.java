@@ -3,7 +3,7 @@ package com.elepy.auth.users;
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class UserDelete implements DeleteHandler<User> {
     @Override
-    public void handleDelete(HttpContext context, Crud<User> crud, ModelDescription<User> modelDescription, ObjectMapper objectMapper) throws Exception {
+    public void handleDelete(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
         final Optional<User> toDelete = crud.getById(context.modelId());
         User loggedInUser = context.request().loggedInUser();
         if (!toDelete.isPresent()) {

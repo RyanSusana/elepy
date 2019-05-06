@@ -3,7 +3,7 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -18,7 +18,7 @@ public class ViewHandler {
 
     private ElepyAdminPanel adminPanel;
 
-    private Map<ModelDescription<?>, RestModelView> models;
+    private Map<ModelContext<?>, RestModelView> models;
 
     public ViewHandler(ElepyAdminPanel adminPanel) {
         this.adminPanel = adminPanel;
@@ -32,7 +32,7 @@ public class ViewHandler {
 
     public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
 
-        for (ModelDescription<?> descriptor : models.keySet()) {
+        for (ModelContext<?> descriptor : models.keySet()) {
             adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
                 response.type("application/json");
                 response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
@@ -86,18 +86,18 @@ public class ViewHandler {
         });
     }
 
-    private Map<ModelDescription<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        Map<ModelDescription<?>, RestModelView> modelsToReturn = new HashMap<>();
-        for (ModelDescription<?> modelDescription : elepyPostConfiguration.getModelDescriptions()) {
+    private Map<ModelContext<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        Map<ModelContext<?>, RestModelView> modelsToReturn = new HashMap<>();
+        for (ModelContext<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
 
-            if (modelDescription.getModelType().isAnnotationPresent(View.class)) {
+            if (modelContext.getModelType().isAnnotationPresent(View.class)) {
 
-                final View annotation = modelDescription.getModelType().getAnnotation(View.class);
+                final View annotation = modelContext.getModelType().getAnnotation(View.class);
                 final RestModelView restModelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
 
-                modelsToReturn.put(modelDescription, restModelView);
+                modelsToReturn.put(modelContext, restModelView);
             } else {
-                modelsToReturn.put(modelDescription, null);
+                modelsToReturn.put(modelContext, null);
             }
         }
         return modelsToReturn;

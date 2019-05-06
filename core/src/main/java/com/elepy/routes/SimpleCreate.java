@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
     @Override
-    public void handleCreate(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+    public void handleCreate(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
 
         try {
 
@@ -29,7 +29,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             beforeCreate(item, dao);
 
-            super.handleCreate(context, dao, modelDescription, objectMapper);
+            super.handleCreate(context, dao, modelContext, objectMapper);
 
             afterCreate(item, dao);
             context.response().status(200);

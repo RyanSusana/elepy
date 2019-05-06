@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +15,6 @@ public interface CreateHandler<T> {
      * @see com.elepy.exceptions.ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    void handleCreate(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception;
+    void handleCreate(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception;
 
 }

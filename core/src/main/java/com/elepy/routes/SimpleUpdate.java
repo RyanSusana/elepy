@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
@@ -23,10 +23,10 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
 
     @Override
-    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
+    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
 
-        T item = objectMapper.readValue(body, modelDescription.getModelType());
+        T item = objectMapper.readValue(body, modelContext.getModelType());
 
         final Optional<Serializable> id = ReflectionUtils.getId(item);
         if (!id.isPresent()) {
@@ -44,14 +44,14 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         T updatedObjectFromRequest = updatedObjectFromRequest(before.get(),
                 context.request(),
                 objectMapper,
-                modelDescription.getModelType());
+                modelContext.getModelType());
 
         final T updated =
                 update(before.get(),
                         updatedObjectFromRequest,
                         dao,
-                        modelDescription.getObjectEvaluators(),
-                        modelDescription.getModelType());
+                        modelContext.getObjectEvaluators(),
+                        modelContext.getModelType());
         afterUpdate(before.get(), updated, dao);
 
         context.response().status(200);
@@ -59,8 +59,8 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
     }
 
     @Override
-    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        super.handleUpdatePut(context, crud, modelDescription, objectMapper);
+    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+        super.handleUpdatePut(context, crud, modelContext, objectMapper);
     }
 
     /**

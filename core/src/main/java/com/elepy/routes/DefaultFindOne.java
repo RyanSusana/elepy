@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
@@ -14,12 +14,12 @@ import java.util.Optional;
 public class DefaultFindOne<T> implements FindOneHandler<T> {
 
     @Override
-    public void handleFindOne(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        T object = findOne(context.request(), context.response(), crud, modelDescription);
+    public void handleFindOne(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+        T object = findOne(context.request(), context.response(), crud, modelContext);
         context.response().result(objectMapper.writeValueAsString(object));
     }
 
-    public T findOne(Request request, Response response, Crud<T> dao, ModelDescription<T> modelDescription) {
+    public T findOne(Request request, Response response, Crud<T> dao, ModelContext<T> modelContext) {
         response.type("application/json");
 
         Serializable paramId = request.modelId();
@@ -30,7 +30,7 @@ public class DefaultFindOne<T> implements FindOneHandler<T> {
             return id.get();
 
         } else {
-            throw new ElepyException(String.format("No %s found", modelDescription.getName()), 404);
+            throw new ElepyException(String.format("No %s found", modelContext.getName()), 404);
         }
     }
 }

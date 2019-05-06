@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class ModelDescription<T> {
+public class ModelContext<T> {
 
     private final Class<T> modelType;
     private final IdentityProvider<T> identityProvider;
@@ -28,7 +28,7 @@ public class ModelDescription<T> {
     private final String name;
 
 
-    public ModelDescription(ResourceDescriber<T> resourceDescriber, String slug, String name, Class<T> modelType, IdentityProvider<T> identityProvider, List<ObjectEvaluator<T>> objectEvaluators, List<HttpAction> actions) {
+    public ModelContext(ResourceDescriber<T> resourceDescriber, String slug, String name, Class<T> modelType, IdentityProvider<T> identityProvider, List<ObjectEvaluator<T>> objectEvaluators, List<HttpAction> actions) {
         this.modelType = modelType;
         this.identityProvider = identityProvider;
         this.objectEvaluators = objectEvaluators;
@@ -113,7 +113,7 @@ public class ModelDescription<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ModelDescription<?> that = (ModelDescription<?>) o;
+        ModelContext<?> that = (ModelContext<?>) o;
         return modelType.equals(that.modelType);
     }
 

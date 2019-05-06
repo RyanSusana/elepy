@@ -8,7 +8,7 @@ import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.CrudProvider;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.describers.ResourceDescriber;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
@@ -48,7 +48,7 @@ public class Elepy implements ElepyContext {
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
-    private final Map<Class<?>, ModelDescription<?>> classModelDescriptionMap;
+    private final Map<Class<?>, ModelContext<?>> classModelDescriptionMap;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
@@ -510,14 +510,14 @@ public class Elepy implements ElepyContext {
      * @return a model description representing everything you need to know about a RestModel
      */
     @SuppressWarnings("unchecked")
-    public <T> ModelDescription<T> getModelDescriptionFor(Class<T> clazz) {
-        return (ModelDescription<T>) classModelDescriptionMap.get(clazz);
+    public <T> ModelContext<T> getModelDescriptionFor(Class<T> clazz) {
+        return (ModelContext<T>) classModelDescriptionMap.get(clazz);
     }
 
     /**
-     * @return All ModelDescription
+     * @return All ModelContext
      */
-    public List<ModelDescription<?>> getModelDescriptions() {
+    public List<ModelContext<?>> getModelDescriptions() {
         return new ArrayList<>(classModelDescriptionMap.values());
     }
 
@@ -561,7 +561,7 @@ public class Elepy implements ElepyContext {
         return models;
     }
 
-    void putModelDescription(ModelDescription<?> clazz) {
+    void putModelDescription(ModelContext<?> clazz) {
         classModelDescriptionMap.put(clazz.getModelType(), clazz);
     }
 
@@ -613,7 +613,7 @@ public class Elepy implements ElepyContext {
         }
 
         registerDependency(Filter.class, "protected", adminFilters);
-        final List<ModelDescription> descriptions = setupPojos(resourceDescribers);
+        final List<ModelContext> descriptions = setupPojos(resourceDescribers);
 
 
         setupAuth();
@@ -671,7 +671,7 @@ public class Elepy implements ElepyContext {
     private void setupExtraRoutes() {
         try {
 
-            for (ModelDescription<?> model : getModelDescriptions()) {
+            for (ModelContext<?> model : getModelDescriptions()) {
                 final ExtraRoutes extraRoutesAnnotation = model.getModelType().getAnnotation(ExtraRoutes.class);
 
                 if (extraRoutesAnnotation != null) {
@@ -716,8 +716,8 @@ public class Elepy implements ElepyContext {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ModelDescription> setupPojos(Set<ResourceDescriber> modelDescribers) {
-        List<ModelDescription> descriptorList = new ArrayList<>();
+    private List<ModelContext> setupPojos(Set<ResourceDescriber> modelDescribers) {
+        List<ModelContext> descriptorList = new ArrayList<>();
 
 
         modelDescribers.forEach(ResourceDescriber::setupDao);
@@ -725,7 +725,7 @@ public class Elepy implements ElepyContext {
 
         modelDescribers.forEach(restModel -> {
             ModelRouteIgniter modelRouteIgniter = new ModelRouteIgniter(Elepy.this, restModel);
-            final ModelDescription map = modelRouteIgniter.ignite();
+            final ModelContext map = modelRouteIgniter.ignite();
             descriptorList.add(map);
 
             Elepy.this.putModelDescription(map);
@@ -786,11 +786,11 @@ public class Elepy implements ElepyContext {
         });
     }
 
-    private void setupDescriptors(List<ModelDescription> descriptors) {
+    private void setupDescriptors(List<ModelContext> descriptors) {
         http.before(configSlug, ctx -> getAllAdminFilters().authenticate(ctx));
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
-            response.result(context.getObjectMapper().writeValueAsString(descriptors.stream().map(ModelDescription::getJsonDescription).collect(Collectors.toList())));
+            response.result(context.getObjectMapper().writeValueAsString(descriptors.stream().map(ModelContext::getJsonDescription).collect(Collectors.toList())));
         });
     }
 

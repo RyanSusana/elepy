@@ -2,7 +2,7 @@ package com.elepy.routes;
 
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +18,8 @@ import java.util.List;
 public abstract class MappedFindMany<T, R> extends DefaultFindMany<T> {
 
     @Override
-    public void handleFindMany(HttpContext context, Crud<T> crud, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        Page<T> page = find(context.request(), context.response(), crud, modelDescription);
+    public void handleFindMany(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+        Page<T> page = find(context.request(), context.response(), crud, modelContext);
 
         List<R> filteredValues = mapValues(page.getValues(), context.request(), crud);
 

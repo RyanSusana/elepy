@@ -1,7 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -113,12 +113,12 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
     }
 
     @Override
-    public void handleUpdatePut(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
+    public void handleUpdatePut(HttpContext httpContext, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, modelContext.getObjectEvaluators(), modelContext.getModelType(), objectMapper);
     }
 
     @Override
-    public void handleUpdatePatch(HttpContext httpContext, Crud<T> dao, ModelDescription<T> modelDescription, ObjectMapper objectMapper) throws Exception {
-        this.update(httpContext.request(), httpContext.response(), dao, modelDescription.getObjectEvaluators(), modelDescription.getModelType(), objectMapper);
+    public void handleUpdatePatch(HttpContext httpContext, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+        this.update(httpContext.request(), httpContext.response(), dao, modelContext.getObjectEvaluators(), modelContext.getModelType(), objectMapper);
     }
 }

@@ -3,7 +3,7 @@ package com.elepy.igniters;
 import com.elepy.Elepy;
 import com.elepy.annotations.Action;
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpAction;
@@ -60,8 +60,8 @@ public class ActionIgniter<T> {
                         .route(ctx -> {
                             ctx.attribute("action", action);
                             ctx.result(Message.of("Executed action", 200));
-                            final ModelDescription<T> modelDescription = elepy.getModelDescriptionFor(modelType);
-                            actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelType), crud, modelDescription, elepy.getObjectMapper());
+                            final ModelContext<T> modelContext = elepy.getModelDescriptionFor(modelType);
+                            actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelType), crud, modelContext, elepy.getObjectMapper());
                         });
 
                 //add two routes for multi select and single select.

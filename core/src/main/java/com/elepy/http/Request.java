@@ -3,7 +3,7 @@ package com.elepy.http;
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.*;
-import com.elepy.describers.ModelDescription;
+import com.elepy.describers.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -154,7 +154,7 @@ public interface Request {
     }
 
 
-    default List<PropertySort> sortingForModel(ModelDescription<?> restModelType) {
+    default List<PropertySort> sortingForModel(ModelContext<?> restModelType) {
         String[] sorts = queryParamValues("sort");
 
         List<PropertySort> propertySorts = new ArrayList<>();
