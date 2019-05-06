@@ -125,11 +125,6 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
         this.description = annotation.description();
     }
 
-    private void setupActions() {
-
-
-    }
-
 
     @SuppressWarnings("unchecked")
     private void routeAnnotations() throws IllegalAccessException, InvocationTargetException, InstantiationException {
