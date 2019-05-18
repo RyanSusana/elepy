@@ -7,6 +7,7 @@ import com.elepy.http.ActionType;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
 import com.elepy.id.IdentityProvider;
+import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -92,7 +93,7 @@ public class ModelContext<T> {
         model.setName(this.name);
         model.setJavaClass(this.modelType.getName());
         model.setIdField(evaluateHasIdField(modelType));
-        model.setProperties(StructureDescriber.describeClass(modelType));
+        model.setProperties(ModelUtils.describeClass(modelType));
         return model;
     }
 

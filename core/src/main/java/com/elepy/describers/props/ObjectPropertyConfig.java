@@ -1,8 +1,8 @@
 package com.elepy.describers.props;
 
 import com.elepy.describers.Property;
-import com.elepy.describers.StructureDescriber;
 import com.elepy.models.FieldType;
+import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AccessibleObject;
@@ -19,7 +19,7 @@ public class ObjectPropertyConfig implements PropertyConfig {
 
     public static ObjectPropertyConfig of(AccessibleObject field) {
         Class<?> objectType = ReflectionUtils.returnType(field);
-        return new ObjectPropertyConfig(objectType.getSimpleName(), StructureDescriber.describeClass(objectType));
+        return new ObjectPropertyConfig(objectType.getSimpleName(), ModelUtils.describeClass(objectType));
     }
 
     public static ObjectPropertyConfig of(Property property) {

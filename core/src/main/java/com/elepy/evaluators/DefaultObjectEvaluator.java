@@ -1,12 +1,12 @@
 package com.elepy.evaluators;
 
 import com.elepy.describers.Property;
-import com.elepy.describers.StructureDescriber;
 import com.elepy.describers.props.DatePropertyConfig;
 import com.elepy.describers.props.NumberPropertyConfig;
 import com.elepy.describers.props.TextPropertyConfig;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
+import com.elepy.utils.ModelUtils;
 
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -21,7 +21,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
         for (Field field : c.getDeclaredFields()) {
             field.setAccessible(true);
-            var fieldDescriber = StructureDescriber.describeFieldOrMethod(field);
+            var fieldDescriber = ModelUtils.describeFieldOrMethod(field);
 
             if (fieldDescriber.getType().equals(FieldType.OBJECT)) {
                 if (field.get(o) != null)

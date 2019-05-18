@@ -1,29 +1,28 @@
-package com.elepy.describers;
+package com.elepy.utils;
 
 import com.elepy.annotations.*;
+import com.elepy.describers.Property;
 import com.elepy.describers.props.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
-import com.elepy.utils.ReflectionUtils;
 
 import javax.persistence.Column;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class StructureDescriber {
+public class ModelUtils {
 
     public static Set<Property> describeClass(Class cls) {
         return Stream.concat(
                 Stream.of(cls.getDeclaredFields())
                         .filter(field -> !field.isAnnotationPresent(Hidden.class))
-                        .map(StructureDescriber::describeFieldOrMethod),
+                        .map(ModelUtils::describeFieldOrMethod),
                 Stream.of(cls.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(Generated.class))
-                        .map(StructureDescriber::describeFieldOrMethod)
+                        .map(ModelUtils::describeFieldOrMethod)
         ).collect(Collectors.toSet());
     }
 
@@ -41,7 +40,6 @@ public class StructureDescriber {
 
         final Column column = accessibleObject.getAnnotation(Column.class);
         final Importance importance = accessibleObject.getAnnotation(Importance.class);
-
 
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
         property.setPrettyName(ReflectionUtils.getPrettyName(accessibleObject));
@@ -80,15 +78,4 @@ public class StructureDescriber {
 
     }
 
-    private String evaluateHasIdField(Class cls) {
-
-        Field field = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
-
-        if (!Arrays.asList(Long.class, String.class, Integer.class).contains(org.apache.commons.lang3.ClassUtils.primitivesToWrappers(field.getType())[0])) {
-            throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
-        }
-
-        return ReflectionUtils.getPropertyName(field);
-
-    }
-} 
+}
