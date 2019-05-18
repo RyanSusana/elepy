@@ -36,7 +36,7 @@ public class ViewHandler {
             adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
                 response.type("application/json");
                 response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
-                        descriptor.getJsonDescription()
+                        descriptor.getModel()
                 ));
             });
         }
@@ -48,7 +48,7 @@ public class ViewHandler {
                 adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
                     Map<String, Object> model = new HashMap<>();
-                    model.put("currentDescriptor", modelDescription.getJsonDescription());
+                    model.put("currentDescriptor", modelDescription.getModel());
                     response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
                 });
             } else {
@@ -79,7 +79,7 @@ public class ViewHandler {
                         return "";
                     }).collect(Collectors.toSet()));
                     model.put("content", document.body().html());
-                    model.put("currentDescriptor", modelDescription.getJsonDescription());
+                    model.put("currentDescriptor", modelDescription.getModel());
                     response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
                 });
             }

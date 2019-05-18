@@ -790,7 +790,7 @@ public class Elepy implements ElepyContext {
         http.before(configSlug, ctx -> getAllAdminFilters().authenticate(ctx));
         http.get(configSlug, (request, response) -> {
             response.type("application/json");
-            response.result(context.getObjectMapper().writeValueAsString(descriptors.stream().map(ModelContext::getJsonDescription).collect(Collectors.toList())));
+            response.result(context.getObjectMapper().writeValueAsString(descriptors.stream().map(ModelContext::getModel).collect(Collectors.toList())));
         });
     }
 

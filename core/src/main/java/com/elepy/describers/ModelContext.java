@@ -20,7 +20,7 @@ public class ModelContext<T> {
     private final IdentityProvider<T> identityProvider;
     private final List<ObjectEvaluator<T>> objectEvaluators;
     private final ResourceDescriber<T> resourceDescriber;
-    private final ModelDescription jsonDescription;
+    private final Model model;
     private final RestModel restModelAnnotation;
 
     private final List<HttpAction> actions;
@@ -36,7 +36,7 @@ public class ModelContext<T> {
         this.name = name;
         this.resourceDescriber = resourceDescriber;
         this.actions = actions;
-        this.jsonDescription = generateJsonDescription(actions, getDefaultActions());
+        this.model = generateJsonDescription(actions, getDefaultActions());
 
         this.restModelAnnotation = resourceDescriber.getModelType().getAnnotation(RestModel.class);
 
@@ -79,12 +79,12 @@ public class ModelContext<T> {
     }
 
 
-    public ModelDescription getJsonDescription() {
-        return jsonDescription;
+    public Model getModel() {
+        return model;
     }
 
-    private ModelDescription generateJsonDescription(List<HttpAction> actions, List<HttpAction> defaultActions) {
-        ModelDescription model = new ModelDescription();
+    private Model generateJsonDescription(List<HttpAction> actions, List<HttpAction> defaultActions) {
+        Model model = new Model();
 
         model.setDefaultActions(defaultActions);
         model.setActions(actions);

@@ -5,7 +5,7 @@ import com.elepy.http.HttpAction;
 import java.util.List;
 import java.util.Set;
 
-public class ModelDescription {
+public class Model {
 
 
     private String name;
