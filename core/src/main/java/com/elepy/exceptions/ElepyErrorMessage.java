@@ -15,6 +15,12 @@ public class ElepyErrorMessage extends RuntimeException {
         this.status = status;
     }
 
+    public ElepyErrorMessage(String message, int status, Throwable cause) {
+        super(message, cause);
+        this.message = message;
+        this.status = status;
+    }
+
     @Override
     public String getMessage() {
         return message;
