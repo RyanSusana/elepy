@@ -5,7 +5,7 @@ import com.elepy.describers.ModelContext;
 import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public interface FindOneHandler<T> {
+public interface FindOneHandler<T> extends BaseHandler<T> {
 
     /**
      * This handles the functionality of finding a model by it's ID, or some self-defined domain specification

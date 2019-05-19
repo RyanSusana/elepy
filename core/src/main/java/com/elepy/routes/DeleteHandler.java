@@ -6,7 +6,7 @@ import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-public interface DeleteHandler<T> {
+public interface DeleteHandler<T> extends BaseHandler<T> {
     /**
      * This handles the functionality of model deletion.
      *

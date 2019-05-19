@@ -6,7 +6,7 @@ import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-public interface UpdateHandler<T> {
+public interface UpdateHandler<T> extends BaseHandler<T> {
     /**
      * This handles the functionality of model updates.
      * <p>

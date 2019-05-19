@@ -5,7 +5,7 @@ import com.elepy.describers.ModelContext;
 import com.elepy.http.HttpContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public interface CreateHandler<T> {
+public interface CreateHandler<T> extends BaseHandler<T> {
 
     /**
      * This handles the functionality of model creation.
