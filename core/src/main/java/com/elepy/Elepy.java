@@ -639,23 +639,19 @@ public class Elepy implements ElepyContext {
 
     // TODO figure out a better way to handle authentication
     private void setupAuth() {
-        try {
-            this.registerDependency(this.initializeElepyObject(UserLoginService.class));
-            final TokenAuthenticationMethod tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
+        this.registerDependency(this.initializeElepyObject(UserLoginService.class));
+        final TokenAuthenticationMethod tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
 
-            registerDependency(tokenAuthenticationMethod);
-            http.get("/elepy-login-check", ctx -> {
-                userAuthenticationCenter.tryToLogin(ctx.request());
-                ctx.result(Message.of("Your are logged in", 200));
+        registerDependency(tokenAuthenticationMethod);
+        http.get("/elepy-login-check", ctx -> {
+            userAuthenticationCenter.tryToLogin(ctx.request());
+            ctx.result(Message.of("Your are logged in", 200));
 
-            });
-            userLogin().addAuthenticationMethod(tokenAuthenticationMethod);
+        });
+        userLogin().addAuthenticationMethod(tokenAuthenticationMethod);
 
-            http.post("elepy-token-login", tokenAuthenticationMethod::tokenLogin);
-            userLogin().addAuthenticationMethod(this.initializeElepyObject(BasicAuthenticationMethod.class));
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed to add auth");
-        }
+        http.post("elepy-token-login", tokenAuthenticationMethod::tokenLogin);
+        userLogin().addAuthenticationMethod(this.initializeElepyObject(BasicAuthenticationMethod.class));
     }
 
     private void injectModules() {
@@ -669,42 +665,34 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupExtraRoutes() {
-        try {
 
-            for (ModelContext<?> model : getModelDescriptions()) {
-                final ExtraRoutes extraRoutesAnnotation = model.getModelType().getAnnotation(ExtraRoutes.class);
+        for (ModelContext<?> model : getModelDescriptions()) {
+            final ExtraRoutes extraRoutesAnnotation = model.getModelType().getAnnotation(ExtraRoutes.class);
 
-                if (extraRoutesAnnotation != null) {
-                    for (Class<?> aClass : extraRoutesAnnotation.value()) {
-                        addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(aClass)));
-                    }
+            if (extraRoutesAnnotation != null) {
+                for (Class<?> aClass : extraRoutesAnnotation.value()) {
+                    addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(aClass)));
                 }
             }
-            for (Class<?> routingClass : routingClasses) {
-                addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(routingClass)));
-            }
-
-
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed creating extra Routes: " + e.getMessage());
         }
+        for (Class<?> routingClass : routingClasses) {
+            addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(routingClass)));
+        }
+
+
     }
 
     private void setupFilters() {
-        try {
-//            for (Filter adminFilter : adminFilters) {
+        //            for (Filter adminFilter : adminFilters) {
 //                //context.injectFields(adminFilter);
 //                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
 //            }
-            for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
-                Filter filter = initializeElepyObject(adminFilterClass);
-                adminFilters.add(filter);
-                addRouting(ReflectionUtils.scanForRoutes(filter));
-            }
-
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed creating extra Filters: " + e.getMessage());
+        for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
+            Filter filter = initializeElepyObject(adminFilterClass);
+            adminFilters.add(filter);
+            addRouting(ReflectionUtils.scanForRoutes(filter));
         }
+
     }
 
     private void igniteAllRoutes() {
