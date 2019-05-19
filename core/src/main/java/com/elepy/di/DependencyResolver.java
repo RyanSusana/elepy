@@ -13,15 +13,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-class UnsatisfiedDependencies {
-    private static final Logger logger = LoggerFactory.getLogger(UnsatisfiedDependencies.class);
+class DependencyResolver {
+    private static final Logger logger = LoggerFactory.getLogger(DependencyResolver.class);
     private final DefaultElepyContext elepyContext;
     private final Set<Class> scannedClasses = new HashSet<>();
     private Set<ContextKey> unsatisfiedKeys = new HashSet<>();
     private Set<ContextKey> allDependencies = new HashSet<>();
 
 
-    UnsatisfiedDependencies(DefaultElepyContext elepyContext) {
+    DependencyResolver(DefaultElepyContext elepyContext) {
         this.elepyContext = elepyContext;
     }
 
@@ -42,7 +42,7 @@ class UnsatisfiedDependencies {
         } else {
             type = annotation.type();
         }
-        return new ContextKey<>(type, ElepyContext.getTag(field));
+        return new ContextKey<>(type, ReflectionUtils.getDependencyTag(field));
 
     }
 
@@ -65,7 +65,7 @@ class UnsatisfiedDependencies {
 
         Optional<Constructor<?>> elepyAnnotatedConstructor =
 
-                ElepyContext.getElepyAnnotatedConstructor(root);
+                ReflectionUtils.getElepyAnnotatedConstructor(root);
 
         if (elepyAnnotatedConstructor.isPresent()) {
             for (Parameter constructorParam : elepyAnnotatedConstructor.get().getParameters()) {
@@ -113,7 +113,7 @@ class UnsatisfiedDependencies {
         for (ContextKey contextKey : unsatisfiedKeys) {
             try {
                 Object o = elepyContext.initializeElepyObject(contextKey.getType());
-                ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), ElepyContext.getTag(contextKey.getType()));
+                ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), ReflectionUtils.getDependencyTag(contextKey.getType()));
                 elepyContext.registerDependency(objectContextKey.getType(), objectContextKey.getTag(), o);
 
 

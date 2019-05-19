@@ -12,15 +12,17 @@ public class DefaultElepyContext implements ElepyContext {
 
     private final Map<ContextKey, Object> contextMap;
 
-    private UnsatisfiedDependencies unsatisfiedDependencies;
+    private final Injector injector;
 
     private List<ContextKey> preInitialisedDependencies;
     private boolean strictMode = false;
+    private DependencyResolver dependencyResolver;
 
     public DefaultElepyContext() {
         this.contextMap = new HashMap<>();
-        this.unsatisfiedDependencies = new UnsatisfiedDependencies(this);
-        preInitialisedDependencies = new ArrayList<>();
+        this.dependencyResolver = new DependencyResolver(this);
+        this.preInitialisedDependencies = new ArrayList<>();
+        this.injector = new Injector(this);
     }
 
     public <T> void registerDependency(Class<T> cls, T object) {
@@ -90,7 +92,7 @@ public class DefaultElepyContext implements ElepyContext {
 
 
     public void registerDependency(Class<?> clazz) {
-        registerDependency(clazz, ElepyContext.getTag(clazz));
+        registerDependency(clazz, ReflectionUtils.getDependencyTag(clazz));
     }
 
     public void registerDependency(Class<?> clazz, String tag) {
@@ -98,7 +100,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public void registerDependency(ContextKey contextKey) {
-        unsatisfiedDependencies.add(contextKey);
+        dependencyResolver.add(contextKey);
         if (strictMode) {
             resolveDependencies();
         }
@@ -109,18 +111,14 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public void resolveDependencies() {
-        unsatisfiedDependencies.tryToSatisfy();
+        dependencyResolver.tryToSatisfy();
         injectPreInitializedDependencies();
     }
 
     private void injectPreInitializedDependencies() {
         for (ContextKey preInitialisedDependency : preInitialisedDependencies) {
             if (!ReflectionUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getType(), Inject.class).isEmpty()) {
-                try {
-                    this.injectFields(contextMap.get(preInitialisedDependency));
-                } catch (IllegalAccessException ignored) {
-                    //Will never be thrown
-                }
+                injector.injectFields(contextMap.get(preInitialisedDependency));
             }
         }
     }
@@ -132,6 +130,11 @@ public class DefaultElepyContext implements ElepyContext {
     @Override
     public Set<ContextKey> getDependencyKeys() {
         return contextMap.keySet();
+    }
+
+    @Override
+    public <T> T initializeElepyObject(Class<? extends T> cls) {
+        return injector.initializeAndInject(cls);
     }
 
 

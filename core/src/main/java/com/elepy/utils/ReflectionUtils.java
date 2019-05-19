@@ -1,10 +1,9 @@
 package com.elepy.utils;
 
-import com.elepy.annotations.Identifier;
-import com.elepy.annotations.PrettyName;
-import com.elepy.annotations.Unique;
+import com.elepy.annotations.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Route;
 import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,10 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -261,4 +257,53 @@ public class ReflectionUtils {
         return toReturn;
     }
 
+
+    /**
+     * Tries to get a tag from a {@link Field} or {@link Parameter}, defaults to null
+     *
+     * @param type Field or Parameter
+     * @return the guessed field
+     */
+    public static String getDependencyTag(AnnotatedElement type) {
+        Inject injectAnnotation = type.getAnnotation(Inject.class);
+
+        if (injectAnnotation != null && !injectAnnotation.tag().isEmpty()) {
+            return injectAnnotation.tag();
+        }
+
+        Tag tag = type.getAnnotation(Tag.class);
+        if (tag != null && !tag.value().isEmpty()) {
+            return tag.value();
+        }
+
+        if (type instanceof Field) {
+            Class<?> fieldType = ((Field) type).getType();
+
+            tag = fieldType.getAnnotation(Tag.class);
+            if (tag != null) {
+                return tag.value();
+            }
+            try {
+                final Class<?> genericType = (Class) ((ParameterizedType) ((Field) type).getGenericType()).getActualTypeArguments()[0];
+                if (genericType != null) {
+                    RestModel restModel = genericType.getAnnotation(RestModel.class);
+                    if (restModel != null) {
+                        return restModel.slug();
+                    }
+                }
+            } catch (ClassCastException ignored) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
+        for (Constructor constructor : cls.getConstructors()) {
+            if (constructor.isAnnotationPresent(ElepyConstructor.class)) {
+                return Optional.of((Constructor<T>) constructor);
+            }
+        }
+        return Optional.empty();
+    }
 }
