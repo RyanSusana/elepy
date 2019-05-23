@@ -12,7 +12,7 @@ import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationCenter;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelContext;
+import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Filter;
 import com.elepy.http.HttpContextHandler;
@@ -45,7 +45,7 @@ public class ElepyAdminPanel implements ElepyModule {
     private HttpService http;
     private PebbleEngine engine;
 
-    private List<ModelContext<?>> modelContexts;
+    private List<Model<?>> modelContexts;
 
 
     private NoUserFoundHandler noUserFoundHandler;

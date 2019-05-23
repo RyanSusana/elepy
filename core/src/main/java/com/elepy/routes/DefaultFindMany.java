@@ -32,7 +32,7 @@ public class DefaultFindMany<T> implements FindManyHandler<T> {
 
         response.status(200);
 
-        return dao.search(new Query(q, request.filtersForModel(modelContext.getModelType())), new PageSettings(pageNumber, pageSize, request.sortingForModel(modelContext)));
+        return dao.search(new Query(q, request.filtersForModel(modelContext.getModelType())), new PageSettings(pageNumber, pageSize, request.sortingForModel(modelContext.getModel())));
     }
 
 

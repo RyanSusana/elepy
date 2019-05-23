@@ -1,6 +1,5 @@
 package com.elepy;
 
-import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.RestModel;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationCenter;
@@ -8,8 +7,7 @@ import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.CrudProvider;
-import com.elepy.describers.ModelContext;
-import com.elepy.describers.ResourceDescriber;
+import com.elepy.describers.Model;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
@@ -20,7 +18,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
-import com.elepy.igniters.ModelRouteIgniter;
+import com.elepy.igniters.ModelEngine;
 import com.elepy.igniters.UploadIgniter;
 import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
@@ -34,7 +32,6 @@ import spark.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -48,7 +45,6 @@ public class Elepy implements ElepyContext {
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
-    private final Map<Class<?>, ModelContext<?>> classModelDescriptionMap;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
@@ -57,6 +53,7 @@ public class Elepy implements ElepyContext {
     private boolean initialized = false;
     private Class<? extends CrudProvider> defaultCrudProvider;
     private List<Class<?>> routingClasses;
+    private ModelEngine modelEngine;
 
     private FileService fileService = null;
 
@@ -86,8 +83,8 @@ public class Elepy implements ElepyContext {
         this.routes = new ArrayList<>();
         this.routingClasses = new ArrayList<>();
         this.adminFilterClasses = new ArrayList<>();
+        this.modelEngine = new ModelEngine(this);
 
-        this.classModelDescriptionMap = new HashMap<>();
         withBaseObjectEvaluator(new DefaultObjectEvaluator<>());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         getObjectMapper()
@@ -180,6 +177,11 @@ public class Elepy implements ElepyContext {
     @Override
     public Set<ContextKey> getDependencyKeys() {
         return context.getDependencyKeys();
+    }
+
+    @Override
+    public <T> T initializeElepyObject(Class<? extends T> cls) {
+        return context.initializeElepyObject(cls);
     }
 
     /**
@@ -400,7 +402,6 @@ public class Elepy implements ElepyContext {
     }
 
 
-
     /**
      * Change the port Elepy listens on.
      *
@@ -510,15 +511,15 @@ public class Elepy implements ElepyContext {
      * @return a model description representing everything you need to know about a RestModel
      */
     @SuppressWarnings("unchecked")
-    public <T> ModelContext<T> getModelDescriptionFor(Class<T> clazz) {
-        return (ModelContext<T>) classModelDescriptionMap.get(clazz);
+    public <T> Model<T> getModelDescriptionFor(Class<T> clazz) {
+        return modelEngine.getModelForClass(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<ModelContext<?>> getModelDescriptions() {
-        return new ArrayList<>(classModelDescriptionMap.values());
+    public List<Model<?>> getModelDescriptions() {
+        return modelEngine.getModels();
     }
 
 
@@ -561,9 +562,6 @@ public class Elepy implements ElepyContext {
         return models;
     }
 
-    void putModelDescription(ModelContext<?> clazz) {
-        classModelDescriptionMap.put(clazz.getModelType(), clazz);
-    }
 
     private void retrievePackageModels() {
 
@@ -606,20 +604,13 @@ public class Elepy implements ElepyContext {
 
         new UploadIgniter(this.http, getObjectMapper(), this.fileService).ignite();
 
-        Set<ResourceDescriber> resourceDescribers = new TreeSet<>();
-
-        for (Class<?> model : models) {
-            resourceDescribers.add(new ResourceDescriber<>(this, model));
-        }
-
         registerDependency(Filter.class, "protected", adminFilters);
-        final List<ModelContext> descriptions = setupPojos(resourceDescribers);
+
+        models.forEach(modelEngine::addModel);
 
 
         setupAuth();
         context.resolveDependencies();
-
-        setupDescriptors(descriptions);
 
 
         setupFilters();
@@ -665,20 +656,9 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupExtraRoutes() {
-
-        for (ModelContext<?> model : getModelDescriptions()) {
-            final ExtraRoutes extraRoutesAnnotation = model.getModelType().getAnnotation(ExtraRoutes.class);
-
-            if (extraRoutesAnnotation != null) {
-                for (Class<?> aClass : extraRoutesAnnotation.value()) {
-                    addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(aClass)));
-                }
-            }
-        }
         for (Class<?> routingClass : routingClasses) {
             addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(routingClass)));
         }
-
 
     }
 
@@ -703,24 +683,6 @@ public class Elepy implements ElepyContext {
         http.ignite();
     }
 
-    @SuppressWarnings("unchecked")
-    private List<ModelContext> setupPojos(Set<ResourceDescriber> modelDescribers) {
-        List<ModelContext> descriptorList = new ArrayList<>();
-
-
-        modelDescribers.forEach(ResourceDescriber::setupDao);
-        modelDescribers.forEach(ResourceDescriber::setupAnnotations);
-
-        modelDescribers.forEach(restModel -> {
-            ModelRouteIgniter modelRouteIgniter = new ModelRouteIgniter(Elepy.this, restModel);
-            final ModelContext map = modelRouteIgniter.ignite();
-            descriptorList.add(map);
-
-            Elepy.this.putModelDescription(map);
-        });
-
-        return descriptorList;
-    }
 
     private void setupLoggingAndExceptions() {
         http.before((request, response) -> {
@@ -771,14 +733,6 @@ public class Elepy implements ElepyContext {
             } catch (JsonProcessingException e) {
                 logger.error(e.getMessage(), e);
             }
-        });
-    }
-
-    private void setupDescriptors(List<ModelContext> descriptors) {
-        http.before(configSlug, ctx -> getAllAdminFilters().authenticate(ctx));
-        http.get(configSlug, (request, response) -> {
-            response.type("application/json");
-            response.result(context.getObjectMapper().writeValueAsString(descriptors.stream().map(ModelContext::getModel).collect(Collectors.toList())));
         });
     }
 

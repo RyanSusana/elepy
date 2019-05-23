@@ -3,7 +3,7 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
-import com.elepy.describers.ModelContext;
+import com.elepy.describers.Model;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -18,7 +18,7 @@ public class ViewHandler {
 
     private ElepyAdminPanel adminPanel;
 
-    private Map<ModelContext<?>, RestModelView> models;
+    private Map<Model<?>, RestModelView> models;
 
     public ViewHandler(ElepyAdminPanel adminPanel) {
         this.adminPanel = adminPanel;
@@ -32,11 +32,11 @@ public class ViewHandler {
 
     public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
 
-        for (ModelContext<?> descriptor : models.keySet()) {
+        for (Model<?> descriptor : models.keySet()) {
             adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
                 response.type("application/json");
                 response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
-                        descriptor.getModel()
+                        descriptor
                 ));
             });
         }
@@ -48,7 +48,7 @@ public class ViewHandler {
                 adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
                     Map<String, Object> model = new HashMap<>();
-                    model.put("currentDescriptor", modelDescription.getModel());
+                    model.put("currentDescriptor", modelDescription);
                     response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
                 });
             } else {
@@ -79,20 +79,20 @@ public class ViewHandler {
                         return "";
                     }).collect(Collectors.toSet()));
                     model.put("content", document.body().html());
-                    model.put("currentDescriptor", modelDescription.getModel());
+                    model.put("currentDescriptor", modelDescription);
                     response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
                 });
             }
         });
     }
 
-    private Map<ModelContext<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        Map<ModelContext<?>, RestModelView> modelsToReturn = new HashMap<>();
-        for (ModelContext<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
+    private Map<Model<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        Map<Model<?>, RestModelView> modelsToReturn = new HashMap<>();
+        for (Model<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
 
-            if (modelContext.getModelType().isAnnotationPresent(View.class)) {
+            if (modelContext.getJavaClass().isAnnotationPresent(View.class)) {
 
-                final View annotation = modelContext.getModelType().getAnnotation(View.class);
+                final View annotation = modelContext.getJavaClass().getAnnotation(View.class);
                 final RestModelView restModelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
 
                 modelsToReturn.put(modelContext, restModelView);

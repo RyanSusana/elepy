@@ -115,6 +115,10 @@ public class DefaultElepyContext implements ElepyContext {
         injectPreInitializedDependencies();
     }
 
+    public void injectFields(Object object) {
+        injector.injectFields(object);
+    }
+
     private void injectPreInitializedDependencies() {
         for (ContextKey preInitialisedDependency : preInitialisedDependencies) {
             if (!ReflectionUtils.searchForFieldsWithAnnotation(preInitialisedDependency.getType(), Inject.class).isEmpty()) {

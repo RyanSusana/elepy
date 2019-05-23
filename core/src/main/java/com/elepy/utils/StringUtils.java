@@ -1,13 +1,31 @@
 package com.elepy.utils;
 
+import com.github.slugify.Slugify;
+
 import java.util.Random;
 
 public class StringUtils {
 
     private static Random random = new Random();
+    private static final Slugify slugify = new Slugify();
 
     private StringUtils() {
 
+    }
+
+    public static String slugify(String toSlugify) {
+        return slugify.slugify(toSlugify);
+    }
+
+    public static String getOrDefault(String toGet, String defaultValue) {
+        if (isEmpty(toGet)) {
+            return defaultValue;
+        }
+        return toGet;
+    }
+
+    public static boolean isEmpty(String s) {
+        return s == null || s.isBlank();
     }
 
     public static String getRandomHexString(int numchars) {

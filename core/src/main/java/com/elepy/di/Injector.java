@@ -61,7 +61,7 @@ public class Injector {
         for (Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             if (field.getType().equals(ElepyContext.class) && field.get(object) == null) {
-                field.set(object, this);
+                field.set(object, elepyContext);
             }
         }
     }

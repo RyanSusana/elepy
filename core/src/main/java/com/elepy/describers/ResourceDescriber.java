@@ -39,11 +39,9 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     public ResourceDescriber(Elepy elepy, Class<T> clazz) {
         this.classType = clazz;
         this.elepy = elepy;
-        try {
-            this.baseAnnotations();
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new ElepyConfigException("(" + clazz.getName() + ") Failed to setup @RestModel: " + e.getMessage());
-        }
+
+        this.baseAnnotations();
+
 
     }
 
@@ -60,29 +58,25 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     }
 
     public void setupDao() {
-        try {
-            final DaoProvider annotation = classType.getAnnotation(DaoProvider.class);
-            final Crud<T> crud;
+        final DaoProvider annotation = classType.getAnnotation(DaoProvider.class);
+        final Crud<T> crud;
 
-            if (annotation == null) {
-                crudProvider = elepy.initializeElepyObject(elepy.getDefaultCrudProvider());
-            } else {
-                crudProvider = elepy.initializeElepyObject(annotation.value());
-            }
-
-            final Dao daoAnnotation = classType.getAnnotation(Dao.class);
-            if (daoAnnotation != null) {
-                crud = elepy.initializeElepyObject(daoAnnotation.value());
-            } else {
-                crud = crudProvider.crudFor(classType);
-            }
-
-
-            elepy.registerDependency(Crud.class, slug, crud);
-            elepy.registerDependency(CrudProvider.class, slug, crudProvider);
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed to setup DAO: " + e.getMessage());
+        if (annotation == null) {
+            crudProvider = elepy.initializeElepyObject(elepy.getDefaultCrudProvider());
+        } else {
+            crudProvider = elepy.initializeElepyObject(annotation.value());
         }
+
+        final Dao daoAnnotation = classType.getAnnotation(Dao.class);
+        if (daoAnnotation != null) {
+            crud = elepy.initializeElepyObject(daoAnnotation.value());
+        } else {
+            crud = crudProvider.crudFor(classType);
+        }
+
+
+        elepy.registerDependency(Crud.class, slug, crud);
+        elepy.registerDependency(CrudProvider.class, slug, crudProvider);
 
     }
 
@@ -104,7 +98,7 @@ public class ResourceDescriber<T> implements Comparable<ResourceDescriber> {
     }
 
     @SuppressWarnings("unchecked")
-    private void baseAnnotations() throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    private void baseAnnotations() {
         final RestModel annotation = classType.getAnnotation(RestModel.class);
 
         if (annotation == null) {

@@ -1,9 +1,9 @@
 package com.elepy.admin.concepts;
 
-import com.elepy.describers.ModelContext;
+import com.elepy.describers.Model;
 
 public interface RestModelView {
 
-    String renderView(ModelContext descriptor);
+    String renderView(Model descriptor);
 
 }
