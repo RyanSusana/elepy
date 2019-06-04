@@ -7,7 +7,7 @@
     <groupId>com.elepy</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0-beta-10</version>
+    <version>2.0.0-beta-11</version>
 
     <name>Elepy</name>
     <description>A Restful API generator and Headless CMS</description>
@@ -78,6 +78,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <javadocVersion>11</javadocVersion>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -134,9 +138,7 @@
         </profile>
         <profile>
             <id>sign-artifacts</id>
-            <properties>
-                <exclude.tests>dont-exclude-anything</exclude.tests>
-            </properties>
+
             <activation>
                 <property>
                     <name>sign</name>

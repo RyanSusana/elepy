@@ -42,8 +42,8 @@ public class DatePropertyConfig implements PropertyConfig {
         property.setType(FieldType.DATE);
 
         property.setExtra("includeTime", includeTime);
-        property.setExtra("minimumDate", formatForCMS(minimumDate));
-        property.setExtra("maximumDate", formatForCMS(maximumDate));
+        property.setExtra("minimumDate", minimumDate);
+        property.setExtra("maximumDate", maximumDate);
     }
 
     private Object formatForCMS(Date date) {
