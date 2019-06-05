@@ -6,13 +6,17 @@ import com.elepy.describers.Model;
 import com.elepy.describers.ModelChange;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
+import com.elepy.http.Route;
 import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class ModelEngine {
 
@@ -46,13 +50,25 @@ public class ModelEngine {
     }
 
     public void setupDescriptors(String configSlug, HttpService http) {
-        http.get(configSlug, ctx -> {
-            ctx.type("application/json");
-            ctx.requirePermissions(Permissions.LOGGED_IN);
 
-            // TODO make result be able to handle regular objects
-            ctx.result(new ObjectMapper().writeValueAsString(pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList())));
-        });
+        final Route build = anElepyRoute()
+                .path(configSlug)
+                .addPermissions(Permissions.LOGGED_IN)
+                .method(HttpMethod.GET)
+
+                .route(ctx -> {
+                    ctx.type("application/json");
+
+                    ctx.requirePermissions(Permissions.LOGGED_IN);
+
+                    // TODO make result be able to handle regular objects
+                    ctx.result(new ObjectMapper().writeValueAsString(pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList())));
+
+                })
+                .build();
+
+        http.addRoute(build);
+
     }
 
     public <T> Model<T> getModelForClass(Class<T> clazz) {
