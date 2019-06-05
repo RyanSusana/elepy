@@ -9,7 +9,6 @@ import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 
@@ -225,7 +224,7 @@ public class ElepyPostConfiguration {
         return elepy.getCrudFor(cls);
     }
 
-    public <T> T initializeElepyObject(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public <T> T initializeElepyObject(Class<? extends T> cls) {
         return elepy.initializeElepyObject(cls);
     }
 
