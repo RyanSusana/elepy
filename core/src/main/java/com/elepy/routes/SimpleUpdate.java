@@ -5,6 +5,7 @@ import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,7 +40,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
             throw new ElepyException("This item doesn't exist and therefor can't be updated");
         }
 
-        beforeUpdate(before.get(), dao);
+        beforeUpdate(before.get(), context.request(), dao);
 
         T updatedObjectFromRequest = updatedObjectFromRequest(before.get(),
                 context.request(),
@@ -72,7 +73,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    public abstract void beforeUpdate(T beforeVersion, Crud<T> crud) throws Exception;
+    public abstract void beforeUpdate(T beforeVersion, Request httpRequest, Crud<T> crud) throws Exception;
 
     /**
      * What happens after you update a model.

@@ -5,6 +5,7 @@ import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,7 +28,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             T item = objectMapper.readValue(body, dao.getType());
 
-            beforeCreate(item, dao);
+            beforeCreate(item, context.request(), dao);
 
             super.handleCreate(context, dao, modelContext, objectMapper);
 
@@ -45,11 +46,12 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
      *
      * @param objectForCreation The object before you singleCreate it
      * @param crud              the crud implementation
+     * @param httpRequest       the HTTP request
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    public abstract void beforeCreate(T objectForCreation, Crud<T> crud) throws Exception;
+    public abstract void beforeCreate(T objectForCreation, Request httpRequest, Crud<T> crud) throws Exception;
 
     /**
      * What happens after you singleCreate a model.
