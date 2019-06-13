@@ -3,7 +3,6 @@ package com.elepy.routes;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
-import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
@@ -40,12 +39,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return beforeUpdate;
     }
 
-    public T update(T before, T update, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
-
-        DefaultObjectUpdateEvaluator<T> updateEvaluator = new DefaultObjectUpdateEvaluator<>();
-
-        updateEvaluator.evaluate(before, update);
-
+    public T update(T update, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             if (update != null) {
                 objectEvaluator.evaluate(update, tClass);
@@ -96,7 +90,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         final T updated = updatedObjectFromRequest(before.get(), request, objectMapper, clazz);
 
         this.beforeUpdate = before.get();
-        update(beforeUpdate, updated, dao, objectEvaluators, clazz);
+        update(updated, dao, objectEvaluators, clazz);
 
         response.result(Message.of("Successfully updated item", 200));
         return updated;

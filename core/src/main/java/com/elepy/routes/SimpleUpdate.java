@@ -37,7 +37,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
 
         final T updated =
-                update(before,
+                update(
                         updatedObjectFromRequest,
                         dao,
                         modelContext.getObjectEvaluators(),
