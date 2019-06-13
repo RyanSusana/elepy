@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @RestModel(name = "Test Resource", slug = "/resources")
 @Delete(requiredPermissions = {})
@@ -16,6 +17,9 @@ public class Resource {
     @Identifier
     private int id;
 
+    @DateTime(minimumDate = "0", maximumDate = "2019-22-12")
+    private Date date;
+
     @Text(TextType.TEXTFIELD)
     private String textField;
 
@@ -24,6 +28,8 @@ public class Resource {
 
     @Text(TextType.MARKDOWN)
     private String MARKDOWN;
+
+    private TextType textType;
 
     @Unique
     @JsonProperty("unique")
@@ -38,7 +44,7 @@ public class Resource {
     @Text(maximumLength = 40)
     private String maxLen40;
 
-    @Text(minimumLength = 10, maximumLength = 50)
+    @Text(minimumLength = 10, maximumLength = 50, value = TextType.TEXTAREA)
     private String minLen10MaxLen50;
 
     @Number(minimum = 20)
@@ -57,6 +63,25 @@ public class Resource {
 
     @Uneditable
     private String nonEditable;
+
+    public Resource() {
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public TextType getTextType() {
+        return textType;
+    }
+
+    public void setTextType(TextType textType) {
+        this.textType = textType;
+    }
 
     public Object getInnerObject() {
         return innerObject;
@@ -171,12 +196,6 @@ public class Resource {
         this.searchableField = searchableField;
     }
 
-    @JsonProperty("generated")
-    @JsonIgnore
-    @Generated
-    public String generatedField() {
-        return "I am generated";
-    }
 
     public int getId() {
         return id;
@@ -184,5 +203,12 @@ public class Resource {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @JsonProperty("generated")
+    @JsonIgnore
+    @Generated
+    public String generatedField() {
+        return "I am generated";
     }
 }

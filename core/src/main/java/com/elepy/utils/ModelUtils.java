@@ -15,14 +15,15 @@ import javax.persistence.Column;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ModelUtils {
 
-    public static Set<Property> describeClass(Class cls) {
+    public static List<Property> describeClass(Class cls) {
         return Stream.concat(
                 Stream.of(cls.getDeclaredFields())
                         .filter(field -> !field.isAnnotationPresent(Hidden.class))
@@ -30,7 +31,9 @@ public class ModelUtils {
                 Stream.of(cls.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(Generated.class))
                         .map(ModelUtils::describeFieldOrMethod)
-        ).collect(Collectors.toSet());
+        ).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+
+
     }
 
     public static Property describeFieldOrMethod(AccessibleObject accessibleObject) {
