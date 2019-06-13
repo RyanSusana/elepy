@@ -570,8 +570,14 @@ public class Elepy implements ElepyContext {
     }
 
 
-    public void alterModel(Class<?> tClass, ModelChange modelChange) {
+    /**
+     * @param tClass      the class of the model
+     * @param modelChange the change to execute to the model
+     * @return the Elepy instance
+     */
+    public Elepy alterModel(Class<?> tClass, ModelChange modelChange) {
         modelEngine.alterModel(tClass, modelChange);
+        return this;
     }
 
     private void retrievePackageModels() {

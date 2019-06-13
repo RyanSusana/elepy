@@ -13,7 +13,9 @@ import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
@@ -24,10 +26,14 @@ public class ModelEngine {
     private Elepy elepy;
     private List<ModelPiston<?>> pistons;
 
+    private Map<Class<?>, ModelChange> changesToImplement;
+
     public ModelEngine(Elepy elepy) {
         this.elepy = elepy;
+        this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
         setupDescriptors(elepy.getConfigSlug(), elepy.http());
+        executeChanges();
     }
 
     public List<Model<?>> getModels() {
@@ -40,13 +46,17 @@ public class ModelEngine {
     }
 
     public <T> void alterModel(Class<T> cls, ModelChange modelChange) {
-        pistons
+        changesToImplement.put(cls, modelChange);
+    }
+
+    private void executeChanges() {
+        this.changesToImplement.forEach((cls, modelChange) -> pistons
                 .stream()
                 .filter(modelContext -> modelContext.getModel().getJavaClass().equals(cls))
                 .findFirst()
                 .orElseThrow(() -> new ElepyConfigException(String.format("No model found with the class: %s", cls.getName())))
                 .getModelContext()
-                .changeModel(modelChange);
+                .changeModel(modelChange));
     }
 
     public void setupDescriptors(String configSlug, HttpService http) {
