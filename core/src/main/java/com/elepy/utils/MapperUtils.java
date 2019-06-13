@@ -23,17 +23,12 @@ public class MapperUtils {
 
         final Field idField = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyException("No id field", 500));
         fieldsToAdd.forEach((fieldName, fieldObject) -> {
-            final Optional<Field> fieldWithName = ReflectionUtils.findFieldWithName(cls, fieldName);
-
-            if (fieldWithName.isPresent()) {
-                Field field = fieldWithName.get();
-                FieldType fieldType = FieldType.guessType(field);
-                if (fieldType.isPrimitive() && !idField.getName().equals(field.getName()) && shouldEdit(field)) {
-                    objectAsMap.put(fieldName, fieldObject);
-                }
-            } else {
-                throw new ElepyException(String.format("Unknown field: %s", fieldName));
+            final Field field = ReflectionUtils.findFieldWithName(cls, fieldName).orElseThrow(() -> new ElepyException(String.format("Unknown field: %s", fieldName)));
+            FieldType fieldType = FieldType.guessType(field);
+            if (fieldType.isPrimitive() && !idField.getName().equals(field.getName()) && shouldEdit(field)) {
+                objectAsMap.put(fieldName, fieldObject);
             }
+
         });
         return objectMapper.convertValue(objectAsMap, cls);
     }
