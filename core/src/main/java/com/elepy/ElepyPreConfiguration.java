@@ -2,6 +2,7 @@ package com.elepy;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.CrudProvider;
+import com.elepy.describers.ModelChange;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Filter;
@@ -251,5 +252,13 @@ public class ElepyPreConfiguration {
      */
     public void onStop(EventHandler handler) {
         elepy.onStop(handler);
+    }
+
+    /**
+     * @param tClass      the class of the model
+     * @param modelChange the change to execute to the model
+     */
+    public void alterModel(Class<?> tClass, ModelChange modelChange) {
+        elepy.alterModel(tClass, modelChange);
     }
 }
