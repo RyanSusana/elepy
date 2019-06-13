@@ -2,6 +2,7 @@ package com.elepy.models;
 
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
+import com.elepy.http.Request;
 import com.elepy.routes.SimpleUpdate;
 
 public class ResourceUpdate extends SimpleUpdate<Resource> {
@@ -16,7 +17,7 @@ public class ResourceUpdate extends SimpleUpdate<Resource> {
 
 
     @Override
-    public void beforeUpdate(Resource beforeVersion, Crud<Resource> crud) throws Exception {
+    public void beforeUpdate(Resource beforeVersion, Request request, Crud<Resource> crud) throws Exception {
 
     }
 

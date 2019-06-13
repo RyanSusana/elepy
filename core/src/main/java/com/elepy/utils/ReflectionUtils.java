@@ -47,11 +47,8 @@ public class ReflectionUtils {
 
     public static String getPropertyName(AccessibleObject property) {
         JsonProperty jsonProperty = property.getAnnotation(JsonProperty.class);
-        final Identifier identifier = property.getAnnotation(Identifier.class);
         if (jsonProperty != null) {
             return jsonProperty.value();
-        } else if (identifier != null) {
-            return "id";
         } else {
             if (property instanceof Field) {
                 return ((Field) property).getName();
