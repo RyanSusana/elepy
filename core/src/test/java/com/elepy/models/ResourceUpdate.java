@@ -17,7 +17,7 @@ public class ResourceUpdate extends SimpleUpdate<Resource> {
 
 
     @Override
-    public void beforeUpdate(Resource beforeVersion, Request request, Crud<Resource> crud) throws Exception {
+    public void beforeUpdate(Resource beforeVersion, Resource updatedVersion, Request httpRequest, Crud<Resource> crud) throws Exception {
 
     }
 

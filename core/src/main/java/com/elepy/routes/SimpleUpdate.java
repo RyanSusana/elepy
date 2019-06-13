@@ -6,11 +6,9 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * A helper class for developers to easily handle the update of objects.
@@ -25,35 +23,26 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
     @Override
     public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        String body = context.request().body();
 
-        T item = objectMapper.readValue(body, modelContext.getModelType());
+        final Serializable id = context.modelId();
 
-        final Optional<Serializable> id = ReflectionUtils.getId(item);
-        if (!id.isPresent()) {
-            throw new ElepyException("This item doesn't can't be identified.");
-        }
+        final T before = dao.getById(id).orElseThrow(() -> new ElepyException("This item doesn't exist and therefor can't be updated"));
 
-        final Optional<T> before = dao.getById(id.get());
-
-        if (!before.isPresent()) {
-            throw new ElepyException("This item doesn't exist and therefor can't be updated");
-        }
-
-        beforeUpdate(before.get(), context.request(), dao);
-
-        T updatedObjectFromRequest = updatedObjectFromRequest(before.get(),
+        T updatedObjectFromRequest = updatedObjectFromRequest(before,
                 context.request(),
                 objectMapper,
                 modelContext.getModelType());
 
+        beforeUpdate(before, updatedObjectFromRequest, context.request(), dao);
+
+
         final T updated =
-                update(before.get(),
+                update(before,
                         updatedObjectFromRequest,
                         dao,
                         modelContext.getObjectEvaluators(),
                         modelContext.getModelType());
-        afterUpdate(before.get(), updated, dao);
+        afterUpdate(before, updated, dao);
 
         context.response().status(200);
         context.response().result(Message.of("Successfully updated item", 200));
@@ -73,7 +62,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      * @see ElepyException
      * @see com.elepy.exceptions.ElepyErrorMessage
      */
-    public abstract void beforeUpdate(T beforeVersion, Request httpRequest, Crud<T> crud) throws Exception;
+    public abstract void beforeUpdate(T beforeVersion, T updatedVersion, Request httpRequest, Crud<T> crud) throws Exception;
 
     /**
      * What happens after you update a model.
