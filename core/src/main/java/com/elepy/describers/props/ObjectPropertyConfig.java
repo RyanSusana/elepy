@@ -6,13 +6,13 @@ import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AccessibleObject;
-import java.util.Set;
+import java.util.List;
 
 public class ObjectPropertyConfig implements PropertyConfig {
     private final String objectName;
-    private final Set<Property> properties;
+    private final List<Property> properties;
 
-    public ObjectPropertyConfig(String objectName, Set<Property> properties) {
+    public ObjectPropertyConfig(String objectName, List<Property> properties) {
         this.objectName = objectName;
         this.properties = properties;
     }

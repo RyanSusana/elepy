@@ -28,6 +28,10 @@ public class EnumPropertyConfig implements PropertyConfig {
         return new EnumPropertyConfig(property.getExtra("availableValues"));
     }
 
+    public List<Map<String, Object>> getAvailableValues() {
+        return availableValues;
+    }
+
     @Override
     public void config(Property property) {
         property.setType(FieldType.ENUM);

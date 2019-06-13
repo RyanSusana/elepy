@@ -1,10 +1,10 @@
 package com.elepy.describers;
 
 import com.elepy.dao.SortOption;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpAction;
 
 import java.util.List;
-import java.util.Set;
 
 public class Model<T> {
 
@@ -13,7 +13,7 @@ public class Model<T> {
     private Class<T> javaClass;
     private String idField;
     private List<HttpAction> actions;
-    private Set<Property> properties;
+    private List<Property> properties;
 
     private String defaultSortField;
     private SortOption defaultSortDirection;
@@ -72,12 +72,19 @@ public class Model<T> {
         this.actions = actions;
     }
 
-    public Set<Property> getProperties() {
+    public List<Property> getProperties() {
         return properties;
     }
 
-    public void setProperties(Set<Property> properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = properties;
+    }
+
+    public Property getProperty(String name) {
+        return this.getProperties()
+                .stream()
+                .filter(property -> name.equals(property.getName()))
+                .findFirst().orElseThrow(() -> new ElepyConfigException("No property with the name: " + name));
     }
 
     public void setJavaClass(Class<T> javaClass) {
