@@ -29,8 +29,8 @@ public abstract class SimpleDelete<T> implements DeleteHandler<T> {
         context.response().result(Message.of("Successfully deleted item", 200));
     }
 
-    public abstract void afterDelete(T itemToDelete, Crud<T> dao);
+    public abstract void afterDelete(T deletedItem, Crud<T> dao);
 
-    public abstract void beforeDelete(T deletedItem, Crud<T> dao);
+    public abstract void beforeDelete(T itemToDelete, Crud<T> dao);
 
 }
