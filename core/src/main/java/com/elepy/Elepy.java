@@ -8,6 +8,7 @@ import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.CrudProvider;
 import com.elepy.describers.Model;
+import com.elepy.describers.ModelChange;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
@@ -569,6 +570,10 @@ public class Elepy implements ElepyContext {
     }
 
 
+    public void alterModel(Class<?> tClass, ModelChange modelChange) {
+        modelEngine.alterModel(tClass, modelChange);
+    }
+
     private void retrievePackageModels() {
 
         if (!packages.isEmpty()) {
@@ -680,6 +685,7 @@ public class Elepy implements ElepyContext {
         }
 
     }
+
 
     private void igniteAllRoutes() {
 

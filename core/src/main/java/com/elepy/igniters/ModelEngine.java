@@ -39,7 +39,7 @@ public class ModelEngine {
         pistons.add(new ModelPiston<>(modelFromClass, elepy));
     }
 
-    private <T> void alterModel(Class<T> cls, ModelChange modelChange) {
+    public <T> void alterModel(Class<T> cls, ModelChange modelChange) {
         pistons
                 .stream()
                 .filter(modelContext -> modelContext.getModel().getJavaClass().equals(cls))
