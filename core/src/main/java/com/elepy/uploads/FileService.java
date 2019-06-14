@@ -1,13 +1,12 @@
 package com.elepy.uploads;
 
-import com.elepy.http.UploadedFile;
-
 import java.util.List;
+import java.util.Optional;
 
 public interface FileService {
     void uploadFile(UploadedFile file);
 
-    UploadedFile readFile(String name);
+    Optional<UploadedFile> readFile(String name);
 
     List<String> listFiles();
 

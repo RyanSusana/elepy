@@ -2,7 +2,6 @@ package com.elepy.uploads;
 
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.UploadedFile;
 import org.apache.tika.Tika;
 
 import java.io.File;
@@ -12,6 +11,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,13 +47,12 @@ public class DirectoryFileService implements FileService {
     }
 
     @Override
-    public synchronized UploadedFile readFile(String name) {
+    public synchronized Optional<UploadedFile> readFile(String name) {
         final Path path = Paths.get(rootFolderLocation + File.separator + name);
         try {
-            final String[] split = name.split("\\.");
-            return UploadedFile.of(tika.detect(path), Files.newInputStream(path), name, split[split.length - 1]);
+            return Optional.of(UploadedFile.of(tika.detect(path), Files.newInputStream(path), name));
         } catch (NoSuchFileException e) {
-            throw new ElepyException("File not found", 404);
+            return Optional.empty();
         } catch (IOException e) {
             throw new ElepyException("Failed at retrieving file: " + name, 500);
         }

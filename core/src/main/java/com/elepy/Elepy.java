@@ -20,7 +20,9 @@ import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
 import com.elepy.igniters.ModelEngine;
+import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileService;
+import com.elepy.uploads.UploadModule;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -54,9 +56,6 @@ public class Elepy implements ElepyContext {
     private Class<? extends CrudProvider> defaultCrudProvider;
     private List<Class<?>> routingClasses;
     private ModelEngine modelEngine;
-
-    private FileService fileService = null;
-
     private UserAuthenticationCenter userAuthenticationCenter;
 
     private List<Configuration> configurations;
@@ -87,6 +86,7 @@ public class Elepy implements ElepyContext {
 
         withBaseObjectEvaluator(new DefaultObjectEvaluator<>());
         registerDependency(ObjectMapper.class, new ObjectMapper());
+        withUploads(new DefaultFileService());
         getObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
@@ -536,8 +536,7 @@ public class Elepy implements ElepyContext {
      * @return the Elepy instance
      */
     public Elepy withUploads(FileService fileService) {
-        this.fileService = fileService;
-
+        this.registerDependency(FileService.class, fileService);
         return this;
     }
 
@@ -608,9 +607,6 @@ public class Elepy implements ElepyContext {
     }
 
     private void validateConfig() {
-        if (this.fileService == null) {
-            logger.warn("No upload service available.");
-        }
         if (this.defaultCrudProvider == null) {
             throw new ElepyConfigException("No default database selected, please configure one.");
         }
@@ -618,6 +614,7 @@ public class Elepy implements ElepyContext {
 
     private void init() {
         addModel(User.class);
+        addExtension(new UploadModule());
 
         this.registerDependency(userAuthenticationCenter);
         setupLoggingAndExceptions();
@@ -696,7 +693,6 @@ public class Elepy implements ElepyContext {
 
 
     private void igniteAllRoutes() {
-
         for (Route extraRoute : routes) {
             http.addRoute(extraRoute);
         }

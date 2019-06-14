@@ -4,6 +4,7 @@ import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.*;
 import com.elepy.describers.Model;
+import com.elepy.uploads.UploadedFile;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;

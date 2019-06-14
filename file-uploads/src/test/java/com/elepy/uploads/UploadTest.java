@@ -1,7 +1,5 @@
 package com.elepy.uploads;
 
-import com.elepy.exceptions.ElepyException;
-import com.elepy.http.UploadedFile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -65,7 +64,7 @@ public class UploadTest {
         String filePath = "src/test/resources/textFileToUpload.txt";
 
 
-        final UploadedFile text = UploadedFile.of("text", Files.newInputStream(Paths.get(filePath)), "textFileToUpload.txt", ".txt");
+        final UploadedFile text = UploadedFile.of("text", Files.newInputStream(Paths.get(filePath)), "textFileToUpload.txt");
 
         directoryFileService.uploadFile(text);
 
@@ -85,7 +84,7 @@ public class UploadTest {
     void testReadText() throws IOException {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
 
-        final UploadedFile uploadedFile = directoryFileService.readFile("textFileToUpload.txt");
+        final UploadedFile uploadedFile = directoryFileService.readFile("textFileToUpload.txt").orElse(null);
         assertNotNull(uploadedFile);
 
         assertEquals("textFileToUpload.txt", uploadedFile.getName());
@@ -115,10 +114,9 @@ public class UploadTest {
     @Test
     void testReadFileNonExistentThrows04() throws IOException {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
+        final Optional<UploadedFile> uploadedFile = directoryFileService.readFile("nonExistent.txt");
 
-        final ElepyException elepyException = assertThrows(ElepyException.class, () -> directoryFileService.readFile("nonExistent.txt"));
-
-        assertEquals(404, elepyException.getStatus());
+        assertTrue(uploadedFile.isEmpty());
         assertEquals(1, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());
 
     }

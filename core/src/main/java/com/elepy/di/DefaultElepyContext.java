@@ -55,7 +55,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     private <T> void ensureUniqueDependency(ContextKey<T> key) {
-        if (contextMap.containsKey(key)) {
+        if (strictMode && contextMap.containsKey(key)) {
             throw new ElepyConfigException(String.format("Elepy already has a key with the class '%s' and the tag '%s'", key.getType(), key.getTag()));
         }
     }

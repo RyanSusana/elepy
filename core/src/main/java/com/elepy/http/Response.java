@@ -42,7 +42,6 @@ public interface Response {
         } catch (JsonProcessingException e) {
             throw new ElepyException("Error writing json", 500);
         }
-
     }
 
     default void json(Object object) {
