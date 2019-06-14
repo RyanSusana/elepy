@@ -1,9 +1,6 @@
 package com.elepy.uploads;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import spark.utils.IOUtils;
 
 import java.io.IOException;
@@ -25,19 +22,27 @@ public class UploadTest {
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
 
-
         directoryFileService = new DirectoryFileService(UPLOAD_DIR);
 
         directoryFileService.ensureDirsMade();
     }
 
-    @AfterEach
-    void tearDown() throws IOException {
+    @BeforeAll
+    public static void clear() {
 
+        try {
+            deleteDir();
+        } catch (IOException ignored) {
+
+        }
+
+    }
+
+    private static void deleteDir() throws IOException {
         Path pathToBeDeleted = Paths.get(UPLOAD_DIR);
 
         Files.walkFileTree(pathToBeDeleted,
-                new SimpleFileVisitor<Path>() {
+                new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult postVisitDirectory(
                             Path dir, IOException exc) throws IOException {
@@ -58,6 +63,11 @@ public class UploadTest {
                 Files.exists(pathToBeDeleted), "Directory still exists");
     }
 
+    @AfterEach
+    void tearDown() throws IOException {
+        deleteDir();
+
+    }
     @Test
     void testUploadText() throws IOException {
 
