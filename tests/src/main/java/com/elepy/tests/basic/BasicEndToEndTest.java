@@ -49,12 +49,16 @@ public abstract class BasicEndToEndTest implements ElepyTest {
 
         List.of(configurations).forEach(elepy::addConfiguration);
 
+    }
+
+    @BeforeAll
+    void setUpAll() {
         elepy.start();
+
 
         userCrud = elepy.getCrudFor(User.class);
         resourceCrud = elepy.getCrudFor(Resource.class);
     }
-
     @AfterAll
     void tearDown() {
         elepy.stop();
