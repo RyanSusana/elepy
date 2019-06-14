@@ -30,18 +30,31 @@ public abstract class BasicEndToEndTest implements ElepyTest {
     private static int resourceCounter = -100;
     private final String userUrl;
     private final String url;
+    private final Configuration[] configurations;
     private ObjectMapper objectMapper = new ObjectMapper();
     private Elepy elepy;
 
     private Crud<User> userCrud;
     private Crud<Resource> resourceCrud;
-
+    private final int port;
 
     public BasicEndToEndTest(Configuration... configurations) {
-        int port = portCounter++;
+        this.configurations = configurations;
+        port = portCounter++;
 
         url = String.format("http://localhost:%d", port);
         userUrl = url + "/users";
+
+
+    }
+
+    public Configuration configuration() {
+        return null;
+    }
+    @BeforeAll
+    void setUpAll() {
+        final Configuration configuration = configuration();
+
 
         elepy = new Elepy()
                 .addModel(Resource.class)
@@ -49,10 +62,8 @@ public abstract class BasicEndToEndTest implements ElepyTest {
 
         List.of(configurations).forEach(elepy::addConfiguration);
 
-    }
+        if (configuration != null) elepy.addConfiguration(configuration);
 
-    @BeforeAll
-    void setUpAll() {
         elepy.start();
 
 

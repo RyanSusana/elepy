@@ -1,5 +1,6 @@
 package com.elepy.tests.basic.slow;
 
+import com.elepy.Configuration;
 import com.elepy.tests.basic.BasicEndToEndTest;
 import com.elepy.tests.config.DatabaseConfigurations;
 import org.testcontainers.containers.JdbcDatabaseContainer;
@@ -13,10 +14,11 @@ public class MariaDBEndToEndTest extends BasicEndToEndTest {
     @Container
     private static final JdbcDatabaseContainer CONTAINER = new MariaDBContainer();
 
-    public MariaDBEndToEndTest() {
-        super(DatabaseConfigurations.createTestContainerConfiguration(
+    @Override
+    public Configuration configuration() {
+        return DatabaseConfigurations.createTestContainerConfiguration(
                 CONTAINER,
                 "org.hibernate.dialect.MariaDBDialect"
-        ));
+        );
     }
 }
