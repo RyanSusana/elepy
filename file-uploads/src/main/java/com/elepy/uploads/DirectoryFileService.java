@@ -6,10 +6,7 @@ import org.apache.tika.Tika;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,8 +38,10 @@ public class DirectoryFileService implements FileService {
         final Path name = Paths.get(rootFolderLocation + File.separator + file.getId());
         try {
             Files.copy(file.getContent(), name);
-        } catch (Exception e) {
-            throw new ElepyException("Failed to upload file: " + file.getId());
+        } catch (FileAlreadyExistsException e) {
+            throw new ElepyException("File Already Exists: " + file.getId(), 409);
+        } catch (IOException e) {
+            throw new ElepyException("Failed to upload file: " + file.getId(), 500);
         }
     }
 
