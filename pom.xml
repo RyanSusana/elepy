@@ -43,7 +43,7 @@
         <module>mongo</module>
         <module>basic</module>
         <module>file-uploads</module>
-        <module>test</module>
+        <module>tests</module>
     </modules>
 
     <distributionManagement>
