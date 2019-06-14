@@ -6,6 +6,8 @@ public interface HttpService {
 
     void port(int port);
 
+    int port();
+
     void addRoute(Route route);
 
     void ignite();

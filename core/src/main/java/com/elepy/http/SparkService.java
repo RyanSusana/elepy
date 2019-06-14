@@ -45,6 +45,11 @@ public class SparkService implements HttpService {
         http.port(port);
     }
 
+    @Override
+    public int port() {
+        return http.port();
+    }
+
     public void notFound(spark.Route route) {
         http.notFound(route);
     }
