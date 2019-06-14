@@ -20,7 +20,6 @@ import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
 import com.elepy.igniters.ModelEngine;
-import com.elepy.igniters.UploadIgniter;
 import com.elepy.uploads.FileService;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -599,6 +598,15 @@ public class Elepy implements ElepyContext {
         }
     }
 
+    private void afterElepyConstruction() {
+        for (Configuration configuration : configurations) {
+            configuration.after(new ElepyPostConfiguration(this));
+        }
+        for (ElepyModule module : modules) {
+            module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
+        }
+    }
+
     private void validateConfig() {
         if (this.fileService == null) {
             logger.warn("No upload service available.");
@@ -619,8 +627,6 @@ public class Elepy implements ElepyContext {
 
         validateConfig();
 
-        new UploadIgniter(this.http, getObjectMapper(), this.fileService).ignite();
-
         registerDependency(Filter.class, "protected", adminFilters);
 
         models.forEach(modelEngine::addModel);
@@ -629,18 +635,14 @@ public class Elepy implements ElepyContext {
         setupAuth();
         context.resolveDependencies();
 
-
         setupFilters();
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
         initialized = true;
-        for (ElepyModule module : modules) {
-            module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
-        }
-        for (Configuration configuration : configurations) {
-            configuration.after(new ElepyPostConfiguration(this));
-        }
+
+        afterElepyConstruction();
+
         context.strictMode(true);
 
     }
