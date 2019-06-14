@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>elepy-test</artifactId>
+    <artifactId>elepy-tests</artifactId>
 
 
     <build>
@@ -64,14 +64,12 @@
             <groupId>com.elepy</groupId>
             <artifactId>elepy-mongo</artifactId>
             <version>2.0.0-beta-12</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.fakemongo</groupId>
             <artifactId>fongo</artifactId>
             <version>2.2.0-RC2</version>
-            <scope>test</scope>
         </dependency>
 
 

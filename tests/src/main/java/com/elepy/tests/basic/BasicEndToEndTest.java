@@ -6,6 +6,7 @@ import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
+import com.elepy.tests.ElepyTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,16 +18,16 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class EndToEndTest {
+public abstract class BasicEndToEndTest implements ElepyTest {
 
     private static int portCounter = 7300;
 
     private static int resourceCounter = -100;
-    private final int port;
     private final String userUrl;
     private final String url;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -36,25 +37,20 @@ public abstract class EndToEndTest {
     private Crud<Resource> resourceCrud;
 
 
-    public EndToEndTest() {
-        port = portCounter++;
-
+    public BasicEndToEndTest(Configuration... configurations) {
+        int port = portCounter++;
 
         url = String.format("http://localhost:%d", port);
         userUrl = url + "/users";
-    }
-
-
-    @BeforeAll
-    public void beforeAll() {
 
         elepy = new Elepy()
                 .addModel(Resource.class)
-                .addConfiguration(configuration())
                 .onPort(port);
 
+        List.of(configurations).forEach(elepy::addConfiguration);
 
         elepy.start();
+
         userCrud = elepy.getCrudFor(User.class);
         resourceCrud = elepy.getCrudFor(Resource.class);
     }
@@ -62,10 +58,13 @@ public abstract class EndToEndTest {
     @AfterAll
     void tearDown() {
         elepy.stop();
-
     }
 
-    public abstract Configuration configuration();
+
+    @Override
+    public String testName() {
+        return "BasicE2E";
+    }
 
     @BeforeEach
     void setUp() {
