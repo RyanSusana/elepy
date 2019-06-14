@@ -27,9 +27,14 @@ public class UploadedFile {
     }
 
     public UploadedFile(String contentType, InputStream content, String name) {
+        this(contentType, content, name, name);
+    }
+
+    public UploadedFile(String contentType, InputStream content, String name, String id) {
         this.contentType = contentType;
         this.content = content;
         this.name = name;
+        this.id = id;
     }
 
     public static UploadedFile of(String contentType, InputStream content, String name) {

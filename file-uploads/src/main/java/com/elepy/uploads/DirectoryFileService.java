@@ -38,29 +38,31 @@ public class DirectoryFileService implements FileService {
 
     @Override
     public synchronized void uploadFile(UploadedFile file) {
-        final Path name = Paths.get(rootFolderLocation + File.separator + file.getName());
+        final Path name = Paths.get(rootFolderLocation + File.separator + file.getId());
         try {
             Files.copy(file.getContent(), name);
         } catch (Exception e) {
-            throw new ElepyException("Failed to upload file: " + file.getName());
+            throw new ElepyException("Failed to upload file: " + file.getId());
         }
     }
 
     @Override
-    public synchronized Optional<UploadedFile> readFile(String name) {
-        final Path path = Paths.get(rootFolderLocation + File.separator + name);
+    public synchronized Optional<UploadedFile> readFile(String id) {
+        final Path path = Paths.get(rootFolderLocation + File.separator + id);
         try {
-            return Optional.of(UploadedFile.of(tika.detect(path), Files.newInputStream(path), name));
+            final UploadedFile uploadedFile = UploadedFile.of(tika.detect(path), Files.newInputStream(path), id);
+            uploadedFile.setId(id);
+
+            return Optional.of(uploadedFile);
         } catch (NoSuchFileException e) {
             return Optional.empty();
         } catch (IOException e) {
-            throw new ElepyException("Failed at retrieving file: " + name, 500);
+            throw new ElepyException("Failed at retrieving file: " + id, 500);
         }
     }
 
     @Override
     public List<String> listFiles() {
-
         final Path path = Paths.get(rootFolderLocation);
 
         try (Stream<Path> files = Files.list(path)) {
@@ -71,13 +73,13 @@ public class DirectoryFileService implements FileService {
     }
 
     @Override
-    public void deleteFile(String name) {
-        final Path path = Paths.get(rootFolderLocation + File.separator + name);
+    public void deleteFile(String id) {
+        final Path path = Paths.get(rootFolderLocation + File.separator + id);
 
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new ElepyException("Failed to delete file: " + name, 500);
+            throw new ElepyException("Failed to delete file: " + id, 500);
         }
     }
 
