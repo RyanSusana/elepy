@@ -12,18 +12,23 @@ public class Property implements Comparable<Property> {
 
     private String name;
     private String prettyName;
-
-
     private boolean editable;
     private boolean required;
     private boolean unique;
     private boolean generated;
-
+    private boolean hiddenFromCMS;
     private int importance;
-
     private FieldType type;
     private Map<String, Object> extraProperties = new HashMap<>();
 
+
+    public boolean isHiddenFromCMS() {
+        return hiddenFromCMS;
+    }
+
+    public void setHiddenFromCMS(boolean hiddenFromCMS) {
+        this.hiddenFromCMS = hiddenFromCMS;
+    }
 
     public String getName() {
         return name;

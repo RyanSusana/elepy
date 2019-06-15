@@ -26,7 +26,6 @@ public class ModelUtils {
     public static List<Property> describeClass(Class cls) {
         return Stream.concat(
                 Stream.of(cls.getDeclaredFields())
-                        .filter(field -> !field.isAnnotationPresent(Hidden.class))
                         .map(ModelUtils::describeFieldOrMethod),
                 Stream.of(cls.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(Generated.class))
@@ -47,10 +46,10 @@ public class ModelUtils {
             idField = false;
         }
 
-
         final Column column = accessibleObject.getAnnotation(Column.class);
         final Importance importance = accessibleObject.getAnnotation(Importance.class);
 
+        property.setHiddenFromCMS(accessibleObject.isAnnotationPresent(Hidden.class));
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
         property.setPrettyName(ReflectionUtils.getPrettyName(accessibleObject));
         property.setRequired(accessibleObject.getAnnotation(Required.class) != null);
