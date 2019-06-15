@@ -9,7 +9,7 @@ public class FileIdentityProvider implements IdentityProvider<UploadedFile> {
     public void provideId(UploadedFile item, Crud<UploadedFile> dao) {
 
         dao.getById(item.getName()).ifPresent(file -> {
-            throw new ElepyException("There is already a file called: " + item.getName(), 400);
+            throw new ElepyException("There is already a file called: " + item.getName(), 409);
         });
         item.setId(item.getName());
     }

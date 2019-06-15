@@ -2,7 +2,7 @@ package com.elepy.uploads;
 
 import com.elepy.tests.upload.UploadEndToEndTest;
 
-public class ElepyEndToEndTest extends UploadEndToEndTest {
+public class DirectoryUploadEndToEndTest extends UploadEndToEndTest {
 
     private static final String UPLOAD_DIR = "src/test/resources/uploads";
 

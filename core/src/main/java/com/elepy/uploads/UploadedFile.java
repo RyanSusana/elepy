@@ -5,6 +5,8 @@ import com.elepy.routes.DisabledHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestModel(name = "Files", slug = "/files")
 @Update(handler = DisabledHandler.class)
@@ -71,6 +73,16 @@ public class UploadedFile {
 
     public void setContent(InputStream content) {
         this.content = content;
+    }
+
+    public boolean contentTypeEquals(String contentTypeToCheck) {
+        if (contentTypeToCheck.equals("*/*")) {
+            return true;
+        }
+
+        Pattern p = Pattern.compile(contentTypeToCheck);
+        Matcher m = p.matcher(this.contentType);
+        return (m.find());
     }
 
 }
