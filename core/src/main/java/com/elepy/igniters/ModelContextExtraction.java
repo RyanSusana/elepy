@@ -70,7 +70,7 @@ public class ModelContextExtraction {
         if (daoAnnotation != null) {
             return elepy.initializeElepyObject(daoAnnotation.value());
         } else {
-            return crudProvider.crudFor(modelType);
+            return crudProvider.crudFor(model);
         }
     }
 } 

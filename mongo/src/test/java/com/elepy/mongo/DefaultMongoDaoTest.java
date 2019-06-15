@@ -5,6 +5,7 @@ import com.elepy.dao.Page;
 import com.elepy.dao.PageSettings;
 import com.elepy.dao.Query;
 import com.elepy.di.DefaultElepyContext;
+import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import org.jongo.Jongo;
@@ -30,7 +31,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultElepyContext.registerDependency(new ObjectMapper());
 
 
-        defaultMongoDao = defaultElepyContext.initializeElepyObject(MongoProvider.class).crudFor(Resource.class);
+        defaultMongoDao = defaultElepyContext.initializeElepyObject(MongoProvider.class).crudFor(ModelUtils.createModelFromClass(Resource.class));
 
         jongo = new Jongo(getDb());
     }

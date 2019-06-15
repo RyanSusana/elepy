@@ -3,6 +3,7 @@ package com.elepy.hibernate;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.dao.*;
+import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
@@ -29,12 +30,12 @@ import java.util.stream.Collectors;
 public class HibernateDao<T> implements Crud<T> {
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
     private final SessionFactory sessionFactory;
-    private final Class<T> modelClassType;
+    private final Model<T> model;
     private final ObjectMapper objectMapper;
 
-    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Class<T> modelClassType) {
+    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Model<T> model) {
         this.sessionFactory = sessionFactory;
-        this.modelClassType = modelClassType;
+        this.model = model;
         this.objectMapper = objectMapper;
     }
 
@@ -62,9 +63,9 @@ public class HibernateDao<T> implements Crud<T> {
 
 
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(modelClassType);
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(getType());
 
-            final Root<T> root = criteriaQuery.from(modelClassType);
+            final Root<T> root = criteriaQuery.from(getType());
 
             Predicate predicate = generateSearchQuery(cb, root, query);
 
@@ -114,7 +115,7 @@ public class HibernateDao<T> implements Crud<T> {
     public Optional<T> getById(Serializable id) {
         try (Session session = sessionFactory.openSession()) {
 
-            final T t = session.get(modelClassType, id);
+            final T t = session.get(getType(), id);
 
             loadLazyCollections(t);
             return Optional.ofNullable(t);
@@ -127,9 +128,9 @@ public class HibernateDao<T> implements Crud<T> {
         try (Session session = sessionFactory.openSession()) {
 
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(modelClassType);
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(getType());
 
-            final Root<T> root = criteriaQuery.from(modelClassType);
+            final Root<T> root = criteriaQuery.from(getType());
 
             if (field.getType().equals(String.class)) {
                 criteriaQuery.select(root).where(cb.like(root.get(getJPAFieldName(field)), qry));
@@ -174,9 +175,9 @@ public class HibernateDao<T> implements Crud<T> {
     public List<T> getAll() {
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(modelClassType);
+            CriteriaQuery<T> criteriaQuery = cb.createQuery(getType());
 
-            final Root<T> root = criteriaQuery.from(modelClassType);
+            final Root<T> root = criteriaQuery.from(getType());
 
             return session.createQuery(criteriaQuery.select(root)).getResultList();
         }
@@ -206,11 +207,11 @@ public class HibernateDao<T> implements Crud<T> {
                 return count();
             }
 
-            List<Field> searchables = ReflectionUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class);
-            searchables.add(ReflectionUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", modelClassType.getName()))));
+            List<Field> searchables = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class);
+            searchables.add(ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", getType().getName()))));
 
 
-            String hql = "select count(*) from " + modelClassType.getName() +
+            String hql = "select count(*) from " + getType().getName() +
                     (searchables.isEmpty() ? "" : (" WHERE " + searchables.stream().map(field -> field.getName() + " LIKE :searchTerm").collect(Collectors.joining(" OR "))));
 
 
@@ -219,10 +220,9 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-
     @Override
-    public Class<T> getType() {
-        return modelClassType;
+    public Model<T> getModel() {
+        return model;
     }
 
     @Override
@@ -239,7 +239,7 @@ public class HibernateDao<T> implements Crud<T> {
             CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
 
 
-            final Root<T> root = criteriaQuery.from(modelClassType);
+            final Root<T> root = criteriaQuery.from(getType());
 
             criteriaQuery.select(cb.count(root));
             Predicate predicate = generateSearchQuery(cb, root, query);
@@ -260,7 +260,7 @@ public class HibernateDao<T> implements Crud<T> {
     public void deleteById(Serializable id) {
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
-            final T item = session.get(modelClassType, id);
+            final T item = session.get(getType(), id);
             if (item != null) {
                 session.delete(item);
             }
@@ -273,7 +273,7 @@ public class HibernateDao<T> implements Crud<T> {
     @Override
     public long count() {
         try (Session session = sessionFactory.openSession()) {
-            final Query<Long> query = session.createQuery("select count(*) from " + modelClassType.getName(), Long.class);
+            final Query<Long> query = session.createQuery("select count(*) from " + getType().getName(), Long.class);
             return query.getSingleResult();
         }
     }
@@ -300,9 +300,9 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     private List<Field> getSearchableFields() {
-        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(modelClassType, Searchable.class, Unique.class);
+        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class, Unique.class);
 
-        Field idField = ReflectionUtils.getIdField(modelClassType).orElseThrow(() -> new ElepyConfigException("No id idField"));
+        Field idField = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idField"));
         fields.add(idField);
 
 

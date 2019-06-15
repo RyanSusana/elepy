@@ -7,6 +7,7 @@ import com.elepy.di.DefaultElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -45,7 +46,7 @@ public class HibernateTest {
         defaultElepyContext.registerDependency(new ObjectMapper());
 
 
-        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(Resource.class);
+        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(ModelUtils.createModelFromClass(Resource.class));
 
 
     }

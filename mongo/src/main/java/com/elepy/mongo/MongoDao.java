@@ -27,7 +27,6 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     private Jongo jongo;
 
-    public abstract Class<T> modelType();
 
     public abstract String mongoCollectionName();
 
@@ -54,7 +53,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private Find addDefaultSort(Find find) {
-        RestModel restModel = modelType().getAnnotation(RestModel.class);
+        RestModel restModel = getType().getAnnotation(RestModel.class);
         if (restModel != null) {
             find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
         }
@@ -63,12 +62,12 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final Serializable id) {
-        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(modelType()));
+        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(getType()));
     }
 
     @Override
     public List<T> getAll() {
-        return Lists.newArrayList(collection().find().as(modelType()).iterator());
+        return Lists.newArrayList(collection().find().as(getType()).iterator());
     }
 
     @Override
@@ -79,17 +78,11 @@ public abstract class MongoDao<T> implements Crud<T> {
         if (query.startsWith("{") && query.endsWith("}")) {
             return collection().count(query);
         } else {
-            String queryCompiled = new MongoSearch(query, modelType()).compile();
+            String queryCompiled = new MongoSearch(query, getType()).compile();
 
             return collection().count(queryCompiled);
         }
     }
-
-    @Override
-    public Class<T> getType() {
-        return modelType();
-    }
-
 
     @Override
     public void deleteById(Serializable id) {
@@ -104,7 +97,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private String getIdFieldProp() {
-        Optional<Field> idField = ReflectionUtils.getIdField(modelType());
+        Optional<Field> idField = ReflectionUtils.getIdField(getType());
         if (idField.isPresent()) {
             return ReflectionUtils.getPropertyName(idField.get());
         }
@@ -155,7 +148,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     private Page<T> toPage(Find find, SearchQuery pageSearch, int amountOfResultsWithThatQuery) {
 
 
-        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(modelType()).iterator());
+        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(getType()).iterator());
 
         final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
         long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
@@ -169,7 +162,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     public Page<T> search(Query query, PageSettings settings) {
         MongoFilters mongoFilters = fromQueryFilters(query.getFilterQueries());
 
-        MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), modelType());
+        MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), getType());
 
         MongoQuery mongoQuery = new MongoQuery(mongoSearch, mongoFilters);
 
@@ -183,7 +176,7 @@ public abstract class MongoDao<T> implements Crud<T> {
                 .limit(settings.getPageSize())
                 .skip((int) ((settings.getPageNumber() - 1) * settings.getPageSize()))
                 .sort(String.format("{%s}", sort))
-                .as(modelType())
+                .as(getType())
                 .iterator());
 
 
