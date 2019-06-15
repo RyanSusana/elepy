@@ -7,7 +7,7 @@ import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.exceptions.Message;
 import com.elepy.http.AccessLevel;
 import com.elepy.http.HttpMethod;
-import com.elepy.mongo.MongoProvider;
+import com.elepy.mongo.MongoCrudFactory;
 import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -38,7 +38,7 @@ public class BasicAuthEndToEndTest {
     void setUp() {
 
         elepy = new Elepy();
-        elepy.withDefaultCrudProvider(MongoProvider.class);
+        elepy.withDefaultCrudProvider(MongoCrudFactory.class);
 
         Fongo fongo = new Fongo("test");
         final FongoDB db = fongo.getDB("test");

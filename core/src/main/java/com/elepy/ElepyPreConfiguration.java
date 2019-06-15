@@ -1,7 +1,7 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
-import com.elepy.dao.CrudProvider;
+import com.elepy.dao.CrudFactory;
 import com.elepy.describers.ModelChange;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -220,14 +220,14 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * Changes the default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
+     * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
      *
      * @param defaultCrudProvider the default crud provider
-     * @see CrudProvider
+     * @see CrudFactory
      * @see com.elepy.dao.Crud
      */
-    public void withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
+    public void withDefaultCrudProvider(Class<? extends CrudFactory> defaultCrudProvider) {
         elepy.withDefaultCrudProvider(defaultCrudProvider);
     }
 

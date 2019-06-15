@@ -2,7 +2,7 @@ package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.Dao;
-import com.elepy.annotations.DaoProvider;
+import com.elepy.annotations.DaoFactory;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.IdProvider;
 import com.elepy.dao.Crud;
@@ -60,7 +60,7 @@ public class ModelContextExtraction {
      */
     private static <T> Crud<T> extractCrud(Model<T> model, Elepy elepy) {
         var modelType = model.getJavaClass();
-        var annotation = modelType.getAnnotation(DaoProvider.class);
+        var annotation = modelType.getAnnotation(DaoFactory.class);
 
         var crudProvider = annotation == null ?
                 elepy.initializeElepyObject(elepy.getDefaultCrudProvider())

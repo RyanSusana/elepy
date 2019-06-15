@@ -46,7 +46,7 @@ public class HibernateTest {
         defaultElepyContext.registerDependency(new ObjectMapper());
 
 
-        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateProvider.class).crudFor(ModelUtils.createModelFromClass(Resource.class));
+        resourceCrud = defaultElepyContext.initializeElepyObject(HibernateCrudFactory.class).crudFor(ModelUtils.createModelFromClass(Resource.class));
 
 
     }

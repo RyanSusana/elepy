@@ -2,12 +2,12 @@ package com.elepy.mongo;
 
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
-import com.elepy.dao.CrudProvider;
+import com.elepy.dao.CrudFactory;
 import com.elepy.describers.Model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 
-public class MongoProvider implements CrudProvider {
+public class MongoCrudFactory implements CrudFactory {
 
     @Inject
     private DB database;

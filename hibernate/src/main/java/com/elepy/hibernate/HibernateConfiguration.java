@@ -27,7 +27,7 @@ public class HibernateConfiguration implements com.elepy.Configuration {
         SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 
         elepy.registerDependency(SessionFactory.class, sessionFactory);
-        elepy.withDefaultCrudProvider(HibernateProvider.class);
+        elepy.withDefaultCrudProvider(HibernateCrudFactory.class);
     }
 
     @Override

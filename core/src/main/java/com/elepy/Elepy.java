@@ -6,7 +6,7 @@ import com.elepy.auth.UserAuthenticationCenter;
 import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
-import com.elepy.dao.CrudProvider;
+import com.elepy.dao.CrudFactory;
 import com.elepy.describers.Model;
 import com.elepy.describers.ModelChange;
 import com.elepy.di.ContextKey;
@@ -53,7 +53,7 @@ public class Elepy implements ElepyContext {
     private List<Class<? extends Filter>> adminFilterClasses;
     private List<Route> routes;
     private boolean initialized = false;
-    private Class<? extends CrudProvider> defaultCrudProvider;
+    private Class<? extends CrudFactory> defaultCrudProvider;
     private List<Class<?>> routingClasses;
     private ModelEngine modelEngine;
     private UserAuthenticationCenter userAuthenticationCenter;
@@ -191,14 +191,14 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * The default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
+     * The default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
      *
      * @return the provider
-     * @see CrudProvider
+     * @see CrudFactory
      * @see com.elepy.dao.Crud
      */
-    public Class<? extends CrudProvider> getDefaultCrudProvider() {
+    public Class<? extends CrudFactory> getDefaultCrudProvider() {
         return defaultCrudProvider;
     }
 
@@ -450,15 +450,15 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Changes the default {@link CrudProvider} of the Elepy instance. The {@link CrudProvider} is
+     * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
      *
      * @param defaultCrudProvider the default crud provider
      * @return The {@link com.elepy.Elepy} instance
-     * @see CrudProvider
+     * @see CrudFactory
      * @see com.elepy.dao.Crud
      */
-    public Elepy withDefaultCrudProvider(Class<? extends CrudProvider> defaultCrudProvider) {
+    public Elepy withDefaultCrudProvider(Class<? extends CrudFactory> defaultCrudProvider) {
         this.defaultCrudProvider = defaultCrudProvider;
         return this;
     }
