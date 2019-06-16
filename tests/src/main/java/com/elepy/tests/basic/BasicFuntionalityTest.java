@@ -34,10 +34,8 @@ public abstract class BasicFuntionalityTest extends CrudTest {
         userCrud = elepy.getCrudFor(User.class);
     }
 
-    @Override
     @BeforeEach
     protected void setUp() {
-        super.setUp();
         userCrud.delete(userCrud.getAll().stream().map(User::getId).collect(Collectors.toList()));
     }
 

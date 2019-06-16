@@ -11,7 +11,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -46,12 +49,6 @@ public abstract class CrudTest implements ElepyTest {
         return null;
     }
 
-
-    @BeforeEach
-    protected void setUp() {
-        resourceCrud.delete(resourceCrud.getAll().stream().map(Resource::getId).collect(Collectors.toList()));
-    }
-
     @BeforeAll
     protected void setUpAll() {
         final Configuration configuration = configuration();
@@ -68,14 +65,18 @@ public abstract class CrudTest implements ElepyTest {
         elepy.start();
 
         resourceCrud = elepy.getCrudFor(Resource.class);
+
     }
 
     @AfterAll
-    protected void tearDown() {
+    protected void tearDownAll() {
         elepy.stop();
     }
 
 
+    private void deleteAll() {
+        resourceCrud.delete(resourceCrud.getAll().stream().map(Resource::getId).collect(Collectors.toList()));
+    }
     @Test
     public void can_FindItems_as_Intended() throws IOException, UnirestException {
 
@@ -87,9 +88,10 @@ public abstract class CrudTest implements ElepyTest {
 
         Page resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), Page.class);
 
+
+        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(count + 1, resourcePage.getValues().size());
 
-        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -106,9 +108,10 @@ public abstract class CrudTest implements ElepyTest {
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
+
+        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(1, resourcePage.getValues().size());
 
-        Assertions.assertEquals(200, getRequest.getStatus());
         Assertions.assertEquals("filterUnique", resourcePage.getValues().get(0).getUniqueField());
     }
 
@@ -117,6 +120,7 @@ public abstract class CrudTest implements ElepyTest {
         Resource resource = validObject();
         resource.setUniqueField("testSearchNotFindingAnything");
         resource.setNumberMax40(BigDecimal.valueOf(25));
+        deleteAll();
         resourceCrud.create(resource);
         resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=ilterUni").asString();
@@ -125,10 +129,8 @@ public abstract class CrudTest implements ElepyTest {
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
-        System.out.println(getRequest.getBody());
+        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(0, resourcePage.getValues().size());
-
-        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -144,9 +146,8 @@ public abstract class CrudTest implements ElepyTest {
         Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
+        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(1, resourcePage.getValues().size());
-
-        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -158,9 +159,9 @@ public abstract class CrudTest implements ElepyTest {
 
         Resource foundResource = elepy.getObjectMapper().readValue(getRequest.getBody(), Resource.class);
 
+        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(foundResource.getId(), resource.getId());
 
-        Assertions.assertEquals(200, getRequest.getStatus());
     }
 
     @Test
@@ -173,8 +174,8 @@ public abstract class CrudTest implements ElepyTest {
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
+        Assertions.assertEquals(201, postRequest.getStatus(), postRequest.getBody());
         Assertions.assertEquals(count + 1, resourceCrud.count());
-        Assertions.assertEquals(201, postRequest.getStatus());
     }
 
 
@@ -213,9 +214,9 @@ public abstract class CrudTest implements ElepyTest {
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
-        System.out.println(postRequest.getBody());
+
+        Assertions.assertEquals(201, postRequest.getStatus(), postRequest.getBody());
         Assertions.assertEquals(count + 2, resourceCrud.count());
-        Assertions.assertEquals(201, postRequest.getStatus());
     }
 
     @Test
@@ -231,8 +232,8 @@ public abstract class CrudTest implements ElepyTest {
         Assertions.assertEquals(beginningCount + 1, resourceCrud.count());
         final HttpResponse<String> delete = Unirest.delete(url + "/resources/55").asString();
 
+        Assertions.assertEquals(200, delete.getStatus(), delete.getBody());
         Assertions.assertEquals(beginningCount, resourceCrud.count());
-        Assertions.assertEquals(200, delete.getStatus());
 
     }
 
@@ -255,10 +256,12 @@ public abstract class CrudTest implements ElepyTest {
 
         Optional<Resource> updatePartialId = resourceCrud.getById(66);
 
+
+        Assertions.assertEquals(200, patch.getStatus(), patch.getBody());
         Assertions.assertTrue(updatePartialId.isPresent());
         Assertions.assertEquals("uniqueUpdate", updatePartialId.get().getUniqueField());
         Assertions.assertEquals("ryan", updatePartialId.get().getMARKDOWN());
-        Assertions.assertEquals(200, patch.getStatus());
+        Assertions.assertEquals(200, patch.getStatus(), patch.getBody());
     }
 
     protected synchronized Resource validObject() {
