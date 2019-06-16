@@ -9,9 +9,9 @@ import java.util.List;
 public class ModelContext<T> {
     private final Model<T> model;
 
-    private final Crud<T> crud;
-    private final IdentityProvider<T> identityProvider;
-    private final List<ObjectEvaluator<T>> objectEvaluators;
+    private Crud<T> crud;
+    private IdentityProvider<T> identityProvider;
+    private List<ObjectEvaluator<T>> objectEvaluators;
 
     public ModelContext(Model<T> model,
                         Crud<T> crud,
@@ -23,6 +23,17 @@ public class ModelContext<T> {
         this.objectEvaluators = objectEvaluators;
     }
 
+    public void setObjectEvaluators(List<ObjectEvaluator<T>> objectEvaluators) {
+        this.objectEvaluators = objectEvaluators;
+    }
+
+    public void setCrud(Crud<T> crud) {
+        this.crud = crud;
+    }
+
+    public void setIdentityProvider(IdentityProvider<T> identityProvider) {
+        this.identityProvider = identityProvider;
+    }
 
     public Crud<T> getCrud() {
         return crud;
