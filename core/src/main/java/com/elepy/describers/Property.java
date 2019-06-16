@@ -17,6 +17,7 @@ public class Property implements Comparable<Property> {
     private boolean unique;
     private boolean generated;
     private boolean hiddenFromCMS;
+    private boolean searchable;
     private int importance;
     private FieldType type;
     private Map<String, Object> extraProperties = new HashMap<>();
@@ -92,6 +93,14 @@ public class Property implements Comparable<Property> {
 
     public void setType(FieldType type) {
         this.type = type;
+    }
+
+    public boolean isSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(boolean searchable) {
+        this.searchable = searchable;
     }
 
     public void config(PropertyConfig propertyConfig) {
