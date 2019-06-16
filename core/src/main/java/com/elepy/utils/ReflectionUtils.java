@@ -104,6 +104,22 @@ public class ReflectionUtils {
 
     }
 
+    public static void getPropertyFromObject(String property, Object obj) {
+        try {
+            ReflectionUtils.getPropertyField(obj.getClass(), property).get(obj);
+        } catch (IllegalAccessException e) {
+            throw new ElepyException("Failed to reflectively access an object", 500, e);
+        }
+
+    }
+
+    public static void setPropertyOnObject(String propertyName, Object object, Object value) {
+        try {
+            ReflectionUtils.getPropertyField(object.getClass(), propertyName).set(object, value);
+        } catch (IllegalAccessException e) {
+            throw new ElepyException("Failed to reflectively access an object", 500, e);
+        }
+    }
 
     public static Serializable toObject(Class clazz, String value) {
         if (Boolean.class == clazz || boolean.class == clazz) return Boolean.valueOf(value);
