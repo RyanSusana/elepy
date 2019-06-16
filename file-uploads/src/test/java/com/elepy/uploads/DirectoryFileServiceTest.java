@@ -1,15 +1,10 @@
 package com.elepy.uploads;
 
-import com.elepy.tests.upload.UploadEndToEndTest;
+import com.elepy.tests.upload.FileServiceTest;
 
-public class DirectoryUploadEndToEndTest extends UploadEndToEndTest {
+public class DirectoryFileServiceTest extends FileServiceTest {
 
     private static final String UPLOAD_DIR = "src/test/resources/uploads";
-
-    @Override
-    public String testName() {
-        return "Test local file upload";
-    }
 
     @Override
     public FileService fileService() {

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class UploadEndToEndTest implements ElepyTest {
+public abstract class FileServiceTest implements ElepyTest {
 
     private static int portCounter = 7900;
 
@@ -32,7 +32,7 @@ public abstract class UploadEndToEndTest implements ElepyTest {
     private final FileService fileService;
     private final String url;
 
-    public UploadEndToEndTest(Configuration... configurations) {
+    public FileServiceTest(Configuration... configurations) {
         final int port = ++portCounter;
         this.fileService = fileService();
         url = String.format("http://localhost:%d", port);

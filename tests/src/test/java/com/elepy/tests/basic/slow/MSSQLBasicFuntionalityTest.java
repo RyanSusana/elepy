@@ -1,24 +1,23 @@
 package com.elepy.tests.basic.slow;
 
 import com.elepy.Configuration;
-import com.elepy.tests.basic.BasicEndToEndTest;
+import com.elepy.tests.basic.BasicFuntionalityTest;
 import com.elepy.tests.config.DatabaseConfigurations;
-import org.testcontainers.containers.JdbcDatabaseContainer;
-import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class MariaDBEndToEndTest extends BasicEndToEndTest {
+public class MSSQLBasicFuntionalityTest extends BasicFuntionalityTest {
 
     @Container
-    private static final JdbcDatabaseContainer CONTAINER = new MariaDBContainer();
+    private static final MSSQLServerContainer MSSQL_SERVER_CONTAINER = new MSSQLServerContainer();
 
     @Override
     public Configuration configuration() {
         return DatabaseConfigurations.createTestContainerConfiguration(
-                CONTAINER,
-                "org.hibernate.dialect.MariaDBDialect"
+                MSSQL_SERVER_CONTAINER,
+                "org.hibernate.dialect.SQLServerDialect"
         );
     }
 }

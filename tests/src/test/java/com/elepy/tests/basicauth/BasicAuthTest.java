@@ -29,7 +29,7 @@ import java.util.Optional;
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BasicAuthEndToEndTest {
+public class BasicAuthTest {
 
 
     protected Elepy elepy;
@@ -38,7 +38,7 @@ public class BasicAuthEndToEndTest {
     void setUp() {
 
         elepy = new Elepy();
-        elepy.withDefaultCrudProvider(MongoCrudFactory.class);
+        elepy.withDefaultCrudFactory(MongoCrudFactory.class);
 
         Fongo fongo = new Fongo("test");
         final FongoDB db = fongo.getDB("test");
