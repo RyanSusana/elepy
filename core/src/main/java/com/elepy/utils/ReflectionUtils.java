@@ -104,9 +104,11 @@ public class ReflectionUtils {
 
     }
 
-    public static void getPropertyFromObject(String property, Object obj) {
+    public static Object getPropertyFromObject(String property, Object obj) {
         try {
-            ReflectionUtils.getPropertyField(obj.getClass(), property).get(obj);
+            return Optional.ofNullable(ReflectionUtils.getPropertyField(obj.getClass(), property))
+                    .orElseThrow(() -> new ElepyException(String.format("Property '%s' not found on the class '%s'", property, obj.getClass().getName()), 500))
+                    .get(obj);
         } catch (IllegalAccessException e) {
             throw new ElepyException("Failed to reflectively access an object", 500, e);
         }
