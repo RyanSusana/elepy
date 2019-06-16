@@ -53,7 +53,8 @@ public class Elepy implements ElepyContext {
     private List<Class<? extends Filter>> adminFilterClasses;
     private List<Route> routes;
     private boolean initialized = false;
-    private Class<? extends CrudFactory> defaultCrudProvider;
+    private Class<? extends CrudFactory> defaultCrudFactoryClass;
+    private CrudFactory defaultCrudFactoryImplementation;
     private List<Class<?>> routingClasses;
     private ModelEngine modelEngine;
     private UserAuthenticationCenter userAuthenticationCenter;
@@ -75,7 +76,7 @@ public class Elepy implements ElepyContext {
         this.adminFilters = new MultiFilter();
         this.http = new SparkService(http, this);
 
-        this.defaultCrudProvider = null;
+        this.defaultCrudFactoryClass = null;
 
         this.models = new ArrayList<>();
         this.configSlug = "/config";
@@ -185,22 +186,11 @@ public class Elepy implements ElepyContext {
         try {
             context.resolveDependencies();
         } catch (ElepyConfigException ignored) {
-            //silent fail, just tries to resolve everything
+            //silent fail, just tries to pre-resolve everything
         }
         return context.initializeElepyObject(cls);
     }
 
-    /**
-     * The default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
-     *
-     * @return the provider
-     * @see CrudFactory
-     * @see com.elepy.dao.Crud
-     */
-    public Class<? extends CrudFactory> getDefaultCrudProvider() {
-        return defaultCrudProvider;
-    }
 
     /**
      * Adds a {@link Filter} administrative checking service.
@@ -458,9 +448,37 @@ public class Elepy implements ElepyContext {
      * @see CrudFactory
      * @see com.elepy.dao.Crud
      */
-    public Elepy withDefaultCrudProvider(Class<? extends CrudFactory> defaultCrudProvider) {
-        this.defaultCrudProvider = defaultCrudProvider;
+    public Elepy withDefaultCrudFactory(Class<? extends CrudFactory> defaultCrudProvider) {
+        this.defaultCrudFactoryClass = defaultCrudProvider;
         return this;
+    }
+
+    /**
+     * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
+     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     *
+     * @param defaultCrudProvider the default crud provider
+     * @return The {@link com.elepy.Elepy} instance
+     * @see CrudFactory
+     * @see com.elepy.dao.Crud
+     */
+    public Elepy withDefaultCrudFactory(CrudFactory defaultCrudProvider) {
+        this.defaultCrudFactoryImplementation = defaultCrudProvider;
+        return this;
+    }
+
+    /**
+     * @return The Default CrudFactory of Elepy. The Default CrudFactory is what creates Crud's for Elepy's models.
+     */
+    public CrudFactory getDefaultCrudFactory() {
+        if (defaultCrudFactoryImplementation == null) {
+            if (defaultCrudFactoryClass == null) {
+                throw new ElepyConfigException("No default CrudFactory selected, please configure one.");
+            }
+            defaultCrudFactoryImplementation = initializeElepyObject(defaultCrudFactoryClass);
+        }
+
+        return defaultCrudFactoryImplementation;
     }
 
     /**
@@ -606,11 +624,6 @@ public class Elepy implements ElepyContext {
         }
     }
 
-    private void validateConfig() {
-        if (this.defaultCrudProvider == null) {
-            throw new ElepyConfigException("No default database selected, please configure one.");
-        }
-    }
 
     private void init() {
         addModel(User.class);
@@ -621,8 +634,6 @@ public class Elepy implements ElepyContext {
         retrievePackageModels();
 
         beforeConfiguration();
-
-        validateConfig();
 
         registerDependency(Filter.class, "protected", adminFilters);
 

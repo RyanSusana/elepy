@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 
 /**
  * A link to the {@link CrudFactory} to be used to singleCreate Crud implementations for this
- * {@link RestModel}. The default is whatever is configured with {@link com.elepy.Elepy#withDefaultCrudProvider(Class)}
+ * {@link RestModel}. The default is whatever is configured with {@link com.elepy.Elepy#withDefaultCrudFactory(Class)}
  *
  * @see CrudFactory
- * @see com.elepy.Elepy#withDefaultCrudProvider(Class)
+ * @see com.elepy.Elepy#withDefaultCrudFactory(Class)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

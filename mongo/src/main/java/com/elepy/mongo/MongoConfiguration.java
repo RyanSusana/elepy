@@ -29,7 +29,7 @@ public class MongoConfiguration implements Configuration {
     @Override
     public void before(ElepyPreConfiguration elepy) {
         elepy.registerDependency(DB.class, db);
-        elepy.withDefaultCrudProvider(MongoCrudFactory.class);
+        elepy.withDefaultCrudFactory(MongoCrudFactory.class);
     }
 
     @Override
