@@ -2,12 +2,10 @@ package com.elepy.tests.upload;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
-import com.elepy.mongo.MongoConfiguration;
 import com.elepy.tests.ElepyTest;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileService;
 import com.elepy.uploads.UploadedFile;
-import com.github.fakemongo.Fongo;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -38,7 +36,7 @@ public abstract class FileServiceTest implements ElepyTest {
         url = String.format("http://localhost:%d", port);
         elepy = new Elepy()
                 .addModel(Resource.class)
-                .addConfiguration(MongoConfiguration.of(new Fongo("test").getDB("test")))
+                .addConfiguration(databaseConfiguration())
                 .withUploads(this.fileService)
                 .onPort(port);
 
@@ -46,6 +44,7 @@ public abstract class FileServiceTest implements ElepyTest {
         elepy.start();
     }
 
+    public abstract Configuration databaseConfiguration();
     public abstract FileService fileService();
 
 

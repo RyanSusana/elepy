@@ -5,8 +5,6 @@ import ch.vorburger.mariadb4j.DB;
 import com.elepy.Configuration;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.hibernate.HibernateConfiguration;
-import com.elepy.mongo.MongoConfiguration;
-import com.github.fakemongo.Fongo;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -48,7 +46,6 @@ public class DatabaseConfigurations {
             "sa"
     );
 
-    public static Configuration MongoDB = MongoConfiguration.of(new Fongo("test").getDB("test"));
 
     public static WithSetupConfiguration MySQL5 = new WithSetupConfiguration(
             () -> {

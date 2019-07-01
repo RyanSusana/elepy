@@ -1,39 +1,33 @@
 package com.elepy.mongo;
 
-import com.mongodb.DB;
+import com.elepy.Configuration;
+import com.elepy.tests.basic.BasicFuntionalityTest;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.junit.jupiter.api.AfterAll;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
-public class BaseFongo extends Base {
-
-
-    private MongoClient _mongo;
-
-    private MongoClient client;
-    private int port;
+public class MongoFunctionalityTest extends BasicFuntionalityTest {
 
     private MongoServer mongoServer;
 
-    public void setUp() throws Exception {
+    @Override
+    public Configuration configuration() {
         mongoServer = new MongoServer(new MemoryBackend());
 
         InetSocketAddress serverAddress = mongoServer.bind();
 
-        client = new MongoClient(new ServerAddress(serverAddress));
+        MongoClient client = new MongoClient(new ServerAddress(serverAddress));
+        return MongoConfiguration.of(client, "test");
     }
 
+    @Override
     @AfterAll
-    void tearDown() {
+    protected void tearDownAll() {
+        super.tearDownAll();
         mongoServer.shutdownNow();
-    }
-
-    public DB getDb() throws IOException {
-        return client.getDB("test");
     }
 }

@@ -4,6 +4,10 @@ import com.elepy.annotations.*;
 import com.elepy.routes.DisabledHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,8 +15,12 @@ import java.util.regex.Pattern;
 @RestModel(name = "Files", slug = "/files")
 @Update(handler = DisabledHandler.class)
 @Delete(handler = UploadedFileDelete.class)
+@Entity(name = "elepy_files")
+@Table(name = "elepy_files")
 public class UploadedFile {
 
+    @Id
+    @Identifier
     private String id;
 
     private String contentType;
@@ -22,6 +30,7 @@ public class UploadedFile {
 
     @JsonIgnore
     @Hidden
+    @Transient
     private InputStream content;
 
     public UploadedFile() {

@@ -11,11 +11,13 @@ import com.mongodb.DB;
 import org.jongo.Jongo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DefaultMongoDaoTest extends BaseFongo {
 
     private Crud<Resource> defaultMongoDao;

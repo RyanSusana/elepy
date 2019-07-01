@@ -58,21 +58,6 @@
             <version>2.6</version>
         </dependency>
 
-
-        <!--Mongo-->
-        <dependency>
-            <groupId>com.elepy</groupId>
-            <artifactId>elepy-mongo</artifactId>
-            <version>2.0.0-beta-13</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
-            <version>2.2.0-RC2</version>
-        </dependency>
-
-
         <!--Hibernate-->
         <dependency>
             <groupId>com.elepy</groupId>

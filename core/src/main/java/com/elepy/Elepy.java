@@ -607,11 +607,11 @@ public class Elepy implements ElepyContext {
     }
 
     private void beforeConfiguration() {
-        for (Configuration configuration : configurations) {
-            configuration.before(new ElepyPreConfiguration(this));
-        }
         for (ElepyModule module : modules) {
             module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
+        }
+        for (Configuration configuration : configurations) {
+            configuration.before(new ElepyPreConfiguration(this));
         }
     }
 
@@ -629,12 +629,12 @@ public class Elepy implements ElepyContext {
         addModel(User.class);
         addExtension(new UploadModule());
 
-        this.registerDependency(userAuthenticationCenter);
+        registerDependency(userAuthenticationCenter);
+
         setupLoggingAndExceptions();
+
         retrievePackageModels();
-
         beforeConfiguration();
-
         registerDependency(Filter.class, "protected", adminFilters);
 
         models.forEach(modelEngine::addModel);
