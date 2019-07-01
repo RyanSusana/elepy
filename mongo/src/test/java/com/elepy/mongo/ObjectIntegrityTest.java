@@ -4,9 +4,11 @@ import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ModelUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ObjectIntegrityTest extends BaseFongo {
 
     @Test
