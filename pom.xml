@@ -44,6 +44,7 @@
         <module>basic</module>
         <module>file-uploads</module>
         <module>tests</module>
+        <module>vertx</module>
     </modules>
 
     <distributionManagement>
