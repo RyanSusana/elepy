@@ -4,7 +4,6 @@ import com.elepy.annotations.RestModel;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import org.jongo.Find;
@@ -104,21 +103,11 @@ public abstract class MongoDao<T> implements Crud<T> {
         return "id";
     }
 
-    @Override
-    public void create(Iterable<T> items) {
-        try {
-            final T[] ts = Iterables.toArray(items, getType());
-            collection().insert((Object[]) ts);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ElepyException(e.getMessage());
-        }
-    }
 
     @Override
     public void create(T item) {
         try {
-            collection().insert(item);
+            collection().save(item);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ElepyException(e.getMessage());
