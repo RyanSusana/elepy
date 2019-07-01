@@ -45,12 +45,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
-            <version>2.2.0-RC2</version>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>1.16.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jongo</groupId>
             <artifactId>jongo</artifactId>
@@ -59,7 +58,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
-            <version>3.6.3</version>
+            <version>3.9.1</version>
         </dependency>
 
         <dependency>
