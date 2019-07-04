@@ -11,7 +11,6 @@ import com.elepy.http.Request;
 import com.elepy.http.Response;
 import spark.utils.IOUtils;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +40,7 @@ public class UploadModule implements ElepyModule {
         final UploadedFile file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("File not found", 404));
 
         response.type(file.getContentType());
-        HttpServletResponse raw = response.servletResponse();
-
-        raw.getOutputStream().write(IOUtils.toByteArray(file.getContent()));
-        raw.getOutputStream().flush();
-        raw.getOutputStream().close();
+        response.result(IOUtils.toByteArray(file.getContent()));
     }
 
     private void handleUpload(Request request, Response response) {

@@ -1,6 +1,7 @@
 package com.elepy.http;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class SparkResponse implements Response {
     private final spark.Response response;
@@ -32,6 +33,19 @@ public class SparkResponse implements Response {
     @Override
     public void result(String body) {
         response.body(body);
+    }
+
+    @Override
+    public void result(byte[] bytes) {
+        HttpServletResponse raw = response.raw();
+
+        try {
+            raw.getOutputStream().write(bytes);
+            raw.getOutputStream().flush();
+            raw.getOutputStream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

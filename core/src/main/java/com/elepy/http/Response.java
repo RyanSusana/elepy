@@ -16,6 +16,8 @@ public interface Response {
 
     void result(String body);
 
+    void result(byte[] bytes);
+
     String result();
 
     HttpServletResponse servletResponse();

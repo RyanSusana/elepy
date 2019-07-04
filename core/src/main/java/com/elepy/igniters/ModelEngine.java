@@ -10,7 +10,6 @@ import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
 import com.elepy.utils.ModelUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,8 +70,7 @@ public class ModelEngine {
 
                     ctx.requirePermissions(Permissions.LOGGED_IN);
 
-                    // TODO make result be able to handle regular objects
-                    ctx.result(new ObjectMapper().writeValueAsString(pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList())));
+                    ctx.response().json(pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList()));
 
                 })
                 .build();
