@@ -1,10 +1,8 @@
 package com.elepy.http;
 
-import javax.servlet.http.HttpSession;
 import java.util.Set;
 
 public interface Session {
-    HttpSession raw();
 
     <T> T attribute(String name);
 
