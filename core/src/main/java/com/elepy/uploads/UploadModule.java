@@ -43,7 +43,6 @@ public class UploadModule implements ElepyModule {
         response.type(file.getContentType());
         HttpServletResponse raw = response.servletResponse();
 
-
         raw.getOutputStream().write(IOUtils.toByteArray(file.getContent()));
         raw.getOutputStream().flush();
         raw.getOutputStream().close();

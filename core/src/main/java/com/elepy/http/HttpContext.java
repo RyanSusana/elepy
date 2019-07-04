@@ -112,18 +112,6 @@ public interface HttpContext {
         return request().session();
     }
 
-    default String pathInfo() {
-        return request().pathInfo();
-    }
-
-    default String servletPath() {
-        return request().servletPath();
-    }
-
-    default String contextPath() {
-        return request().contextPath();
-    }
-
     default Set<String> queryParams() {
         return request().queryParams();
     }
@@ -138,10 +126,6 @@ public interface HttpContext {
 
     default Map<String, String> params() {
         return request().params();
-    }
-
-    default String[] splat() {
-        return request().splat();
     }
 
     default void attribute(String attribute, Object value) {

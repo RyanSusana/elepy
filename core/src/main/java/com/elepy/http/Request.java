@@ -29,7 +29,6 @@ public interface Request {
 
     String body();
 
-
     byte[] bodyAsBytes();
 
     String queryParams(String queryParam);
@@ -48,12 +47,6 @@ public interface Request {
 
     Session session();
 
-    String pathInfo();
-
-    String servletPath();
-
-    String contextPath();
-
     Set<String> queryParams();
 
     Set<String> headers();
@@ -63,8 +56,6 @@ public interface Request {
     Map<String, String> params();
 
     String[] queryParamValues(String key);
-
-    String[] splat();
 
     List<UploadedFile> uploadedFiles(String key);
 
