@@ -37,22 +37,31 @@ public interface HttpService {
 
     ////////// FILTERS
 
-    void before(String path, RequestResponseHandler requestResponseHandler);
 
-    void before(String path, HttpContextHandler requestResponseHandler);
+    void before(HttpContextHandler contextHandler);
 
-    void before(RequestResponseHandler requestResponseHandler);
+    void before(String path, HttpContextHandler contextHandler);
 
-    void before(HttpContextHandler requestResponseHandler);
+    void after(String path, HttpContextHandler contextHandler);
 
+    void after(HttpContextHandler contextHandler);
 
-    void after(String path, RequestResponseHandler requestResponseHandler);
+    default void before(String path, RequestResponseHandler requestResponseHandler) {
+        before(path, context -> requestResponseHandler.handle(context.request(), context.response()));
+    }
 
-    void after(String path, HttpContextHandler requestResponseHandler);
+    default void before(RequestResponseHandler requestResponseHandler) {
+        before(context -> requestResponseHandler.handle(context.request(), context.response()));
+    }
 
-    void after(RequestResponseHandler requestResponseHandler);
+    default void after(String path, RequestResponseHandler requestResponseHandler) {
+        after(path, context -> requestResponseHandler.handle(context.request(), context.response()));
+    }
 
-    void after(HttpContextHandler requestResponseHandler);
+    default void after(RequestResponseHandler requestResponseHandler) {
+        after(context -> requestResponseHandler.handle(context.request(), context.response()));
+    }
+
 
     /////////// GET
 

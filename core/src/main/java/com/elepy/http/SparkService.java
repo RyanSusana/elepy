@@ -95,8 +95,8 @@ public class SparkService implements HttpService {
     }
 
     @Override
-    public void before(String path, HttpContextHandler requestResponseHandler) {
-        http.before(path, (request, response) -> requestResponseHandler.handle(new SparkContext(request, response)));
+    public void before(String path, HttpContextHandler contextHandler) {
+        http.before(path, (request, response) -> contextHandler.handle(new SparkContext(request, response)));
     }
 
     @Override
@@ -105,8 +105,8 @@ public class SparkService implements HttpService {
     }
 
     @Override
-    public void before(HttpContextHandler requestResponseHandler) {
-        http.before((request, response) -> requestResponseHandler.handle(new SparkContext(request, response)));
+    public void before(HttpContextHandler contextHandler) {
+        http.before((request, response) -> contextHandler.handle(new SparkContext(request, response)));
     }
 
 
@@ -116,8 +116,8 @@ public class SparkService implements HttpService {
     }
 
     @Override
-    public void after(String path, HttpContextHandler requestResponseHandler) {
-        http.before(path, (request, response) -> requestResponseHandler.handle(new SparkContext(request, response)));
+    public void after(String path, HttpContextHandler contextHandler) {
+        http.before(path, (request, response) -> contextHandler.handle(new SparkContext(request, response)));
     }
 
     @Override
@@ -126,8 +126,8 @@ public class SparkService implements HttpService {
     }
 
     @Override
-    public void after(HttpContextHandler requestResponseHandler) {
-        http.before((request, response) -> requestResponseHandler.handle(new SparkContext(request, response)));
+    public void after(HttpContextHandler contextHandler) {
+        http.before((request, response) -> contextHandler.handle(new SparkContext(request, response)));
     }
 
     public void afterAfter(spark.Filter filter) {
