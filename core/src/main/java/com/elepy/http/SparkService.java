@@ -90,18 +90,8 @@ public class SparkService implements HttpService {
     }
 
     @Override
-    public void before(String path, RequestResponseHandler requestResponseHandler) {
-        http.before(path, (request, response) -> requestResponseHandler.handle(new SparkRequest(request), new SparkResponse(response)));
-    }
-
-    @Override
     public void before(String path, HttpContextHandler contextHandler) {
         http.before(path, (request, response) -> contextHandler.handle(new SparkContext(request, response)));
-    }
-
-    @Override
-    public void before(RequestResponseHandler requestResponseHandler) {
-        http.before((request, response) -> requestResponseHandler.handle(new SparkRequest(request), new SparkResponse(response)));
     }
 
     @Override
@@ -109,20 +99,9 @@ public class SparkService implements HttpService {
         http.before((request, response) -> contextHandler.handle(new SparkContext(request, response)));
     }
 
-
-    @Override
-    public void after(String path, RequestResponseHandler requestResponseHandler) {
-        http.before(path, (request, response) -> requestResponseHandler.handle(new SparkRequest(request), new SparkResponse(response)));
-    }
-
     @Override
     public void after(String path, HttpContextHandler contextHandler) {
         http.before(path, (request, response) -> contextHandler.handle(new SparkContext(request, response)));
-    }
-
-    @Override
-    public void after(RequestResponseHandler requestResponseHandler) {
-        http.before((request, response) -> requestResponseHandler.handle(new SparkRequest(request), new SparkResponse(response)));
     }
 
     @Override
