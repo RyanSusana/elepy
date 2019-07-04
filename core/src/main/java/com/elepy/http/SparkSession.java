@@ -1,6 +1,5 @@
 package com.elepy.http;
 
-import javax.servlet.http.HttpSession;
 import java.util.Set;
 
 public class SparkSession implements Session {
@@ -10,11 +9,6 @@ public class SparkSession implements Session {
         this.session = session;
     }
 
-
-    @Override
-    public HttpSession raw() {
-        return session.raw();
-    }
 
     @Override
     public <T> T attribute(String name) {
