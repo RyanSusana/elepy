@@ -1,21 +1,32 @@
 package com.elepy.vertx;
 
+import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Session;
 import com.elepy.uploads.UploadedFile;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.ext.web.Cookie;
+import io.vertx.ext.web.RoutingContext;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class VertxRequest implements Request {
-    HttpServerRequest request;
+    private final HttpServerRequest request;
+
+    private final RoutingContext routingContext;
+
+    public VertxRequest(RoutingContext routingContext) {
+        this.routingContext = routingContext;
+        this.request = routingContext.request();
+    }
 
 
     @Override
     public String params(String param) {
-        return request.getParam(param);
+        return routingContext.pathParam(param);
     }
 
     @Override
@@ -52,106 +63,95 @@ public class VertxRequest implements Request {
 
     @Override
     public String body() {
-        return null;
+        return routingContext.getBody().toString();
     }
 
     @Override
     public byte[] bodyAsBytes() {
-        return new byte[0];
+        return routingContext.getBody().getBytes();
     }
 
     @Override
     public String queryParams(String queryParam) {
-        return null;
+        return request.getParam(queryParam);
     }
 
     @Override
     public String queryParamOrDefault(String queryParam, String defaultValue) {
-        return null;
+        final String param = request.getParam(queryParam);
+        return param == null ? defaultValue : param;
     }
 
     @Override
     public String headers(String header) {
-        return null;
+        return request.getHeader(header);
     }
 
     @Override
     public <T> T attribute(String attribute) {
-        return null;
+        return routingContext.get(attribute);
     }
 
     @Override
     public Map<String, String> cookies() {
-        return null;
+        Map<String, String> cookies = new HashMap<>();
+        routingContext.cookies().forEach(cookie -> cookies.put(cookie.getName(), cookie.getValue()));
+        return cookies;
     }
 
     @Override
     public String cookie(String name) {
-        return null;
+        return routingContext.cookies().stream()
+                .filter(cookie -> cookie.getName().equals(name))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
     }
 
     @Override
     public String uri() {
-        return null;
+        return request.uri();
     }
 
     @Override
     public Session session() {
-        return null;
-    }
-
-    @Override
-    public String pathInfo() {
-        return null;
-    }
-
-    @Override
-    public String servletPath() {
-        return null;
-    }
-
-    @Override
-    public String contextPath() {
-        return null;
+        return new VertxSession(routingContext);
     }
 
     @Override
     public Set<String> queryParams() {
-        return null;
+        return request.params().names();
     }
 
     @Override
     public Set<String> headers() {
-        return null;
+        return request.headers().names();
     }
 
     @Override
     public String queryString() {
-        return null;
+        return request.query();
     }
 
     @Override
     public Map<String, String> params() {
-        return null;
+        Map<String, String> toReturn = new HashMap<>();
+        request.params().forEach((entry) -> toReturn.put(entry.getKey(), entry.getValue()));
+        return toReturn;
     }
 
     @Override
     public String[] queryParamValues(String key) {
-        return new String[0];
-    }
-
-    @Override
-    public String[] splat() {
-        return new String[0];
+        return request.params().getAll(key).toArray(new String[0]);
     }
 
     @Override
     public List<UploadedFile> uploadedFiles(String key) {
-        return null;
+        throw new ElepyException("No no bro bro");
     }
 
     @Override
     public void attribute(String attribute, Object value) {
-
+        routingContext.put(attribute, value);
     }
 }
