@@ -80,13 +80,13 @@ public class VertxResponse implements Response {
 
     @Override
     public void redirect(String location) {
-        throw new UnsupportedOperationException();
+        redirect(location, 301);
     }
 
     @Override
     public void redirect(String location, int httpStatusCode) {
-
-        throw new UnsupportedOperationException();
+        header("Loacation", location);
+        status(httpStatusCode);
     }
 
     @Override

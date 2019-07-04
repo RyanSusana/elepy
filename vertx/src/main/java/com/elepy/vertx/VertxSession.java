@@ -7,67 +7,39 @@ import java.util.Set;
 
 public class VertxSession implements Session {
 
-
-    private final RoutingContext routingContext;
-    private final io.vertx.ext.web.Session vertxSession;
+    private final io.vertx.ext.web.Session session;
 
     public VertxSession(RoutingContext routingContext) {
-        this.routingContext = routingContext;
-        this.vertxSession = routingContext.session();
+        this.session = routingContext.session();
     }
 
     @Override
     public <T> T attribute(String name) {
-        return null;
+        return session.get(name);
     }
 
     @Override
     public void attribute(String name, Object value) {
-
+        session.put(name, value);
     }
 
     @Override
     public Set<String> attributes() {
-        return null;
-    }
-
-    @Override
-    public long creationTime() {
-        return 0;
+        return session.data().keySet();
     }
 
     @Override
     public String id() {
-        return null;
-    }
-
-    @Override
-    public long lastAccessedTime() {
-        return 0;
-    }
-
-    @Override
-    public int maxInactiveInterval() {
-        return 0;
-    }
-
-    @Override
-    public void maxInactiveInterval(int interval) {
-
+        return session.id();
     }
 
     @Override
     public void invalidate() {
-
-    }
-
-    @Override
-    public boolean isNew() {
-        return false;
+        session.destroy();
     }
 
     @Override
     public void removeAttribute(String name) {
-
+        session.remove(name);
     }
 }

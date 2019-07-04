@@ -10,19 +10,10 @@ public interface Session {
 
     Set<String> attributes();
 
-    long creationTime();
-
     String id();
-
-    long lastAccessedTime();
-
-    int maxInactiveInterval();
-
-    void maxInactiveInterval(int interval);
 
     void invalidate();
 
-    boolean isNew();
 
     void removeAttribute(String name);
 }

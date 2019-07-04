@@ -46,7 +46,6 @@ public class VertxRequest implements Request {
 
     @Override
     public int port() {
-        //TODO
         return request.remoteAddress().port();
     }
 
@@ -57,7 +56,6 @@ public class VertxRequest implements Request {
 
     @Override
     public String ip() {
-        //TODO
         return request.remoteAddress().host();
     }
 

@@ -26,38 +26,13 @@ public class SparkSession implements Session {
     }
 
     @Override
-    public long creationTime() {
-        return session.creationTime();
-    }
-
-    @Override
     public String id() {
         return session.id();
     }
 
     @Override
-    public long lastAccessedTime() {
-        return session.lastAccessedTime();
-    }
-
-    @Override
-    public int maxInactiveInterval() {
-        return session.maxInactiveInterval();
-    }
-
-    @Override
-    public void maxInactiveInterval(int interval) {
-        session.maxInactiveInterval(interval);
-    }
-
-    @Override
     public void invalidate() {
         session.invalidate();
-    }
-
-    @Override
-    public boolean isNew() {
-        return session.isNew();
     }
 
     @Override
