@@ -7,7 +7,6 @@ import com.elepy.describers.Model;
 import com.elepy.uploads.UploadedFile;
 import com.elepy.utils.ReflectionUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +29,6 @@ public interface Request {
 
     String body();
 
-    HttpServletRequest servletRequest();
 
     byte[] bodyAsBytes();
 

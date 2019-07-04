@@ -4,7 +4,6 @@ import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -76,9 +75,6 @@ public interface HttpContext {
         return request().body();
     }
 
-    default HttpServletRequest servletRequest() {
-        return request().servletRequest();
-    }
 
     default byte[] bodyAsBytes() {
         return request().bodyAsBytes();

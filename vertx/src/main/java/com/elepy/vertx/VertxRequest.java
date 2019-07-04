@@ -5,7 +5,6 @@ import com.elepy.http.Session;
 import com.elepy.uploads.UploadedFile;
 import io.vertx.core.http.HttpServerRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,11 +52,6 @@ public class VertxRequest implements Request {
 
     @Override
     public String body() {
-        return null;
-    }
-
-    @Override
-    public HttpServletRequest servletRequest() {
         return null;
     }
 

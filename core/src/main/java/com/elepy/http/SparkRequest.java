@@ -194,7 +194,7 @@ public class SparkRequest implements Request {
 
         if (contentType != null && contentType.toLowerCase().contains("multipart/form-data")) {
 
-            HttpServletRequest servletRequest = servletRequest();
+            HttpServletRequest servletRequest = request.raw();
 
             servletRequest.setAttribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
 
