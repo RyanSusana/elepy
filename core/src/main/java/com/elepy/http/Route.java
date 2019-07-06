@@ -9,7 +9,6 @@ import java.util.Set;
  * A route that can be added to {@link com.elepy.Elepy}
  */
 public class Route {
-    private final HttpContextHandler beforeFilter;
     private final AccessLevel accessLevel;
     private final HttpContextHandler httpContextHandler;
     private final HttpMethod method;
@@ -20,15 +19,13 @@ public class Route {
     /**
      * @param path               The URI path
      * @param method             The HTTP method
-     * @param beforeFilter       What happens before a httpContextHandler is executed
      * @param accessLevel        Who is allowed to see the httpContextHandler
      * @param httpContextHandler The Spark httpContextHandler interface
      * @param acceptType         The accept type of the httpContextHandler
      * @param permissions        The required permissions of the route.
      */
-    public Route(String path, HttpMethod method, HttpContextHandler beforeFilter, AccessLevel accessLevel, HttpContextHandler httpContextHandler, String acceptType, Set<String> permissions) {
-        this.beforeFilter = beforeFilter == null ? ctx -> {
-        } : beforeFilter;
+    public Route(String path, HttpMethod method, AccessLevel accessLevel, HttpContextHandler httpContextHandler, String acceptType, Set<String> permissions) {
+
         this.accessLevel = accessLevel == null ? AccessLevel.PUBLIC : accessLevel;
         this.acceptType = acceptType == null ? "*/*" : acceptType;
         this.permissions = permissions;
@@ -43,10 +40,6 @@ public class Route {
 
     public Set<String> getPermissions() {
         return permissions;
-    }
-
-    public HttpContextHandler getBeforeFilter() {
-        return beforeFilter;
     }
 
     public HttpContextHandler getHttpContextHandler() {
