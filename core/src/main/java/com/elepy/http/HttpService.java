@@ -1,5 +1,6 @@
 package com.elepy.http;
 
+
 public interface HttpService {
 
     void ipAddress(String ip);
@@ -13,6 +14,8 @@ public interface HttpService {
     void ignite();
 
     void stop();
+
+    <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler);
 
     default void addRoute(HttpMethod method, String path, AccessLevel accessLevel, HttpContextHandler contextHandler) {
         addRoute(RouteBuilder

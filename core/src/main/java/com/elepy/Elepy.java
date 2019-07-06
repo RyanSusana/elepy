@@ -24,7 +24,6 @@ import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileService;
 import com.elepy.uploads.UploadModule;
 import com.elepy.utils.ReflectionUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.reflections.Reflections;
@@ -42,7 +41,7 @@ import java.util.*;
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
-    private final SparkService http;
+    private final HttpService http;
     private final List<ElepyModule> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
@@ -725,14 +724,8 @@ public class Elepy implements ElepyContext {
                 logger.info(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> response.result(""));
-        http.notFound((request, response) -> {
 
-            response.type("application/json");
-            return getObjectMapper().writeValueAsString(Message.of("Not found", 404));
-
-        });
-
-        http.exception(Exception.class, (exception, request, response) -> {
+        http.exception(Exception.class, (exception, context) -> {
             final ElepyErrorMessage elepyErrorMessage;
             if (exception instanceof InvocationTargetException && ((InvocationTargetException) exception).getTargetException() instanceof ElepyErrorMessage) {
                 exception = (ElepyErrorMessage) ((InvocationTargetException) exception).getTargetException();
@@ -750,16 +743,11 @@ public class Elepy implements ElepyContext {
                 logger.error(exception.getMessage(), exception);
                 exception.printStackTrace();
             }
-            response.type("application/json");
+            context.type("application/json");
 
-            response.status(elepyErrorMessage.getStatus());
-            try {
-                response.body(getObjectMapper()
-                        .writeValueAsString(Message.of(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus())));
+            context.status(elepyErrorMessage.getStatus());
+            context.result(Message.of(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus()));
 
-            } catch (JsonProcessingException e) {
-                logger.error(e.getMessage(), e);
-            }
         });
     }
 
