@@ -1,5 +1,5 @@
 ![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
-https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.(svg|png)?style={style}
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
 # Version 2.0 is almost here!
 Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSusana/elepy/projects/2). You can download it here:
 The latest version can be found at https://elepy.com/docs/download
