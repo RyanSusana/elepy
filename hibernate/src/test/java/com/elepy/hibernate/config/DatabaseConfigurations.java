@@ -79,6 +79,7 @@ public class DatabaseConfigurations {
         properties.setProperty("hibernate.dialect", dialect);
         properties.setProperty("hibernate.hbm2ddl.auto", "create");
 
+        new org.hibernate.cfg.Configuration();
 
         return HibernateConfiguration.of(new org.hibernate.cfg.Configuration().setProperties(properties));
 

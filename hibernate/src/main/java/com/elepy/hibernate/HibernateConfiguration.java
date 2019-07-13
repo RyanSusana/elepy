@@ -11,11 +11,21 @@ public class HibernateConfiguration implements com.elepy.Configuration {
 
     public HibernateConfiguration(Configuration hibernateConfiguration) {
         this.hibernateConfiguration = hibernateConfiguration;
+        hibernateConfiguration.configure();
     }
 
     public static HibernateConfiguration of(Configuration c) {
         return new HibernateConfiguration(c);
     }
+
+    public static HibernateConfiguration fromEnv(String hibernateCfgXml) {
+        return of(new Configuration().configure(hibernateCfgXml));
+    }
+
+    public static HibernateConfiguration fromEnv() {
+        return of(new Configuration().configure("hibernate.cfg.xml"));
+    }
+
 
     @Override
     public void before(ElepyPreConfiguration elepy) {
