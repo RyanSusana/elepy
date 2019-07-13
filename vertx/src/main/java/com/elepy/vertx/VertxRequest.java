@@ -1,6 +1,5 @@
 package com.elepy.vertx;
 
-import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Session;
 import com.elepy.uploads.UploadedFile;
@@ -8,10 +7,12 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.RoutingContext;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class VertxRequest implements Request {
     private final HttpServerRequest request;
@@ -61,7 +62,7 @@ public class VertxRequest implements Request {
 
     @Override
     public String body() {
-        return routingContext.getBody().toString();
+        return routingContext.getBodyAsString();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class VertxRequest implements Request {
 
     @Override
     public String queryParamOrDefault(String queryParam, String defaultValue) {
-        final String param = request.getParam(queryParam);
+        final String param = queryParams(queryParam);
         return param == null ? defaultValue : param;
     }
 
@@ -134,7 +135,7 @@ public class VertxRequest implements Request {
     @Override
     public Map<String, String> params() {
         Map<String, String> toReturn = new HashMap<>();
-        request.params().forEach((entry) -> toReturn.put(entry.getKey(), entry.getValue()));
+        request.params().forEach((entry) -> toReturn.put(entry.getKey().toLowerCase(), entry.getValue()));
         return toReturn;
     }
 
@@ -145,7 +146,13 @@ public class VertxRequest implements Request {
 
     @Override
     public List<UploadedFile> uploadedFiles(String key) {
-        throw new ElepyException("No no bro bro");
+        return routingContext.fileUploads().stream()
+                .map(file ->
+                        new UploadedFile(
+                                file.contentType(),
+                                new ByteArrayInputStream(routingContext.vertx().fileSystem().readFileBlocking(file.uploadedFileName()).getBytes()),
+                                file.fileName()))
+                .collect(Collectors.toList());
     }
 
     @Override

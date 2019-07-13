@@ -41,7 +41,7 @@ import java.util.*;
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
-    private final HttpService http;
+    private HttpService http;
     private final List<ElepyModule> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
@@ -201,6 +201,18 @@ public class Elepy implements ElepyContext {
     public Elepy addAdminFilter(Filter filter) {
         checkConfig();
         adminFilters.add(filter);
+        return this;
+    }
+
+    /**
+     * Switches the HttpService of Elepy. This can be used to swap to Vertx, Sparkjava, Javalin, etc.
+     *
+     * @param httpService The httpService you want to swap to
+     * @return The {@link com.elepy.Elepy} instance
+     */
+    public Elepy withHttpService(HttpService httpService) {
+        checkConfig();
+        this.http = httpService;
         return this;
     }
 

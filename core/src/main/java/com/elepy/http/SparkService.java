@@ -4,7 +4,6 @@ import com.elepy.Elepy;
 import com.elepy.auth.UserPermissionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.ExceptionHandler;
 import spark.RouteImpl;
 import spark.Service;
 import spark.route.HttpMethod;
@@ -26,6 +25,7 @@ public class SparkService implements HttpService {
 
 
     private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
+
 
     public SparkService(Service service, Elepy elepy) {
         this.http = service;
@@ -65,7 +65,7 @@ public class SparkService implements HttpService {
     }
 
     public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler) {
-        http.exception(exceptionClass, handler);
+        http.exception(exceptionClass, ((e, req, res) -> handler.handleException(e, new SparkContext(req, res))));
     }
 
     @Override
@@ -87,6 +87,8 @@ public class SparkService implements HttpService {
             }
         }));
         ignitedOnce = true;
+
+        http.awaitInitialization();
     }
 
     @Override

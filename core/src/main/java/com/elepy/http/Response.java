@@ -32,7 +32,9 @@ public interface Response {
 
     void cookie(String name, String value, int maxAge);
 
-    void redirect(String location);
+    default void redirect(String location) {
+        redirect(location, 301);
+    }
 
     void redirect(String location, int httpStatusCode);
 

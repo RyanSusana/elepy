@@ -8,10 +8,7 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SparkRequest implements Request {
@@ -22,7 +19,10 @@ public class SparkRequest implements Request {
     }
 
     public Map<String, String> params() {
-        return request.params();
+        final Map<String, String> objectObjectHashMap = new HashMap<>();
+
+        request.params().forEach((key, value) -> objectObjectHashMap.put(key.replaceAll(":", ""), value));
+        return objectObjectHashMap;
     }
 
     @Override

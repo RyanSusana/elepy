@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class VertxResponse implements Response {
 
-    public final static String RESPONSE_KEY = "response";
+    static final String RESPONSE_KEY = "response";
     private final RoutingContext routingContext;
     private final HttpServerResponse response;
 
@@ -79,13 +79,8 @@ public class VertxResponse implements Response {
     }
 
     @Override
-    public void redirect(String location) {
-        redirect(location, 301);
-    }
-
-    @Override
     public void redirect(String location, int httpStatusCode) {
-        header("Loacation", location);
+        header("Location", location);
         status(httpStatusCode);
     }
 

@@ -1,16 +1,24 @@
 package com.elepy.vertx;
 
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.ExceptionHandler;
 import com.elepy.http.HttpContextHandler;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
+import org.eclipse.jetty.util.MultiMap;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 public class VertxService implements HttpService {
     private final HttpServer server;
@@ -22,13 +30,26 @@ public class VertxService implements HttpService {
     private int counter;
     private boolean ignitedOnce = false;
 
+    private Map<Class, ExceptionHandler> exceptionHandlers;
+    private MultiMap<HttpContextHandler> before;
+    private MultiMap<HttpContextHandler> after;
+
     public VertxService() {
         this.vertx = Vertx.vertx();
 
         this.server = vertx.createHttpServer();
+
+
         this.router = Router.router(vertx);
 
+        this.exceptionHandlers = new HashMap<>();
 
+        this.exceptionHandlers.put(Exception.class, (e, ctx) -> {
+            e.printStackTrace();
+        });
+
+        this.before = new MultiMap<>();
+        this.after = new MultiMap<>();
         this.routes = new HashMap<>();
     }
 
@@ -49,37 +70,46 @@ public class VertxService implements HttpService {
 
     @Override
     public void stop() {
-        vertx.close();
+
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        vertx.close(voidAsyncResult -> countDownLatch.countDown());
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Override
-    public void before(HttpContextHandler contextHandler) {
+    public <T extends Exception> void exception(Class<T> exceptionClass, com.elepy.http.ExceptionHandler<? super T> handler) {
+        exceptionHandlers.put(exceptionClass, handler);
+    }
 
+
+    @Override
+    public void before(HttpContextHandler contextHandler) {
+        this.before.put(null, contextHandler);
     }
 
     @Override
     public void before(String path, HttpContextHandler contextHandler) {
-
+        this.before.put(path, contextHandler);
     }
 
     @Override
     public void after(String path, HttpContextHandler contextHandler) {
-
+        this.after.put(path, contextHandler);
     }
 
     @Override
     public void after(HttpContextHandler contextHandler) {
-
+        this.after.put(null, contextHandler);
     }
 
     @Override
     public void addRoute(Route route) {
-        routes.put(new RouteKey(counter++), route);
-
-        //auto-ignite route if ignite() already has been called
-        if (ignitedOnce) {
-            ignite();
-        }
+        this.routes.put(new RouteKey(counter++), route);
     }
 
     @Override
@@ -88,38 +118,133 @@ public class VertxService implements HttpService {
         if (ignitedOnce) {
             throw new ElepyConfigException("Can't add routes after server has ignited");
         }
+
+
+        router.route().handler(BodyHandler.create()
+                .setMergeFormAttributes(true)
+                .setUploadsDirectory(System.getProperty("java.io.tmpdir")));
+        igniteBefore();
+        igniteRoutes();
+        igniteAfter();
+        igniteFinal();
+        ignitedOnce = true;
+        server.requestHandler(router);
+
+
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        server.listen(port, httpServerAsyncResult -> countDownLatch.countDown());
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void igniteFinal() {
+        router.route().handler(this::endRoute);
+
+    }
+
+    private void igniteAfter() {
+        igniteMultiMapContexts(this.after);
+    }
+
+    private void igniteBefore() {
+        igniteMultiMapContexts(this.before);
+    }
+
+    private Handler<RoutingContext> handleSafely(Handler<RoutingContext> h) {
+        return routingContext -> {
+            try {
+                h.handle(routingContext);
+            } catch (Exception e) {
+                final ExceptionHandler exceptionHandler = getExceptionHandler(e.getClass());
+
+                if (exceptionHandler != null)
+                    exceptionHandler.handleException(e, new VertxContext(routingContext));
+
+                endRoute(routingContext);
+            }
+        };
+    }
+
+
+    private void endRoute(RoutingContext routingContext) {
+        final Object responseBody = routingContext.get(VertxResponse.RESPONSE_KEY);
+
+        if (responseBody == null) {
+            routingContext.response().end("");
+        } else if (responseBody instanceof byte[]) {
+            routingContext.response().end(Buffer.buffer((byte[]) responseBody));
+        } else {
+            routingContext.response().end(responseBody.toString());
+        }
+    }
+
+    private void igniteMultiMapContexts(MultiMap<HttpContextHandler> contexts) {
+        contexts.forEach((path, contextHandlers) ->
+                //if path is null, use a route without a path
+                Optional.ofNullable(path).map(router::route).orElse(router.route())
+                        .handler(handleSafely(routingContext -> contextHandlers
+                                .forEach(contextHandler -> {
+                                    contextHandler.handleWithExceptions(new VertxContext(routingContext));
+                                    routingContext.next();
+                                }))));
+    }
+
+
+    private void igniteRoutes() {
         routes.forEach(((key, route) -> {
             if (!key.ignited) {
                 key.ignited = true;
                 igniteRoute(route);
             }
         }));
-        ignitedOnce = true;
-        server.requestHandler(router);
-
-        server.listen(port);
     }
 
+
+    public ExceptionHandler getExceptionHandler(Class<? extends Exception> exceptionClass) {
+        // If the exception map does not contain the provided exception class, it might
+        // still be that a superclass of the exception class is.
+        if (!this.exceptionHandlers.containsKey(exceptionClass)) {
+
+            Class<?> superclass = exceptionClass.getSuperclass();
+            do {
+                // Is the superclass mapped?
+                if (this.exceptionHandlers.containsKey(superclass)) {
+                    // Use the handler for the mapped superclass, and cache handler
+                    // for this exception class
+                    ExceptionHandler handler = this.exceptionHandlers.get(superclass);
+                    this.exceptionHandlers.put(exceptionClass, handler);
+                    return handler;
+                }
+
+                // Iteratively walk through the exception class's superclasses
+                superclass = superclass.getSuperclass();
+            } while (superclass != null);
+
+            // No handler found either for the superclasses of the exception class
+            // We cache the null value to prevent future
+            this.exceptionHandlers.put(exceptionClass, null);
+            return null;
+        }
+
+        // Direct map
+        return this.exceptionHandlers.get(exceptionClass);
+    }
 
     private void igniteRoute(Route extraRoute) {
-        router.route(get(extraRoute), extraRoute.getPath()).handler(routingContext -> {
+        router.route(transformToHttpMethod(extraRoute), extraRoute.getPath()).handler(
+                handleSafely(routingContext -> {
+                    final VertxContext vertxContext = new VertxContext(routingContext);
+                    extraRoute.getHttpContextHandler().handleWithExceptions(vertxContext);
 
-            final VertxContext vertxContext = new VertxContext(routingContext);
-
-            try {
-                extraRoute.getBeforeFilter().handle(vertxContext);
-                extraRoute.getHttpContextHandler().handle(vertxContext);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            routingContext.response().end(routingContext.get(VertxResponse.RESPONSE_KEY).toString());
-
-
-        });
+                    routingContext.next();
+                }));
     }
 
-    private io.vertx.core.http.HttpMethod get(Route route) {
+    private io.vertx.core.http.HttpMethod transformToHttpMethod(Route route) {
         return io.vertx.core.http.HttpMethod.valueOf(route.getMethod().name());
     }
 
