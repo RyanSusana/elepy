@@ -11,7 +11,6 @@ public class HibernateConfiguration implements com.elepy.Configuration {
 
     public HibernateConfiguration(Configuration hibernateConfiguration) {
         this.hibernateConfiguration = hibernateConfiguration;
-        hibernateConfiguration.configure();
     }
 
     public static HibernateConfiguration of(Configuration c) {
