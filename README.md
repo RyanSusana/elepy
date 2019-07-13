@@ -1,5 +1,5 @@
 ![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
+![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
 # Version 2.0 is almost here!
 Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSusana/elepy/projects/2). You can download it here:
 The latest version can be found at https://elepy.com/docs/download
@@ -10,6 +10,7 @@ The latest version can be found at https://elepy.com/docs/download
     <version>LATEST_VERSION</version>
 </dependency>
 ```
+Latest Version: ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
 Docs can be found at: https://docs.elepy.com
 
 # About Elepy
@@ -18,9 +19,6 @@ Elepy is a Headless Content Management Framework for Java & Kotlin developed by 
 
 It's able to handle extremely complex objects with ease.
 Read this article: https://medium.com/@ryansusana/rapidly-create-a-customized-cms-with-this-awesome-java-framework-e04ef2ea7810
-
-## Downloads
-The latest versions of elepy can be found at: https://elepy.com/docs/download
 
 ## Quick Start
 ### Step One: Create and annotate your POJO's
