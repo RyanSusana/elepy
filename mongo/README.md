@@ -1,10 +1,11 @@
-This module is dedicated to the use of SQL(Through JPA/Hibernate) as a database for Elepy.
+This module is dedicated to the use of MongoDB as a database for Elepy.
 
+[Feel free to try out Elepy with SQL as well.](https://github.com/RyanSusana/elepy/tree/master/hibernate)
 ## Download
 
 ```xml
 <dependency>
-    <artifactId>elepy-hibernate</artifactId>
+    <artifactId>elepy-mongo</artifactId>
     <groupId>com.elepy</groupId>
     <version>THE ELEPY VERSION</version>
 </dependency>
