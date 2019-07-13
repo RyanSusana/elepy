@@ -1,8 +1,8 @@
 ![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
 ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
+
 # Version 2.0 is almost here!
 Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSusana/elepy/projects/2). You can download it here:
-The latest version can be found at https://elepy.com/docs/download
 ``` xml
 <dependency>
     <groupId>com.elepy</groupId>
@@ -11,7 +11,6 @@ The latest version can be found at https://elepy.com/docs/download
 </dependency>
 ```
 Latest Version: ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
-Docs can be found at: https://docs.elepy.com
 
 # About Elepy
 
@@ -20,7 +19,15 @@ Elepy is a Headless Content Management Framework for Java & Kotlin developed by 
 It's able to handle extremely complex objects with ease.
 Read this article: https://medium.com/@ryansusana/rapidly-create-a-customized-cms-with-this-awesome-java-framework-e04ef2ea7810
 
-## Quick Start
+# Awesome links
+- Configure Elepy to use MongoDB!
+- Configure Elepy to use SQL with Hibernate!
+- Configure basic file uploads!
+
+# Quick Start & Example Repo
+Visit https://github.com/RyanSusana/elepy-basic-example for an example of Elepy in action.
+
+
 ### Step One: Create and annotate your POJO's
 Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and /slug of your model. You should also take a look at [the awesome collection of Elepy annotations](https://elepy.com/docs/annotations). 
 ``` java
@@ -51,12 +58,13 @@ public class Product {
 }
 ```
 ### Step Two: Configure Elepy
+In this case I've used the [elepy-mongo](https://github.com/RyanSusana/elepy/tree/master/mongo) module to setup the database.
 ``` java
 public static void main(String[] args) {
-    DB database = mongo.getDB("product-database");
+    MongoClient mongoClient = new MongoClient();
 
     new Elepy()
-        .registerDependency(DB.class, database)
+        .withConfiguration(MongoConfiguration.of(mongoClient, "product-db"))
         .withIPAddress("localhost")
         .onPort(7777)
         .addModel(Product.class)
@@ -68,7 +76,4 @@ public static void main(String[] args) {
 }
 ```
 ### Step Three: Enjoy!
-
 You can now login to the Elepy CMS by going to http://localhost:7777/admin.
-
-Visit https://github.com/RyanSusana/elepy-basic-example for an example
