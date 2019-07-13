@@ -1,4 +1,4 @@
-package com.elepy.tests.config;
+package com.elepy.hibernate.config;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
