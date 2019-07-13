@@ -16,6 +16,8 @@
     <properties>
         <exclude.tests>nothing-to-exclude</exclude.tests>
         <junit.version>5.3.1</junit.version>
+        <awaitility.version>3.1.2</awaitility.version>
+        <unirest.version>1.4.9</unirest.version>
     </properties>
 
     <licenses>
@@ -82,13 +84,13 @@
         <dependency>
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>1.4.9</version>
+            <version>${unirest.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>3.1.2</version>
+            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
