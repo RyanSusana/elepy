@@ -1,4 +1,4 @@
-package com.elepy.mongo;
+package com.elepy.mongo.querybuilding;
 
 import com.elepy.dao.FilterQuery;
 import com.elepy.exceptions.ElepyException;

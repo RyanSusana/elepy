@@ -1,4 +1,4 @@
-package com.elepy.mongo;
+package com.elepy.mongo.querybuilding;
 
 import com.elepy.dao.FilterableField;
 import com.elepy.utils.MapperUtils;

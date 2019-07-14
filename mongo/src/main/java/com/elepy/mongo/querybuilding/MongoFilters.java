@@ -1,4 +1,4 @@
-package com.elepy.mongo;
+package com.elepy.mongo.querybuilding;
 
 import java.io.Serializable;
 import java.util.List;
