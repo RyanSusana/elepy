@@ -7,11 +7,10 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.RoutingContext;
 
-import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VertxRequest implements Request {
@@ -148,10 +147,17 @@ public class VertxRequest implements Request {
     public List<UploadedFile> uploadedFiles(String key) {
         return routingContext.fileUploads().stream()
                 .map(file ->
-                        new UploadedFile(
+                {
+                    try {
+                        return new UploadedFile(
                                 file.contentType(),
-                                new ByteArrayInputStream(routingContext.vertx().fileSystem().readFileBlocking(file.uploadedFileName()).getBytes()),
-                                file.fileName()))
+                                new FileInputStream(new File(file.uploadedFileName())),
+                                file.fileName());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
