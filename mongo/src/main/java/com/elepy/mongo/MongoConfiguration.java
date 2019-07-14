@@ -8,28 +8,34 @@ import com.mongodb.MongoClient;
 
 public class MongoConfiguration implements Configuration {
 
-    private final DB db;
+    private final MongoClient mongoClient;
 
-    public MongoConfiguration(MongoClient mongoClient, String databaseName) {
-        this(mongoClient.getDB(databaseName));
-    }
+    private final String databaseName;
 
-    public MongoConfiguration(DB db) {
-        this.db = db;
+    private final String bucket;
+
+    public MongoConfiguration(MongoClient mongoClient, String databaseName, String bucket) {
+        this.mongoClient = mongoClient;
+        this.databaseName = databaseName;
+        this.bucket = bucket;
     }
 
     public static MongoConfiguration of(MongoClient mongoClient, String database) {
-        return new MongoConfiguration(mongoClient, database);
+        return new MongoConfiguration(mongoClient, database, null);
     }
 
-    public static MongoConfiguration of(DB db) {
-        return new MongoConfiguration(db);
+    public static MongoConfiguration of(MongoClient mongoClient, String database, String bucket) {
+        return new MongoConfiguration(mongoClient, database, bucket);
     }
 
     @Override
     public void before(ElepyPreConfiguration elepy) {
-        elepy.registerDependency(DB.class, db);
+        elepy.registerDependency(DB.class, mongoClient.getDB(databaseName));
         elepy.withDefaultCrudFactory(MongoCrudFactory.class);
+
+        if (bucket != null) {
+            elepy.withUploads(new MongoFileService(mongoClient.getDatabase(databaseName), null));
+        }
     }
 
     @Override

@@ -22,3 +22,16 @@ MongoClient mongoClient = new MongoClient();
 new Elepy()
     .withConfiguration(MongoConfiguration.of(mongoClient, "database-name"))
 ```
+
+
+### Enable GridFS file upload with Mongo
+It's as easy as just defining a bucket
+
+```java
+
+//configure Mongo as you wish.
+MongoClient mongoClient = new MongoClient();
+
+new Elepy()
+    .withConfiguration(MongoConfiguration.of(mongoClient, "database-name", "bucket-name"))
+```
