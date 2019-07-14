@@ -531,8 +531,11 @@ public abstract class HttpServiceTest {
         final UploadedFile uploadedFile1 = uploadedFiles.get(0);
         final UploadedFile uploadedFile2 = uploadedFiles.get(1);
 
-        IOUtils.contentEquals(uploadedFile1.getContent(), inputStream("double.txt"));
-        IOUtils.contentEquals(uploadedFile2.getContent(), inputStream("cv.pdf"));
+
+        assertTrue(IOUtils.contentEquals(uploadedFile1.getContent(), inputStream("double.txt")));
+
+        assertTrue(IOUtils.contentEquals(uploadedFile2.getContent(), inputStream("cv.pdf")));
+
     }
 
     @Test

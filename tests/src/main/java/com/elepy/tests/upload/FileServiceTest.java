@@ -10,6 +10,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.entity.ContentType;
+import org.apache.tika.Tika;
 import org.junit.jupiter.api.*;
 import org.opentest4j.AssertionFailedError;
 
@@ -25,13 +27,28 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class FileServiceTest implements ElepyTest {
 
     private static int portCounter = 7900;
+    private final Configuration[] configurations;
+    private final int port;
 
-    private final Elepy elepy;
-    private final FileService fileService;
-    private final String url;
+    private Elepy elepy;
+    private FileService fileService;
+    private String url;
+
+    private Tika tika = new Tika();
 
     public FileServiceTest(Configuration... configurations) {
-        final int port = ++portCounter;
+        this.configurations = configurations;
+
+        port = ++portCounter;
+    }
+
+    public abstract Configuration databaseConfiguration();
+
+    public abstract FileService fileService();
+
+
+    @BeforeAll
+    public void setUp() {
         this.fileService = fileService();
         url = String.format("http://localhost:%d", port);
         elepy = new Elepy()
@@ -44,27 +61,18 @@ public abstract class FileServiceTest implements ElepyTest {
         elepy.start();
     }
 
-    public abstract Configuration databaseConfiguration();
-    public abstract FileService fileService();
-
-
-    @BeforeAll
-    void setUp() {
-        clearFileServiceFiles();
-    }
-
     @AfterEach
-    void tearDown() {
+    public void tearDown() {
         clearFileServiceFiles();
     }
 
     @AfterAll
-    void tearDownAll() {
+    public void tearDownAll() {
         elepy.stop();
     }
 
     @Test
-    void canNot_UploadSameFile_MoreThanOnce() throws UnirestException, IOException {
+    void canNot_UploadSameFile_MoreThanOnce() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("double.txt", "text/*");
 
         final var assertionFailedError = assertThrows(AssertionFailedError.class, () ->
@@ -75,37 +83,37 @@ public abstract class FileServiceTest implements ElepyTest {
     }
 
     @Test
-    void can_UploadAndRead_TextFile() throws UnirestException, IOException {
+    void can_UploadAndRead_TextFile() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("uploadExampleText.txt", "text/plain");
     }
 
     @Test
-    void can_UploadAndRead_GIF() throws UnirestException, IOException {
+    void can_UploadAndRead_GIF() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("LoadingWhite.gif", "image/gif");
     }
 
     @Test
-    void can_UploadAndRead_PNG() throws UnirestException, IOException {
+    void can_UploadAndRead_PNG() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("logo-light.png", "image/png");
     }
 
     @Test
-    void can_UploadAndRead_SVG() throws UnirestException, IOException {
+    void can_UploadAndRead_SVG() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("logo-dark.svg", "image/svg");
     }
 
     @Test
-    void can_UploadAndRead_JPEG() throws UnirestException, IOException {
+    void can_UploadAndRead_JPEG() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("doggo.jpg", "image/jpeg");
     }
 
     @Test
-    void can_UploadAndRead_PDF() throws UnirestException, IOException {
+    void can_UploadAndRead_PDF() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("cv.pdf", "application/pdf");
     }
 
     @Test
-    void can_UploadAndRead_MP4() throws UnirestException, IOException {
+    void can_UploadAndRead_MP4() throws UnirestException, IOException, InterruptedException {
         testCanUploadAndRead("nature.mp4", "video/mp4");
     }
 
@@ -114,8 +122,10 @@ public abstract class FileServiceTest implements ElepyTest {
 
         final int fileCountBeforeUpload = countFiles();
         final InputStream resourceAsStream = inputStream(fileName);
+
+
         final HttpResponse<String> response = Unirest.post(url + "/uploads")
-                .field("files", resourceAsStream, fileName).asString();
+                .field("files", resourceAsStream, ContentType.create(tika.detect(resourceAsStream, fileName)), fileName).asString();
 
 
         final UploadedFile uploadedFile = fileService.readFile(fileName).orElseThrow(() ->
