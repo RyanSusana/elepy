@@ -517,28 +517,20 @@ public abstract class HttpServiceTest {
         service.post("/uploads", (request, response) -> atomicReference.set(request.uploadedFiles("files")));
 
         service.ignite();
-        final InputStream file1 = inputStream("double.txt");
+        final InputStream file1 = inputStream("cv.pdf");
 
-        final InputStream file2 = inputStream("cv.pdf");
         Unirest.post("http://localhost:3030/uploads")
-                .field("files", file1, "double.txt")
-                .field("files", file2, "cv.pdf")
+                .field("files", file1, "cv.pdf")
                 .asString();
 
         file1.close();
-        file2.close();
 
-        await().atMost(5, TimeUnit.SECONDS).untilAtomic(atomicReference, hasSize(2));
+        await().atMost(5, TimeUnit.SECONDS).untilAtomic(atomicReference, hasSize(1));
 
         final List<UploadedFile> uploadedFiles = atomicReference.get();
-
         final UploadedFile uploadedFile1 = uploadedFiles.get(0);
-        final UploadedFile uploadedFile2 = uploadedFiles.get(1);
 
-        assertTrue(IOUtils.contentEquals(uploadedFile1.getContent(), inputStream("double.txt")));
-
-        assertTrue(IOUtils.contentEquals(uploadedFile2.getContent(), inputStream("cv.pdf")));
-
+        assertTrue(IOUtils.contentEquals(uploadedFile1.getContent(), inputStream("cv.pdf")));
     }
 
     @Test

@@ -146,8 +146,8 @@ public class VertxRequest implements Request {
     @Override
     public List<UploadedFile> uploadedFiles(String key) {
         return routingContext.fileUploads().stream()
-                .map(file ->
-                {
+                .filter(file -> file.name().equals(key))
+                .map(file -> {
                     try {
                         return new UploadedFile(
                                 file.contentType(),
