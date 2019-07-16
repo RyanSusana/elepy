@@ -1,7 +1,7 @@
 package com.elepy.hibernate.slow;
 
 import com.elepy.Configuration;
-import com.elepy.hibernate.config.DatabaseConfigurations;
+import com.elepy.hibernate.DatabaseConfigurations;
 import com.elepy.tests.basic.BasicFuntionalityTest;
 import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.junit.jupiter.Container;

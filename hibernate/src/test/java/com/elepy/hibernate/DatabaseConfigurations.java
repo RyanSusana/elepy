@@ -1,35 +1,28 @@
-package com.elepy.hibernate.config;
+package com.elepy.hibernate;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import com.elepy.Configuration;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.hibernate.HibernateConfiguration;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Properties;
+import static com.elepy.hibernate.HibernateConfiguration.createInMemoryHibernateConfig;
 
 @Testcontainers
 public class DatabaseConfigurations {
 
 
-    public static Configuration H2 = createHibernateConfig(
-            "org.h2.Driver",
-            "jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-            "org.hibernate.dialect.H2Dialect",
-            "SA",
-            ""
-    );
+    public static Configuration H2 = HibernateConfiguration.inMemory();
 
-    public static Configuration HSQL = createHibernateConfig(
+    public static Configuration HSQL = createInMemoryHibernateConfig(
             "org.hsqldb.jdbc.JDBCDriver",
             "jdbc:hsqldb:mem:myDb",
             "org.hibernate.dialect.HSQLDialect",
             "sa",
             "sa"
     );
-    public static Configuration ApacheDerby = createHibernateConfig(
+    public static Configuration ApacheDerby = createInMemoryHibernateConfig(
             "org.apache.derby.jdbc.EmbeddedDriver",
             "jdbc:derby:memory:myDb;create=true",
             "org.hibernate.dialect.DerbyDialect",
@@ -38,7 +31,7 @@ public class DatabaseConfigurations {
     );
 
     //    TODO figure out why SQLite is not being found.
-    public static Configuration SQLite = createHibernateConfig(
+    public static Configuration SQLite = createInMemoryHibernateConfig(
             "org.sqlite.JDBC",
             "jdbc:sqlite:memory:myDb",
             " org.hibernate.dialect.SQLiteDialect",
@@ -57,7 +50,7 @@ public class DatabaseConfigurations {
                     throw new ElepyConfigException("Failed to start MariaDB");
                 }
             },
-            createHibernateConfig(
+            createInMemoryHibernateConfig(
                     "com.mysql.jdbc.Driver",
                     "jdbc:mysql://localhost:3307/test?serverTimezone=UTC",
                     "org.hibernate.dialect.MySQL5Dialect",
@@ -69,26 +62,10 @@ public class DatabaseConfigurations {
     }
 
 
-    public static HibernateConfiguration createHibernateConfig(String driverClassName, String url, String dialect, String username, String password) {
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.connection.driver_class", driverClassName);
-        properties.setProperty("hibernate.connection.url", url);
-        properties.setProperty("hibernate.connection.username", username);
-        properties.setProperty("hibernate.connection.password", password);
-        properties.setProperty("hibernate.show_sql", "true");
-        properties.setProperty("hibernate.dialect", dialect);
-        properties.setProperty("hibernate.hbm2ddl.auto", "create");
-
-        new org.hibernate.cfg.Configuration();
-
-        return HibernateConfiguration.of(new org.hibernate.cfg.Configuration().setProperties(properties));
-
-    }
-
     public static Configuration createTestContainerConfiguration(JdbcDatabaseContainer container, String dialect) {
         return new WithSetupConfiguration(
                 container::start,
-                DatabaseConfigurations.createHibernateConfig(
+                createInMemoryHibernateConfig(
                         container.getDriverClassName(),
                         container.getJdbcUrl(),
                         dialect,

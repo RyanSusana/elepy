@@ -1,4 +1,4 @@
-package com.elepy.hibernate.config;
+package com.elepy.hibernate;
 
 
 import com.elepy.Configuration;
