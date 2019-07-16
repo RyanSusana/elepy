@@ -10,11 +10,9 @@ import com.elepy.admin.models.Link;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationCenter;
-import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.Crud;
 import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.Filter;
 import com.elepy.http.HttpContextHandler;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
@@ -36,7 +34,6 @@ public class ElepyAdminPanel implements ElepyModule {
     private final PluginHandler pluginHandler;
     private final ViewHandler viewHandler;
     private final List<Link> links;
-    private Filter baseAdminAuthenticationFilter;
     private boolean initiated = false;
 
     @Inject
@@ -50,8 +47,6 @@ public class ElepyAdminPanel implements ElepyModule {
 
     private NoUserFoundHandler noUserFoundHandler;
 
-    @Inject
-    private TokenAuthenticationMethod tokenHandler;
 
     @Inject
     private UserAuthenticationCenter userAuthenticationCenter;
@@ -222,11 +217,6 @@ public class ElepyAdminPanel implements ElepyModule {
 
     public ElepyAdminPanel addLink(Link link) {
         links.add(link);
-        return this;
-    }
-
-    public ElepyAdminPanel baseAdminFilter(Filter filter) {
-        this.baseAdminAuthenticationFilter = filter;
         return this;
     }
 
