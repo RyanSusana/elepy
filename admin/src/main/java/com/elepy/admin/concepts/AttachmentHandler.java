@@ -77,7 +77,7 @@ public class AttachmentHandler {
 
         final byte[] bytes = FileUtils.readFileToByteArray(file);
         final Tika tika = new Tika();
-        final String contentType = tika.detect(new FileInputStream(file), file.getName());
+        final String contentType = tika.detect(new BufferedInputStream(new FileInputStream(file)), file.getName());
 
 
         attachSrc(file.getName(), contentType, bytes, AttachmentType.guessTypeFromMime(contentType), isFromDirectory, directory);

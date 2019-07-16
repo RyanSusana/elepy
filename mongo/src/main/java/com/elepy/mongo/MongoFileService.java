@@ -40,6 +40,8 @@ public class MongoFileService implements FileService {
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
             bucket.downloadToStream(file.getObjectId(), outputStream);
+
+            System.out.println("ByteLength:" + outputStream.toByteArray().length);
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
             outputStream.close();

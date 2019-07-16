@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class FileServiceTest implements ElepyTest {
 
-    private static int portCounter = 7900;
+    private static int portCounter = 8700;
     private final Configuration[] configurations;
     private final int port;
 
@@ -121,21 +121,25 @@ public abstract class FileServiceTest implements ElepyTest {
 
 
         final int fileCountBeforeUpload = countFiles();
-        final InputStream resourceAsStream = inputStream(fileName);
 
 
         final HttpResponse<String> response = Unirest.post(url + "/uploads")
-                .field("files", resourceAsStream, ContentType.create(tika.detect(resourceAsStream, fileName)), fileName).asString();
+                .field("files", inputStream(fileName), ContentType.create(tika.detect(inputStream(fileName), fileName)), fileName).asString();
+
 
 
         final UploadedFile uploadedFile = fileService.readFile(fileName).orElseThrow(() ->
                 new AssertionFailedError("FileService did not recognize file: " + fileName));
+
+        // System.out.println(String.format("ByteLength2[%s]: %d",uploadedFile.getName(), uploadedFile.getContent().readAllBytes().length));
 
         assertEquals(200, response.getStatus(), response.getBody());
         assertEquals(fileCountBeforeUpload + 1, countFiles(),
                 "File upload did not increase the count of Files");
         assertTrue(uploadedFile.contentTypeEquals(contentType),
                 String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", fileName, contentType, uploadedFile.getContentType()));
+
+
         assertTrue(IOUtils.contentEquals(inputStream(fileName), uploadedFile.getContent()),
                 String.format("Content doesn't match between the uploaded version and read version of '%s'", fileName));
 
