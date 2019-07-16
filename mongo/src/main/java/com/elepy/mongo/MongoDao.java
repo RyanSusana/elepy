@@ -13,8 +13,6 @@ import com.mongodb.DB;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
 import java.io.Serializable;
@@ -25,8 +23,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class MongoDao<T> implements Crud<T> {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
 
     private Jongo jongo;
 
@@ -113,8 +109,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         try {
             collection().save(item);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ElepyException(e.getMessage());
+            throw new ElepyException(e.getMessage(), 500, e);
         }
     }
 
