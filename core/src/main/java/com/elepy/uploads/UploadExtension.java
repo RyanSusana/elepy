@@ -21,7 +21,7 @@ public class UploadExtension implements ElepyExtension {
     private FileService fileService;
 
     @Inject
-    private Crud<UploadedFile> fileCrud;
+    private Crud<FileReference> fileCrud;
 
     @Override
     public void setup(HttpService httpService, ElepyPostConfiguration elepy) {
@@ -39,8 +39,13 @@ public class UploadExtension implements ElepyExtension {
     private void handleUpload(Request request, Response response) {
         final List<UploadedFile> files = request.uploadedFiles("files");
         files.forEach(uploadedFile -> {
-            new FileIdentityProvider().provideId(uploadedFile, fileCrud);
-            fileCrud.create(uploadedFile);
+
+            final FileReference reference = FileReference.of(uploadedFile);
+
+            fileCrud.getById(reference.getName()).ifPresent(file -> {
+                throw new ElepyException("There is already a file called: " + file.getName(), 409);
+            });
+            fileCrud.create(reference);
             fileService.uploadFile(uploadedFile);
         });
 
