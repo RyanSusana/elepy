@@ -5,11 +5,6 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-
-import java.net.InetSocketAddress;
 
 public class MongoConfiguration implements Configuration {
 
@@ -34,12 +29,8 @@ public class MongoConfiguration implements Configuration {
     }
 
     public static MongoConfiguration inMemory() {
-        MongoServer mongoServer = new MongoServer(new MemoryBackend());
 
-        InetSocketAddress serverAddress = mongoServer.bind();
-
-        MongoClient client = new MongoClient(new ServerAddress(serverAddress));
-        return of(client, "in-memory-database", "in-memory-fileservice");
+        return of(InMemoryClientFactory.createInMemoryClient(), "in-memory-database", "in-memory-fileservice");
     }
 
     @Override
