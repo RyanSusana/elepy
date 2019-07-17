@@ -1,8 +1,7 @@
 package com.elepy.admin;
 
-import com.elepy.ElepyModule;
+import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
 import com.elepy.admin.concepts.*;
 import com.elepy.admin.models.Attachment;
 import com.elepy.admin.models.AttachmentType;
@@ -28,18 +27,18 @@ import java.util.Map;
 import static spark.Spark.halt;
 
 
-public class ElepyAdminPanel implements ElepyModule {
+public class ElepyAdminPanel implements ElepyExtension {
     public static final String ADMIN_USER = "adminUser";
-    private final AttachmentHandler attachmentHandler;
-    private final PluginHandler pluginHandler;
-    private final ViewHandler viewHandler;
-    private final List<Link> links;
+    private AttachmentHandler attachmentHandler;
+    private PluginHandler pluginHandler;
+    private ViewHandler viewHandler;
+    private List<Link> links;
     private boolean initiated = false;
 
     @Inject
     private Crud<User> userCrud;
 
-    private HttpService http;
+
     private PebbleEngine engine;
 
     private List<Model<?>> modelContexts;
@@ -51,49 +50,33 @@ public class ElepyAdminPanel implements ElepyModule {
     @Inject
     private UserAuthenticationCenter userAuthenticationCenter;
 
-    public ElepyAdminPanel() {
-
-
-        this.attachmentHandler = new AttachmentHandler(this);
-        this.pluginHandler = new PluginHandler(this);
-
-
-        this.viewHandler = new ViewHandler(this);
-
-
-        this.noUserFoundHandler = (ctx) -> {
-            ctx.response().redirect("/elepy-initial-user");
-            halt();
-        };
-
-
-        this.links = new ArrayList<>();
-
-        this.engine = new PebbleEngine.Builder().build();
-    }
-
 
     @Override
-    public void afterElepyConstruction(HttpService http, ElepyPostConfiguration elepy) {
+    public void setup(HttpService http, ElepyPostConfiguration elepy) {
         try {
-            attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
-            setupLogin();
-            setupAdmin(elepy);
+            this.attachmentHandler = new AttachmentHandler(this, http);
+            this.pluginHandler = new PluginHandler(this, http);
+            this.viewHandler = new ViewHandler(this, http);
+            this.noUserFoundHandler = (ctx) -> {
+                ctx.response().redirect("/elepy-initial-user");
+                halt();
+            };
 
-            this.attachmentHandler.setupAttachments(elepy);
+
+            this.links = new ArrayList<>();
+
+            this.engine = new PebbleEngine.Builder().build();
+
+            attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
+            setupLogin(http);
+            setupAdmin(http, elepy);
+
+            this.attachmentHandler.setupAttachments();
             this.initiated = true;
             this.modelContexts = elepy.getModelDescriptions();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    @Override
-    public void beforeElepyConstruction(HttpService http, ElepyPreConfiguration elepy) {
-
-        this.http = http;
-
     }
 
 
@@ -110,7 +93,7 @@ public class ElepyAdminPanel implements ElepyModule {
         };
     }
 
-    private void setupAdmin(ElepyPostConfiguration elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void setupAdmin(HttpService http, ElepyPostConfiguration elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
         http.before("/admin/*/*", filter());
@@ -135,7 +118,7 @@ public class ElepyAdminPanel implements ElepyModule {
     }
 
 
-    private void setupLogin() {
+    private void setupLogin(HttpService http) {
 
 
         http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb")));
@@ -236,11 +219,6 @@ public class ElepyAdminPanel implements ElepyModule {
         this.noUserFoundHandler = noUserFoundHandler;
         return this;
     }
-
-    public HttpService http() {
-        return http;
-    }
-
 
     public boolean isInitiated() {
         return initiated;

@@ -1,8 +1,7 @@
 package com.elepy.uploads;
 
-import com.elepy.ElepyModule;
+import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
@@ -17,21 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UploadModule implements ElepyModule {
+public class UploadExtension implements ElepyExtension {
     @Inject
     private FileService fileService;
 
     @Inject
     private Crud<UploadedFile> fileCrud;
 
-
     @Override
-    public void beforeElepyConstruction(HttpService httpService, ElepyPreConfiguration elepy) {
-        elepy.addModel(UploadedFile.class);
-    }
-
-    @Override
-    public void afterElepyConstruction(HttpService httpService, ElepyPostConfiguration elepy) {
+    public void setup(HttpService httpService, ElepyPostConfiguration elepy) {
         httpService.post("/uploads", this::handleUpload);
         httpService.get("/uploads/:fileName", this::handleFileGet);
     }

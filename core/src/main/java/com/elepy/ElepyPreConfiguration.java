@@ -63,7 +63,7 @@ public class ElepyPreConfiguration {
      *
      * @param module The module
      */
-    public void addExtension(ElepyModule module) {
+    public void addExtension(ElepyExtension module) {
         elepy.addExtension(module);
     }
 

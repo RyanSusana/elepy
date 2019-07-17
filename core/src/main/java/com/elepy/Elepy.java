@@ -22,7 +22,8 @@ import com.elepy.http.*;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadModule;
+import com.elepy.uploads.UploadExtension;
+import com.elepy.uploads.UploadedFile;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +43,7 @@ public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
     private HttpService http;
-    private final List<ElepyModule> modules;
+    private final List<ElepyExtension> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
@@ -238,7 +239,7 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
 
-    public Elepy addExtension(ElepyModule module) {
+    public Elepy addExtension(ElepyExtension module) {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start().");
         }
@@ -618,9 +619,6 @@ public class Elepy implements ElepyContext {
     }
 
     private void beforeConfiguration() {
-        for (ElepyModule module : modules) {
-            module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
-        }
         for (Configuration configuration : configurations) {
             configuration.before(new ElepyPreConfiguration(this));
         }
@@ -630,15 +628,16 @@ public class Elepy implements ElepyContext {
         for (Configuration configuration : configurations) {
             configuration.after(new ElepyPostConfiguration(this));
         }
-        for (ElepyModule module : modules) {
-            module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
+        for (ElepyExtension module : modules) {
+            module.setup(http, new ElepyPostConfiguration(this));
         }
     }
 
 
     private void init() {
         addModel(User.class);
-        addExtension(new UploadModule());
+        addModel(UploadedFile.class);
+        addExtension(new UploadExtension());
 
         registerDependency(userAuthenticationCenter);
 
@@ -685,7 +684,7 @@ public class Elepy implements ElepyContext {
 
     private void injectModules() {
         try {
-            for (ElepyModule module : modules) {
+            for (ElepyExtension module : modules) {
                 context.injectFields(module);
             }
         } catch (Exception e) {

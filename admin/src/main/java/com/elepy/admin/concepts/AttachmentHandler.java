@@ -1,9 +1,9 @@
 package com.elepy.admin.concepts;
 
-import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.models.Attachment;
 import com.elepy.admin.models.AttachmentType;
+import com.elepy.http.HttpService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
@@ -23,16 +23,18 @@ public class AttachmentHandler {
     private final List<Attachment> attachments = new ArrayList<>();
 
     private final ElepyAdminPanel adminPanel;
+    private final HttpService http;
 
 
-    public AttachmentHandler(ElepyAdminPanel adminPanel) {
+    public AttachmentHandler(ElepyAdminPanel adminPanel, HttpService http) {
         this.adminPanel = adminPanel;
+        this.http = http;
     }
 
 
-    public void setupAttachments(ElepyPostConfiguration elepyPostConfiguration) {
+    public void setupAttachments() {
         for (Attachment attachment : attachments) {
-            adminPanel.http().get(attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
+            http.get(attachment.getDirectory() + (attachment.isFromDirectory() ? "" : attachment.getType().getRoute()) + attachment.getFileName(), (request, response) -> {
                 response.type(attachment.getContentType());
                 HttpServletResponse raw = response.servletResponse();
 

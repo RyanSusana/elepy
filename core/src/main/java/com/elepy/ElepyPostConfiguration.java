@@ -43,39 +43,6 @@ public class ElepyPostConfiguration {
         return elepy.getObjectMapper();
     }
 
-
-    /**
-     * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
-     * Consider adding the ElepyAdminPanel(in the elepy-admin dependency).
-     *
-     * @param module The module
-     */
-    public void addExtension(ElepyModule module) {
-        elepy.addExtension(module);
-    }
-
-    /**
-     * Adds a model to the void instance
-     *
-     * @param clazz The class of the model you want to add. The class must also be annotated with
-     *              {@link RestModel}
-     * @see RestModel
-     */
-    public void addModel(Class<?> clazz) {
-        elepy.addModel(clazz);
-    }
-
-    /**
-     * Adds an array of models to the void instance
-     *
-     * @param classes An array of model classes. All classes must be annotated with
-     *                {@link RestModel}
-     * @see RestModel
-     */
-    public void addModels(Class<?>... classes) {
-        elepy.addModels(classes);
-    }
-
     /**
      * Attaches a context object to the void instance. This object would then later be used
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
@@ -136,18 +103,6 @@ public class ElepyPostConfiguration {
      */
     public <T> void registerDependency(T object, String tag) {
         elepy.registerDependency(object, tag);
-    }
-
-    /**
-     * Adds a package of models annotated with {@link RestModel} in a package.
-     * <p>
-     * void then uses reflection to scan this package for {@link RestModel}s.
-     *
-     * @param packageName the package to scan.
-     * @see #addModels(Class[])
-     */
-    public void addModelPackage(String packageName) {
-        elepy.addModelPackage(packageName);
     }
 
     /**

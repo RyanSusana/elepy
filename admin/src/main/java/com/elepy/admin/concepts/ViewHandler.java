@@ -4,6 +4,7 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
 import com.elepy.describers.Model;
+import com.elepy.http.HttpService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -17,11 +18,13 @@ public class ViewHandler {
 
 
     private ElepyAdminPanel adminPanel;
+    private final HttpService http;
 
     private Map<Model<?>, RestModelView> models;
 
-    public ViewHandler(ElepyAdminPanel adminPanel) {
+    public ViewHandler(ElepyAdminPanel adminPanel, HttpService http) {
         this.adminPanel = adminPanel;
+        this.http = http;
     }
 
 
@@ -33,7 +36,7 @@ public class ViewHandler {
     public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
 
         for (Model<?> descriptor : models.keySet()) {
-            adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
+            http.get("/admin/config" + descriptor.getSlug(), (request, response) -> {
                 response.type("application/json");
                 response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
                         descriptor
@@ -45,7 +48,7 @@ public class ViewHandler {
             if (restModelView == null) {
 
                 //Default View
-                adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
+                http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
                     Map<String, Object> model = new HashMap<>();
                     model.put("currentDescriptor", modelDescription);
@@ -54,7 +57,7 @@ public class ViewHandler {
             } else {
 
                 //Custom View
-                adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
+                http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
                     Map<String, Object> model = new HashMap<>();
 
