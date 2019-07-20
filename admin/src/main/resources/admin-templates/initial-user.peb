@@ -61,7 +61,8 @@
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">Confirm Password</label>
                     <div class="uk-form-controls">
-                        <input name="password" class="uk-input" v-on:keyup.enter="register" v-model="confirmPassword"
+                        <input name="confirm-password" class="uk-input" v-on:keyup.enter="register"
+                               v-model="confirmPassword"
                                type="password"
                                placeholder="Confirm Password">
                     </div>
