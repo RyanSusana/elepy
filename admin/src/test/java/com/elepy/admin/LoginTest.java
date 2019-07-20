@@ -11,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -26,7 +27,7 @@ public class LoginTest {
     @BeforeEach //has been changed from @Before
     public void startBrowser() {
         //System.setProperty("webdriver.chrome.driver","/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome");
-        driver = new ChromeDriver();
+        driver = new ChromeDriver(new ChromeOptions().addArguments("--no-sandbox"));
 
         elepy = new Elepy()
                 .addConfiguration(AdminPanel.newAdminPanel())
