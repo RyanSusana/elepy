@@ -1,4 +1,6 @@
 language: java
 jdk:
   - openjdk11
+addons:
+  chrome: stable
 script: mvn clean test -Pslow
