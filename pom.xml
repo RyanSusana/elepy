@@ -19,6 +19,7 @@
         <awaitility.version>3.1.2</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
         <jackson.version>2.9.9</jackson.version>
+        <headlessMode>false</headlessMode>
     </properties>
 
     <licenses>
@@ -179,9 +180,10 @@
             </properties>
         </profile>
         <profile>
-            <id>slow</id>
+            <id>travis</id>
             <properties>
                 <exclude.tests>dont-exclude-anything</exclude.tests>
+                <headlessMode>true</headlessMode>
             </properties>
         </profile>
         <profile>

@@ -13,4 +13,4 @@ install: # Install ChromeDriver (64bits; replace 64 with 32 for 32bits).
 script:
   - whereis google-chrome-stable
   - whereis chromedriver
-  - mvn clean test --quiet -Pslow
+  - mvn clean test --quiet -Ptravis

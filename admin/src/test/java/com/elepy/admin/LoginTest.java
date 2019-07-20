@@ -19,15 +19,18 @@ import static org.awaitility.Awaitility.await;
 
 public class LoginTest {
 
+    private WebDriver driver;
+    private Elepy elepy;
 
-    WebDriver driver;
-    Elepy elepy;
-    String url;
-
-    @BeforeEach //has been changed from @Before
+    @BeforeEach
     public void startBrowser() {
-        //System.setProperty("webdriver.chrome.driver","/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome");
-        driver = new ChromeDriver(new ChromeOptions().addArguments("--no-sandbox").addArguments("--headless"));
+        final var headlessMode = Boolean.parseBoolean(System.getProperty("headlessMode"));
+        final var chromeOptions = new ChromeOptions();
+
+        if (headlessMode) {
+            chromeOptions.addArguments("--no-sandbox").addArguments("--headless");
+        }
+        driver = new ChromeDriver(chromeOptions);
 
         elepy = new Elepy()
                 .addConfiguration(AdminPanel.newAdminPanel())
@@ -40,17 +43,17 @@ public class LoginTest {
     }
 
     @Test
-    public void createInitialUser() throws InterruptedException {
+    void createInitialUser() {
         createInitialUser("Ryan", "Susana");
     }
 
     @Test
-    public void canCreateUser() throws InterruptedException {
+    void canCreateUser() {
         createInitialUser("Ryan", "Susana");
         login("Ryan", "Susana");
     }
 
-    private User login(String username, String password) throws InterruptedException {
+    private User login(String username, String password) {
 
         driver.get(path("/elepy-login"));
 
