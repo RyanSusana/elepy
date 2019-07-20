@@ -27,7 +27,7 @@ public class LoginTest {
     @BeforeEach //has been changed from @Before
     public void startBrowser() {
         //System.setProperty("webdriver.chrome.driver","/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome");
-        driver = new ChromeDriver(new ChromeOptions().addArguments("--no-sandbox"));
+        driver = new ChromeDriver(new ChromeOptions().addArguments("--no-sandbox").addArguments("--headless"));
 
         elepy = new Elepy()
                 .addConfiguration(AdminPanel.newAdminPanel())
