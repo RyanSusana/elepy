@@ -61,7 +61,7 @@ public class HibernateConfiguration implements com.elepy.Configuration {
         properties.setProperty("hibernate.connection.url", url);
         properties.setProperty("hibernate.connection.username", username);
         properties.setProperty("hibernate.connection.password", password);
-        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("hibernate.show_sql", "false");
         properties.setProperty("hibernate.dialect", dialect);
         properties.setProperty("hibernate.hbm2ddl.auto", "create");
 
