@@ -10,23 +10,19 @@ import com.elepy.http.HttpContext;
 import com.elepy.routes.DeleteHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Optional;
-
 public class UserDelete implements DeleteHandler<User> {
     @Override
     public void handleDelete(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
-        final Optional<User> toDelete = crud.getById(context.modelId());
-        User loggedInUser = context.request().loggedInUser();
-        if (!toDelete.isPresent()) {
-            throw new ElepyException("No user with this ID is found.", 404);
-        }
-        if (loggedInUser.getId().equals(toDelete.get().getId())) {
+        final User toDelete = crud.getById(context.modelId()).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
+        final User loggedInUser = context.request().loggedInUserOrThrow();
+
+        if (loggedInUser.getId().equals(toDelete.getId())) {
             throw new ElepyException("You can't DELETE yourself!");
         }
-        if (toDelete.get().getPermissions().contains(Permissions.SUPER_USER)) {
+        if (toDelete.getPermissions().contains(Permissions.SUPER_USER)) {
             throw new ElepyException("You can't delete Super Users!");
         }
-        crud.deleteById(toDelete.get().getId());
+        crud.deleteById(toDelete.getId());
 
         context.response().result(Message.of("Successfully deleted user", 200));
     }

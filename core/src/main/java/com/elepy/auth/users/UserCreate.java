@@ -1,12 +1,9 @@
 package com.elepy.auth.users;
 
-import com.elepy.annotations.Inject;
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationCenter;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelContext;
-import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
@@ -19,10 +16,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class UserCreate implements CreateHandler<User> {
 
-
-    @Inject
-    private ElepyContext elepyContext;
-
     @Override
     public synchronized void handleCreate(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
 
@@ -32,7 +25,9 @@ public class UserCreate implements CreateHandler<User> {
             throw new ElepyException("Usernames can't be empty!", 400);
         }
         if (crud.count() > 0) {
-            lazyLoginService().tryToLogin(context.request());
+            if (context.loggedInUser().isEmpty()) {
+                throw new ElepyException("Must be logged in to perform this action", 401);
+            }
             context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
 
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
@@ -62,11 +57,5 @@ public class UserCreate implements CreateHandler<User> {
             context.response().result(Message.of("Successfully created the user", 200));
 
         }
-    }
-
-
-    // MUST BE DONE LIKE THIS BECAUSE AUTH GETS INITIALIZED AFTER MOST ROUTES
-    public UserAuthenticationCenter lazyLoginService() {
-        return elepyContext.getDependency(UserAuthenticationCenter.class);
     }
 }

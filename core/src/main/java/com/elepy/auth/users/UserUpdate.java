@@ -20,7 +20,7 @@ public class UserUpdate implements UpdateHandler<User> {
     public void handleUpdatePut(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
 
         context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
-        User loggedInUser = context.loggedInUser();
+        User loggedInUser = context.loggedInUserOrThrow();
         User updated = objectMapper.readValue(context.body(), modelContext.getModelType());
 
 

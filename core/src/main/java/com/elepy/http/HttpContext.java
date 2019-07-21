@@ -1,15 +1,13 @@
 package com.elepy.http;
 
 import com.elepy.auth.User;
-import com.elepy.exceptions.ElepyException;
+import com.elepy.auth.UserAuthenticationService;
+import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.Message;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public interface HttpContext {
 
@@ -40,6 +38,14 @@ public interface HttpContext {
     default HttpContext injectModelClassInHttpContext(Class<?> cls) {
         request().attribute("modelClass", cls);
         return this;
+    }
+
+    default ElepyContext elepy() {
+        return request().elepy();
+    }
+
+    default UserAuthenticationService authService() {
+        return request().authService();
     }
 
     ////////// REQUEST
@@ -133,21 +139,23 @@ public interface HttpContext {
     }
 
     default boolean hasPermissions(Collection<String> requiredPermissions) {
-        return request().permissions().hasPermissions(requiredPermissions);
+        return request().hasPermissions(requiredPermissions);
     }
 
     default void requirePermissions(String... requiredPermissions) {
-        requirePermissions(Arrays.asList(requiredPermissions));
+        request().hasPermissions(List.of(requiredPermissions));
     }
 
     default void requirePermissions(Collection<String> requiredPermissions) {
-        if (!hasPermissions(requiredPermissions)) {
-            throw new ElepyException("User is not authorized.", 401);
-        }
+        request().requirePermissions(requiredPermissions);
     }
 
-    default User loggedInUser() {
+    default Optional<User> loggedInUser() {
         return request().loggedInUser();
+    }
+
+    default User loggedInUserOrThrow() {
+        return request().loggedInUserOrThrow();
     }
 
 
@@ -217,6 +225,7 @@ public interface HttpContext {
     default void terminateWithResult(Message message) {
         response().terminateWithResult(message);
     }
+
 
 }
 

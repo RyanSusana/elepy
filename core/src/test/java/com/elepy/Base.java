@@ -60,10 +60,16 @@ public class Base {
         when(request.permissions()).thenCallRealMethod();
 
         doCallRealMethod().when(context).requirePermissions(anyCollection());
+        doCallRealMethod().when(context).requirePermissions(any(String.class));
+        doCallRealMethod().when(context).requirePermissions(any(String[].class));
 
         when(context.hasPermissions(anyCollection())).thenCallRealMethod();
         when(request.loggedInUser()).thenCallRealMethod();
 
+        doCallRealMethod().when(request).requirePermissions(anyCollection());
+        doCallRealMethod().when(request).hasPermissions(any());
+        doCallRealMethod().when(request).requirePermissions(any(String.class));
+        doCallRealMethod().when(request).requirePermissions(any(String[].class));
 
         return context;
     }

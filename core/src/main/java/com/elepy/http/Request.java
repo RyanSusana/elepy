@@ -2,8 +2,11 @@ package com.elepy.http;
 
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
+import com.elepy.auth.UserAuthenticationService;
 import com.elepy.dao.*;
 import com.elepy.describers.Model;
+import com.elepy.di.ElepyContext;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.UploadedFile;
 import com.elepy.utils.ReflectionUtils;
 
@@ -66,28 +69,6 @@ public interface Request {
         return uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
     }
 
-    default User loggedInUser() {
-        return attribute("user");
-    }
-
-
-    default void addPermissions(String... permissions) {
-        permissions().addPermissions(permissions);
-    }
-
-    default Permissions permissions() {
-        Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
-
-        Optional.ofNullable(loggedInUser()).ifPresent(user -> {
-            permissions.addPermissions(Permissions.LOGGED_IN);
-            permissions.addPermissions(user.getPermissions());
-        });
-
-        attribute("permissions", permissions);
-
-        return permissions;
-    }
-
     void attribute(String attribute, Object value);
 
     /**
@@ -121,6 +102,65 @@ public interface Request {
         }
         return new HashSet<>(Collections.singletonList(modelId()));
     }
+
+    default UserAuthenticationService userAuthenticationCenter() {
+        return attribute("authCenter");
+    }
+
+    default ElepyContext elepy() {
+        return attribute("elepyContext");
+    }
+
+    default UserAuthenticationService authService() {
+        return elepy().getDependency(UserAuthenticationService.class);
+    }
+
+    default void tryToLogin() {
+        authService().tryToLogin(this);
+    }
+
+    default Optional<User> loggedInUser() {
+        tryToLogin();
+        return Optional.ofNullable(attribute("user"));
+    }
+
+    default User loggedInUserOrThrow() {
+        return loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in."));
+    }
+
+    default Permissions permissions() {
+        Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
+
+        loggedInUser().ifPresent(user -> {
+            permissions.addPermissions(Permissions.LOGGED_IN);
+            permissions.addPermissions(user.getPermissions());
+        });
+
+        attribute("permissions", permissions);
+
+        return permissions;
+    }
+
+    default void addPermissions(String... permissions) {
+        permissions().addPermissions(permissions);
+    }
+
+
+    default boolean hasPermissions(Collection<String> requiredPermissions) {
+        return permissions().hasPermissions(requiredPermissions);
+    }
+
+    default void requirePermissions(String... requiredPermissions) {
+        requirePermissions(Arrays.asList(requiredPermissions));
+    }
+
+    default void requirePermissions(Collection<String> requiredPermissions) {
+        tryToLogin();
+        if (!hasPermissions(requiredPermissions)) {
+            throw new ElepyException("User is not authorized.", 401);
+        }
+    }
+
 
     /**
      * @return The ID of the model a.k.a request.params("id)

@@ -8,7 +8,7 @@ import com.elepy.admin.models.AttachmentType;
 import com.elepy.admin.models.Link;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationCenter;
+import com.elepy.auth.UserAuthenticationService;
 import com.elepy.dao.Crud;
 import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyException;
@@ -48,7 +48,7 @@ public class ElepyAdminPanel implements ElepyExtension {
 
 
     @Inject
-    private UserAuthenticationCenter userAuthenticationCenter;
+    private UserAuthenticationService userAuthenticationService;
 
 
     @Override
@@ -85,9 +85,8 @@ public class ElepyAdminPanel implements ElepyExtension {
         return ctx -> {
 
             try {
-                userAuthenticationCenter.tryToLogin(ctx.request());
+                ctx.loggedInUserOrThrow();
             } catch (ElepyException e) {
-
                 ctx.redirect("/elepy-login");
             }
         };

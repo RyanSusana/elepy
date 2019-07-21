@@ -94,7 +94,7 @@ public class ElepyPreConfiguration {
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
      * object is a Database for void or another component to use.
      * <p>
-     * The context object is bound with a unique key. The key is a combination of the object's class
+     * The elepy object is bound with a unique key. The key is a combination of the object's class
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>

@@ -2,7 +2,7 @@ package com.elepy;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationCenter;
+import com.elepy.auth.UserAuthenticationService;
 import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
@@ -57,7 +57,7 @@ public class Elepy implements ElepyContext {
     private CrudFactory defaultCrudFactoryImplementation;
     private List<Class<?>> routingClasses;
     private ModelEngine modelEngine;
-    private UserAuthenticationCenter userAuthenticationCenter;
+    private UserAuthenticationService userAuthenticationService;
 
     private List<Configuration> configurations;
     private List<EventHandler> stopEventHandlers;
@@ -67,7 +67,7 @@ public class Elepy implements ElepyContext {
     }
 
     public Elepy(Service http) {
-        this.userAuthenticationCenter = new UserAuthenticationCenter();
+        this.userAuthenticationService = new UserAuthenticationService();
         this.stopEventHandlers = new ArrayList<>();
         this.configurations = new ArrayList<>();
         this.modules = new ArrayList<>();
@@ -116,7 +116,7 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return The context containing all the context objects
+     * @return The elepy containing all the elepy objects
      * @see ElepyContext
      */
     public DefaultElepyContext getContext() {
@@ -280,7 +280,7 @@ public class Elepy implements ElepyContext {
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
      * object is a Database for Elepy or another component to use.
      * <p>
-     * The context object is bound with a unique key. The key is a combination of the object's class
+     * The elepy object is bound with a unique key. The key is a combination of the object's class
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
@@ -639,7 +639,7 @@ public class Elepy implements ElepyContext {
         addModel(FileReference.class);
         addExtension(new UploadExtension());
 
-        registerDependency(userAuthenticationCenter);
+        registerDependency(userAuthenticationService);
 
         setupLoggingAndExceptions();
 
@@ -665,21 +665,26 @@ public class Elepy implements ElepyContext {
 
     }
 
-    // TODO figure out a better way to handle authentication
     private void setupAuth() {
-        this.registerDependency(this.initializeElepyObject(UserLoginService.class));
-        final TokenAuthenticationMethod tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
+        final var userLoginService = this.initializeElepyObject(UserLoginService.class);
+        final var tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
 
+        final var basicAuthenticationMethod = this.initializeElepyObject(BasicAuthenticationMethod.class);
+
+        registerDependency(userLoginService);
         registerDependency(tokenAuthenticationMethod);
+
+        userAuthenticationService.addAuthenticationMethod(tokenAuthenticationMethod);
+        userAuthenticationService.addAuthenticationMethod(basicAuthenticationMethod);
+
         http.get("/elepy-login-check", ctx -> {
-            userAuthenticationCenter.tryToLogin(ctx.request());
+            ctx.loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));
 
         });
-        userLogin().addAuthenticationMethod(tokenAuthenticationMethod);
 
-        http.post("elepy-token-login", tokenAuthenticationMethod::tokenLogin);
-        userLogin().addAuthenticationMethod(this.initializeElepyObject(BasicAuthenticationMethod.class));
+        http.post("/elepy-token-login", tokenAuthenticationMethod::tokenLogin);
+
     }
 
     private void injectModules() {
@@ -701,7 +706,7 @@ public class Elepy implements ElepyContext {
 
     private void setupFilters() {
         //            for (Filter adminFilter : adminFilters) {
-//                //context.injectFields(adminFilter);
+//                //elepy.injectFields(adminFilter);
 //                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
 //            }
         for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
@@ -766,10 +771,5 @@ public class Elepy implements ElepyContext {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling start()");
         }
-    }
-
-    public UserAuthenticationCenter userLogin() {
-
-        return this.userAuthenticationCenter;
     }
 }

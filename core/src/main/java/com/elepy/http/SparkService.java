@@ -122,9 +122,8 @@ public class SparkService implements HttpService {
             http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
 
                 SparkContext sparkContext = new SparkContext(request, response);
-
                 if (!extraRoute.getPermissions().isEmpty()) {
-                    elepy.userLogin().tryToLogin(sparkContext.request());
+                    sparkContext.requirePermissions(extraRoute.getPermissions());
                     new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
                 }
                 if (extraRoute.getAccessLevel().equals(AccessLevel.PROTECTED)) {
