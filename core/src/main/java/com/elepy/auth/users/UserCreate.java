@@ -25,9 +25,7 @@ public class UserCreate implements CreateHandler<User> {
             throw new ElepyException("Usernames can't be empty!", 400);
         }
         if (crud.count() > 0) {
-            if (context.loggedInUser().isEmpty()) {
-                throw new ElepyException("Must be logged in to perform this action", 401);
-            }
+            context.loggedInUserOrThrow();
             context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
 
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
