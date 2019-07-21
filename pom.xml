@@ -176,6 +176,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <headlessMode>true</headlessMode>
                 <exclude.tests>**/slow/**</exclude.tests>
             </properties>
         </profile>
