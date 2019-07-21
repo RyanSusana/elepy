@@ -667,11 +667,13 @@ public class Elepy implements ElepyContext {
 
     private void setupAuth() {
         final var userLoginService = this.initializeElepyObject(UserLoginService.class);
+
+
+        registerDependency(userLoginService);
         final var tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
 
         final var basicAuthenticationMethod = this.initializeElepyObject(BasicAuthenticationMethod.class);
 
-        registerDependency(userLoginService);
         registerDependency(tokenAuthenticationMethod);
 
         userAuthenticationService.addAuthenticationMethod(tokenAuthenticationMethod);
