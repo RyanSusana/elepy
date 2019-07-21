@@ -125,7 +125,7 @@ public interface Request {
     }
 
     default User loggedInUserOrThrow() {
-        return loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in."));
+        return loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
     }
 
     default Permissions permissions() {
