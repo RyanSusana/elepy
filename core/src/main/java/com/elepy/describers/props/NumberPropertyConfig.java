@@ -20,12 +20,16 @@ public class NumberPropertyConfig implements PropertyConfig {
     }
 
     public static NumberPropertyConfig of(AccessibleObject field) {
+        return of(field, ReflectionUtils.returnTypeOf(field));
+    }
+
+    //This method  was made to get number configuration from arrays by passing the actual  generic class type
+    public static NumberPropertyConfig of(AccessibleObject field, Class<?> actualNumberType) {
         final Number annotation = field.getAnnotation(Number.class);
         return new NumberPropertyConfig(
                 annotation == null ? Integer.MIN_VALUE : annotation.minimum(),
                 annotation == null ? Integer.MAX_VALUE : annotation.maximum(),
-                NumberType.guessType(ReflectionUtils.returnType(field))
-
+                NumberType.guessType(actualNumberType)
         );
     }
 

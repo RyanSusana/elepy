@@ -18,13 +18,17 @@ public class EnumPropertyConfig implements PropertyConfig {
     }
 
     public static EnumPropertyConfig of(AccessibleObject field) {
-        final Class<?> returnType = ReflectionUtils.returnType(field);
+        final Class<?> returnType = ReflectionUtils.returnTypeOf(field);
 
-        return new EnumPropertyConfig(MapperUtils.getEnumMapValues((Class<? extends Enum<?>>) returnType));
+        return of((Class<? extends Enum<?>>) returnType);
     }
 
-    public static EnumPropertyConfig of(Property property) {
+    public static EnumPropertyConfig of(Class<? extends Enum<?>> returnType) {
+        return new EnumPropertyConfig(MapperUtils.getEnumMapValues(returnType));
+    }
 
+
+    public static EnumPropertyConfig of(Property property) {
         return new EnumPropertyConfig(property.getExtra("availableValues"));
     }
 

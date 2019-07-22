@@ -4,6 +4,7 @@ import com.elepy.describers.props.DatePropertyConfig;
 import com.elepy.describers.props.EnumPropertyConfig;
 import com.elepy.describers.props.NumberPropertyConfig;
 import com.elepy.describers.props.TextPropertyConfig;
+import com.elepy.models.FieldType;
 import com.elepy.models.Resource;
 import com.elepy.models.TextType;
 import com.elepy.utils.ModelUtils;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelUtilsTest {
@@ -85,4 +87,36 @@ public class ModelUtilsTest {
 
         assertFalse(modelFromClass.getProperty("nonEditable").isEditable());
     }
+
+
+    //TODO consider splitting this into multiple tests and testing the extras
+    @Test
+    void testCorrectArray() {
+        final Model<ResourceWithArray> model = ModelUtils.createModelFromClass(ResourceWithArray.class);
+
+
+        final Property arrayString = model.getProperty("arrayString");
+        final Property arrayNumber = model.getProperty("arrayNumber");
+        final Property arrayDate = model.getProperty("arrayDate");
+        final Property arrayObject = model.getProperty("arrayObject");
+        final Property arrayBoolean = model.getProperty("arrayBoolean");
+        final Property arrayEnum = model.getProperty("arrayEnum");
+
+
+        assertThat(arrayString.getType()).isEqualTo(FieldType.ARRAY);
+        assertThat(arrayNumber.getType()).isEqualTo(FieldType.ARRAY);
+        assertThat(arrayDate.getType()).isEqualTo(FieldType.ARRAY);
+        assertThat(arrayObject.getType()).isEqualTo(FieldType.ARRAY);
+        assertThat(arrayBoolean.getType()).isEqualTo(FieldType.ARRAY);
+        assertThat(arrayEnum.getType()).isEqualTo(FieldType.ARRAY);
+
+        assertThat((FieldType) arrayString.getExtra("arrayType")).isEqualTo(FieldType.TEXT);
+        assertThat((FieldType) arrayNumber.getExtra("arrayType")).isEqualTo(FieldType.NUMBER);
+        assertThat((FieldType) arrayDate.getExtra("arrayType")).isEqualTo(FieldType.DATE);
+        assertThat((FieldType) arrayObject.getExtra("arrayType")).isEqualTo(FieldType.OBJECT);
+        assertThat((FieldType) arrayBoolean.getExtra("arrayType")).isEqualTo(FieldType.BOOLEAN);
+        assertThat((FieldType) arrayEnum.getExtra("arrayType")).isEqualTo(FieldType.ENUM);
+    }
+
+
 }

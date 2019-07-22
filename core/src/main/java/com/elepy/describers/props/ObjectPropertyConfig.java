@@ -18,7 +18,11 @@ public class ObjectPropertyConfig implements PropertyConfig {
     }
 
     public static ObjectPropertyConfig of(AccessibleObject field) {
-        Class<?> objectType = ReflectionUtils.returnType(field);
+        Class<?> objectType = ReflectionUtils.returnTypeOf(field);
+        return of(objectType);
+    }
+
+    public static ObjectPropertyConfig of(Class<?> objectType) {
         return new ObjectPropertyConfig(objectType.getSimpleName(), ModelUtils.describeClass(objectType));
     }
 

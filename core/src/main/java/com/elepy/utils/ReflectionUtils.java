@@ -154,7 +154,7 @@ public class ReflectionUtils {
         }
     }
 
-    public static Class<?> returnType(AccessibleObject field) {
+    public static Class<?> returnTypeOf(AccessibleObject field) {
         return (field instanceof Field) ? ((Field) field).getType() : ((Method) field).getReturnType();
     }
 

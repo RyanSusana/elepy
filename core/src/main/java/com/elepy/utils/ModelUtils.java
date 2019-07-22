@@ -140,7 +140,7 @@ public class ModelUtils {
 
     }
 
-    private static PropertyConfig mapFieldTypeInformation(AccessibleObject field) {
+    public static PropertyConfig mapFieldTypeInformation(AccessibleObject field) {
         FieldType fieldType = FieldType.guessType(field);
 
         switch (fieldType) {
@@ -156,8 +156,8 @@ public class ModelUtils {
                 return ObjectPropertyConfig.of(field);
             case BOOLEAN:
                 return BooleanPropertyConfig.of(field);
-            case PRIMITIVE_ARRAY:
-                return BasicArrayPropertyConfig.of(field);
+            case ARRAY:
+                return ArrayPropertyConfig.of(field);
             default:
                 throw new ElepyConfigException(String.format("%s is not supported", fieldType.name()));
 
