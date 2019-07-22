@@ -3,6 +3,7 @@ package com.elepy.models;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
+import com.elepy.uploads.FileReference;
 import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -15,7 +16,16 @@ import java.util.Date;
 import java.util.Optional;
 
 public enum FieldType {
-    ENUM(Enum.class), BOOLEAN(Boolean.class), DATE(Date.class), TEXT(String.class), NUMBER(java.lang.Number.class), OBJECT(Object.class), ENUM_ARRAY(Collection.class), OBJECT_ARRAY(Collection.class), PRIMITIVE_ARRAY(Collection.class);
+    ENUM(Enum.class),
+    BOOLEAN(Boolean.class),
+    DATE(Date.class),
+    TEXT(String.class),
+    NUMBER(java.lang.Number.class),
+    OBJECT(Object.class),
+    ENUM_ARRAY(Collection.class),
+    OBJECT_ARRAY(Collection.class),
+    PRIMITIVE_ARRAY(Collection.class),
+    FILE_REFERENCE(FileReference.class);
 
 
     private final Class<?> baseClass;

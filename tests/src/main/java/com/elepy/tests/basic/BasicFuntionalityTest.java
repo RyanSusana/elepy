@@ -10,11 +10,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.Collections;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BasicFuntionalityTest extends CrudTest {
@@ -55,9 +60,9 @@ public abstract class BasicFuntionalityTest extends CrudTest {
                 .asString();
 
 
-        Assertions.assertEquals(200, response.getStatus());
-        Assertions.assertEquals(401, response2.getStatus());
-        Assertions.assertEquals(1, userCrud.count());
+        assertEquals(200, response.getStatus());
+        assertEquals(401, response2.getStatus());
+        assertEquals(1, userCrud.count());
 
     }
 
@@ -73,8 +78,8 @@ public abstract class BasicFuntionalityTest extends CrudTest {
                 .basicAuth("admin", "admin")
                 .asString();
 
-        Assertions.assertEquals(200, authorizedFind.getStatus());
-        Assertions.assertEquals(401, unauthorizedFind.getStatus());
+        assertEquals(200, authorizedFind.getStatus());
+        assertEquals(401, unauthorizedFind.getStatus());
     }
 
     @Test
@@ -90,10 +95,10 @@ public abstract class BasicFuntionalityTest extends CrudTest {
                 .basicAuth("admin", "admin")
                 .asString();
 
-        Assertions.assertEquals(200, authorizedDelete.getStatus());
+        assertEquals(200, authorizedDelete.getStatus());
 
-        Assertions.assertEquals(401, unauthorizedDelete.getStatus());
-        Assertions.assertEquals(1, userCrud.count());
+        assertEquals(401, unauthorizedDelete.getStatus());
+        assertEquals(1, userCrud.count());
 
     }
 
@@ -101,7 +106,7 @@ public abstract class BasicFuntionalityTest extends CrudTest {
     void can_Login_and_UpdateOtherUserPermissions() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
-        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.SUPER_USER));
+        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.LOGGED_IN));
 
         final HttpResponse<String> unauthorizedFind = Unirest
                 .put(userUrl + "/user")
@@ -114,17 +119,83 @@ public abstract class BasicFuntionalityTest extends CrudTest {
                 .body(json(userToUpdate))
                 .asString();
 
-        final Optional<User> user = userCrud.getById("user");
+        final User user = userCrud.getById("user").orElseThrow();
 
-        Assertions.assertEquals(200, authorizedFind.getStatus());
-        Assertions.assertEquals(401, unauthorizedFind.getStatus());
-        Assertions.assertEquals(2, userCrud.count());
-        Assertions.assertTrue(user.isPresent());
-        Assertions.assertEquals(1, user.get().getPermissions().size());
-        Assertions.assertEquals(Permissions.SUPER_USER, user.get().getPermissions().get(0));
+        assertEquals(200, authorizedFind.getStatus());
+        assertEquals(401, unauthorizedFind.getStatus());
+        assertEquals(2, userCrud.count());
+        assertEquals(1, user.getPermissions().size());
+        assertEquals(Permissions.LOGGED_IN, user.getPermissions().get(0));
 
     }
 
+    @Test
+    void cant_Login_and_UpdateSuperUsersPermission() throws JsonProcessingException, UnirestException {
+        createInitialUsersViaHttp();
+
+        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.SUPER_USER));
+
+
+        final HttpResponse<String> authorizedFind = Unirest
+                .put(userUrl + "/user")
+                .basicAuth("admin", "admin")
+                .body(json(userToUpdate))
+                .asString();
+
+        final User user = userCrud.getById("user").orElseThrow();
+
+
+        assertEquals(403, authorizedFind.getStatus());
+        assertEquals(0, user.getPermissions().size());
+    }
+
+    @Test
+    void cant_Login_and_CreateSuperUser_afterOneHasBeenCreated() throws JsonProcessingException, UnirestException {
+        createInitialUsersViaHttp();
+
+        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.SUPER_USER));
+
+        final HttpResponse<String> authorizedFind = Unirest
+                .post(userUrl)
+                .basicAuth("admin", "admin")
+                .body(json(userToUpdate))
+                .asString();
+
+        final User user = userCrud.getById("user").orElseThrow();
+
+
+        assertEquals(403, authorizedFind.getStatus());
+        assertEquals(0, user.getPermissions().size());
+    }
+
+    @Test
+    void cant_Login_and_DeleteYourself() throws JsonProcessingException, UnirestException {
+        createInitialUsersViaHttp();
+
+        final HttpResponse<String> authorizedFind = Unirest
+                .delete(userUrl + "/admin")
+                .basicAuth("admin", "admin")
+                .asString();
+
+        final User user = userCrud.getById("user").orElseThrow();
+
+
+        assertEquals(403, authorizedFind.getStatus());
+        assertEquals(0, user.getPermissions().size());
+    }
+
+    @Test
+    void can_Login_and_UpdateOwnPassword_AsSuperUser() throws JsonProcessingException, UnirestException {
+        createInitialUsersViaHttp();
+
+        final HttpResponse<String> authorizedFind = Unirest
+                .delete(userUrl + "/admin")
+                .basicAuth("user", "user")
+                .asString();
+
+        assertEquals(403, authorizedFind.getStatus());
+        assertTrue(userCrud.getById("admin").isPresent());
+    }
 
     @Test
     void can_AccessExtraRoutes_when_RoutesAreDefinedInAService() throws UnirestException {
@@ -136,24 +207,24 @@ public abstract class BasicFuntionalityTest extends CrudTest {
         resourceCrud.create(resource1);
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/" + resource1.getId() + "/extra").asString();
 
-        Assertions.assertEquals(200, getRequest.getStatus());
-        Assertions.assertEquals(shouldReturn, getRequest.getBody());
+        assertEquals(200, getRequest.getStatus());
+        assertEquals(shouldReturn, getRequest.getBody());
     }
 
     @Test
     void can_AccessExtraRoutes_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources-extra").asString();
 
-        Assertions.assertEquals(201, getRequest.getStatus());
-        Assertions.assertEquals("generated", getRequest.getBody());
+        assertEquals(201, getRequest.getStatus());
+        assertEquals("generated", getRequest.getBody());
     }
 
     @Test
     void can_AccessActions_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/actions/extra-action?ids=999,777").asString();
 
-        Assertions.assertEquals(200, getRequest.getStatus());
-        Assertions.assertEquals("[999,777]", getRequest.getBody());
+        assertEquals(200, getRequest.getStatus());
+        assertEquals("[999,777]", getRequest.getBody());
     }
 
 
@@ -177,8 +248,8 @@ public abstract class BasicFuntionalityTest extends CrudTest {
                         .body(json(user2))
                         .asString();
 
-        Assertions.assertEquals(200, response.getStatus());
-        Assertions.assertEquals(200, response2.getStatus());
+        assertEquals(200, response.getStatus());
+        assertEquals(200, response2.getStatus());
     }
 
 

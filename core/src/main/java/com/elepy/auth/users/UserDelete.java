@@ -17,10 +17,10 @@ public class UserDelete implements DeleteHandler<User> {
         final User loggedInUser = context.request().loggedInUserOrThrow();
 
         if (loggedInUser.getId().equals(toDelete.getId())) {
-            throw new ElepyException("You can't DELETE yourself!");
+            throw new ElepyException("You can't delete yourself!", 403);
         }
         if (toDelete.getPermissions().contains(Permissions.SUPER_USER)) {
-            throw new ElepyException("You can't delete Super Users!");
+            throw new ElepyException(String.format("You can't delete users with the permission '%s'", Permissions.SUPER_USER), 403);
         }
         crud.deleteById(toDelete.getId());
 
