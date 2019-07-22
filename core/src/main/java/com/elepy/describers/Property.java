@@ -4,6 +4,7 @@ import com.elepy.describers.props.PropertyConfig;
 import com.elepy.models.FieldType;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +90,11 @@ public class Property implements Comparable<Property> {
 
     public FieldType getType() {
         return type;
+    }
+
+    @JsonProperty
+    public boolean isPrimitive() {
+        return type != null && type.isPrimitive();
     }
 
     public void setType(FieldType type) {
