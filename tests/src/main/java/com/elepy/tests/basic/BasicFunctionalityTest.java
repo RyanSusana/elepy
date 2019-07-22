@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class BasicFuntionalityTest extends CrudTest {
+public abstract class BasicFunctionalityTest extends CrudTest {
 
 
     protected Crud<User> userCrud;
 
 
-    public BasicFuntionalityTest(Configuration... configurations) {
+    public BasicFunctionalityTest(Configuration... configurations) {
         super(configurations);
     }
 

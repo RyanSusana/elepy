@@ -1,7 +1,7 @@
 package com.elepy.mongo;
 
 import com.elepy.Configuration;
-import com.elepy.tests.basic.BasicFuntionalityTest;
+import com.elepy.tests.basic.BasicFunctionalityTest;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 
 import java.net.InetSocketAddress;
 
-public class MongoFunctionalityTest extends BasicFuntionalityTest {
+public class MongoFunctionalityTest extends BasicFunctionalityTest {
 
     private MongoServer mongoServer;
 
