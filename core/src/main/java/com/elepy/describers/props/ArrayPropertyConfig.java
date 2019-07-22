@@ -57,6 +57,7 @@ public class ArrayPropertyConfig implements PropertyConfig {
         arrayConfig.config(property);
         property.setType(FieldType.ARRAY);
         property.setExtra("arrayType", arrayType);
+        property.setExtra("arrayTypePrimitive", arrayType.isPrimitive());
 
     }
 }
