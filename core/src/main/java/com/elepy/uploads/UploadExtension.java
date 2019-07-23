@@ -3,6 +3,7 @@ package com.elepy.uploads;
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.annotations.Inject;
+import com.elepy.auth.Permissions;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
@@ -30,13 +31,15 @@ public class UploadExtension implements ElepyExtension {
     }
 
     private void handleFileGet(Request request, Response response) throws IOException {
-        final UploadedFile file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("File not found", 404));
+        final UploadedFile file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("FileReference not found", 404));
 
         response.type(file.getContentType());
         response.result(IOUtils.toByteArray(file.getContent()));
     }
 
     private void handleUpload(Request request, Response response) {
+        request.requirePermissions(Permissions.LOGGED_IN);
+
         final List<UploadedFile> files = request.uploadedFiles("files");
         files.forEach(uploadedFile -> {
 
