@@ -3,6 +3,7 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
+import com.elepy.admin.views.DefaultView;
 import com.elepy.describers.Model;
 import com.elepy.http.HttpService;
 import org.jsoup.Jsoup;
@@ -45,51 +46,39 @@ public class ViewHandler {
         }
 
         models.forEach((modelDescription, restModelView) -> {
-            if (restModelView == null) {
 
-                //Default View
-                http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
+            http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
-                    Map<String, Object> model = new HashMap<>();
-                    model.put("currentDescriptor", modelDescription);
-                    response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
-                });
-            } else {
+                Map<String, Object> model = new HashMap<>();
 
-                //Custom View
-                http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
+                String content = restModelView.renderView(request, modelDescription);
 
-                    Map<String, Object> model = new HashMap<>();
+                Document document = Jsoup.parse(content);
 
-                    String content = restModelView.renderView(modelDescription);
+                Elements styles = document.select("style");
+                Elements stylesheets = document.select("stylesheet");
 
-                    Document document = Jsoup.parse(content);
-
-                    Elements styles = document.select("style");
-                    Elements stylesheets = document.select("stylesheet");
-
-                    stylesheets.remove();
-                    styles.remove();
+                stylesheets.remove();
+                styles.remove();
 
 
-                    model.put("styles", styles);
-                    model.put("stylesheets", stylesheets.stream().map(sheet -> {
-                        if (sheet.hasText()) {
-                            return sheet.text();
-                        } else if (sheet.hasAttr("src")) {
-                            return sheet.attr("src");
-                        }
-                        return "";
-                    }).collect(Collectors.toSet()));
-                    model.put("content", document.body().html());
-                    model.put("currentDescriptor", modelDescription);
-                    response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
-                });
-            }
+                model.put("styles", styles);
+                model.put("stylesheets", stylesheets.stream().map(sheet -> {
+                    if (sheet.hasText()) {
+                        return sheet.text();
+                    } else if (sheet.hasAttr("src")) {
+                        return sheet.attr("src");
+                    }
+                    return "";
+                }).collect(Collectors.toSet()));
+                model.put("content", document.body().html());
+                model.put("currentDescriptor", modelDescription);
+                response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
+            });
         });
     }
 
-    private Map<Model<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    private Map<Model<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) {
         Map<Model<?>, RestModelView> modelsToReturn = new HashMap<>();
         for (Model<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
 
@@ -100,7 +89,7 @@ public class ViewHandler {
 
                 modelsToReturn.put(modelContext, restModelView);
             } else {
-                modelsToReturn.put(modelContext, null);
+                modelsToReturn.put(modelContext, elepyPostConfiguration.initializeElepyObject(DefaultView.class));
             }
         }
         return modelsToReturn;

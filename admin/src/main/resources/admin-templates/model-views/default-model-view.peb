@@ -1,0 +1,32 @@
+<div id="app">
+    <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
+    <Elepy v-if="selectedModel!=null" :model="selectedModel"/>
+</div>
+
+<stylesheet src="https://unpkg.com/elepy-vue@0.2/dist/ElepyVue.css"/>
+
+<script src="https://unpkg.com/elepy-vue@0.2/dist/ElepyVue.umd.js"></script>
+<script>
+    Vue.component('Elepy', ElepyVue);
+    const app = new Vue({
+        el: '#app',
+        delimiters: ['((', '))'],
+        components: {"Elepy": ElepyVue},
+        data() {
+            return {selectedModel: null};
+        },
+        methods: {
+            getModel() {
+                axios.get("/config").then(response => {
+                    this.selectedModel = response.data.filter(function (model) {
+                        return model.slug === document.getElementById('slug').innerText
+                    })[0];
+                });
+            }
+        },
+        created() {
+            this.getModel();
+        }
+    });
+
+</script>
