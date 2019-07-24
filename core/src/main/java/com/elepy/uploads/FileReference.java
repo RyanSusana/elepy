@@ -6,6 +6,7 @@ import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Update;
 import com.elepy.routes.DisabledHandler;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 
 @RestModel(name = "Files", slug = "/files")
 @Update(handler = DisabledHandler.class)
-@Delete(handler = FileUploadDelete.class)
+@Delete(handler = FileReferenceDelete.class)
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
 public class FileReference {
@@ -22,12 +23,17 @@ public class FileReference {
     @Id
     @Identifier
     private String name;
+
+    @Column
     private String contentType;
 
     //Like this to query easier for cloud databases
+    @Column
     private String mimeType;
+    @Column
     private String mimeSubtype;
 
+    @Column
     private long size;
 
 
