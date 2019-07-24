@@ -18,7 +18,8 @@ public class FileUploadEvaluator {
 
     public static FileUploadEvaluator fromRequest(Request request) {
         try {
-            return new FileUploadEvaluator(Long.parseLong(request.queryParams("maxSize")), request.queryParams("requiredContentType"));
+            final String maxSize = request.queryParams("maxSize");
+            return new FileUploadEvaluator(maxSize == null ? null : Long.parseLong(maxSize), request.queryParams("requiredContentType"));
         } catch (NumberFormatException e) {
             throw new ElepyException("maxSize must be a number");
         }
