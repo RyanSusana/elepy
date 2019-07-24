@@ -3,7 +3,6 @@ package com.elepy;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.models.Resource;
 
 import java.math.BigDecimal;
 import java.util.Map;

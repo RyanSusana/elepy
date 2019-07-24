@@ -1,8 +1,8 @@
 package com.elepy.evaluators;
 
 import com.elepy.Base;
+import com.elepy.Resource;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Resource;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

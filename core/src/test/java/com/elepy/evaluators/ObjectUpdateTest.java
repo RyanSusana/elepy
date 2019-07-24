@@ -1,7 +1,7 @@
 package com.elepy.evaluators;
 
 import com.elepy.Base;
-import com.elepy.models.Resource;
+import com.elepy.Resource;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

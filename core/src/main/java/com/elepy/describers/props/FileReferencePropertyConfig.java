@@ -10,28 +10,28 @@ import java.lang.reflect.AccessibleObject;
 public class FileReferencePropertyConfig implements PropertyConfig {
 
     private final String allowedExtensions;
-    private final long maxSize;
+    private final long maximumFileSize;
 
-    public FileReferencePropertyConfig(String allowedMimeType, long maxSize) {
+    public FileReferencePropertyConfig(String allowedMimeType, long maximumFileSize) {
         this.allowedExtensions = allowedMimeType;
-        this.maxSize = maxSize;
+        this.maximumFileSize = maximumFileSize;
     }
 
     public static FileReferencePropertyConfig of(AccessibleObject accessibleObject) {
         final var annotation = accessibleObject.getAnnotation(FileReference.class);
 
-        return new FileReferencePropertyConfig(annotation == null ? "*/*" : annotation.allowedMimeType(), annotation == null ? FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE : annotation.maxSize());
+        return new FileReferencePropertyConfig(annotation == null ? "*/*" : annotation.allowedMimeType(), annotation == null ? FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE : annotation.maximumFileSize());
     }
 
     public static FileReferencePropertyConfig of(Property property) {
-        return new FileReferencePropertyConfig(property.getExtra("allowedMimeType"), property.getExtra("maxSize"));
+        return new FileReferencePropertyConfig(property.getExtra("allowedMimeType"), property.getExtra("maximumFileSize"));
     }
 
     @Override
     public void config(Property property) {
         property.setType(FieldType.FILE_REFERENCE);
         property.setExtra("allowedMimeType", allowedExtensions);
-        property.setExtra("maxSize", maxSize);
+        property.setExtra("maximumFileSize", maximumFileSize);
     }
 
     public String getAllowedMimeType() {
@@ -39,6 +39,6 @@ public class FileReferencePropertyConfig implements PropertyConfig {
     }
 
     public long getMaxSizeInBytes() {
-        return maxSize;
+        return maximumFileSize;
     }
 }

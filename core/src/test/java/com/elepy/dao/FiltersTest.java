@@ -1,10 +1,10 @@
 package com.elepy.dao;
 
+import com.elepy.Resource;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.models.Resource;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

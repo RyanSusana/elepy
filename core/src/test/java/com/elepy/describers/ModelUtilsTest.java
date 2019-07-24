@@ -1,8 +1,9 @@
 package com.elepy.describers;
 
+import com.elepy.Resource;
+import com.elepy.ResourceArray;
 import com.elepy.describers.props.*;
 import com.elepy.models.FieldType;
-import com.elepy.models.Resource;
 import com.elepy.models.TextType;
 import com.elepy.uploads.FileUploadEvaluator;
 import com.elepy.utils.ModelUtils;
@@ -125,7 +126,7 @@ public class ModelUtilsTest {
     //TODO consider splitting this into multiple tests and testing the extras
     @Test
     void testCorrectArray() {
-        final Model<ResourceWithArray> model = ModelUtils.createModelFromClass(ResourceWithArray.class);
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
 
 
         final Property arrayString = model.getProperty("arrayString");

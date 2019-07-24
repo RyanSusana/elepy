@@ -9,20 +9,20 @@ public class FileUploadEvaluator {
     private static final long MEGABYTE_SIZE = KILOBYTE_SIZE * 1024;
     public static final long DEFAULT_MAX_FILE_SIZE = 10 * MEGABYTE_SIZE;
 
-    private final long maxSize;
+    private final long maximumFileSize;
     private final String requiredContentType;
 
-    public FileUploadEvaluator(Long maxSize, String requiredContentType) {
-        this.maxSize = maxSize == null ? DEFAULT_MAX_FILE_SIZE : maxSize;
+    public FileUploadEvaluator(Long maximumFileSize, String requiredContentType) {
+        this.maximumFileSize = maximumFileSize == null ? DEFAULT_MAX_FILE_SIZE : maximumFileSize;
         this.requiredContentType = requiredContentType == null ? "*/*" : requiredContentType;
     }
 
     public static FileUploadEvaluator fromRequest(Request request) {
         try {
-            final String maxSize = request.queryParams("maxSize");
-            return new FileUploadEvaluator(maxSize == null ? null : Long.parseLong(maxSize), request.queryParams("requiredContentType"));
+            final String maximumFileSize = request.queryParams("maximumFileSize");
+            return new FileUploadEvaluator(maximumFileSize == null ? null : Long.parseLong(maximumFileSize), request.queryParams("requiredContentType"));
         } catch (NumberFormatException e) {
-            throw new ElepyException("maxSize must be a number");
+            throw new ElepyException("maximumFileSize must be a number");
         }
     }
 
@@ -31,19 +31,19 @@ public class FileUploadEvaluator {
             throw new ElepyException(String.format("Content type must match %s, was %s", requiredContentType, file.getContentType()), 400);
         }
 
-        if (file.getSize() > maxSize) {
+        if (file.getSize() > maximumFileSize) {
             throw new ElepyException(String.format("File size can't exceed %s, was %s",
-                    translateToRepresentableString(maxSize),
+                    translateToRepresentableString(maximumFileSize),
                     translateToRepresentableString(file.getSize())));
         }
         return FileReference.of(file);
     }
 
     private String translateToRepresentableString(long bytes) {
-        if (maxSize > MEGABYTE_SIZE) {
+        if (maximumFileSize > MEGABYTE_SIZE) {
             return String.format("%d MB", bytes / MEGABYTE_SIZE);
         }
-        if (maxSize > KILOBYTE_SIZE) {
+        if (maximumFileSize > KILOBYTE_SIZE) {
             return String.format("%d KB", bytes / KILOBYTE_SIZE);
         } else {
             return String.format("%d bytes", bytes);

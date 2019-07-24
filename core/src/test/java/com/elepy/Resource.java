@@ -1,7 +1,8 @@
-package com.elepy.models;
+package com.elepy;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
+import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

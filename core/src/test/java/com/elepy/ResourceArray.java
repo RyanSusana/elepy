@@ -1,15 +1,17 @@
-package com.elepy.describers;
+package com.elepy;
 
+import com.elepy.annotations.Array;
+import com.elepy.annotations.Number;
 import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Text;
 import com.elepy.models.FieldType;
-import com.elepy.models.Resource;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 @RestModel(name = "Resources", slug = "/resources")
-public class ResourceWithArray {
+public class ResourceArray {
 
     private int id;
 
@@ -20,6 +22,40 @@ public class ResourceWithArray {
     private List<FieldType> arrayEnum;
     private List<Boolean> arrayBoolean;
 
+
+    @Array(maximumArrayLength = 2, minimumArrayLength = 1)
+    @Text(minimumLength = 10)
+    private List<String> arrayStringMax2Min1TextWithMinimumLengthOf10;
+
+    @Number(minimum = 10)
+    private List<Integer> arrayNumberMax2Min1NumberWithMinimumOf10;
+
+
+    private List<Resource> arrayObjects;
+
+    public List<Resource> getArrayObjects() {
+        return arrayObjects;
+    }
+
+    public void setArrayObjects(List<Resource> arrayObjects) {
+        this.arrayObjects = arrayObjects;
+    }
+
+    public List<Integer> getArrayNumberMax2Min1NumberWithMinimumOf10() {
+        return arrayNumberMax2Min1NumberWithMinimumOf10;
+    }
+
+    public void setArrayNumberMax2Min1NumberWithMinimumOf10(List<Integer> arrayNumberMax2Min1NumberWithMinimumOf10) {
+        this.arrayNumberMax2Min1NumberWithMinimumOf10 = arrayNumberMax2Min1NumberWithMinimumOf10;
+    }
+
+    public List<String> getArrayStringMax2Min1TextWithMinimumLengthOf10() {
+        return arrayStringMax2Min1TextWithMinimumLengthOf10;
+    }
+
+    public void setArrayStringMax2Min1TextWithMinimumLengthOf10(List<String> arrayStringMax2Min1TextWithMinimumLengthOf10) {
+        this.arrayStringMax2Min1TextWithMinimumLengthOf10 = arrayStringMax2Min1TextWithMinimumLengthOf10;
+    }
 
     public Set<Integer> getArrayNumber() {
         return arrayNumber;
