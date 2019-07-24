@@ -18,15 +18,6 @@ public class UploadTest {
     private static final String UPLOAD_DIR = "src/test/resources/uploads";
     private DirectoryFileService directoryFileService;
 
-    @BeforeEach
-    @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
-
-        directoryFileService = new DirectoryFileService(UPLOAD_DIR);
-
-        directoryFileService.ensureDirsMade();
-    }
-
     @BeforeAll
     public static void clear() {
 
@@ -63,11 +54,21 @@ public class UploadTest {
                 Files.exists(pathToBeDeleted), "Directory still exists");
     }
 
+    @BeforeEach
+    @SuppressWarnings("unchecked")
+    public void setUp() throws Exception {
+
+        directoryFileService = new DirectoryFileService(UPLOAD_DIR);
+
+        directoryFileService.ensureDirsMade();
+    }
+
     @AfterEach
     void tearDown() throws IOException {
         deleteDir();
 
     }
+
     @Test
     void testUploadText() throws IOException {
 

@@ -48,7 +48,7 @@ public class MapperUtils {
 
             Field declaredField;
             try {
-                declaredField = enumClass.getDeclaredField(((Enum) enumConstant).name());
+                declaredField = enumClass.getDeclaredField(enumConstant.name());
             } catch (NoSuchFieldException ignored) {
                 throw new ElepyConfigException("Enum field not found");
             }

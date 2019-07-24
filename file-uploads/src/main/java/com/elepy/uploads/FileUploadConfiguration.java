@@ -11,6 +11,10 @@ public class FileUploadConfiguration implements Configuration {
         directoryFileService = new DirectoryFileService(rootFolderLocation);
     }
 
+    public static FileUploadConfiguration of(String rootFolder) {
+        return new FileUploadConfiguration(rootFolder);
+    }
+
     @Override
     public void before(ElepyPreConfiguration elepy) {
         elepy.withUploads(directoryFileService);
@@ -19,9 +23,5 @@ public class FileUploadConfiguration implements Configuration {
     @Override
     public void after(ElepyPostConfiguration elepy) {
 
-    }
-
-    public static FileUploadConfiguration of(String rootFolder) {
-        return new FileUploadConfiguration(rootFolder);
     }
 }

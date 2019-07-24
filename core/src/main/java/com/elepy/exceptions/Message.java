@@ -21,20 +21,6 @@ public class Message {
         this.properties = properties;
     }
 
-
-    @JsonProperty
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
     public static Message of(String message, int status) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", status >= 300 ? MessageType.ERROR : MessageType.MESSAGE);
@@ -63,5 +49,18 @@ public class Message {
         properties.put("type", MessageType.MARKDOWN);
 
         return new Message(markdown, 200, properties);
+    }
+
+    @JsonProperty
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public int getStatus() {
+        return status;
     }
 }

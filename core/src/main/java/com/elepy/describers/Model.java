@@ -52,8 +52,16 @@ public class Model<T> {
         return slug;
     }
 
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
     public Class<T> getJavaClass() {
         return javaClass;
+    }
+
+    public void setJavaClass(Class<T> javaClass) {
+        this.javaClass = javaClass;
     }
 
     public String getIdField() {
@@ -85,14 +93,6 @@ public class Model<T> {
                 .stream()
                 .filter(property -> name.equals(property.getName()))
                 .findFirst().orElseThrow(() -> new ElepyConfigException("No property with the name: " + name));
-    }
-
-    public void setJavaClass(Class<T> javaClass) {
-        this.javaClass = javaClass;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
     }
 
     public HttpAction getFindOneAction() {

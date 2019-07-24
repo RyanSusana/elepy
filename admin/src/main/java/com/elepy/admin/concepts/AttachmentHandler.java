@@ -95,7 +95,7 @@ public class AttachmentHandler {
             try {
                 JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
 
-                try (JarFile jar = urlcon.getJarFile();) {
+                try (JarFile jar = urlcon.getJarFile()) {
                     Enumeration<JarEntry> entries = jar.entries();
                     while (entries.hasMoreElements()) {
                         JarEntry entry = entries.nextElement();

@@ -14,17 +14,12 @@ import java.util.TreeMap;
 
 public class SparkService implements HttpService {
 
+    private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
     private final Service http;
     private final Elepy elepy;
-
     private Map<RouteKey, Route> routes;
-
     private int counter;
-
     private boolean ignitedOnce = false;
-
-
-    private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
 
 
     public SparkService(Service service, Elepy elepy) {

@@ -92,13 +92,13 @@ public class Property implements Comparable<Property> {
         return type;
     }
 
+    public void setType(FieldType type) {
+        this.type = type;
+    }
+
     @JsonProperty
     public boolean isPrimitive() {
         return type != null && type.isPrimitive();
-    }
-
-    public void setType(FieldType type) {
-        this.type = type;
     }
 
     public boolean isSearchable() {

@@ -6,8 +6,8 @@ import java.util.Random;
 
 public class StringUtils {
 
-    private static Random random = new Random();
     private static final Slugify slugify = new Slugify();
+    private static Random random = new Random();
 
     private StringUtils() {
 

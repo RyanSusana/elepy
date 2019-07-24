@@ -77,6 +77,7 @@ public abstract class CrudTest implements ElepyTest {
     private void deleteAll() {
         resourceCrud.delete(resourceCrud.getAll().stream().map(Resource::getId).collect(Collectors.toList()));
     }
+
     @Test
     public void can_FindItems_as_Intended() throws IOException, UnirestException {
 

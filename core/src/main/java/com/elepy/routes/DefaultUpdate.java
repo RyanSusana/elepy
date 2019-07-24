@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DefaultUpdate<T> implements UpdateHandler<T> {
@@ -29,7 +30,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         String[] pairs = body.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf('=');
-            queryPairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+            queryPairs.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8), URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
         }
         return queryPairs;
     }

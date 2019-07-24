@@ -42,11 +42,11 @@ import java.util.*;
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
-    private HttpService http;
     private final List<ElepyExtension> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
+    private HttpService http;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;

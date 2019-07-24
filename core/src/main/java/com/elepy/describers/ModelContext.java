@@ -23,20 +23,12 @@ public class ModelContext<T> {
         this.objectEvaluators = objectEvaluators;
     }
 
-    public void setObjectEvaluators(List<ObjectEvaluator<T>> objectEvaluators) {
-        this.objectEvaluators = objectEvaluators;
+    public Crud<T> getCrud() {
+        return crud;
     }
 
     public void setCrud(Crud<T> crud) {
         this.crud = crud;
-    }
-
-    public void setIdentityProvider(IdentityProvider<T> identityProvider) {
-        this.identityProvider = identityProvider;
-    }
-
-    public Crud<T> getCrud() {
-        return crud;
     }
 
     public void changeModel(ModelChange modelChange) {
@@ -47,13 +39,20 @@ public class ModelContext<T> {
         return model;
     }
 
-
     public IdentityProvider<T> getIdentityProvider() {
         return identityProvider;
     }
 
+    public void setIdentityProvider(IdentityProvider<T> identityProvider) {
+        this.identityProvider = identityProvider;
+    }
+
     public List<ObjectEvaluator<T>> getObjectEvaluators() {
         return objectEvaluators;
+    }
+
+    public void setObjectEvaluators(List<ObjectEvaluator<T>> objectEvaluators) {
+        this.objectEvaluators = objectEvaluators;
     }
 
     public String getName() {

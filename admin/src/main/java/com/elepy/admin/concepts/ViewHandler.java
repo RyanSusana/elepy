@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
 public class ViewHandler {
 
 
-    private ElepyAdminPanel adminPanel;
     private final HttpService http;
-
+    private ElepyAdminPanel adminPanel;
     private Map<Model<?>, ModelView> models;
 
     public ViewHandler(ElepyAdminPanel adminPanel, HttpService http) {
