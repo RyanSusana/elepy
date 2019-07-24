@@ -10,25 +10,25 @@ public class FileUploadEvaluator {
     public static final long DEFAULT_MAX_FILE_SIZE = 10 * MEGABYTE_SIZE;
 
     private final long maximumFileSize;
-    private final String requiredContentType;
+    private final String allowedMimeType;
 
-    public FileUploadEvaluator(Long maximumFileSize, String requiredContentType) {
+    public FileUploadEvaluator(Long maximumFileSize, String allowedMimeType) {
         this.maximumFileSize = maximumFileSize == null ? DEFAULT_MAX_FILE_SIZE : maximumFileSize;
-        this.requiredContentType = requiredContentType == null ? "*/*" : requiredContentType;
+        this.allowedMimeType = allowedMimeType == null ? "*/*" : allowedMimeType;
     }
 
     public static FileUploadEvaluator fromRequest(Request request) {
         try {
             final String maximumFileSize = request.queryParams("maximumFileSize");
-            return new FileUploadEvaluator(maximumFileSize == null ? null : Long.parseLong(maximumFileSize), request.queryParams("requiredContentType"));
+            return new FileUploadEvaluator(maximumFileSize == null ? null : Long.parseLong(maximumFileSize), request.queryParams("allowedMimeType"));
         } catch (NumberFormatException e) {
             throw new ElepyException("maximumFileSize must be a number");
         }
     }
 
     public FileReference evaluate(FileUpload file) {
-        if (!file.contentTypeMatches(requiredContentType)) {
-            throw new ElepyException(String.format("Content type must match %s, was %s", requiredContentType, file.getContentType()), 400);
+        if (!file.contentTypeMatches(allowedMimeType)) {
+            throw new ElepyException(String.format("Content type must match %s, was %s", allowedMimeType, file.getContentType()), 400);
         }
 
         if (file.getSize() > maximumFileSize) {
