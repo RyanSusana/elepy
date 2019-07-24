@@ -13,17 +13,21 @@ import java.util.Optional;
 
 public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
 
-    private final ModelContext<T> modelContext;
+    private final Crud<T> crud;
+
+    public DefaultIntegrityEvaluator(ModelContext<T> modelContext) {
+        this.crud = modelContext.getCrud();
+    }
 
     @ElepyConstructor
-    public DefaultIntegrityEvaluator(ModelContext<T> modelContext) {
-        this.modelContext = modelContext;
+    public DefaultIntegrityEvaluator(Crud<T> crud) {
+        this.crud = crud;
     }
 
     @Override
     public void evaluate(T item, EvaluationType isACreate) {
         try {
-            checkUniqueness(item, modelContext.getCrud(), isACreate.equals(EvaluationType.CREATE));
+            checkUniqueness(item, crud, isACreate.equals(EvaluationType.CREATE));
         } catch (IllegalAccessException e) {
             throw new ElepyException("Can't reflectively checkUniqueness()", 500);
         }
