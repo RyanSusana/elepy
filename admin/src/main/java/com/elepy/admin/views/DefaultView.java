@@ -1,6 +1,6 @@
 package com.elepy.admin.views;
 
-import com.elepy.admin.concepts.RestModelView;
+import com.elepy.admin.concepts.ModelView;
 import com.elepy.describers.Model;
 import com.elepy.http.Request;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultView implements RestModelView {
+public class DefaultView implements ModelView {
 
     private PebbleEngine engine = new PebbleEngine.Builder().build();
 

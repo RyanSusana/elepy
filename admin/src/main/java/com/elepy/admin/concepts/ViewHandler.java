@@ -21,7 +21,7 @@ public class ViewHandler {
     private ElepyAdminPanel adminPanel;
     private final HttpService http;
 
-    private Map<Model<?>, RestModelView> models;
+    private Map<Model<?>, ModelView> models;
 
     public ViewHandler(ElepyAdminPanel adminPanel, HttpService http) {
         this.adminPanel = adminPanel;
@@ -45,13 +45,13 @@ public class ViewHandler {
             });
         }
 
-        models.forEach((modelDescription, restModelView) -> {
+        models.forEach((modelDescription, modelView) -> {
 
             http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
 
                 Map<String, Object> model = new HashMap<>();
 
-                String content = restModelView.renderView(request, modelDescription);
+                String content = modelView.renderView(request, modelDescription);
 
                 Document document = Jsoup.parse(content);
 
@@ -78,16 +78,16 @@ public class ViewHandler {
         });
     }
 
-    private Map<Model<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) {
-        Map<Model<?>, RestModelView> modelsToReturn = new HashMap<>();
+    private Map<Model<?>, ModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) {
+        Map<Model<?>, ModelView> modelsToReturn = new HashMap<>();
         for (Model<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
 
             if (modelContext.getJavaClass().isAnnotationPresent(View.class)) {
 
                 final View annotation = modelContext.getJavaClass().getAnnotation(View.class);
-                final RestModelView restModelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
+                final ModelView modelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
 
-                modelsToReturn.put(modelContext, restModelView);
+                modelsToReturn.put(modelContext, modelView);
             } else {
                 modelsToReturn.put(modelContext, elepyPostConfiguration.initializeElepyObject(DefaultView.class));
             }
