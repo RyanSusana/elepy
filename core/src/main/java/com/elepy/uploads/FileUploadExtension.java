@@ -57,11 +57,10 @@ public class FileUploadExtension implements ElepyExtension {
             return reference;
         }).collect(Collectors.toList());
 
-        final List<String> fileNames = references.stream().map(f -> "/uploads/" + f.getName()).collect(Collectors.toList());
 
         Map<String, Object> map = new HashMap<>();
 
-        map.put("files", fileNames);
+        map.put("files", references);
         map.put("status", 200);
         map.put("message", "Uploaded files");
         response.status(200);
