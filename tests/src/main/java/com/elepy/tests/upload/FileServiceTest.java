@@ -133,7 +133,7 @@ public abstract class FileServiceTest implements ElepyTest {
         final FileUpload fileUpload = fileService.readFile(fileName).orElseThrow(() ->
                 new AssertionFailedError("FileService did not recognize file: " + fileName));
 
-        assertEquals(fileUpload.getSize(), inputStream(fileName).readAllBytes().length, "");
+        assertEquals(fileUpload.getSize(), inputStream(fileName).readAllBytes().length, "File  size of uploaded file not equal to the actual file");
         assertEquals(200, response.getStatus(), response.getBody());
         assertEquals(fileCountBeforeUpload + 1, countFiles(),
                 "File upload did not increase the count of Files");
