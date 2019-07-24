@@ -43,11 +43,11 @@ public class DefaultCreate<T> implements CreateHandler<T> {
 
     private void evaluate(T item, ModelContext<T> modelContext, Crud<T> dao) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(item, modelContext.getModelType());
+            objectEvaluator.evaluate(item);
         }
 
         modelContext.getIdentityProvider().provideId(item, dao);
-        new DefaultIntegrityEvaluator<T>().evaluate(item, dao, true);
+        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(item, true);
     }
 
     private void create(Response response, Crud<T> dao, Iterable<T> items) {

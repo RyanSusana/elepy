@@ -1,5 +1,6 @@
 package com.elepy.mongo;
 
+import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ModelUtils;
@@ -15,14 +16,14 @@ public class ObjectIntegrityTest extends BaseFongo {
     public void testIntegrityUnique() throws Exception {
         super.setUp();
         DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", ModelUtils.createModelFromClass(Resource.class));
-        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>();
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(ModelUtils.createModelFromClass(Resource.class), defaultMongoDao, null, null));
         defaultMongoDao.create(validObject());
 
 
         defaultMongoDao.create(validObject());
         try {
-            evaluator.evaluate(validObject(), defaultMongoDao);
-            fail("Was supposed to throw a rest error message");
+            evaluator.evaluate(validObject());
+            fail("Was supposed to throw an ElepyException");
         } catch (ElepyException ignored) {
 
         }

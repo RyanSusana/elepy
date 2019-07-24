@@ -32,18 +32,18 @@ public class UserCreate implements CreateHandler<User> {
                 throw new ElepyException(String.format("Can't create users with the permission '%s'", Permissions.SUPER_USER), 403);
             }
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-                objectEvaluator.evaluate(user, User.class);
+                objectEvaluator.evaluate(user);
             }
-            new DefaultIntegrityEvaluator<User>().evaluate(user, crud, true);
+            new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, true);
 
             user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
             crud.create(user);
             context.response().result(Message.of("Successfully created user", 200));
         } else {
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-                objectEvaluator.evaluate(user, User.class);
+                objectEvaluator.evaluate(user);
             }
-            new DefaultIntegrityEvaluator<User>().evaluate(user, crud, true);
+            new DefaultIntegrityEvaluator<User>(modelContext).evaluate(user, true);
 
 
             user.getPermissions().add(Permissions.SUPER_USER);

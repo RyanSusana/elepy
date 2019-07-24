@@ -85,7 +85,7 @@ public class Elepy implements ElepyContext {
         this.adminFilterClasses = new ArrayList<>();
         this.modelEngine = new ModelEngine(this);
 
-        withBaseObjectEvaluator(new DefaultObjectEvaluator<>());
+        withBaseObjectEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         withUploads(new DefaultFileService());
         getObjectMapper()

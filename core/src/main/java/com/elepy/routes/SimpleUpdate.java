@@ -31,7 +31,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         T updatedObjectFromRequest = updatedObjectFromRequest(before,
                 context.request(),
                 objectMapper,
-                modelContext.getModelType());
+                modelContext.getModel());
 
         beforeUpdate(before, updatedObjectFromRequest, context.request(), dao);
 
@@ -39,9 +39,9 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         final T updated =
                 update(
                         updatedObjectFromRequest,
-                        dao,
+                        modelContext,
                         modelContext.getObjectEvaluators(),
-                        modelContext.getModelType());
+                        modelContext.getModel());
         afterUpdate(before, updated, dao);
 
         context.response().status(200);

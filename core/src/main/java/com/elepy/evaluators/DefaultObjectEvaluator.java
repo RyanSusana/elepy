@@ -13,18 +13,20 @@ import java.lang.reflect.Field;
 import java.util.Date;
 
 public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
-
-
-    public void evaluate(T o, Class<T> clazz) throws Exception {
+    public void evaluate(Object o) throws Exception {
         Class c = o.getClass();
 
+        evaluateObject(o, c);
+    }
+
+    public void evaluateObject(Object o, Class c) throws Exception {
         for (Field field : c.getDeclaredFields()) {
             field.setAccessible(true);
             var fieldDescriber = ModelUtils.describeFieldOrMethod(field);
 
             if (fieldDescriber.getType().equals(FieldType.OBJECT)) {
                 if (field.get(o) != null)
-                    evaluate((T) field.get(o), clazz);
+                    evaluateObject(field.get(o), field.getType());
             } else {
                 checkProperty(field.get(o), fieldDescriber);
             }

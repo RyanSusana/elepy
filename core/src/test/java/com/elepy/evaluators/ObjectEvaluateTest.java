@@ -17,16 +17,14 @@ public class ObjectEvaluateTest extends Base {
     private ObjectEvaluator<Resource> resourceObjectEvaluator;
 
     @BeforeEach
-    public void setUp() throws Exception {
-
+    public void setUp() {
         this.resourceObjectEvaluator = new DefaultObjectEvaluator<>();
-
     }
 
 
     @Test
     public void testValidObject() {
-        assertDoesNotThrow(() -> resourceObjectEvaluator.evaluate(validObject(), Resource.class));
+        assertDoesNotThrow(() -> resourceObjectEvaluator.evaluate(validObject()));
 
     }
 
@@ -52,22 +50,10 @@ public class ObjectEvaluateTest extends Base {
         exceptionTest(resource);
     }
 
-    @Test
-    public void testRecursiveEvaluation() throws Exception {
-
-        Resource resource = validObject();
-        Resource inner = validObject();
-
-        inner.setNumberMin10Max50(BigDecimal.valueOf(9));
-        resource.setInnerObject(inner);
-
-        exceptionTest(resource);
-    }
 
     private void exceptionTest(Resource resource) throws Exception {
         try {
-
-            resourceObjectEvaluator.evaluate(resource, Resource.class);
+            resourceObjectEvaluator.evaluate(resource);
             fail("This object should not be considered valid");
         } catch (ElepyException ignored) {
         }

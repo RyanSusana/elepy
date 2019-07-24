@@ -1,6 +1,7 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
+import com.elepy.describers.Model;
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -39,58 +40,58 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return beforeUpdate;
     }
 
-    public T update(T update, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> tClass) throws Exception {
+    public T update(T update, ModelContext<T> modelContext, List<ObjectEvaluator<T>> objectEvaluators, Model<T> tClass) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : objectEvaluators) {
             if (update != null) {
-                objectEvaluator.evaluate(update, tClass);
+                objectEvaluator.evaluate(update);
             }
         }
 
-        new DefaultIntegrityEvaluator<T>().evaluate(update, dao);
-        dao.update(update);
+        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(update);
+        modelContext.getCrud().update(update);
 
         return update;
     }
 
     @SuppressWarnings("unchecked")
-    public T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Class<T> clazz) throws IOException {
+    public T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Model<T> model) throws IOException {
 
         final String body = request.body();
         if (request.method().equals("PUT")) {
             if (body.startsWith("{")) {
-                return objectMapper.readValue(body, clazz);
+                return objectMapper.readValue(body, model.getJavaClass());
             } else {
-                return MapperUtils.objectFromMaps(objectMapper, new HashMap<>(), splitQuery(request.body()), clazz);
+                return MapperUtils.objectFromMaps(objectMapper, new HashMap<>(), splitQuery(request.body()), model.getJavaClass());
             }
         } else {
             if (body.startsWith("{")) {
                 final Map<String, Object> beforeMap = objectMapper.convertValue(before, Map.class);
                 final Map<String, Object> changesMap = objectMapper.readValue(request.body(), Map.class);
                 ReflectionUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
-                return MapperUtils.objectFromMaps(objectMapper, beforeMap, changesMap, clazz);
+                return MapperUtils.objectFromMaps(objectMapper, beforeMap, changesMap, model.getJavaClass());
             } else {
-                return setParamsOnObject(request, objectMapper, before, clazz);
+                return setParamsOnObject(request, objectMapper, before, model.getJavaClass());
             }
         }
     }
 
-    public T update(Request request, Response response, Crud<T> dao, List<ObjectEvaluator<T>> objectEvaluators, Class<T> clazz, ObjectMapper objectMapper) throws Exception {
+    public T update(Request request, Response response, ModelContext<T> modelContext, List<ObjectEvaluator<T>> objectEvaluators, Model<T> model, ObjectMapper objectMapper) throws Exception {
         String body = request.body();
 
         if (body == null || body.isEmpty()) {
             throw new ElepyException("No changes detected.");
         }
 
-        Optional<T> before = dao.getById(request.modelId());
+        Optional<T> before = modelContext.getCrud().getById(request.modelId());
 
         if (!before.isPresent()) {
             throw new ElepyException("No object found with this ID", 404);
         }
 
-        final T updated = updatedObjectFromRequest(before.get(), request, objectMapper, clazz);
+        final T updated = updatedObjectFromRequest(before.get(), request, objectMapper, model);
 
         this.beforeUpdate = before.get();
-        update(updated, dao, objectEvaluators, clazz);
+        update(updated, modelContext, objectEvaluators, model);
 
         response.result(Message.of("Successfully updated item", 200));
         return updated;
@@ -108,11 +109,11 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
 
     @Override
     public void handleUpdatePut(HttpContext httpContext, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        this.update(httpContext.request(), httpContext.response(), dao, modelContext.getObjectEvaluators(), modelContext.getModelType(), objectMapper);
+        this.update(httpContext.request(), httpContext.response(), modelContext, modelContext.getObjectEvaluators(), modelContext.getModel(), objectMapper);
     }
 
     @Override
     public void handleUpdatePatch(HttpContext httpContext, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        this.update(httpContext.request(), httpContext.response(), dao, modelContext.getObjectEvaluators(), modelContext.getModelType(), objectMapper);
+        this.update(httpContext.request(), httpContext.response(), modelContext, modelContext.getObjectEvaluators(), modelContext.getModel(), objectMapper);
     }
 }

@@ -34,9 +34,9 @@ public class UserUpdate implements UpdateHandler<User> {
         new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdate);
 
         for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(userToUpdate, User.class);
+            objectEvaluator.evaluate(userToUpdate);
         }
-        new DefaultIntegrityEvaluator<User>().evaluate(userToUpdate, crud);
+        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdate);
 
         //If password is empty, use the old password
         if (userToUpdate.getPassword().isEmpty()) {

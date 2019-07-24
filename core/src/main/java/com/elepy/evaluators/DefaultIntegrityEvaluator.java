@@ -1,6 +1,8 @@
 package com.elepy.evaluators;
 
+import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
+import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
 
@@ -10,10 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
+
+    private final ModelContext<T> modelContext;
+
+    @ElepyConstructor
+    public DefaultIntegrityEvaluator(ModelContext<T> modelContext) {
+        this.modelContext = modelContext;
+    }
+
     @Override
-    public void evaluate(T item, Crud<T> dao, boolean insert) {
+    public void evaluate(T item, boolean isACreate) {
         try {
-            checkUniqueness(item, dao, insert);
+            checkUniqueness(item, modelContext.getCrud(), isACreate);
         } catch (IllegalAccessException e) {
             throw new ElepyException("Can't reflectively checkUniqueness()", 500);
         }
@@ -50,6 +60,4 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
         }
 
     }
-
-
 }
