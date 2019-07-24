@@ -7,12 +7,13 @@ public class FileUploadEvaluator {
 
     private static final long KILOBYTE_SIZE = 1024;
     private static final long MEGABYTE_SIZE = KILOBYTE_SIZE * 1024;
+    public static final long DEFAULT_MAX_FILE_SIZE = 10 * MEGABYTE_SIZE;
 
     private final long maxSize;
     private final String requiredContentType;
 
     public FileUploadEvaluator(Long maxSize, String requiredContentType) {
-        this.maxSize = maxSize == null ? 10 * MEGABYTE_SIZE : maxSize;
+        this.maxSize = maxSize == null ? DEFAULT_MAX_FILE_SIZE : maxSize;
         this.requiredContentType = requiredContentType == null ? "*/*" : requiredContentType;
     }
 

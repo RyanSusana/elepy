@@ -4,6 +4,7 @@ import com.elepy.describers.props.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.Resource;
 import com.elepy.models.TextType;
+import com.elepy.uploads.FileUploadEvaluator;
 import com.elepy.utils.ModelUtils;
 import org.junit.jupiter.api.Test;
 
@@ -95,9 +96,10 @@ public class ModelUtilsTest {
         final Property property = modelFromClass.getProperty("fileReference");
         final var reference = FileReferencePropertyConfig.of(property);
 
-        assertThat(reference.getAllowedExtensions())
-                .asList()
-                .containsExactly(".png");
+        assertThat(reference.getAllowedMimeType())
+                .isEqualTo("image/png");
+        assertThat(reference.getMaxSizeInBytes())
+                .isEqualTo(FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE);
 
         assertThat(property.getType())
                 .isEqualTo(FILE_REFERENCE);

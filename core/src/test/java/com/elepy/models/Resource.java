@@ -61,12 +61,21 @@ public class Resource {
 
     private Object innerObject;
 
-    @FileReference(allowedExtensions = ".png")
+    @FileReference(allowedMimeType = "image/png")
     private String fileReference;
+
     @Uneditable
     private String nonEditable;
 
     public Resource() {
+    }
+
+    public String getFileReference() {
+        return fileReference;
+    }
+
+    public void setFileReference(String fileReference) {
+        this.fileReference = fileReference;
     }
 
     public Date getDate() {
