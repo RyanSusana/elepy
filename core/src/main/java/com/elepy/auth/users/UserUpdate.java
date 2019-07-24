@@ -6,6 +6,7 @@ import com.elepy.dao.Crud;
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
+import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
@@ -36,7 +37,7 @@ public class UserUpdate implements UpdateHandler<User> {
         for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
             objectEvaluator.evaluate(userToUpdate);
         }
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdate);
+        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdate, EvaluationType.UPDATE);
 
         //If password is empty, use the old password
         if (userToUpdate.getPassword().isEmpty()) {

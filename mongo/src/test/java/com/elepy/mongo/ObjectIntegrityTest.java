@@ -2,6 +2,7 @@ package com.elepy.mongo;
 
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ModelUtils;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ public class ObjectIntegrityTest extends BaseFongo {
 
         defaultMongoDao.create(validObject());
         try {
-            evaluator.evaluate(validObject());
+            evaluator.evaluate(validObject(), EvaluationType.UPDATE);
             fail("Was supposed to throw an ElepyException");
         } catch (ElepyException ignored) {
 

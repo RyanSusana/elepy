@@ -5,6 +5,7 @@ import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
@@ -34,7 +35,7 @@ public class UserCreate implements CreateHandler<User> {
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
                 objectEvaluator.evaluate(user);
             }
-            new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, true);
+            new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
 
             user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
             crud.create(user);
@@ -43,7 +44,7 @@ public class UserCreate implements CreateHandler<User> {
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
                 objectEvaluator.evaluate(user);
             }
-            new DefaultIntegrityEvaluator<User>(modelContext).evaluate(user, true);
+            new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
 
 
             user.getPermissions().add(Permissions.SUPER_USER);

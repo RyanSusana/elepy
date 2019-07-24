@@ -11,7 +11,7 @@ public class DefaultModelEvaluator implements ModelEvaluator {
 
 
     @Override
-    public void evaluate(Object object, boolean isACreate) {
+    public void evaluate(Object object, EvaluationType type) {
 //        new DefaultObjectEvaluator<>(context.).evaluate(object);
 //        new DefaultIntegrityEvaluator<T>(dao).evaluate(object);
 

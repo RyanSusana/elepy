@@ -4,6 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.AtomicIntegrityEvaluator;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
@@ -47,7 +48,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
         }
 
         modelContext.getIdentityProvider().provideId(item, dao);
-        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(item, true);
+        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(item, EvaluationType.CREATE);
     }
 
     private void create(Response response, Crud<T> dao, Iterable<T> items) {

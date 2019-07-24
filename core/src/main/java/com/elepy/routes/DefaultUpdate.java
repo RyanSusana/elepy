@@ -4,6 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.describers.Model;
 import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
+import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
@@ -47,7 +48,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             }
         }
 
-        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(update);
+        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(update, EvaluationType.UPDATE);
         modelContext.getCrud().update(update);
 
         return update;

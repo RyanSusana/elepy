@@ -1,16 +1,8 @@
 package com.elepy.evaluators;
 
-import com.elepy.describers.ModelContext;
-
-
 /**
- * This evaluator evaluates if an object is valid within it's own {@link ModelContext}.
+ * This evaluator evaluates if an object is valid within in respects to an {@link EvaluationType}.
  */
 public interface IntegrityEvaluator<T> {
-
-    default void evaluate(T item) {
-        evaluate(item, false);
-    }
-
-    void evaluate(T item, boolean isACreate);
+    void evaluate(T item, EvaluationType type);
 }

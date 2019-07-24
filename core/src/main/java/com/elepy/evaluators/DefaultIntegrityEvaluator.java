@@ -21,9 +21,9 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
     }
 
     @Override
-    public void evaluate(T item, boolean isACreate) {
+    public void evaluate(T item, EvaluationType isACreate) {
         try {
-            checkUniqueness(item, modelContext.getCrud(), isACreate);
+            checkUniqueness(item, modelContext.getCrud(), isACreate.equals(EvaluationType.CREATE));
         } catch (IllegalAccessException e) {
             throw new ElepyException("Can't reflectively checkUniqueness()", 500);
         }
