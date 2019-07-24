@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 @RestModel(name = "Files", slug = "/files")
 @Update(handler = DisabledHandler.class)
-@Delete(handler = UploadedFileDelete.class)
+@Delete(handler = FileUploadDelete.class)
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
 public class FileReference {
@@ -22,20 +22,31 @@ public class FileReference {
     @Id
     @Identifier
     private String name;
-
     private String contentType;
+
+    //Like this to query easier for cloud databases
+    private String mimeType;
+    private String mimeSubtype;
+
+    private long size;
 
 
     public FileReference() {
     }
 
-    public FileReference(String name, String contentType) {
+    public FileReference(String name, String contentType, long size) {
         this.name = name;
         this.contentType = contentType;
+        this.size = size;
+
+        final String[] mime = contentType.split("/");
+
+        this.mimeType = mime[0];
+        this.mimeSubtype = mime[1].split(";")[0];
     }
 
-    public static FileReference of(UploadedFile file) {
-        return new FileReference(file.getName(), file.getContentType());
+    public static FileReference of(FileUpload file) {
+        return new FileReference(file.getName(), file.getContentType(), file.getSize());
     }
 
     public String getName() {
@@ -54,6 +65,29 @@ public class FileReference {
         this.contentType = contentType;
     }
 
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getMimeSubtype() {
+        return mimeSubtype;
+    }
+
+    public void setMimeSubtype(String mimeSubtype) {
+        this.mimeSubtype = mimeSubtype;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
 
     public boolean contentTypeEquals(String contentTypeToCheck) {
         if (contentTypeToCheck.equals("*/*")) {

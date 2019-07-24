@@ -60,7 +60,6 @@ public enum FieldType {
     }
 
 
-
     private static boolean isCollection(Class<?> type) {
         for (Class<?> aClass : type.getInterfaces()) {
             if (aClass.equals(Collection.class)) {
@@ -71,10 +70,13 @@ public enum FieldType {
     }
 
     private static Optional<FieldType> getByAnnotation(AccessibleObject accessibleObject) {
-        if (accessibleObject.getAnnotation(Text.class) != null) {
+        if (accessibleObject.isAnnotationPresent(com.elepy.annotations.FileReference.class)) {
+            return Optional.of(FILE_REFERENCE);
+        }
+        if (accessibleObject.isAnnotationPresent(Text.class)) {
             return Optional.of(TEXT);
         }
-        if (accessibleObject.getAnnotation(Number.class) != null) {
+        if (accessibleObject.isAnnotationPresent(Number.class)) {
             return Optional.of(NUMBER);
         }
         return Optional.empty();

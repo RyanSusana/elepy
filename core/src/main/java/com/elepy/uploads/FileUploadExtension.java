@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UploadExtension implements ElepyExtension {
+
+//
+public class FileUploadExtension implements ElepyExtension {
     @Inject
     private FileService fileService;
 
@@ -31,7 +33,7 @@ public class UploadExtension implements ElepyExtension {
     }
 
     private void handleFileGet(Request request, Response response) throws IOException {
-        final UploadedFile file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("FileReference not found", 404));
+        final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("FileReference not found", 404));
 
         response.type(file.getContentType());
         response.result(IOUtils.toByteArray(file.getContent()));
@@ -40,19 +42,31 @@ public class UploadExtension implements ElepyExtension {
     private void handleUpload(Request request, Response response) {
         request.requirePermissions(Permissions.LOGGED_IN);
 
-        final List<UploadedFile> files = request.uploadedFiles("files");
-        files.forEach(uploadedFile -> {
+        final List<FileUpload> files = request.uploadedFiles("files");
+        final List<FileReference> references = files.stream().map(uploadedFile -> {
 
-            final FileReference reference = FileReference.of(uploadedFile);
+            boolean fileExistedFromBefore = fileCrud.getById(uploadedFile.getName()).isEmpty();
 
-            fileCrud.getById(reference.getName()).ifPresent(file -> {
+            try {
+                FileUploadEvaluator.fromRequest(request).evaluate(uploadedFile);
+            } catch (Exception e) {
+                if (!fileExistedFromBefore) {
+                    fileService.deleteFile(uploadedFile.getName());
+                }
+                throw e;
+            }
+            final var reference = FileReference.of(uploadedFile);
+
+            this.fileCrud.getById(reference.getName()).ifPresent(file -> {
                 throw new ElepyException("There is already a file called: " + file.getName(), 409);
             });
             fileCrud.create(reference);
             fileService.uploadFile(uploadedFile);
-        });
 
-        final List<String> fileNames = files.stream().map(f -> "/uploads/" + f.getName()).collect(Collectors.toList());
+            return reference;
+        }).collect(Collectors.toList());
+
+        final List<String> fileNames = references.stream().map(f -> "/uploads/" + f.getName()).collect(Collectors.toList());
 
         Map<String, Object> map = new HashMap<>();
 

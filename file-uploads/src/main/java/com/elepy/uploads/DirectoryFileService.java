@@ -34,25 +34,25 @@ public class DirectoryFileService implements FileService {
     }
 
     @Override
-    public synchronized void uploadFile(UploadedFile file) {
-        final Path name = Paths.get(rootFolderLocation + File.separator + file.getId());
+    public synchronized void uploadFile(FileUpload file) {
+        final Path name = Paths.get(rootFolderLocation + File.separator + file.getName());
         try {
             Files.copy(file.getContent(), name);
         } catch (FileAlreadyExistsException e) {
-            throw new ElepyException("File Already Exists: " + file.getId(), 409);
+            throw new ElepyException("FileReference Already Exists: " + file.getName(), 409);
         } catch (IOException e) {
-            throw new ElepyException("Failed to upload file: " + file.getId(), 500);
+            throw new ElepyException("Failed to upload file: " + file.getName(), 500);
         }
     }
 
     @Override
-    public synchronized Optional<UploadedFile> readFile(String id) {
+    public synchronized Optional<FileUpload> readFile(String id) {
         final Path path = Paths.get(rootFolderLocation + File.separator + id);
         try {
-            final UploadedFile uploadedFile = UploadedFile.of(tika.detect(path), Files.newInputStream(path), id);
-            uploadedFile.setId(id);
 
-            return Optional.of(uploadedFile);
+            final FileUpload fileUpload = FileUpload.of(tika.detect(path), Files.newInputStream(path), id, Files.size(path));
+
+            return Optional.of(fileUpload);
         } catch (NoSuchFileException e) {
             return Optional.empty();
         } catch (IOException e) {

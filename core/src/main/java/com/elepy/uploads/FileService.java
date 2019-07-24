@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FileService {
-    void uploadFile(UploadedFile file);
+    void uploadFile(FileUpload file);
 
-    Optional<UploadedFile> readFile(String name);
+    Optional<FileUpload> readFile(String name);
 
     List<String> listFiles();
 

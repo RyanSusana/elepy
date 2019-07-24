@@ -2,10 +2,11 @@ package com.elepy.tests.upload;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
+import com.elepy.auth.Permissions;
 import com.elepy.tests.ElepyTest;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -58,6 +59,8 @@ public abstract class FileServiceTest implements ElepyTest {
                 .onPort(port);
 
         List.of(configurations).forEach(elepy::addConfiguration);
+
+        elepy.http().before(ctx -> ctx.request().addPermissions(Permissions.LOGGED_IN));
         elepy.start();
     }
 
@@ -117,7 +120,7 @@ public abstract class FileServiceTest implements ElepyTest {
         testCanUploadAndRead("nature.mp4", "video/mp4");
     }
 
-    private UploadedFile testCanUploadAndRead(String fileName, String contentType) throws UnirestException, IOException {
+    private FileUpload testCanUploadAndRead(String fileName, String contentType) throws UnirestException, IOException {
 
 
         final int fileCountBeforeUpload = countFiles();
@@ -127,23 +130,21 @@ public abstract class FileServiceTest implements ElepyTest {
                 .field("files", inputStream(fileName), ContentType.create(tika.detect(inputStream(fileName), fileName)), fileName).asString();
 
 
-
-        final UploadedFile uploadedFile = fileService.readFile(fileName).orElseThrow(() ->
+        final FileUpload fileUpload = fileService.readFile(fileName).orElseThrow(() ->
                 new AssertionFailedError("FileService did not recognize file: " + fileName));
 
-        // System.out.println(String.format("ByteLength2[%s]: %d",uploadedFile.getName(), uploadedFile.getContent().readAllBytes().length));
-
+        assertEquals(fileUpload.getSize(), inputStream(fileName).readAllBytes().length, "");
         assertEquals(200, response.getStatus(), response.getBody());
         assertEquals(fileCountBeforeUpload + 1, countFiles(),
                 "File upload did not increase the count of Files");
-        assertTrue(uploadedFile.contentTypeEquals(contentType),
-                String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", fileName, contentType, uploadedFile.getContentType()));
+        assertTrue(fileUpload.contentTypeMatches(contentType),
+                String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", fileName, contentType, fileUpload.getContentType()));
 
 
-        assertTrue(IOUtils.contentEquals(inputStream(fileName), uploadedFile.getContent()),
+        assertTrue(IOUtils.contentEquals(inputStream(fileName), fileUpload.getContent()),
                 String.format("Content doesn't match between the uploaded version and read version of '%s'", fileName));
 
-        return uploadedFile;
+        return fileUpload;
     }
 
 

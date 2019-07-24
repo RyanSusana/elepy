@@ -23,7 +23,7 @@ import com.elepy.igniters.ModelEngine;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadExtension;
+import com.elepy.uploads.FileUploadExtension;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -637,7 +637,7 @@ public class Elepy implements ElepyContext {
     private void init() {
         addModel(User.class);
         addModel(FileReference.class);
-        addExtension(new UploadExtension());
+        addExtension(new FileUploadExtension());
 
         registerDependency(userAuthenticationService);
 

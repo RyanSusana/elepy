@@ -23,6 +23,9 @@ import java.util.stream.Stream;
 
 public class ModelUtils {
 
+    private ModelUtils() {
+    }
+
     public static List<Property> describeClass(Class cls) {
         return Stream.concat(
                 Stream.of(cls.getDeclaredFields())
@@ -31,8 +34,6 @@ public class ModelUtils {
                         .filter(method -> method.isAnnotationPresent(Generated.class))
                         .map(ModelUtils::describeFieldOrMethod)
         ).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
-
-
     }
 
     public static Property describeFieldOrMethod(AccessibleObject accessibleObject) {
@@ -86,10 +87,10 @@ public class ModelUtils {
     }
 
     private static <T> void setupActions(Model<T> model) {
-
         model.setActions(Stream.of(model.getJavaClass().getAnnotationsByType(Action.class))
-                .map(actionAnnotation -> actionToHttpAction(model.getSlug(), actionAnnotation)).collect(Collectors.toList()));
-
+                .map(actionAnnotation ->
+                        actionToHttpAction(model.getSlug(), actionAnnotation))
+                .collect(Collectors.toList()));
     }
 
     public static HttpAction actionToHttpAction(String modelSlug, Action actionAnnotation) {
@@ -140,7 +141,7 @@ public class ModelUtils {
 
     }
 
-    public static PropertyConfig mapFieldTypeInformation(AccessibleObject field) {
+    private static PropertyConfig mapFieldTypeInformation(AccessibleObject field) {
         FieldType fieldType = FieldType.guessType(field);
 
         switch (fieldType) {
@@ -158,8 +159,10 @@ public class ModelUtils {
                 return BooleanPropertyConfig.of(field);
             case ARRAY:
                 return ArrayPropertyConfig.of(field);
+            case FILE_REFERENCE:
+                return FileReferencePropertyConfig.of(field);
             default:
-                throw new ElepyConfigException(String.format("%s is not supported", fieldType.name()));
+                throw new ElepyConfigException(String.format("%s fields are not supported", fieldType.name()));
 
         }
 

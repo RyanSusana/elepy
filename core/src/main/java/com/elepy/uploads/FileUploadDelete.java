@@ -4,17 +4,17 @@ import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.routes.SimpleDelete;
 
-public class UploadedFileDelete extends SimpleDelete<UploadedFile> {
+public class FileUploadDelete extends SimpleDelete<FileUpload> {
 
     @Inject
     private FileService fileService;
 
     @Override
-    public void afterDelete(UploadedFile itemToDelete, Crud<UploadedFile> dao) {
+    public void afterDelete(FileUpload itemToDelete, Crud<FileUpload> dao) {
     }
 
     @Override
-    public void beforeDelete(UploadedFile deletedItem, Crud<UploadedFile> dao) {
+    public void beforeDelete(FileUpload deletedItem, Crud<FileUpload> dao) {
         fileService.deleteFile(deletedItem.getName());
     }
 }

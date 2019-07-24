@@ -7,7 +7,7 @@ import com.elepy.dao.*;
 import com.elepy.describers.Model;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;
@@ -60,13 +60,13 @@ public interface Request {
 
     String[] queryParamValues(String key);
 
-    List<UploadedFile> uploadedFiles(String key);
+    List<FileUpload> uploadedFiles(String key);
 
-    default UploadedFile uploadedFile(String key) {
+    default FileUpload uploadedFile(String key) {
 
-        final List<UploadedFile> uploadedFiles = uploadedFiles(key);
+        final List<FileUpload> fileUploads = uploadedFiles(key);
 
-        return uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
+        return fileUploads.isEmpty() ? null : fileUploads.get(0);
     }
 
     void attribute(String attribute, Object value);
@@ -116,7 +116,10 @@ public interface Request {
     }
 
     default void tryToLogin() {
-        authService().tryToLogin(this);
+        try {
+            authService().tryToLogin(this);
+        } catch (ElepyException | NullPointerException ignored) {
+        }
     }
 
     default Optional<User> loggedInUser() {

@@ -2,7 +2,7 @@ package com.elepy.vertx;
 
 import com.elepy.http.Request;
 import com.elepy.http.Session;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.RoutingContext;
@@ -145,15 +145,17 @@ public class VertxRequest implements Request {
     }
 
     @Override
-    public List<UploadedFile> uploadedFiles(String key) {
+    public List<FileUpload> uploadedFiles(String key) {
         return routingContext.fileUploads().stream()
                 .filter(file -> file.name().equals(key))
                 .map(file -> {
                     try {
-                        return new UploadedFile(
+
+                        return FileUpload.of(
                                 file.contentType(),
                                 new BufferedInputStream(new FileInputStream(new File(file.uploadedFileName()))),
-                                file.fileName());
+                                file.fileName(),
+                                file.size());
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         return null;

@@ -61,6 +61,8 @@ public class Resource {
 
     private Object innerObject;
 
+    @FileReference(allowedExtensions = ".png")
+    private String fileReference;
     @Uneditable
     private String nonEditable;
 

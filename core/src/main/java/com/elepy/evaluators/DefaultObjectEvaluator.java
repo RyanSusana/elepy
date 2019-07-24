@@ -2,6 +2,7 @@ package com.elepy.evaluators;
 
 import com.elepy.describers.Property;
 import com.elepy.describers.props.DatePropertyConfig;
+import com.elepy.describers.props.FileReferencePropertyConfig;
 import com.elepy.describers.props.NumberPropertyConfig;
 import com.elepy.describers.props.TextPropertyConfig;
 import com.elepy.exceptions.ElepyException;
@@ -15,9 +16,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
 
     public void evaluate(T o, Class<T> clazz) throws Exception {
-
         Class c = o.getClass();
-
 
         for (Field field : c.getDeclaredFields()) {
             field.setAccessible(true);
@@ -27,57 +26,88 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
                 if (field.get(o) != null)
                     evaluate((T) field.get(o), clazz);
             } else {
-                checkAnnotations(field.get(o), fieldDescriber);
+                checkProperty(field.get(o), fieldDescriber);
             }
         }
+    }
 
+    private void checkProperty(Object obj, Property property) {
+        checkRequired(obj, property);
+
+        if (property.getType().equals(FieldType.NUMBER)) {
+            obj = checkNumber(obj, property);
+
+        }
+        if (property.getType().equals(FieldType.TEXT)) {
+            checkText((String) obj, property);
+
+        }
+        if (property.getType().equals(FieldType.DATE)) {
+            checkDate(obj, property);
+        }
+
+        if (property.getType().equals(FieldType.FILE_REFERENCE)) {
+            checkFileReference(obj, property);
+        }
 
     }
 
-    private void checkAnnotations(Object obj, Property fieldDescriber) {
-        if (fieldDescriber.isRequired() && (obj == null || (obj instanceof Date && ((Date) obj).getTime() < 100000) || (obj instanceof String && ((String) obj).isEmpty()))) {
-            throw new ElepyException(fieldDescriber.getPrettyName() + " is blank, please fill it in!");
+    private void checkRequired(Object obj, Property property) {
+        if (property.isRequired() && (obj == null || (obj instanceof Date && ((Date) obj).getTime() < 1000) || (obj instanceof String && ((String) obj).isEmpty()))) {
+            throw new ElepyException(property.getPrettyName() + " is blank, please fill it in!");
         }
-        if (fieldDescriber.getType().equals(FieldType.NUMBER)) {
-            if (obj == null) {
-                obj = 0;
-            }
-            if (!(obj instanceof java.lang.Number)) {
-                throw new ElepyException(fieldDescriber.getPrettyName() + " must be a number");
-            }
-            java.lang.Number number = (java.lang.Number) obj;
+    }
 
+    private void checkFileReference(Object obj, Property property) {
 
-            NumberPropertyConfig numberAnnotation = NumberPropertyConfig.of(fieldDescriber);
-            if (number.floatValue() > numberAnnotation.getMaximum() || number.floatValue() < numberAnnotation.getMinimum()) {
-                throw new ElepyException(String.format("%s must be between %d and %d", fieldDescriber.getPrettyName(), (int) numberAnnotation.getMinimum(), (int) numberAnnotation.getMaximum()));
-            }
-
+        if (obj != null && !(obj instanceof String)) {
+            throw new ElepyException(String.format("%s must be a String", property.getPrettyName()));
         }
-        if (fieldDescriber.getType().equals(FieldType.TEXT)) {
-            String text = (String) obj;
-            if (text == null) {
-                text = "";
-            }
-            TextPropertyConfig textAnnotation = TextPropertyConfig.of(fieldDescriber);
-            if (text.length() > textAnnotation.getMaximumLength() || text.length() < textAnnotation.getMinimumLength()) {
-                throw new ElepyException(String.format("%s must be between %d and %d characters long", fieldDescriber.getPrettyName(), textAnnotation.getMinimumLength(), textAnnotation.getMaximumLength()));
-            }
+        final var config = FileReferencePropertyConfig.of(property);
 
+
+        //TODO check file extensions
+    }
+
+    private Object checkNumber(Object obj, Property property) {
+        if (obj == null) {
+            obj = 0;
         }
-        if (fieldDescriber.getType().equals(FieldType.DATE)) {
-            Date date = obj == null ? new Date(0) : (Date) obj;
+        if (!(obj instanceof Number)) {
+            throw new ElepyException(property.getPrettyName() + " must be a number");
+        }
+        Number number = (Number) obj;
 
 
-            DatePropertyConfig dateTimeAnnotation = DatePropertyConfig.of(fieldDescriber);
+        NumberPropertyConfig numberAnnotation = NumberPropertyConfig.of(property);
+        if (number.floatValue() > numberAnnotation.getMaximum() || number.floatValue() < numberAnnotation.getMinimum()) {
+            throw new ElepyException(String.format("%s must be between %d and %d", property.getPrettyName(), (int) numberAnnotation.getMinimum(), (int) numberAnnotation.getMaximum()));
+        }
+        return obj;
+    }
+
+    private void checkText(String obj, Property property) {
+        String text = obj;
+        if (text == null) {
+            text = "";
+        }
+        TextPropertyConfig textAnnotation = TextPropertyConfig.of(property);
+        if (text.length() > textAnnotation.getMaximumLength() || text.length() < textAnnotation.getMinimumLength()) {
+            throw new ElepyException(String.format("%s must be between %d and %d characters long", property.getPrettyName(), textAnnotation.getMinimumLength(), textAnnotation.getMaximumLength()));
+        }
+    }
+
+    private void checkDate(Object obj, Property property) {
+        Date date = obj == null ? new Date(0) : (Date) obj;
 
 
-            Date min = dateTimeAnnotation.getMinimumDate();
-            Date max = dateTimeAnnotation.getMaximumDate();
-            if (date.before(min) || date.after(max)) {
-                throw new ElepyException(String.format("%s must be between '%s' and '%s'", fieldDescriber.getPrettyName(), dateTimeAnnotation.getMinimumDate(), dateTimeAnnotation.getMaximumDate()));
+        DatePropertyConfig dateTimeAnnotation = DatePropertyConfig.of(property);
 
-            }
+
+        Date min = dateTimeAnnotation.getMinimumDate();
+        Date max = dateTimeAnnotation.getMaximumDate();
+        if (date.before(min) || date.after(max)) {
+            throw new ElepyException(String.format("%s must be between '%s' and '%s'", property.getPrettyName(), dateTimeAnnotation.getMinimumDate(), dateTimeAnnotation.getMaximumDate()));
 
         }
     }

@@ -2,7 +2,7 @@ package com.elepy.mongo;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
@@ -28,12 +28,12 @@ public class MongoFileService implements FileService {
     }
 
     @Override
-    public void uploadFile(UploadedFile file) {
+    public void uploadFile(FileUpload file) {
         bucket.uploadFromStream(file.getName(), file.getContent(), new GridFSUploadOptions().metadata(new Document().append("contentType", file.getContentType())));
     }
 
     @Override
-    public Optional<UploadedFile> readFile(String name) {
+    public Optional<FileUpload> readFile(String name) {
         try {
             final var file = findByName(name).orElseThrow();
 
@@ -45,7 +45,7 @@ public class MongoFileService implements FileService {
 
             outputStream.close();
             inputStream.close();
-            return Optional.of(new UploadedFile(file.getMetadata().getString("contentType"), inputStream, file.getFilename()));
+            return Optional.of(new FileUpload(file.getMetadata().getString("contentType"), inputStream, file.getFilename(), file.getLength()));
         } catch (NoSuchElementException e) {
             return Optional.empty();
         } catch (Exception e) {
