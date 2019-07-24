@@ -25,7 +25,7 @@ public class FileUploadEvaluator {
         }
     }
 
-    public void evaluate(FileUpload file) {
+    public FileReference evaluate(FileUpload file) {
         if (!file.contentTypeMatches(requiredContentType)) {
             throw new ElepyException(String.format("Content type must match %s, was %s", requiredContentType, file.getContentType()), 400);
         }
@@ -35,6 +35,7 @@ public class FileUploadEvaluator {
                     translateToRepresentableString(maxSize),
                     translateToRepresentableString(file.getSize())));
         }
+        return FileReference.of(file);
     }
 
     private String translateToRepresentableString(long bytes) {

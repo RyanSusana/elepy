@@ -45,23 +45,14 @@ public class FileUploadExtension implements ElepyExtension {
         final List<FileUpload> files = request.uploadedFiles("files");
         final List<FileReference> references = files.stream().map(uploadedFile -> {
 
-            boolean fileExistedFromBefore = fileCrud.getById(uploadedFile.getName()).isEmpty();
-
-            try {
-                FileUploadEvaluator.fromRequest(request).evaluate(uploadedFile);
-            } catch (Exception e) {
-                if (!fileExistedFromBefore) {
-                    fileService.deleteFile(uploadedFile.getName());
-                }
-                throw e;
-            }
-            final var reference = FileReference.of(uploadedFile);
+            final var reference = FileUploadEvaluator.fromRequest(request).evaluate(uploadedFile);
 
             this.fileCrud.getById(reference.getName()).ifPresent(file -> {
                 throw new ElepyException("There is already a file called: " + file.getName(), 409);
             });
-            fileCrud.create(reference);
+
             fileService.uploadFile(uploadedFile);
+            fileCrud.create(reference);
 
             return reference;
         }).collect(Collectors.toList());
