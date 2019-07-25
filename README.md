@@ -1,5 +1,5 @@
-![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)
-![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
+[![Travis Button](https://travis-ci.com/RyanSusana/elepy.svg?branch=master)](https://travis-ci.org/RyanSusana/elepy/builds)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)](https://search.maven.org/search?q=com.elepy)
 
 # Version 2.0 is almost here!
 Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSusana/elepy/projects/2). You can download it here:
@@ -10,7 +10,7 @@ Elepy is [currently in BETA of its version 2 release](https://github.com/RyanSus
     <version>LATEST_VERSION</version>
 </dependency>
 ```
-Latest Version: ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)
+Latest Version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)](https://search.maven.org/search?q=com.elepy)
 
 # About Elepy
 
