@@ -23,7 +23,7 @@ public class ProductHighestPrice implements ActionHandler<Product> {
                 .max(Comparator.comparing(Product::getPrice))
                 .orElseThrow(() -> new ElepyException("No products found", 404));
 
-        context.result(Message.htmlContent(String.format("<div class = 'uk-padding'><p>The highest priced product in this list is '%s', it costs %.2f.</p><p>This message has been brought to you by a custom Elepy action. Done in 7 lines of code! Elepy supports all types actions.</p></div>",
+        context.result(Message.htmlContent(String.format("<div class = 'uk-padding'><p>The highest priced product in this list is '%s', it costs %.2f.</p><p>This message has been brought to you by a custom Elepy action. Done in 7 lines with code! Elepy supports all types actions.</p></div>",
 
                 max.getId(),
                 max.getPrice().setScale(2, RoundingMode.HALF_UP))

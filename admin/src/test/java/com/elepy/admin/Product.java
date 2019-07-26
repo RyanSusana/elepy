@@ -23,7 +23,6 @@ public class Product {
 
     @DateTime()
     @PrettyName("Expiration Date")
-    @Required
     private Date date;
 
     @TrueFalse(trueValue = "This product is awesome", falseValue = "This product is meh")
