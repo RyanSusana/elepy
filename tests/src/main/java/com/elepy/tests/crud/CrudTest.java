@@ -2,8 +2,7 @@ package com.elepy.tests.crud;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
-import com.elepy.dao.Crud;
-import com.elepy.dao.Page;
+import com.elepy.dao.*;
 import com.elepy.tests.ElepyTest;
 import com.elepy.tests.basic.Resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,16 +10,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public abstract class CrudTest implements ElepyTest {
 
@@ -73,6 +71,10 @@ public abstract class CrudTest implements ElepyTest {
         elepy.stop();
     }
 
+    @AfterEach
+    void tearDown() {
+        deleteAll();
+    }
 
     private void deleteAll() {
         resourceCrud.delete(resourceCrud.getAll().stream().map(Resource::getId).collect(Collectors.toList()));
@@ -121,7 +123,6 @@ public abstract class CrudTest implements ElepyTest {
         Resource resource = validObject();
         resource.setUniqueField("testSearchNotFindingAnything");
         resource.setNumberMax40(BigDecimal.valueOf(25));
-        deleteAll();
         resourceCrud.create(resource);
         resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=ilterUni").asString();
@@ -263,6 +264,58 @@ public abstract class CrudTest implements ElepyTest {
         Assertions.assertEquals("uniqueUpdate", updatePartialId.get().getUniqueField());
         Assertions.assertEquals("ryan", updatePartialId.get().getMARKDOWN());
         Assertions.assertEquals(200, patch.getStatus(), patch.getBody());
+    }
+
+    @Test
+    void can_SortDescending() {
+        final Resource resource1 = validObject();
+        final Resource resource2 = validObject();
+
+        resource1.setTextField("resource1");
+        resource2.setTextField("resource2");
+
+
+        resourceCrud.create(resource1, resource2);
+
+        final Page<Resource> search = resourceCrud.search(new Query("", List.of()),
+                new PageSettings(1, Integer.MAX_VALUE,
+                        List.of(new PropertySort("textField", SortOption.DESCENDING))
+                )
+        );
+
+
+        assertThat(search.getValues().get(0).getTextField())
+                .isEqualTo("resource2");
+
+        assertThat(search.getValues().get(1).getTextField())
+                .isEqualTo("resource1");
+
+    }
+
+    @Test
+    void can_SortAscending() {
+        final Resource resource1 = validObject();
+        final Resource resource2 = validObject();
+
+
+        resource2.setTextField("resource2");
+        resource1.setTextField("resource1");
+
+
+        resourceCrud.create(resource1, resource2);
+
+        final Page<Resource> search = resourceCrud.search(new Query("", List.of()),
+                new PageSettings(1, Integer.MAX_VALUE,
+                        List.of(new PropertySort("textField", SortOption.ASCENDING))
+                )
+        );
+
+        assertThat(search.getValues().get(0).getTextField())
+                .isEqualTo("resource1");
+        assertThat(search.getValues().get(1).getTextField())
+                .isEqualTo("resource2");
+
+
     }
 
     protected synchronized Resource validObject() {

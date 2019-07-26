@@ -19,6 +19,7 @@
         <awaitility.version>3.1.2</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
         <jackson.version>2.9.9</jackson.version>
+        <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
     </properties>
 
@@ -98,7 +99,7 @@
         <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
-            <version>1.0</version>
+            <version>${truth.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
