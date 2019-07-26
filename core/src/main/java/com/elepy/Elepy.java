@@ -24,6 +24,7 @@ import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
 import com.elepy.uploads.FileUploadExtension;
+import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -663,6 +664,8 @@ public class Elepy implements ElepyContext {
 
         context.strictMode(true);
 
+        logger.info(String.format(LogUtils.banner, http.port()));
+
     }
 
     private void setupAuth() {
@@ -682,7 +685,6 @@ public class Elepy implements ElepyContext {
         http.get("/elepy-login-check", ctx -> {
             ctx.loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));
-
         });
 
         http.post("/elepy-token-login", tokenAuthenticationMethod::tokenLogin);
@@ -739,7 +741,7 @@ public class Elepy implements ElepyContext {
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
             if (!request.method().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.info(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+                logger.debug(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> response.result(""));
 
