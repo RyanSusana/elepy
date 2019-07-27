@@ -23,13 +23,13 @@ public enum FilterType {
 
     private final String filterName;
     private final String queryName;
-    private final Set<FieldType> fieldTypes;
+    private final Set<FieldType> allowedFieldTypes;
 
 
-    FilterType(String filterName, String queryName, FieldType... fieldTypes) {
+    FilterType(String filterName, String queryName, FieldType... allowedFieldTypes) {
         this.filterName = filterName;
         this.queryName = queryName;
-        this.fieldTypes = new TreeSet<>(Arrays.asList(fieldTypes));
+        this.allowedFieldTypes = new TreeSet<>(Arrays.asList(allowedFieldTypes));
     }
 
     public static Optional<FilterType> getByQueryString(String s) {
@@ -37,7 +37,7 @@ public enum FilterType {
     }
 
     public boolean canBeUsedBy(FilterableField filterableField) {
-        return fieldTypes.contains(filterableField.getFieldType());
+        return allowedFieldTypes.contains(filterableField.getFieldType());
     }
 
     public String getFilterName() {
