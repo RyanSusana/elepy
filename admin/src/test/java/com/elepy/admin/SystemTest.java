@@ -27,7 +27,7 @@ public class SystemTest {
         final var chromeOptions = new ChromeOptions();
 
         if (headlessMode) {
-            chromeOptions.addArguments("--no-sandbox").addArguments("--headless");
+            chromeOptions.addArguments("--no-sandbox").addArguments("--headless").addArguments("--window-size=1920,1080");
         }
         elepySystemUnderTest = new Elepy()
                 .addConfiguration(AdminPanel.newAdminPanel())
