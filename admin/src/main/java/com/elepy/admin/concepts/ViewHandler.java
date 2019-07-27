@@ -13,43 +13,38 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ViewHandler {
 
 
+    private final List<Model<?>> models;
     private final HttpService http;
     private ElepyAdminPanel adminPanel;
-    private Map<Model<?>, ModelView> models;
 
-    public ViewHandler(ElepyAdminPanel adminPanel, HttpService http) {
+
+    public ViewHandler(List<Model<?>> models, ElepyAdminPanel adminPanel, HttpService http) {
         this.adminPanel = adminPanel;
         this.http = http;
+        this.models = models;
     }
 
 
-    public void setupModels(ElepyPostConfiguration elepyPostConfiguration) {
-        this.models = mapModels(elepyPostConfiguration);
-    }
-
-
-    public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
-
-        for (Model<?> model : models.keySet()) {
-            http.get("/admin/config" + model.getSlug(), (request, response) -> {
-                response.type("application/json");
-                response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
-                        model
-                ));
-            });
-        }
+    public void setupModels(ElepyPostConfiguration elepy) {
+        var models = getModelsFromElepy(elepy);
 
         models.forEach((elepyModel, modelView) -> {
 
+            http.get("/admin/config" + elepyModel.getSlug(), (request, response) -> {
+                response.type("application/json");
+                response.json(elepyModel);
+            });
+
             http.get("/admin" + elepyModel.getSlug(), (request, response) -> {
 
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> renderModel = new HashMap<>();
 
                 String content = modelView.renderView(request, elepyModel);
 
@@ -62,8 +57,8 @@ public class ViewHandler {
                 styles.remove();
 
 
-                model.put("styles", styles);
-                model.put("stylesheets", stylesheets.stream().map(sheet -> {
+                renderModel.put("styles", styles);
+                renderModel.put("stylesheets", stylesheets.stream().map(sheet -> {
                     if (sheet.hasText()) {
                         return sheet.text();
                     } else if (sheet.hasAttr("src")) {
@@ -71,17 +66,19 @@ public class ViewHandler {
                     }
                     return "";
                 }).collect(Collectors.toSet()));
-                model.put("content", document.body().html());
-                model.put("model", elepyModel);
-                response.result(adminPanel.renderWithDefaults(model, "admin-templates/model.peb"));
+                renderModel.put("content", document.body().html());
+                renderModel.put("model", elepyModel);
+                renderModel.put("models", models.keySet());
+                response.result(adminPanel.renderWithDefaults(renderModel, "admin-templates/model.peb"));
             });
         });
     }
 
-    private Map<Model<?>, ModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) {
+    private Map<Model<?>, ModelView> getModelsFromElepy(ElepyPostConfiguration elepyPostConfiguration) {
         Map<Model<?>, ModelView> modelsToReturn = new HashMap<>();
 
-        elepyPostConfiguration.getModelDescriptions()
+        models
+
                 .forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
 
         return modelsToReturn;

@@ -11,6 +11,7 @@ public class Model<T> {
     private String name;
     private String slug;
     private Class<T> javaClass;
+    private boolean viewableOnCMS;
     private String idField;
     private List<HttpAction> actions;
     private List<Property> properties;
@@ -88,6 +89,7 @@ public class Model<T> {
         this.properties = properties;
     }
 
+
     public Property getProperty(String name) {
         return this.getProperties()
                 .stream()
@@ -133,5 +135,13 @@ public class Model<T> {
 
     public void setCreateAction(HttpAction createAction) {
         this.createAction = createAction;
+    }
+
+    public boolean isViewableOnCMS() {
+        return viewableOnCMS;
+    }
+
+    public void setViewableOnCMS(boolean viewableOnCMS) {
+        this.viewableOnCMS = viewableOnCMS;
     }
 }

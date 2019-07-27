@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RestModel(name = "Files", slug = "/files")
+@RestModel(name = "Files", slug = "/files", shouldDisplayOnCMS = false)
 @Update(handler = DisabledHandler.class)
 @Delete(handler = FileReferenceDelete.class)
 @Entity(name = "elepy_files")

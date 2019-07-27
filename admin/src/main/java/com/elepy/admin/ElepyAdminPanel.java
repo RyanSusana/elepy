@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static spark.Spark.halt;
 
@@ -47,8 +48,11 @@ public class ElepyAdminPanel implements ElepyExtension {
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
+
+
+        this.models = elepy.getModelDescriptions().stream().filter(Model::isViewableOnCMS).collect(Collectors.toList());
         this.pluginHandler = new PluginHandler(this, http);
-        this.viewHandler = new ViewHandler(this, http);
+        this.viewHandler = new ViewHandler(models, this, http);
         this.noUserFoundHandler = (ctx) -> {
             ctx.response().redirect("/elepy-initial-user");
             halt();
@@ -59,7 +63,6 @@ public class ElepyAdminPanel implements ElepyExtension {
         setupAdminFilters(http, elepy);
 
         this.initiated = true;
-        this.models = elepy.getModelDescriptions();
     }
 
 
@@ -92,7 +95,6 @@ public class ElepyAdminPanel implements ElepyExtension {
         });
         this.viewHandler.setupModels(elepy);
         this.pluginHandler.setupPlugins(elepy);
-        this.viewHandler.initializeRoutes(elepy);
         this.pluginHandler.setupRoutes(elepy);
     }
 

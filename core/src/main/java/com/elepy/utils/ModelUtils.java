@@ -68,6 +68,7 @@ public class ModelUtils {
         var model = new Model<T>();
         final RestModel restModel = classType.getAnnotation(RestModel.class);
 
+        model.setViewableOnCMS(restModel.shouldDisplayOnCMS());
         model.setSlug(restModel.slug());
         model.setName(restModel.name());
         model.setJavaClass(classType);
