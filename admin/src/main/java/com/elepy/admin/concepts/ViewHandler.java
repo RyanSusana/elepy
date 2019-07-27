@@ -4,8 +4,10 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
 import com.elepy.admin.views.DefaultView;
+import com.elepy.admin.views.FileView;
 import com.elepy.describers.Model;
 import com.elepy.http.HttpService;
+import com.elepy.uploads.FileReference;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -78,19 +80,22 @@ public class ViewHandler {
 
     private Map<Model<?>, ModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) {
         Map<Model<?>, ModelView> modelsToReturn = new HashMap<>();
-        for (Model<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
 
-            if (modelContext.getJavaClass().isAnnotationPresent(View.class)) {
+        elepyPostConfiguration.getModelDescriptions()
+                .forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
 
-                final View annotation = modelContext.getJavaClass().getAnnotation(View.class);
-                final ModelView modelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
-
-                modelsToReturn.put(modelContext, modelView);
-            } else {
-                modelsToReturn.put(modelContext, elepyPostConfiguration.initializeElepyObject(DefaultView.class));
-            }
-        }
         return modelsToReturn;
+    }
+
+    private ModelView getViewFromModel(Model<?> model, ElepyPostConfiguration elepyPostConfiguration) {
+        if (model.getJavaClass().equals(FileReference.class)) {
+            return new FileView();
+        } else if (model.getJavaClass().isAnnotationPresent(View.class)) {
+            final View annotation = model.getJavaClass().getAnnotation(View.class);
+            return elepyPostConfiguration.initializeElepyObject(annotation.value());
+        } else {
+            return elepyPostConfiguration.initializeElepyObject(DefaultView.class);
+        }
     }
 
 }

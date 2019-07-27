@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
@@ -31,7 +32,7 @@ public class ElepyDriver implements WebDriver {
     }
 
     public void waitTillCanSee(By by) {
-        await().until(() -> {
+        await().atMost(20, TimeUnit.SECONDS).until(() -> {
             try {
 
                 final WebElement element = findElement(by);
@@ -43,7 +44,7 @@ public class ElepyDriver implements WebDriver {
     }
 
     public void waitTillCantSee(By by) {
-        await().until(() -> {
+        await().atMost(20, TimeUnit.SECONDS).until(() -> {
             final WebElement element = findElement(by);
             return (element == null || element.getCssValue("display").equals("none"));
         });
@@ -59,7 +60,7 @@ public class ElepyDriver implements WebDriver {
     }
 
     public void waitForURL(String url) {
-        await().until(() -> getCurrentUrl().contains(url));
+        await().atMost(20, TimeUnit.SECONDS).until(() -> getCurrentUrl().contains(url));
     }
 
     //DELEGATION METHODS

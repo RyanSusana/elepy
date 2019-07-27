@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingleView implements ModelView {
+public class SingleView implements ModelView<Object> {
 
     private PebbleEngine engine = new PebbleEngine.Builder().build();
 
