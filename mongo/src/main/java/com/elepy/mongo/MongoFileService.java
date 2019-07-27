@@ -33,9 +33,9 @@ public class MongoFileService implements FileService {
     }
 
     @Override
-    public Optional<FileUpload> readFile(String name) {
+    public Optional<FileUpload> readFile(String path) {
         try {
-            final var file = findByName(name).orElseThrow();
+            final var file = findByName(path).orElseThrow();
 
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -45,7 +45,7 @@ public class MongoFileService implements FileService {
 
             outputStream.close();
             inputStream.close();
-            return Optional.of(new FileUpload(file.getMetadata().getString("contentType"), inputStream, file.getFilename(), file.getLength()));
+            return Optional.of(FileUpload.of(file.getFilename(), file.getMetadata().getString("contentType"), inputStream, file.getLength()));
         } catch (NoSuchElementException e) {
             return Optional.empty();
         } catch (Exception e) {
@@ -62,8 +62,8 @@ public class MongoFileService implements FileService {
     }
 
     @Override
-    public void deleteFile(String name) {
-        var file = findByName(name).orElseThrow(() -> new ElepyException(String.format("No file '%s' found", name), 404)).getObjectId();
+    public void deleteFile(String path) {
+        var file = findByName(path).orElseThrow(() -> new ElepyException(String.format("No file '%s' found", path), 404)).getObjectId();
 
         bucket.delete(file);
     }

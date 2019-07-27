@@ -152,9 +152,10 @@ public class VertxRequest implements Request {
                     try {
 
                         return FileUpload.of(
+                                file.fileName(),
                                 file.contentType(),
                                 new BufferedInputStream(new FileInputStream(new File(file.uploadedFileName()))),
-                                file.fileName(),
+
                                 file.size());
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();

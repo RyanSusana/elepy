@@ -36,7 +36,7 @@ public class FileUploadEvaluator {
                     translateToRepresentableString(maximumFileSize),
                     translateToRepresentableString(file.getSize())));
         }
-        return FileReference.of(file);
+        return FileReference.newFileReference(file);
     }
 
     private String translateToRepresentableString(long bytes) {

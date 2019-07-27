@@ -14,7 +14,7 @@ public class DefaultFileService implements FileService {
     }
 
     @Override
-    public Optional<FileUpload> readFile(String name) {
+    public Optional<FileUpload> readFile(String path) {
         error();
         return Optional.empty();
     }
@@ -26,7 +26,7 @@ public class DefaultFileService implements FileService {
     }
 
     @Override
-    public void deleteFile(String name) {
+    public void deleteFile(String path) {
         error();
     }
 

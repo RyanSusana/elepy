@@ -202,7 +202,7 @@ public class SparkRequest implements Request {
             try {
                 return servletRequest.getParts().stream().filter(part -> part.getSubmittedFileName() != null && part.getName().equals(key)).map(part -> {
                             try {
-                                return FileUpload.of(part.getContentType(), part.getInputStream(), part.getSubmittedFileName(), part.getSize());
+                                return FileUpload.of(part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize());
                             } catch (IOException e) {
                                 throw new ElepyException("File upload failed", 500);
                             }

@@ -6,9 +6,10 @@ import java.util.Optional;
 public interface FileService {
     void uploadFile(FileUpload file);
 
-    Optional<FileUpload> readFile(String name);
+    Optional<FileUpload> readFile(String path);
 
     List<String> listFiles();
 
-    void deleteFile(String name);
+    void deleteFile(String path);
+
 }

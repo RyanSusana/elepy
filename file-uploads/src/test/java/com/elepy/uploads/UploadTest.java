@@ -60,7 +60,7 @@ public class UploadTest {
 
         directoryFileService = new DirectoryFileService(UPLOAD_DIR);
 
-        directoryFileService.ensureDirsMade();
+        directoryFileService.ensureRootFolderExists();
     }
 
     @AfterEach
@@ -75,7 +75,7 @@ public class UploadTest {
         String filePath = "src/test/resources/textFileToUpload.txt";
 
 
-        final FileUpload text = FileUpload.of("text", Files.newInputStream(Paths.get(filePath)), "textFileToUpload.txt", Files.size(Paths.get(filePath)));
+        final FileUpload text = FileUpload.of("textFileToUpload.txt", "text", Files.newInputStream(Paths.get(filePath)), Files.size(Paths.get(filePath)));
 
         directoryFileService.uploadFile(text);
 

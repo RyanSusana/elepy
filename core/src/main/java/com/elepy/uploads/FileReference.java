@@ -1,15 +1,15 @@
 package com.elepy.uploads;
 
-import com.elepy.annotations.Delete;
-import com.elepy.annotations.Identifier;
-import com.elepy.annotations.RestModel;
-import com.elepy.annotations.Update;
+import com.elepy.annotations.*;
 import com.elepy.routes.DisabledHandler;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,37 +22,75 @@ public class FileReference {
 
     @Id
     @Identifier
+    private String uid;
+
+    @Column
     private String name;
+
+    @Unique
+    @Column(unique = true)
+    private String uploadName;
 
     @Column
     private String contentType;
 
-    //Like this to query easier for cloud databases
+    // Better querying for cloud databases
     @Column
     private String mimeType;
+
     @Column
     private String mimeSubtype;
 
     @Column
     private long size;
 
+    @Column
+    private Date createdDate;
+
 
     public FileReference() {
     }
 
-    public FileReference(String name, String contentType, long size) {
+    public FileReference(String uid, String name, String uploadName, String contentType, long size, Date createdDate) {
+        this.uid = uid;
+        this.uploadName = uploadName;
         this.name = name;
         this.contentType = contentType;
         this.size = size;
 
+        this.createdDate = createdDate;
         final String[] mime = contentType.split("/");
 
         this.mimeType = mime[0];
         this.mimeSubtype = mime[1].split(";")[0];
     }
 
-    public static FileReference of(FileUpload file) {
-        return new FileReference(file.getName(), file.getContentType(), file.getSize());
+    public static FileReference newFileReference(FileUpload file) {
+        return new FileReference(UUID.randomUUID().toString(), file.getName(), file.getName(), file.getContentType(), file.getSize(), Calendar.getInstance().getTime());
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getUID() {
+        return uid;
+    }
+
+    public void setUID(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUploadName() {
+        return uploadName;
+    }
+
+    public void setUploadName(String uploadName) {
+        this.uploadName = uploadName;
     }
 
     public String getName() {

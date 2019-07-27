@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 public class FileUpload {
 
-
     private String contentType;
 
     private String name;
@@ -15,18 +14,14 @@ public class FileUpload {
 
     private long size;
 
-    public FileUpload() {
-
-    }
-
-    public FileUpload(String contentType, InputStream content, String name, long size) {
+    private FileUpload(String contentType, InputStream content, String name, long size) {
         this.contentType = contentType;
         this.content = content;
         this.name = name;
         this.size = size;
     }
 
-    public static FileUpload of(String contentType, InputStream content, String name, long size) {
+    public static FileUpload of(String name, String contentType, InputStream content, long size) {
         return new FileUpload(contentType, content, name, size);
     }
 

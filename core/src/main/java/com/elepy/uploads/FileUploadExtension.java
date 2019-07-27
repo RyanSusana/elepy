@@ -9,17 +9,19 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import org.apache.commons.lang3.RandomStringUtils;
 import spark.utils.IOUtils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
-//
 public class FileUploadExtension implements ElepyExtension {
+
     @Inject
     private FileService fileService;
 
@@ -33,7 +35,7 @@ public class FileUploadExtension implements ElepyExtension {
     }
 
     private void handleFileGet(Request request, Response response) throws IOException {
-        final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("FileReference not found", 404));
+        final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("File not found", 404));
 
         response.type(file.getContentType());
         response.result(IOUtils.toByteArray(file.getContent()));
@@ -45,9 +47,14 @@ public class FileUploadExtension implements ElepyExtension {
         final List<FileUpload> files = request.uploadedFiles("files");
         final List<FileReference> references = files.stream().map(uploadedFile -> {
 
-            final var reference = FileUploadEvaluator.fromRequest(request).evaluate(uploadedFile);
+            final String originalName = uploadedFile.getName();
 
-            this.fileCrud.getById(reference.getName()).ifPresent(file -> {
+
+            final var reference = FileUploadEvaluator.fromRequest(request).evaluate(uploadedFile);
+            uploadedFile.setName(generateUniqueFileName(originalName));
+            reference.setUploadName(uploadedFile.getName());
+
+            this.fileCrud.searchInField("name", reference.getName()).stream().findFirst().ifPresent(file -> {
                 throw new ElepyException("There is already a file called: " + file.getName(), 409);
             });
 
@@ -65,5 +72,16 @@ public class FileUploadExtension implements ElepyExtension {
         map.put("message", "Uploaded files");
         response.status(200);
         response.json(map);
+    }
+
+    private String generateUniqueFileName(String originalName) {
+        var random = RandomStringUtils.randomAlphanumeric(7);
+        var datePrefix = new SimpleDateFormat("yyyy_MM").format(Calendar.getInstance().getTime());
+
+        final String generatedName = String.format("%s_%s_%s", datePrefix, random, originalName);
+        if (!fileCrud.searchInField("uploadName", generatedName).isEmpty()) {
+            return generateUniqueFileName(originalName);
+        }
+        return generatedName;
     }
 }
