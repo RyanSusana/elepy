@@ -10,7 +10,7 @@ public class LogUtils {
             "|    l0WWNNNNXXXXXXXXXXK xk0WWOc\n" +
             "|    lx0XXXXXXNNNWWWNXKKNNKKWWkc\n" +
             "|       oOKNWMMMMMMNK0KNMMMWKKNNx\n" +
-            "|        coxOXWWMWKkkO0KKXXKkOXKo         Elepy starting on port %d\n" +
+            "|        coxOXWWMWKkkO0KKXXKkOXKo         Elepy started on port %d\n" +
             "|            cdk0KOl    ccclx00Oxoc\n" +
             "|                cc         dKWNKxlc\n" +
             "|                            ckNX0d\n" +
