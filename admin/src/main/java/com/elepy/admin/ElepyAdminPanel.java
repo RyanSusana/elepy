@@ -2,13 +2,12 @@ package com.elepy.admin;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.admin.concepts.*;
-import com.elepy.admin.models.Attachment;
-import com.elepy.admin.models.AttachmentType;
+import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
+import com.elepy.admin.concepts.PluginHandler;
+import com.elepy.admin.concepts.ViewHandler;
 import com.elepy.admin.models.Link;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationService;
 import com.elepy.dao.Crud;
 import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyException;
@@ -17,7 +16,9 @@ import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.mitchellbosecke.pebble.PebbleEngine;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +29,6 @@ import static spark.Spark.halt;
 
 
 public class ElepyAdminPanel implements ElepyExtension {
-    public static final String ADMIN_USER = "adminUser";
-    private AttachmentHandler attachmentHandler;
     private PluginHandler pluginHandler;
     private ViewHandler viewHandler;
     private List<Link> links;
@@ -47,14 +46,9 @@ public class ElepyAdminPanel implements ElepyExtension {
     private NoUserFoundHandler noUserFoundHandler;
 
 
-    @Inject
-    private UserAuthenticationService userAuthenticationService;
-
-
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
         try {
-            this.attachmentHandler = new AttachmentHandler(this, http);
             this.pluginHandler = new PluginHandler(this, http);
             this.viewHandler = new ViewHandler(this, http);
             this.noUserFoundHandler = (ctx) -> {
@@ -67,11 +61,11 @@ public class ElepyAdminPanel implements ElepyExtension {
 
             this.engine = new PebbleEngine.Builder().build();
 
-            attachSrcDirectory(this.getClass().getClassLoader(), "admin-resources");
             setupLogin(http);
-            setupAdmin(http, elepy);
 
-            this.attachmentHandler.setupAttachments();
+            setupInitialUser(http);
+            setupAdminFilters(http, elepy);
+
             this.initiated = true;
             this.modelContexts = elepy.getModelDescriptions();
         } catch (Exception e) {
@@ -92,7 +86,7 @@ public class ElepyAdminPanel implements ElepyExtension {
         };
     }
 
-    private void setupAdmin(HttpService http, ElepyPostConfiguration elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void setupAdminFilters(HttpService http, ElepyPostConfiguration elepy) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
 
         http.before("/admin/*/*", filter());
@@ -118,8 +112,6 @@ public class ElepyAdminPanel implements ElepyExtension {
 
 
     private void setupLogin(HttpService http) {
-
-
         http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb")));
 
         http.before("/elepy-login", ctx -> {
@@ -127,8 +119,9 @@ public class ElepyAdminPanel implements ElepyExtension {
                 noUserFoundHandler.handle(ctx);
             }
         });
+    }
 
-
+    private void setupInitialUser(HttpService http) {
         http.before("/elepy-initial-user", (request, response) -> {
             if (userCrud.count() > 0) {
                 response.redirect("/elepy-login", 301);
@@ -136,15 +129,12 @@ public class ElepyAdminPanel implements ElepyExtension {
             }
         });
         http.get("/elepy-initial-user", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/initial-user.peb")));
-
-
     }
 
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
         model.put("descriptors", modelContexts);
         model.put("plugins", pluginHandler.getPlugins());
-        model.put("user", request.attribute(ADMIN_USER));
         model.put("links", links);
         return render(model, templatePath);
     }
@@ -161,41 +151,6 @@ public class ElepyAdminPanel implements ElepyExtension {
         return pluginHandler.addPlugin(plugin);
     }
 
-
-    public ElepyAdminPanel attachSrc(Attachment attachment) {
-        attachmentHandler.attachSrc(attachment);
-        return this;
-    }
-
-    public ElepyAdminPanel attachSrc(String fileName, String contentType, byte[] src, AttachmentType type, boolean isFromDirectory, String directory) {
-        attachmentHandler.attachSrc(fileName, contentType, src, type, isFromDirectory, directory);
-        return this;
-    }
-
-    public ElepyAdminPanel attachSrc(ClassLoader classLoader, String file, boolean isFromDirectory, String directory) throws IOException {
-        attachmentHandler.attachSrc(classLoader, file, isFromDirectory, directory);
-        return this;
-    }
-
-    public ElepyAdminPanel attachSrc(String fileName, InputStream inputStream, boolean isFromDirectory, String directory) throws IOException {
-        attachmentHandler.attachSrc(fileName, inputStream, isFromDirectory, directory);
-        return this;
-    }
-
-    public ElepyAdminPanel attachSrc(File file, boolean isFromDirectory, String directory) throws IOException {
-        attachmentHandler.attachSrc(file, isFromDirectory, directory);
-        return this;
-    }
-
-    public ElepyAdminPanel attachSrcDirectory(ClassLoader classLoader, String directory) throws IOException {
-        attachmentHandler.attachSrcDirectory(classLoader, directory);
-        return this;
-    }
-
-
-    public ElepyAdminPanel onFirstTime(SetupHandler setupHandler) {
-        return this;
-    }
 
     public ElepyAdminPanel addLink(Link link) {
         links.add(link);
@@ -223,8 +178,4 @@ public class ElepyAdminPanel implements ElepyExtension {
         return initiated;
     }
 
-
-    public AttachmentHandler getAttachmentHandler() {
-        return attachmentHandler;
-    }
 }

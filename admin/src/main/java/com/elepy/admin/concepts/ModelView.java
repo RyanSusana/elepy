@@ -5,6 +5,6 @@ import com.elepy.http.Request;
 
 public interface ModelView {
 
-    String renderView(Request request, Model descriptor);
+    String renderView(Request request, Model model);
 
 }

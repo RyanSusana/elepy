@@ -10,7 +10,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class ViewHandler {
     }
 
 
-    public void setupModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public void setupModels(ElepyPostConfiguration elepyPostConfiguration) {
         this.models = mapModels(elepyPostConfiguration);
     }
 
@@ -71,7 +70,7 @@ public class ViewHandler {
                     return "";
                 }).collect(Collectors.toSet()));
                 model.put("content", document.body().html());
-                model.put("currentDescriptor", modelDescription);
+                model.put("model", modelDescription);
                 response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
             });
         });

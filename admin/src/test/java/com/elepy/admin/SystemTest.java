@@ -132,10 +132,10 @@ public class SystemTest {
     }
 
 
-    @AfterEach //has been changed from @After
+    @AfterEach
     public void tearDown() {
-//        driver.close();
-//        driver.quit();
-//        elepySystemUnderTest.stop();
+        driver.close();
+        driver.quit();
+        elepySystemUnderTest.stop();
     }
 }

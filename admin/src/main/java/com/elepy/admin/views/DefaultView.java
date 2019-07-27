@@ -19,7 +19,7 @@ public class DefaultView implements ModelView {
     public String renderView(Request request, Model descriptor) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("currentDescriptor", descriptor);
+        model.put("model", descriptor);
         Writer writer = new StringWriter();
         try {
             engine.getTemplate("admin-templates/model-views/default-model-view.peb").evaluate(writer, model);

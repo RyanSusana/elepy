@@ -3,7 +3,7 @@
 
 
 
-{% block title %}{{currentDescriptor.name}}{% endblock %}
+{% block title %}{{model.name}}{% endblock %}
 
 {% block main %}{% autoescape false %}{{ content }}{% endautoescape %}{% endblock %}
 

@@ -1,5 +1,5 @@
 <div id="app">
-    <p id="slug" style="display:none;">{{ currentDescriptor.slug }}</p>
+    <p id="slug" style="display:none;">{{ model.slug }}</p>
     <Elepy v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 
