@@ -34,22 +34,22 @@ public class ViewHandler {
 
     public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
 
-        for (Model<?> descriptor : models.keySet()) {
-            http.get("/admin/config" + descriptor.getSlug(), (request, response) -> {
+        for (Model<?> model : models.keySet()) {
+            http.get("/admin/config" + model.getSlug(), (request, response) -> {
                 response.type("application/json");
                 response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
-                        descriptor
+                        model
                 ));
             });
         }
 
-        models.forEach((modelDescription, modelView) -> {
+        models.forEach((elepyModel, modelView) -> {
 
-            http.get("/admin" + modelDescription.getSlug(), (request, response) -> {
+            http.get("/admin" + elepyModel.getSlug(), (request, response) -> {
 
                 Map<String, Object> model = new HashMap<>();
 
-                String content = modelView.renderView(request, modelDescription);
+                String content = modelView.renderView(request, elepyModel);
 
                 Document document = Jsoup.parse(content);
 
@@ -70,8 +70,8 @@ public class ViewHandler {
                     return "";
                 }).collect(Collectors.toSet()));
                 model.put("content", document.body().html());
-                model.put("model", modelDescription);
-                response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
+                model.put("model", elepyModel);
+                response.result(adminPanel.renderWithDefaults(model, "admin-templates/model.peb"));
             });
         });
     }
@@ -92,6 +92,5 @@ public class ViewHandler {
         }
         return modelsToReturn;
     }
-
 
 }
