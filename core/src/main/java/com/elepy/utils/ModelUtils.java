@@ -59,7 +59,7 @@ public class ModelUtils {
         property.setUnique(accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
         property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idField && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idField && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
 
-        property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class));
+        property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idField);
         property.config(mapFieldTypeInformation(accessibleObject));
         return property;
     }
@@ -86,6 +86,7 @@ public class ModelUtils {
 
         return model;
     }
+
 
     private static <T> void setupActions(Model<T> model) {
         model.setActions(Stream.of(model.getJavaClass().getAnnotationsByType(Action.class))
