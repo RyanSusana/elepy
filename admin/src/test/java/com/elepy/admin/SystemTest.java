@@ -33,6 +33,7 @@ public class SystemTest {
                 .addConfiguration(AdminPanel.newAdminPanel())
                 .addConfiguration(MongoConfiguration.inMemory())
                 .onPort(1339)
+                .addModel(CantSeeThis.class)
                 .addModel(Product.class);
 
         elepySystemUnderTest.start();
@@ -81,6 +82,17 @@ public class SystemTest {
                 .isEqualTo(1);
         assertThat(products.getAll().get(0).getPrice())
                 .isEqualTo(BigDecimal.valueOf(200.0));
+    }
+
+    @Test
+    void testCantSeeNonViewableModel() throws InterruptedException {
+
+        Scenario
+                .with(driver)
+                .fromModel(CantSeeThis.class);
+
+        assertThat(driver.getPageSource()).contains("404");
+
     }
 
 

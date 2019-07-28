@@ -3,9 +3,9 @@
     <Elepy v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 
-<stylesheet src="https://unpkg.com/elepy-vue@0.2/dist/ElepySingleVue.css"/>
+<stylesheet src="https://unpkg.com/elepy-vue@0.3/dist/ElepySingleVue.css"/>
 
-<script src="https://unpkg.com/elepy-vue@0.2/dist/ElepySingleVue.umd.js"></script>
+<script src="https://unpkg.com/elepy-vue@0.3/dist/ElepySingleVue.umd.js"></script>
 <script>
     Vue.component('Elepy', ElepySingleVue);
     const app = new Vue({
