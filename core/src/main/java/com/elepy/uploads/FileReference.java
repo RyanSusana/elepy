@@ -1,6 +1,7 @@
 package com.elepy.uploads;
 
 import com.elepy.annotations.*;
+import com.elepy.auth.Permissions;
 import com.elepy.routes.DisabledHandler;
 
 import javax.persistence.Column;
@@ -13,9 +14,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RestModel(name = "Files", slug = "/files", shouldDisplayOnCMS = false)
+@RestModel(name = "Files", slug = "/files")
 @Update(handler = DisabledHandler.class)
-@Delete(handler = FileReferenceDelete.class)
+@Delete(handler = FileReferenceDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_FILES)
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
 public class FileReference {
@@ -25,20 +26,23 @@ public class FileReference {
     @Importance(-100)
     private String uid;
 
-    @Column
-    @PrettyName("File Name")
-    @Searchable
-    private String name;
+
 
     @Unique
     @Column(unique = true)
     @com.elepy.annotations.FileReference
     @Uneditable
-    @PrettyName("File Location")
+    @PrettyName("File")
     @Searchable
     private String uploadName;
 
     @Column
+    @PrettyName("Name")
+    @Searchable
+    private String name;
+
+    @Column
+    @PrettyName("Content Type")
     @Uneditable
     private String contentType;
 
@@ -46,21 +50,23 @@ public class FileReference {
     @Column
     @Uneditable
     @Importance(-100)
-    private String mimeType;
+    @PrettyName("Main Type")
+    private String mimeMainType;
 
     @Column
     @Uneditable
     @Importance(-100)
-    private String mimeSubtype;
+    @PrettyName("Subtype")
+    private String mimeSubType;
 
     @Column
     @Uneditable
-    @PrettyName("File Size")
+    @PrettyName("Size (Bytes)")
     private long size;
 
     @Column
     @Uneditable
-    @PrettyName("Created on")
+    @PrettyName("Created")
     private Date createdDate;
 
 
@@ -77,8 +83,8 @@ public class FileReference {
         this.createdDate = createdDate;
         final String[] mime = contentType.split("/");
 
-        this.mimeType = mime[0];
-        this.mimeSubtype = mime[1].split(";")[0];
+        this.mimeMainType = mime[0];
+        this.mimeSubType = mime[1].split(";")[0];
     }
 
     public static FileReference newFileReference(FileUpload file) {
@@ -125,20 +131,20 @@ public class FileReference {
         this.contentType = contentType;
     }
 
-    public String getMimeType() {
-        return mimeType;
+    public String getMimeMainType() {
+        return mimeMainType;
     }
 
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
+    public void setMimeMainType(String mimeMainType) {
+        this.mimeMainType = mimeMainType;
     }
 
-    public String getMimeSubtype() {
-        return mimeSubtype;
+    public String getMimeSubType() {
+        return mimeSubType;
     }
 
-    public void setMimeSubtype(String mimeSubtype) {
-        this.mimeSubtype = mimeSubtype;
+    public void setMimeSubType(String mimeSubType) {
+        this.mimeSubType = mimeSubType;
     }
 
     public long getSize() {
