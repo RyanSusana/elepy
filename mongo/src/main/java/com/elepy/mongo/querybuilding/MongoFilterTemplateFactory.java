@@ -26,7 +26,7 @@ public class MongoFilterTemplateFactory {
                 final Pattern pattern = Pattern.compile(".*" + filterQuery.getFilterValue() + ".*", Pattern.CASE_INSENSITIVE);
                 return new MongoFilterTemplate("$regex", filterQuery.getFilterableField(), pattern.toString());
         }
-        throw new ElepyException("Mongo does not support: " + filterQuery.getFilterType().getQueryName());
+        throw new ElepyException("Mongo does not support: " + filterQuery.getFilterType().getName());
     }
 
 }

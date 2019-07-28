@@ -2,6 +2,7 @@ package com.elepy.utils;
 
 import com.elepy.annotations.*;
 import com.elepy.auth.Permissions;
+import com.elepy.dao.FilterType;
 import com.elepy.describers.Model;
 import com.elepy.describers.Property;
 import com.elepy.describers.props.*;
@@ -59,9 +60,16 @@ public class ModelUtils {
         property.setUnique(accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
         property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idField && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idField && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
 
-        property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idField);
         property.config(mapFieldTypeInformation(accessibleObject));
+        setupSearch(accessibleObject, property, idField);
         return property;
+    }
+
+    private static void setupSearch(AccessibleObject accessibleObject, Property property, boolean idField) {
+        property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idField);
+        var availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
+
+        property.setExtra("availableFilters", availableFilters);
     }
 
     public static <T> Model<T> createModelFromClass(Class<T> classType) {

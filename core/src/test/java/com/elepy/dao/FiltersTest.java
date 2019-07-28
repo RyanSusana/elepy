@@ -5,12 +5,14 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import com.elepy.models.FieldType;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,6 +32,25 @@ public class FiltersTest {
         assertEquals("ryan", request.queryParams("hi"));
 
     }
+
+    @Test
+    void testCanFindProperFilter() {
+        assertThat(FilterType.getForFieldType(FieldType.NUMBER))
+                .containsExactly(
+                        FilterType.GREATER_THAN,
+                        FilterType.GREATER_THAN_OR_EQUALS,
+                        FilterType.LESSER_THAN,
+                        FilterType.LESSER_THAN_OR_EQUALS,
+                        FilterType.EQUALS,
+                        FilterType.NOT_EQUALS);
+
+        assertThat(FilterType.getForFieldType(FieldType.TEXT))
+                .containsExactly(
+                        FilterType.CONTAINS,
+                        FilterType.EQUALS,
+                        FilterType.NOT_EQUALS);
+    }
+
 
     @Test
     void testCreateProperFilter() {

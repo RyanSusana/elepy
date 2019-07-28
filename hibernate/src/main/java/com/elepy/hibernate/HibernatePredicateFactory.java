@@ -52,7 +52,7 @@ public class HibernatePredicateFactory {
                     return cb.le(root.get(fieldName), (Number) value);
                 }
         }
-        throw new ElepyException("Hibernate does not support the filter: " + filterQuery.getFilterType().getQueryName());
+        throw new ElepyException("Hibernate does not support the filter: " + filterQuery.getFilterType().getName());
     }
 
     private static Serializable value(FilterableField field, String value) {
