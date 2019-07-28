@@ -22,29 +22,45 @@ public class FileReference {
 
     @Id
     @Identifier
+    @Importance(-100)
     private String uid;
 
     @Column
+    @PrettyName("File Name")
+    @Searchable
     private String name;
 
     @Unique
     @Column(unique = true)
+    @com.elepy.annotations.FileReference
+    @Uneditable
+    @PrettyName("File Location")
+    @Searchable
     private String uploadName;
 
     @Column
+    @Uneditable
     private String contentType;
 
     // Better querying for cloud databases
     @Column
+    @Uneditable
+    @Importance(-100)
     private String mimeType;
 
     @Column
+    @Uneditable
+    @Importance(-100)
     private String mimeSubtype;
 
     @Column
+    @Uneditable
+    @PrettyName("File Size")
     private long size;
 
     @Column
+    @Uneditable
+    @PrettyName("Created on")
     private Date createdDate;
 
 
