@@ -15,6 +15,12 @@ public interface HttpService {
 
     void stop();
 
+    void staticFiles(String path, StaticFileLocation location);
+
+    default void staticFiles(String path) {
+        staticFiles(path, StaticFileLocation.CLASSPATH);
+    }
+
     <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler);
 
     default void addRoute(HttpMethod method, String path, AccessLevel accessLevel, HttpContextHandler contextHandler) {

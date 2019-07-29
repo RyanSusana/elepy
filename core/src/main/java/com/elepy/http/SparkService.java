@@ -59,6 +59,15 @@ public class SparkService implements HttpService {
         http.awaitStop();
     }
 
+    @Override
+    public void staticFiles(String path, StaticFileLocation location) {
+        if (location.equals(StaticFileLocation.EXTERNAL)) {
+            http.staticFiles.externalLocation(path);
+        } else {
+            http.staticFiles.location(path);
+        }
+    }
+
     public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler) {
         http.exception(exceptionClass, ((e, req, res) -> handler.handleException(e, new SparkContext(req, res))));
     }

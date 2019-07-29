@@ -64,6 +64,31 @@ public abstract class HttpServiceTest {
 
         service.ignite();
         assertResponseReturns("get", "/test", "hi");
+
+
+    }
+
+    @Test
+    void can_handleStaticFiles() throws IOException, InterruptedException {
+        service.staticFiles("static");
+
+        service.get("/test", ctx -> ctx.result("hi"));
+
+        service.ignite();
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format("http://localhost:3030/doggo.jpg")))
+                .build();
+
+        final HttpResponse<InputStream> send = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
+
+
+        //assert it doesn't interfere with existing request.
+        assertResponseReturns("get", "/test", "hi");
+        assertTrue(IOUtils.contentEquals(send.body(), inputStream("static/doggo.jpg")),
+                "Static file returning a wrong input stream");
+
+
     }
 
     @Test
