@@ -1,17 +1,17 @@
 <div id="app">
     <p id="slug" style="display:none;">{{ model.slug }}</p>
-    <Elepy v-if="selectedModel!=null" :model="selectedModel"/>
+    <{{ theView }} v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 
-<stylesheet src="https://unpkg.com/elepy-vue@0.3/dist/ElepyVue.css"/>
+<stylesheet src="https://unpkg.com/elepy-vue@^0.4/dist/ElepyVue.css"/>
 
-<script src="https://unpkg.com/elepy-vue@0.3/dist/ElepyVue.umd.js"></script>
+<script src="https://unpkg.com/elepy-vue@^0.4/dist/ElepyVue.umd.js"></script>
 <script>
-    Vue.component('Elepy', ElepyVue);
+
+    console.log(new Vue().$options.components)
     const app = new Vue({
         el: '#app',
         delimiters: ['((', '))'],
-        components: {"Elepy": ElepyVue},
         data() {
             return {selectedModel: null};
         },
@@ -25,6 +25,7 @@
             }
         },
         created() {
+
             this.getModel();
         }
     });
