@@ -1,6 +1,5 @@
 package com.elepy.mongo;
 
-import com.elepy.annotations.RestModel;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.mongo.querybuilding.MongoFilterTemplateFactory;
@@ -52,10 +51,8 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private Find addDefaultSort(Find find) {
-        RestModel restModel = getType().getAnnotation(RestModel.class);
-        if (restModel != null) {
-            find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
-        }
+        final String sort = String.format("{%s: %d}", getModel().getDefaultSortField(), getModel().getDefaultSortDirection().getVal());
+        find.sort(sort);
         return find;
     }
 
