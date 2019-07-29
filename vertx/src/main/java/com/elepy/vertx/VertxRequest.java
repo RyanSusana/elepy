@@ -169,4 +169,9 @@ public class VertxRequest implements Request {
     public void attribute(String attribute, Object value) {
         routingContext.put(attribute, value);
     }
+
+    @Override
+    public Set<String> attributes() {
+        return routingContext.data().keySet();
+    }
 }

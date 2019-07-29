@@ -71,6 +71,8 @@ public interface Request {
 
     void attribute(String attribute, Object value);
 
+    Set<String> attributes();
+
     /**
      * @return The ID of the model a.k.a request.params("id")
      */

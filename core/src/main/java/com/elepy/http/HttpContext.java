@@ -138,6 +138,10 @@ public interface HttpContext {
         request().attribute(attribute, value);
     }
 
+    default Set<String> attributes() {
+        return request().attributes();
+    }
+
     default boolean hasPermissions(Collection<String> requiredPermissions) {
         return request().hasPermissions(requiredPermissions);
     }
