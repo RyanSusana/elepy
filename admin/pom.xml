@@ -26,6 +26,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <!--Sometimes jsdeliver cdn fails-->
+                    <rerunFailingTestsCount>2</rerunFailingTestsCount>
                     <systemPropertyVariables>
                         <headlessMode>${headlessMode}</headlessMode>
                     </systemPropertyVariables>

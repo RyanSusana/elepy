@@ -302,8 +302,8 @@ public class HibernateDao<T> implements Crud<T> {
     private List<Field> getSearchableFields() {
         List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class, Unique.class);
 
-        Field idField = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idField"));
-        fields.add(idField);
+        Field idProperty = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idProperty"));
+        fields.add(idProperty);
 
 
         fields.removeIf(field -> !field.getType().equals(String.class));

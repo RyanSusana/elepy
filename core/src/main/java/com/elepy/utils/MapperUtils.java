@@ -21,11 +21,11 @@ public class MapperUtils {
     public static <T> T objectFromMaps(ObjectMapper objectMapper, Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, Class<T> cls) {
 
 
-        final Field idField = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyException("No id field", 500));
+        final Field idProperty = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyException("No id field", 500));
         fieldsToAdd.forEach((fieldName, fieldObject) -> {
             final Field field = ReflectionUtils.findFieldWithName(cls, fieldName).orElseThrow(() -> new ElepyException(String.format("Unknown field: %s", fieldName)));
             FieldType fieldType = FieldType.guessType(field);
-            if (fieldType.isPrimitive() && !idField.getName().equals(field.getName()) && shouldEdit(field)) {
+            if (fieldType.isPrimitive() && !idProperty.getName().equals(field.getName()) && shouldEdit(field)) {
                 objectAsMap.put(fieldName, fieldObject);
             }
 

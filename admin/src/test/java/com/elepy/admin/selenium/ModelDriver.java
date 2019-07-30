@@ -17,6 +17,7 @@ public class ModelDriver<T> {
     }
 
     public FormDriver<T> startCreating() {
+        driver.waitTillCanSee(ADD_BUTTON);
         driver.findElement(ADD_BUTTON).click();
         driver.waitTillCanSee(FormDriver.SAVE_BUTTON);
         return new FormDriver<>(driver, model);

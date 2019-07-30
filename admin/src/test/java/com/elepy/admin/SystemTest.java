@@ -3,11 +3,8 @@ package com.elepy.admin;
 import com.elepy.Elepy;
 import com.elepy.admin.selenium.ElepyDriver;
 import com.elepy.admin.selenium.Scenario;
-import com.elepy.describers.Model;
 import com.elepy.mongo.MongoConfiguration;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -19,16 +16,39 @@ public class SystemTest {
 
     private ElepyDriver driver;
     private Elepy elepySystemUnderTest;
-    private Model<Product> model;
 
-    @BeforeEach
-    public void startBrowser() {
+    private static ChromeDriver chromeDriver;
+
+    @BeforeAll
+    public static void startBrowser() {
         final var headlessMode = Boolean.parseBoolean(System.getProperty("headlessMode"));
         final var chromeOptions = new ChromeOptions();
 
         if (headlessMode) {
             chromeOptions.addArguments("--no-sandbox").addArguments("--headless").addArguments("--window-size=2120,1280");
         }
+
+
+        chromeDriver = new ChromeDriver(chromeOptions);
+
+
+
+    }
+
+    @AfterAll
+    public static void afterAll() {
+
+        chromeDriver.close();
+        chromeDriver.quit();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        elepySystemUnderTest.stop();
+    }
+
+    @BeforeEach
+    public void setup() {
         elepySystemUnderTest = new Elepy()
                 .addConfiguration(AdminPanel.newAdminPanel())
                 .addConfiguration(MongoConfiguration.inMemory())
@@ -38,13 +58,9 @@ public class SystemTest {
 
         elepySystemUnderTest.start();
 
-        model = elepySystemUnderTest.getModelDescriptionFor(Product.class);
-
-
-        driver = new ElepyDriver(elepySystemUnderTest, new ChromeDriver(chromeOptions));
+        driver = new ElepyDriver(elepySystemUnderTest, chromeDriver);
 
     }
-
 
     @Test
     void canCreateUser() {
@@ -96,10 +112,4 @@ public class SystemTest {
     }
 
 
-    @AfterEach
-    public void tearDown() {
-        driver.close();
-        driver.quit();
-        elepySystemUnderTest.stop();
-    }
 }

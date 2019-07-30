@@ -93,9 +93,9 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private String getIdFieldProp() {
-        Optional<Field> idField = ReflectionUtils.getIdField(getType());
-        if (idField.isPresent()) {
-            return ReflectionUtils.getPropertyName(idField.get());
+        Optional<Field> idProperty = ReflectionUtils.getIdField(getType());
+        if (idProperty.isPresent()) {
+            return ReflectionUtils.getPropertyName(idProperty.get());
         }
         return "id";
     }

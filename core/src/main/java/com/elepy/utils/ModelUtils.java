@@ -40,12 +40,12 @@ public class ModelUtils {
     public static Property describeFieldOrMethod(AccessibleObject accessibleObject) {
         Property property = new Property();
 
-        final boolean idField;
+        final boolean idProperty;
 
         if (accessibleObject instanceof Field) {
-            idField = ReflectionUtils.getIdField(((Field) accessibleObject).getDeclaringClass()).map(field1 -> field1.getName().equals(((Field) accessibleObject).getName())).orElse(false);
+            idProperty = ReflectionUtils.getIdField(((Field) accessibleObject).getDeclaringClass()).map(field1 -> field1.getName().equals(((Field) accessibleObject).getName())).orElse(false);
         } else {
-            idField = false;
+            idProperty = false;
         }
 
         final Column column = accessibleObject.getAnnotation(Column.class);
@@ -55,18 +55,18 @@ public class ModelUtils {
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
         property.setPrettyName(ReflectionUtils.getPrettyName(accessibleObject));
         property.setRequired(accessibleObject.getAnnotation(Required.class) != null);
-        property.setEditable(!idField && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
+        property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
         property.setImportance(importance == null ? 0 : importance.value());
         property.setUnique(accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
-        property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idField && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idField && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
+        property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
 
         property.config(mapFieldTypeInformation(accessibleObject));
-        setupSearch(accessibleObject, property, idField);
+        setupSearch(accessibleObject, property, idProperty);
         return property;
     }
 
-    private static void setupSearch(AccessibleObject accessibleObject, Property property, boolean idField) {
-        property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idField);
+    private static void setupSearch(AccessibleObject accessibleObject, Property property, boolean idProperty) {
+        property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idProperty);
         var availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
 
         property.setExtra("availableFilters", availableFilters);
@@ -89,8 +89,8 @@ public class ModelUtils {
         setupActions(model);
 
         final String toGet = restModel.defaultSortField();
-        final String idField = model.getIdProperty();
-        model.setDefaultSortField(StringUtils.getOrDefault(toGet, idField));
+        final String idProperty = model.getIdProperty();
+        model.setDefaultSortField(StringUtils.getOrDefault(toGet, idProperty));
 
         return model;
     }
