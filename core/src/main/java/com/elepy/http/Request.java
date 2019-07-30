@@ -3,6 +3,7 @@ package com.elepy.http;
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationService;
+import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.describers.Model;
 import com.elepy.di.ElepyContext;
@@ -214,8 +215,8 @@ public interface Request {
         return propertySorts;
     }
 
-    default List<FilterQuery> filtersForModel(Class restModelType) {
-        final List<FilterQuery> filterQueries = new ArrayList<>();
+    default List<Filter> filtersForModel(Class restModelType) {
+        final List<Filter> filterQueries = new ArrayList<>();
         for (String queryParam : queryParams()) {
             if (queryParam.contains("_")) {
                 String[] propertyNameFilter = queryParam.split("_");
@@ -227,8 +228,8 @@ public interface Request {
 
                 FilterType.getByQueryString(propertyNameFilter[propertyNameFilter.length - 1]).ifPresent(filterType1 -> {
                     FilterableField filterableField = new FilterableField(restModelType, propertyName);
-                    FilterQuery filterQuery = new FilterQuery(filterableField, filterType1, queryParams(queryParam));
-                    filterQueries.add(filterQuery);
+                    Filter filter = new Filter(filterableField, filterType1, queryParams(queryParam));
+                    filterQueries.add(filter);
                 });
             }
         }

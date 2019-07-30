@@ -2,12 +2,12 @@ package com.elepy.dao;
 
 import com.elepy.exceptions.ElepyException;
 
-public class FilterQuery {
+public class Filter {
     private final FilterableField filterableField;
     private final FilterType filterType;
     private final String filterValue;
 
-    public FilterQuery(FilterableField filterableField, FilterType filterType, String filterValue) {
+    public Filter(FilterableField filterableField, FilterType filterType, String filterValue) {
         this.filterableField = filterableField;
         this.filterType = filterType;
         this.filterValue = filterValue;

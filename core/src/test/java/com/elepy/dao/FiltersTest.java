@@ -63,7 +63,7 @@ public class FiltersTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        List<FilterQuery> filterQueries = request.filtersForModel(resourceClass);
+        List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
         assertEquals(1, filterQueries.size());
         assertEquals("id", filterQueries.get(0).getFilterableField().getName());
@@ -82,7 +82,7 @@ public class FiltersTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        List<FilterQuery> filterQueries = request.filtersForModel(resourceClass);
+        List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
         assertEquals(1, filterQueries.size());
     }
@@ -97,7 +97,7 @@ public class FiltersTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        List<FilterQuery> filterQueries = request.filtersForModel(resourceClass);
+        List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
         assertEquals(0, filterQueries.size());
 

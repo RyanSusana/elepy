@@ -91,8 +91,8 @@ public class HibernateDao<T> implements Crud<T> {
 
 
         final List<Predicate> filterList = new ArrayList<>();
-        for (FilterQuery filterQuery : query.getFilterQueries()) {
-            filterList.add(HibernatePredicateFactory.fromFilter(root, cb, filterQuery));
+        for (Filter filter : query.getFilters()) {
+            filterList.add(HibernatePredicateFactory.fromFilter(root, cb, filter));
         }
 
 

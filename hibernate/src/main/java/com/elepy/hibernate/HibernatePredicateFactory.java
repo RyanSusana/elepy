@@ -1,6 +1,6 @@
 package com.elepy.hibernate;
 
-import com.elepy.dao.FilterQuery;
+import com.elepy.dao.Filter;
 import com.elepy.dao.FilterableField;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
@@ -14,12 +14,12 @@ import java.util.Date;
 
 public class HibernatePredicateFactory {
 
-    public static Predicate fromFilter(Root root, CriteriaBuilder cb, FilterQuery filterQuery) {
-        final Serializable value = value(filterQuery.getFilterableField(), filterQuery.getFilterValue());
-        final FieldType fieldType = filterQuery.getFilterableField().getFieldType();
+    public static Predicate fromFilter(Root root, CriteriaBuilder cb, Filter filter) {
+        final Serializable value = value(filter.getFilterableField(), filter.getFilterValue());
+        final FieldType fieldType = filter.getFilterableField().getFieldType();
 
-        final String fieldName = filterQuery.getFilterableField().getField().getName();
-        switch (filterQuery.getFilterType()) {
+        final String fieldName = filter.getFilterableField().getField().getName();
+        switch (filter.getFilterType()) {
             case EQUALS:
                 return cb.equal(root.get(fieldName), value);
             case NOT_EQUALS:
@@ -52,7 +52,7 @@ public class HibernatePredicateFactory {
                     return cb.le(root.get(fieldName), (Number) value);
                 }
         }
-        throw new ElepyException("Hibernate does not support the filter: " + filterQuery.getFilterType().getName());
+        throw new ElepyException("Hibernate does not support the filter: " + filter.getFilterType().getName());
     }
 
     private static Serializable value(FilterableField field, String value) {
