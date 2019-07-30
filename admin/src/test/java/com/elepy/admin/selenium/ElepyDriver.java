@@ -32,7 +32,7 @@ public class ElepyDriver implements WebDriver {
     }
 
     public void waitTillCanSee(By by) {
-        await().atMost(20, TimeUnit.SECONDS).until(() -> {
+        await().atMost(40, TimeUnit.SECONDS).until(() -> {
             try {
 
                 final WebElement element = findElement(by);
@@ -44,7 +44,7 @@ public class ElepyDriver implements WebDriver {
     }
 
     public void waitTillCantSee(By by) {
-        await().atMost(20, TimeUnit.SECONDS).until(() -> {
+        await().atMost(40, TimeUnit.SECONDS).until(() -> {
             final WebElement element = findElement(by);
             return (element == null || element.getCssValue("display").equals("none"));
         });
