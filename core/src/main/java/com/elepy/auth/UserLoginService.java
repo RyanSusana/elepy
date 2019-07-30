@@ -34,4 +34,7 @@ public class UserLoginService {
         return Optional.empty();
     }
 
+    public Crud<User> getUserDao() {
+        return userDao;
+    }
 }

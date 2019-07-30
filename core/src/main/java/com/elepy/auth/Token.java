@@ -1,17 +1,35 @@
 package com.elepy.auth;
 
 
+import com.elepy.annotations.RestModel;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
+@Entity(name = "elepy_token")
+@Table(name = "elepy_tokens")
+@RestModel(name = "Tokens", slug = "/tokens", shouldDisplayOnCMS = false)
 public class Token implements Comparable<Token> {
+    @Id
     private String id;
 
-    private User user;
+    @Column
+    private String userId;
 
-    private long creationTime;
+    @Column
+    private long maxDate;
 
-    private long duration;
+    public long getMaxDate() {
+        return maxDate;
+    }
 
+    public Token setMaxDate(long maxDate) {
+        this.maxDate = maxDate;
+        return this;
+    }
 
     public String getId() {
         return id;
@@ -22,30 +40,12 @@ public class Token implements Comparable<Token> {
         return this;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public Token setUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    public long getCreationTime() {
-        return creationTime;
-    }
-
-    public Token setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-        return this;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public Token setDuration(long duration) {
-        this.duration = duration;
+    public Token setUserId(String userId) {
+        this.userId = userId;
         return this;
     }
 
@@ -68,6 +68,6 @@ public class Token implements Comparable<Token> {
 
     @Override
     public int compareTo(Token o) {
-        return Long.compare(this.creationTime, o.creationTime);
+        return Long.compare(this.maxDate, o.maxDate);
     }
 }

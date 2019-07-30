@@ -1,6 +1,7 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.auth.Token;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationService;
 import com.elepy.auth.UserLoginService;
@@ -636,6 +637,8 @@ public class Elepy implements ElepyContext {
 
 
     private void init() {
+
+        addModel(Token.class);
         addModel(User.class);
         addModel(FileReference.class);
         addExtension(new FileUploadExtension());

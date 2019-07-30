@@ -26,6 +26,10 @@ public interface Crud<T> {
 
     Page<T> search(Query query, PageSettings settings);
 
+    default Page<T> search(Query query) {
+        return search(query, new PageSettings(1L, Integer.MAX_VALUE, List.of()));
+    }
+
     /**
      * Queries a database in search of a model item with a specific ID
      *
