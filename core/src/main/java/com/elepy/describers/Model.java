@@ -12,7 +12,8 @@ public class Model<T> {
     private String slug;
     private Class<T> javaClass;
     private boolean viewableOnCMS;
-    private String idField;
+    private String idProperty;
+    private String featuredProperty;
     private List<HttpAction> actions;
     private List<Property> properties;
 
@@ -27,6 +28,14 @@ public class Model<T> {
 
     public String getDefaultSortField() {
         return defaultSortField;
+    }
+
+    public String getFeaturedProperty() {
+        return featuredProperty;
+    }
+
+    public void setFeaturedProperty(String featuredProperty) {
+        this.featuredProperty = featuredProperty;
     }
 
     public void setDefaultSortField(String defaultSortField) {
@@ -65,12 +74,12 @@ public class Model<T> {
         this.javaClass = javaClass;
     }
 
-    public String getIdField() {
-        return idField;
+    public String getIdProperty() {
+        return idProperty;
     }
 
-    public void setIdField(String idField) {
-        this.idField = idField;
+    public void setIdProperty(String idProperty) {
+        this.idProperty = idProperty;
     }
 
     public List<HttpAction> getActions() {

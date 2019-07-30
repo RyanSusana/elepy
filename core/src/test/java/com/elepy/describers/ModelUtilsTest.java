@@ -70,6 +70,24 @@ public class ModelUtilsTest {
     }
 
     @Test
+    void testCorrectObject() {
+        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+
+        final Property property = modelFromClass.getProperty("resourceCustomObject");
+        final ObjectPropertyConfig of = ObjectPropertyConfig.of(property);
+
+        assertThat(property.getType())
+                .isEqualTo(OBJECT);
+
+        assertThat(of.getObjectName())
+                .isEqualTo("ResourceCustomObject");
+        assertThat(of.getFeaturedProperty())
+                .isEqualTo("featured");
+        assertThat(of.getProperties().size())
+                .isEqualTo(1);
+    }
+
+    @Test
     void testCorrectNumber() {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
@@ -122,6 +140,19 @@ public class ModelUtilsTest {
         assertFalse(modelFromClass.getProperty("nonEditable").isEditable());
     }
 
+    @Test
+    void testCorrectIdProperty() {
+        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+
+        assertThat(modelFromClass.getIdProperty()).isEqualTo("id");
+    }
+
+    @Test
+    void testCorrectFeaturedProperty() {
+        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+
+        assertThat(modelFromClass.getFeaturedProperty()).isEqualTo("featuredProperty");
+    }
 
     //TODO consider splitting this into multiple tests and testing the extras
     @Test

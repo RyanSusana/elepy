@@ -85,11 +85,11 @@ public class ModelUtils {
 
 
         setupDefaultActions(model);
-        setupIdField(model);
+        setupImportantFields(model);
         setupActions(model);
 
         final String toGet = restModel.defaultSortField();
-        final String idField = model.getIdField();
+        final String idField = model.getIdProperty();
         model.setDefaultSortField(StringUtils.getOrDefault(toGet, idField));
 
         return model;
@@ -108,16 +108,22 @@ public class ModelUtils {
         return HttpAction.of(actionAnnotation.name(), multiSlug, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
     }
 
-    private static void setupIdField(Model<?> model) {
+    private static void setupImportantFields(Model<?> model) {
 
         var cls = model.getJavaClass();
+
         Field field = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
 
         if (!Arrays.asList(Long.class, String.class, Integer.class).contains(org.apache.commons.lang3.ClassUtils.primitivesToWrappers(field.getType())[0])) {
             throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
         }
 
-        model.setIdField(ReflectionUtils.getPropertyName(field));
+        model.setIdProperty(ReflectionUtils.getPropertyName(field));
+
+        model.setFeaturedProperty(ReflectionUtils.searchForFieldWithAnnotation(cls, Featured.class)
+                .map(ReflectionUtils::getPropertyName)
+                .orElse(model.getIdProperty()));
+
     }
 
     private static void setupDefaultActions(Model<?> model) {

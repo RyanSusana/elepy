@@ -68,6 +68,6 @@ public class ModelContext<T> {
     }
 
     public String getIdField() {
-        return model.getIdField();
+        return model.getIdProperty();
     }
 }

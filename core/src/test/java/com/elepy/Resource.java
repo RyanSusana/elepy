@@ -18,6 +18,9 @@ public class Resource {
     @Identifier
     private int id;
 
+    @Featured
+    private String featuredProperty;
+
     @DateTime(minimumDate = "0", maximumDate = "2019-22-12")
     private Date date;
 
@@ -60,7 +63,7 @@ public class Resource {
     @Searchable
     private String searchableField;
 
-    private Object innerObject;
+    private ResourceCustomObject resourceCustomObject;
 
     @FileReference(allowedMimeType = "image/png")
     private String fileReference;
@@ -69,6 +72,14 @@ public class Resource {
     private String nonEditable;
 
     public Resource() {
+    }
+
+    public String getFeaturedProperty() {
+        return featuredProperty;
+    }
+
+    public void setFeaturedProperty(String featuredProperty) {
+        this.featuredProperty = featuredProperty;
     }
 
     public String getFileReference() {
@@ -95,12 +106,12 @@ public class Resource {
         this.textType = textType;
     }
 
-    public Object getInnerObject() {
-        return innerObject;
+    public ResourceCustomObject getResourceCustomObject() {
+        return resourceCustomObject;
     }
 
-    public void setInnerObject(Object innerObject) {
-        this.innerObject = innerObject;
+    public void setResourceCustomObject(ResourceCustomObject resourceCustomObject) {
+        this.resourceCustomObject = resourceCustomObject;
     }
 
     public String getNonEditable() {
