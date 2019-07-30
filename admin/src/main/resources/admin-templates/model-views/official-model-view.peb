@@ -5,7 +5,7 @@
 
 <stylesheet src="https://unpkg.com/elepy-vue@^0.4/dist/ElepyVue.css"/>
 
-<script src="https://unpkg.com/elepy-vue@^0.4/dist/ElepyVue.umd.js"></script>
+<script src="https://unpkg.com/elepy-vue@^0.4/dist/ElepyVue.umd.min.js"></script>
 <script>
 
     console.log(new Vue().$options.components)
