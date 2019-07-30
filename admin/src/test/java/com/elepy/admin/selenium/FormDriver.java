@@ -33,7 +33,7 @@ public class FormDriver<T> {
     }
 
     public By getPropertyField(Property property) {
-        return By.cssSelector(String.format("*[property=\"%s\"] > *", property.getName()));
+        return By.cssSelector(String.format("*[property=\"%s\"] > :not(div)", property.getName()));
     }
 
     protected By getPropertyField(String propertyName) {
