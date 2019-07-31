@@ -1,4 +1,4 @@
-package com.elepy.routes;
+package com.elepy.handlers;
 
 public class DefaultService<T> extends FinalService<T> {
 

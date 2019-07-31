@@ -2,7 +2,7 @@ package com.elepy.uploads;
 
 import com.elepy.annotations.*;
 import com.elepy.auth.Permissions;
-import com.elepy.routes.DisabledHandler;
+import com.elepy.handlers.DisabledHandler;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

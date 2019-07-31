@@ -2,8 +2,8 @@ package com.elepy.annotations;
 
 
 import com.elepy.auth.Permissions;
-import com.elepy.routes.CreateHandler;
-import com.elepy.routes.DefaultCreate;
+import com.elepy.handlers.CreateHandler;
+import com.elepy.handlers.DefaultCreate;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,7 +22,7 @@ public @interface Create {
      *
      * @return the route createHandler
      * @see DefaultCreate
-     * @see com.elepy.routes.CreateHandler
+     * @see com.elepy.handlers.CreateHandler
      */
     Class<? extends CreateHandler> handler() default DefaultCreate.class;
 

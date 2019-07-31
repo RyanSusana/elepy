@@ -1,4 +1,4 @@
-package com.elepy.routes;
+package com.elepy.handlers;
 
 public interface BaseHandler<T> {
 }

@@ -11,7 +11,7 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.models.ModelContext;
-import com.elepy.routes.CreateHandler;
+import com.elepy.handlers.CreateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mindrot.jbcrypt.BCrypt;
 

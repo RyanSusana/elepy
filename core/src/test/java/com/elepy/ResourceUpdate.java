@@ -3,7 +3,7 @@ package com.elepy;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Request;
-import com.elepy.routes.SimpleUpdate;
+import com.elepy.handlers.SimpleUpdate;
 
 public class ResourceUpdate extends SimpleUpdate<Resource> {
 

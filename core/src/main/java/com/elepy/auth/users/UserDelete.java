@@ -7,7 +7,7 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
-import com.elepy.routes.DeleteHandler;
+import com.elepy.handlers.DeleteHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserDelete implements DeleteHandler<User> {

@@ -1,8 +1,8 @@
 package com.elepy.annotations;
 
 import com.elepy.auth.Permissions;
-import com.elepy.routes.DefaultDelete;
-import com.elepy.routes.DeleteHandler;
+import com.elepy.handlers.DefaultDelete;
+import com.elepy.handlers.DeleteHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,7 +21,7 @@ public @interface Delete {
      *
      * @return the route deleteHandler
      * @see DefaultDelete
-     * @see com.elepy.routes.DeleteHandler
+     * @see com.elepy.handlers.DeleteHandler
      */
     Class<? extends DeleteHandler> handler() default DefaultDelete.class;
 

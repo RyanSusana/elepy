@@ -1,4 +1,4 @@
-package com.elepy.routes;
+package com.elepy.handlers;
 
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;

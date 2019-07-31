@@ -3,7 +3,7 @@ package com.elepy.auth.users;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.http.Request;
-import com.elepy.routes.MappedFind;
+import com.elepy.handlers.MappedFind;
 
 public class UserFind extends MappedFind<User, User> {
     @Override

@@ -1,4 +1,4 @@
-package com.elepy.routes;
+package com.elepy.handlers;
 
 import com.elepy.dao.Crud;
 import com.elepy.http.HttpContext;
@@ -32,7 +32,7 @@ public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements Fi
     }
 
 
-    private class DefaultMappedFindMany extends com.elepy.routes.MappedFindMany<T, R> {
+    private class DefaultMappedFindMany extends com.elepy.handlers.MappedFindMany<T, R> {
         @Override
         public List<R> mapValues(List<T> typeStream, Request request, Crud<T> crud) {
             return typeStream.stream().map(t -> MappedFind.this.map(t, request, crud)).collect(Collectors.toList());

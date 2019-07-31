@@ -6,7 +6,7 @@ import com.elepy.dao.Crud;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.routes.DefaultService;
+import com.elepy.handlers.DefaultService;
 
 import java.util.Optional;
 

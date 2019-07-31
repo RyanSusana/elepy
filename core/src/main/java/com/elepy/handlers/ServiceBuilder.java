@@ -1,4 +1,4 @@
-package com.elepy.routes;
+package com.elepy.handlers;
 
 public final class ServiceBuilder<T> {
     private FindOneHandler<T> findOne;
