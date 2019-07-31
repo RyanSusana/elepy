@@ -1,6 +1,10 @@
 # Getting Started {docsify-ignore-all}
 Elepy is awesome, but more importantly, easy! This guide shows how easy Elepy can be to get started with.
 
+___or if you prefer videos...___
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4kyScR_lSTM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Feel free to subscribe!
 # Step Zero: Basic Terminology
 Elepy knows the concept of RestModels. These are regular POJO(or Data Classes, for Kotlin users) annotated with the [@RestModel](/docs/annotations#restmodel) annotation. This is the domain objects of your CMS.
 And that leads us to the next term, CMS. CMS means [(Headless) Content Management System](https://en.wikipedia.org/wiki/Headless_content_management_system) in the context of Elepy.
