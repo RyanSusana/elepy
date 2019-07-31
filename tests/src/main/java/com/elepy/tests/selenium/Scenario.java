@@ -1,4 +1,4 @@
-package com.elepy.admin.selenium;
+package com.elepy.tests.selenium;
 
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;

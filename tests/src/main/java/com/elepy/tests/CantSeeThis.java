@@ -1,4 +1,4 @@
-package com.elepy.admin;
+package com.elepy.tests;
 
 import com.elepy.annotations.RestModel;
 

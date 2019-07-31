@@ -1,4 +1,4 @@
-package com.elepy.admin.selenium;
+package com.elepy.tests.selenium;
 
 import com.elepy.models.FieldType;
 import com.elepy.models.Model;

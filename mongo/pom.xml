@@ -19,6 +19,11 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <printSummary>true</printSummary>
+                    <!--Sometimes jsdeliver cdn fails-->
+                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
+                    <systemPropertyVariables>
+                        <headlessMode>${headlessMode}</headlessMode>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>

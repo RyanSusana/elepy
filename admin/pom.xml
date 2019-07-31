@@ -20,20 +20,6 @@
                 </excludes>
             </resource>
         </resources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!--Sometimes jsdeliver cdn fails-->
-                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
-                    <systemPropertyVariables>
-                        <headlessMode>${headlessMode}</headlessMode>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
     <dependencies>
         <dependency>
@@ -65,44 +51,16 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
-            <version>2.2.0-RC2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.elepy</groupId>
-            <artifactId>elepy-mongo</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.elepy</groupId>
-            <artifactId>elepy-uploads</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>3.141.59</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <version>3.141.59</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
             <version>1.16.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

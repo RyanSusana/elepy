@@ -18,6 +18,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
+                    <!--Sometimes jsdeliver cdn fails-->
+                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
+                    <systemPropertyVariables>
+                        <headlessMode>${headlessMode}</headlessMode>
+                    </systemPropertyVariables>
                     <printSummary>true</printSummary>
                 </configuration>
             </plugin>

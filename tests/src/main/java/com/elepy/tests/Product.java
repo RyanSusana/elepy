@@ -1,8 +1,10 @@
-package com.elepy.admin;
+package com.elepy.tests;
 
 import com.elepy.annotations.*;
-import com.elepy.http.ActionType;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -11,11 +13,13 @@ import java.util.Date;
 @Delete(requiredPermissions = {})
 @Update(requiredPermissions = {})
 @Find(requiredPermissions = {})
-@Action(name = "Find On Google", handler = ProductFindOnGoogle.class, actionType = ActionType.SINGLE)
+@Entity(name = "Products")
+@Table(name = "products")
 public class Product {
 
     @PrettyName("Product ID")
     @Identifier(generated = false)
+    @Id
     private Integer id;
 
     @PrettyName("Price")

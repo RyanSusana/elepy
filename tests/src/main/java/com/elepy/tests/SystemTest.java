@@ -1,9 +1,9 @@
-package com.elepy.admin;
+package com.elepy.tests;
 
 import com.elepy.Elepy;
-import com.elepy.admin.selenium.ElepyDriver;
-import com.elepy.admin.selenium.Scenario;
-import com.elepy.mongo.MongoConfiguration;
+import com.elepy.admin.AdminPanel;
+import com.elepy.tests.selenium.ElepyDriver;
+import com.elepy.tests.selenium.Scenario;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class SystemTest {
+public abstract class SystemTest implements ElepyConfigHelper {
 
     private ElepyDriver driver;
     private Elepy elepySystemUnderTest;
@@ -32,7 +32,6 @@ public class SystemTest {
         chromeDriver = new ChromeDriver(chromeOptions);
 
 
-
     }
 
     @AfterAll
@@ -49,9 +48,13 @@ public class SystemTest {
 
     @BeforeEach
     public void setup() {
-        elepySystemUnderTest = new Elepy()
-                .addConfiguration(AdminPanel.newAdminPanel())
-                .addConfiguration(MongoConfiguration.inMemory())
+        elepySystemUnderTest = new Elepy();
+
+        this.configureElepy(elepySystemUnderTest);
+
+
+        elepySystemUnderTest.addConfiguration(AdminPanel.newAdminPanel())
+
                 .onPort(1339)
                 .addModel(CantSeeThis.class)
                 .addModel(Product.class);
@@ -96,8 +99,8 @@ public class SystemTest {
 
         assertThat(products.count())
                 .isEqualTo(1);
-        assertThat(products.getAll().get(0).getPrice())
-                .isEqualTo(BigDecimal.valueOf(200.0));
+        assertThat(products.getAll().get(0).getPrice().intValue())
+                .isEqualTo(200);
     }
 
     @Test
@@ -110,6 +113,5 @@ public class SystemTest {
         assertThat(driver.getPageSource()).contains("404");
 
     }
-
 
 }

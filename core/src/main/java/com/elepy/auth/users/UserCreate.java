@@ -9,6 +9,7 @@ import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
+import com.elepy.id.HexIdentityProvider;
 import com.elepy.models.ModelContext;
 import com.elepy.routes.CreateHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,8 +38,7 @@ public class UserCreate implements CreateHandler<User> {
             }
             new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
 
-            user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-            crud.create(user);
+            createUser(crud, user);
             context.response().result(Message.of("Successfully created user", 200));
         } else {
             for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
@@ -53,11 +53,20 @@ public class UserCreate implements CreateHandler<User> {
                 throw new ElepyException("Passwords must be more than 4 characters long!", 400);
             }
 
-            user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-            crud.create(user);
+            createUser(crud, user);
             context.response().result();
             context.response().result(Message.of("Successfully created the user", 200));
 
         }
+    }
+
+    private void createUser(Crud<User> crud, User user) {
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+
+        //This line didn't exist before for some reason it got deleted
+        new HexIdentityProvider<User>().provideId(user, crud);
+
+
+        crud.create(user);
     }
 }
