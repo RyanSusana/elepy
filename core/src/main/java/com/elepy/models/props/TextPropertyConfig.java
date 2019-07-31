@@ -1,8 +1,8 @@
-package com.elepy.describers.props;
+package com.elepy.models.props;
 
 import com.elepy.annotations.Text;
-import com.elepy.describers.Property;
 import com.elepy.models.FieldType;
+import com.elepy.models.Property;
 import com.elepy.models.TextType;
 
 import java.lang.reflect.AccessibleObject;

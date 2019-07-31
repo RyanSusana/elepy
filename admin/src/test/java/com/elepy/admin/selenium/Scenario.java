@@ -2,7 +2,7 @@ package com.elepy.admin.selenium;
 
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.describers.Model;
+import com.elepy.models.Model;
 import org.mindrot.jbcrypt.BCrypt;
 import org.openqa.selenium.By;
 

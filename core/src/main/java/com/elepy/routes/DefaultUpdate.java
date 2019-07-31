@@ -1,8 +1,6 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.Model;
-import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -11,6 +9,8 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import com.elepy.models.Model;
+import com.elepy.models.ModelContext;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;

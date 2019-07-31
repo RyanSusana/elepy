@@ -1,6 +1,6 @@
-package com.elepy.describers.props;
+package com.elepy.models.props;
 
-import com.elepy.describers.Property;
+import com.elepy.models.Property;
 
 public interface PropertyConfig {
     void config(Property property);

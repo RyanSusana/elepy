@@ -2,9 +2,9 @@ package com.elepy.uploads;
 
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
+import com.elepy.models.ModelContext;
 import com.elepy.routes.DeleteHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -5,9 +5,9 @@ import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationService;
 import com.elepy.dao.Filter;
 import com.elepy.dao.*;
-import com.elepy.describers.Model;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.Model;
 import com.elepy.uploads.FileUpload;
 import com.elepy.utils.ReflectionUtils;
 

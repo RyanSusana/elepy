@@ -3,14 +3,14 @@ package com.elepy.utils;
 import com.elepy.annotations.*;
 import com.elepy.auth.Permissions;
 import com.elepy.dao.FilterType;
-import com.elepy.describers.Model;
-import com.elepy.describers.Property;
-import com.elepy.describers.props.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.ActionType;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.FieldType;
+import com.elepy.models.Model;
+import com.elepy.models.Property;
+import com.elepy.models.props.*;
 
 import javax.persistence.Column;
 import java.lang.reflect.AccessibleObject;

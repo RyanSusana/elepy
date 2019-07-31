@@ -1,4 +1,4 @@
-package com.elepy.describers;
+package com.elepy.models;
 
 public interface ModelChange {
     void change(ModelContext modelContext);

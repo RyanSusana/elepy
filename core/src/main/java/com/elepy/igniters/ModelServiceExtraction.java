@@ -2,7 +2,7 @@ package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
-import com.elepy.describers.Model;
+import com.elepy.models.Model;
 import com.elepy.routes.*;
 import com.elepy.utils.ReflectionUtils;
 

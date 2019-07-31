@@ -3,10 +3,10 @@ package com.elepy.auth.users;
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
+import com.elepy.models.ModelContext;
 import com.elepy.routes.DeleteHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

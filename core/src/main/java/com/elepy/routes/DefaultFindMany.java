@@ -4,10 +4,10 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.PageSettings;
 import com.elepy.dao.Query;
-import com.elepy.describers.ModelContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DefaultFindMany<T> implements FindManyHandler<T> {

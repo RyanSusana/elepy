@@ -1,11 +1,11 @@
 package com.elepy.routes;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
+import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

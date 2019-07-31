@@ -8,10 +8,10 @@ import com.elepy.admin.concepts.ViewHandler;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContextHandler;
 import com.elepy.http.HttpService;
+import com.elepy.models.Model;
 import com.mitchellbosecke.pebble.PebbleEngine;
 
 import java.io.IOException;

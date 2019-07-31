@@ -1,6 +1,6 @@
 package com.elepy.admin.selenium;
 
-import com.elepy.describers.Model;
+import com.elepy.models.Model;
 import org.openqa.selenium.By;
 
 public class ModelDriver<T> {

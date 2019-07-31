@@ -2,8 +2,8 @@ package com.elepy.dao;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Unique;
-import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.models.Model;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;

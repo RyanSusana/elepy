@@ -1,6 +1,6 @@
 package com.elepy.dao;
 
-import com.elepy.describers.Model;
+import com.elepy.models.Model;
 
 /**
  * This is a class used by Elepy to map a class to a Crud interface

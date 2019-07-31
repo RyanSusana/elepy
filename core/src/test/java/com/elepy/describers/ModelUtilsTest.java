@@ -2,9 +2,11 @@ package com.elepy.describers;
 
 import com.elepy.Resource;
 import com.elepy.ResourceArray;
-import com.elepy.describers.props.*;
 import com.elepy.models.FieldType;
+import com.elepy.models.Model;
+import com.elepy.models.Property;
 import com.elepy.models.TextType;
+import com.elepy.models.props.*;
 import com.elepy.uploads.FileUploadEvaluator;
 import com.elepy.utils.ModelUtils;
 import org.junit.jupiter.api.Test;

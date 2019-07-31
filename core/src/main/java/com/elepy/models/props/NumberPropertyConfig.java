@@ -1,9 +1,9 @@
-package com.elepy.describers.props;
+package com.elepy.models.props;
 
 import com.elepy.annotations.Number;
-import com.elepy.describers.Property;
 import com.elepy.models.FieldType;
 import com.elepy.models.NumberType;
+import com.elepy.models.Property;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AccessibleObject;

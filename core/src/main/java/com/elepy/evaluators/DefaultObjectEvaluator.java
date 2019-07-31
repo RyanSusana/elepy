@@ -1,11 +1,11 @@
 package com.elepy.evaluators;
 
-import com.elepy.describers.Property;
-import com.elepy.describers.props.DatePropertyConfig;
-import com.elepy.describers.props.NumberPropertyConfig;
-import com.elepy.describers.props.TextPropertyConfig;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
+import com.elepy.models.Property;
+import com.elepy.models.props.DatePropertyConfig;
+import com.elepy.models.props.NumberPropertyConfig;
+import com.elepy.models.props.TextPropertyConfig;
 import com.elepy.utils.ModelUtils;
 
 import java.lang.reflect.Field;

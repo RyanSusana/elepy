@@ -1,9 +1,9 @@
 package com.elepy.admin;
 
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
+import com.elepy.models.ModelContext;
 import com.elepy.routes.ActionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

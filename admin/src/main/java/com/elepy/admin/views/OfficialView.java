@@ -1,8 +1,8 @@
 package com.elepy.admin.views;
 
 import com.elepy.admin.concepts.ModelView;
-import com.elepy.describers.Model;
 import com.elepy.http.Request;
+import com.elepy.models.Model;
 import com.mitchellbosecke.pebble.PebbleEngine;
 
 import java.io.IOException;

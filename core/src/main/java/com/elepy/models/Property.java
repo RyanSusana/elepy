@@ -1,7 +1,6 @@
-package com.elepy.describers;
+package com.elepy.models;
 
-import com.elepy.describers.props.PropertyConfig;
-import com.elepy.models.FieldType;
+import com.elepy.models.props.PropertyConfig;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;

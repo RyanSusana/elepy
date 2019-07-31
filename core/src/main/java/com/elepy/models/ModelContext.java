@@ -1,4 +1,4 @@
-package com.elepy.describers;
+package com.elepy.models;
 
 import com.elepy.dao.Crud;
 import com.elepy.evaluators.ObjectEvaluator;

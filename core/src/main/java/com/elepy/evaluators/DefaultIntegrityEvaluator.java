@@ -2,8 +2,8 @@ package com.elepy.evaluators;
 
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
-import com.elepy.describers.ModelContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;

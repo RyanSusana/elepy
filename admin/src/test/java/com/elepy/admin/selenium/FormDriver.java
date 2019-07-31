@@ -1,8 +1,8 @@
 package com.elepy.admin.selenium;
 
-import com.elepy.describers.Model;
-import com.elepy.describers.Property;
 import com.elepy.models.FieldType;
+import com.elepy.models.Model;
+import com.elepy.models.Property;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
