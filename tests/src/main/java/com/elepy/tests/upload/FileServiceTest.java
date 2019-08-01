@@ -58,7 +58,7 @@ public abstract class FileServiceTest implements ElepyTest {
         elepy = new Elepy()
                 .addModel(Resource.class)
                 .addConfiguration(databaseConfiguration())
-                .withUploads(this.fileService)
+                .withFileService(this.fileService)
                 .onPort(port);
 
         List.of(configurations).forEach(elepy::addConfiguration);

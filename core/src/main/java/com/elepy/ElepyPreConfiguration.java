@@ -249,7 +249,7 @@ public class ElepyPreConfiguration {
      * @param fileService The file service
      */
     public void withUploads(FileService fileService) {
-        elepy.withUploads(fileService);
+        elepy.withFileService(fileService);
     }
 
     /**

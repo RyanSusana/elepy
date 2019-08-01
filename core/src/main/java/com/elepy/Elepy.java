@@ -89,7 +89,7 @@ public class Elepy implements ElepyContext {
 
         withBaseObjectEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
-        withUploads(new DefaultFileService());
+        withFileService(new DefaultFileService());
         getObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
@@ -567,7 +567,7 @@ public class Elepy implements ElepyContext {
      * @param fileService The file service
      * @return the Elepy instance
      */
-    public Elepy withUploads(FileService fileService) {
+    public Elepy withFileService(FileService fileService) {
         this.registerDependency(FileService.class, fileService);
         return this;
     }
