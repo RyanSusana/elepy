@@ -19,6 +19,9 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <printSummary>true</printSummary>
+                    <systemPropertyVariables>
+                        <headlessMode>${headlessMode}</headlessMode>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
