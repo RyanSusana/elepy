@@ -34,7 +34,7 @@ public class MongoConfiguration implements Configuration {
     }
 
     @Override
-    public void before(ElepyPreConfiguration elepy) {
+    public void preConfig(ElepyPreConfiguration elepy) {
         elepy.registerDependency(DB.class, mongoClient.getDB(databaseName));
         elepy.withDefaultCrudFactory(MongoCrudFactory.class);
 
@@ -44,7 +44,7 @@ public class MongoConfiguration implements Configuration {
     }
 
     @Override
-    public void after(ElepyPostConfiguration elepy) {
+    public void postConfig(ElepyPostConfiguration elepy) {
 
     }
 }

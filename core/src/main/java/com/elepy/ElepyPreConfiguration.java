@@ -242,6 +242,10 @@ public class ElepyPreConfiguration {
         return elepy.models();
     }
 
+    public List<Class<?>> modelClasses() {
+        return elepy.modelClasses();
+    }
+
     /**
      * @param handler What to do when elepy stops gracefully
      */

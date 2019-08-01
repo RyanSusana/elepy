@@ -29,12 +29,12 @@ public class AdminPanel implements Configuration {
     }
 
     @Override
-    public void before(ElepyPreConfiguration elepy) {
+    public void preConfig(ElepyPreConfiguration elepy) {
         elepy.addExtension(elepyAdminPanel);
     }
 
     @Override
-    public void after(ElepyPostConfiguration elepy) {
+    public void postConfig(ElepyPostConfiguration elepy) {
 
     }
 }

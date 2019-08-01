@@ -23,15 +23,20 @@ public class WithSetupConfiguration implements Configuration {
     }
 
     @Override
-    public void before(ElepyPreConfiguration elepy) {
+    public void preConfig(ElepyPreConfiguration elepy) {
         configPre.handle();
-        postConf.before(elepy);
+        postConf.preConfig(elepy);
 
     }
 
     @Override
-    public void after(ElepyPostConfiguration elepy) {
-        postConf.after(elepy);
+    public void afterPreConfig(ElepyPreConfiguration elepy) {
+        postConf.afterPreConfig(elepy);
+    }
+
+    @Override
+    public void postConfig(ElepyPostConfiguration elepy) {
+        postConf.postConfig(elepy);
         elepy.onStop(teardown);
     }
 

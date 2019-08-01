@@ -41,6 +41,7 @@ public class Scenario {
     public User createInialUser(String username, String password) {
         driver.navToUrl("/elepy-initial-user");
 
+        driver.waitTillCanSee(By.name("username"));
 
         driver.findElement(By.name("username")).sendKeys(username);
         driver.findElement(By.name("password")).sendKeys(password);

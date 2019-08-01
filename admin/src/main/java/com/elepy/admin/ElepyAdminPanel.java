@@ -50,7 +50,7 @@ public class ElepyAdminPanel implements ElepyExtension {
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
 
 
-        this.models = elepy.getModelDescriptions().stream().filter(Model::isViewableOnCMS).collect(Collectors.toList());
+        this.models = elepy.models().stream().filter(Model::isViewableOnCMS).collect(Collectors.toList());
         this.pluginHandler = new PluginHandler(this, http);
         this.viewHandler = new ViewHandler(models, this, http);
         this.noUserFoundHandler = (ctx) -> {
