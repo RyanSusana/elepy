@@ -5,11 +5,11 @@ import com.elepy.annotations.Action;
 import com.elepy.annotations.ExtraRoutes;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.Message;
+import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.ServiceHandler;
 import com.elepy.http.*;
 import com.elepy.models.Model;
 import com.elepy.models.ModelContext;
-import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.ServiceHandler;
 import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ public class ModelPiston<T> {
 
     public ModelPiston(Model<T> model, Elepy elepy) {
         this.model = model;
-        this.objectMapper = elepy.getObjectMapper();
+        this.objectMapper = elepy.objectMapper();
         this.modelContext = ModelContextExtraction.extractContext(model, elepy);
 
         this.serviceExtraction = ModelServiceExtraction.extractService(model, elepy);
@@ -160,7 +160,7 @@ public class ModelPiston<T> {
                     .route(ctx -> {
                         ctx.attribute("action", action);
                         ctx.result(Message.of("Executed action", 200));
-                        actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelType), crud, modelContext, elepy.getObjectMapper());
+                        actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelType), crud, modelContext, elepy.objectMapper());
                     });
 
             //add two routes for multi select and single select.

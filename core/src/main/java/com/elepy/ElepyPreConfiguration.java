@@ -43,7 +43,7 @@ public class ElepyPreConfiguration {
     }
 
     public ObjectMapper getObjectMapper() {
-        return elepy.getObjectMapper();
+        return elepy.objectMapper();
     }
 
 

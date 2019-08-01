@@ -39,7 +39,7 @@ public class ElepyPostConfiguration {
     }
 
     public ObjectMapper getObjectMapper() {
-        return elepy.getObjectMapper();
+        return elepy.objectMapper();
     }
 
     /**

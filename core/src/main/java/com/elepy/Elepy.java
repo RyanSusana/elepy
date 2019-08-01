@@ -88,7 +88,7 @@ public class Elepy implements ElepyContext {
         withBaseObjectEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         withFileService(new DefaultFileService());
-        getObjectMapper()
+        objectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -158,8 +158,8 @@ public class Elepy implements ElepyContext {
     }
 
     @Override
-    public ObjectMapper getObjectMapper() {
-        return this.context.getObjectMapper();
+    public ObjectMapper objectMapper() {
+        return this.context.objectMapper();
     }
 
     @Override

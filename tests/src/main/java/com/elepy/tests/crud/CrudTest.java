@@ -89,7 +89,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources").asString();
 
 
-        Page resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), Page.class);
+        Page resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), Page.class);
 
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
@@ -108,7 +108,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?id_equals=4&uniqueField_contains=filter&numberMax40_equals=25&q=ilterUni").asString();
 
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
 
@@ -128,7 +128,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=ilterUni").asString();
 
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
@@ -145,7 +145,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=testsearchto").asString();
 
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
@@ -159,7 +159,7 @@ public abstract class CrudTest implements ElepyTest {
         final Resource resource = resourceCrud.getAll().get(0);
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/" + resource.getId()).asString();
 
-        Resource foundResource = elepy.getObjectMapper().readValue(getRequest.getBody(), Resource.class);
+        Resource foundResource = elepy.objectMapper().readValue(getRequest.getBody(), Resource.class);
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(foundResource.getId(), resource.getId());
@@ -172,7 +172,7 @@ public abstract class CrudTest implements ElepyTest {
         final long count = resourceCrud.count();
         final Resource resource = validObject();
         resource.setUniqueField("uniqueCreate");
-        final String s = elepy.getObjectMapper().writeValueAsString(resource);
+        final String s = elepy.objectMapper().writeValueAsString(resource);
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
@@ -194,7 +194,7 @@ public abstract class CrudTest implements ElepyTest {
         resource1.setUniqueField("uniqueMultiCreate");
 
 
-        final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
+        final String s = elepy.objectMapper().writeValueAsString(new Resource[]{resource, resource1});
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
@@ -212,7 +212,7 @@ public abstract class CrudTest implements ElepyTest {
         final Resource resource1 = validObject();
         resource1.setUniqueField("uniqueMultiCreate1");
 
-        final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
+        final String s = elepy.objectMapper().writeValueAsString(new Resource[]{resource, resource1});
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 

@@ -16,6 +16,6 @@ public class HibernateCrudFactory implements CrudFactory {
     public <T> Crud<T> crudFor(Model<T> type) {
 
         final SessionFactory singleton = elepyContext.getDependency(SessionFactory.class);
-        return new HibernateDao<>(singleton, elepyContext.getObjectMapper(), type);
+        return new HibernateDao<>(singleton, elepyContext.objectMapper(), type);
     }
 }
