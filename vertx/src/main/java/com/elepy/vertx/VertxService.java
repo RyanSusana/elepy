@@ -1,10 +1,7 @@
 package com.elepy.vertx;
 
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.http.ExceptionHandler;
-import com.elepy.http.HttpContextHandler;
-import com.elepy.http.HttpService;
-import com.elepy.http.Route;
+import com.elepy.http.*;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -12,6 +9,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.StaticHandler;
 import org.eclipse.jetty.util.MultiMap;
 
 import java.util.HashMap;
@@ -29,6 +27,8 @@ public class VertxService implements HttpService {
     private Map<RouteKey, Route> routes;
     private int counter;
     private boolean ignitedOnce = false;
+
+    private StaticHandler staticHandler = null;
 
     private Map<Class, ExceptionHandler> exceptionHandlers;
     private MultiMap<HttpContextHandler> before;
@@ -82,6 +82,11 @@ public class VertxService implements HttpService {
     }
 
     @Override
+    public void staticFiles(String path, StaticFileLocation location) {
+        staticHandler = StaticHandler.create().setWebRoot(path);
+    }
+
+    @Override
     public <T extends Exception> void exception(Class<T> exceptionClass, com.elepy.http.ExceptionHandler<? super T> handler) {
         exceptionHandlers.put(exceptionClass, handler);
     }
@@ -119,13 +124,13 @@ public class VertxService implements HttpService {
             throw new ElepyConfigException("Can't add routes after server has ignited");
         }
 
-
         router.route().handler(BodyHandler.create()
                 .setMergeFormAttributes(true)
                 .setUploadsDirectory(System.getProperty("java.io.tmpdir")));
         igniteBefore();
         igniteRoutes();
         igniteAfter();
+        igniteStatic();
         igniteFinal();
         ignitedOnce = true;
         server.requestHandler(router);
@@ -138,6 +143,12 @@ public class VertxService implements HttpService {
             countDownLatch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private void igniteStatic() {
+        if (staticHandler != null) {
+            router.route().handler(staticHandler);
         }
     }
 

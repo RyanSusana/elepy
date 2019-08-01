@@ -1,7 +1,7 @@
 package com.elepy.mongo;
 
 
-import com.elepy.describers.Model;
+import com.elepy.models.Model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import org.jongo.Jongo;

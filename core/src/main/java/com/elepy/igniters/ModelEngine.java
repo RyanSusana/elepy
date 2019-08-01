@@ -2,13 +2,13 @@ package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.auth.Permissions;
-import com.elepy.describers.Model;
-import com.elepy.describers.ModelChange;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
+import com.elepy.models.Model;
+import com.elepy.models.ModelChange;
 import com.elepy.utils.ModelUtils;
 
 import java.util.ArrayList;

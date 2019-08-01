@@ -2,8 +2,7 @@ package com.elepy.tests.crud;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
-import com.elepy.dao.Crud;
-import com.elepy.dao.Page;
+import com.elepy.dao.*;
 import com.elepy.tests.ElepyTest;
 import com.elepy.tests.basic.Resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,16 +10,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public abstract class CrudTest implements ElepyTest {
 
@@ -73,10 +71,15 @@ public abstract class CrudTest implements ElepyTest {
         elepy.stop();
     }
 
+    @AfterEach
+    void tearDown() {
+        deleteAll();
+    }
 
     private void deleteAll() {
         resourceCrud.delete(resourceCrud.getAll().stream().map(Resource::getId).collect(Collectors.toList()));
     }
+
     @Test
     public void can_FindItems_as_Intended() throws IOException, UnirestException {
 
@@ -86,7 +89,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources").asString();
 
 
-        Page resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), Page.class);
+        Page resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), Page.class);
 
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
@@ -105,7 +108,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?id_equals=4&uniqueField_contains=filter&numberMax40_equals=25&q=ilterUni").asString();
 
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
 
@@ -120,13 +123,12 @@ public abstract class CrudTest implements ElepyTest {
         Resource resource = validObject();
         resource.setUniqueField("testSearchNotFindingAnything");
         resource.setNumberMax40(BigDecimal.valueOf(25));
-        deleteAll();
         resourceCrud.create(resource);
         resourceCrud.create(validObject());
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=ilterUni").asString();
 
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
@@ -143,7 +145,7 @@ public abstract class CrudTest implements ElepyTest {
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources?q=testsearchto").asString();
 
 
-        Page<Resource> resourcePage = elepy.getObjectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
         });
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
@@ -157,7 +159,7 @@ public abstract class CrudTest implements ElepyTest {
         final Resource resource = resourceCrud.getAll().get(0);
         final HttpResponse<String> getRequest = Unirest.get(url + "/resources/" + resource.getId()).asString();
 
-        Resource foundResource = elepy.getObjectMapper().readValue(getRequest.getBody(), Resource.class);
+        Resource foundResource = elepy.objectMapper().readValue(getRequest.getBody(), Resource.class);
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
         Assertions.assertEquals(foundResource.getId(), resource.getId());
@@ -170,7 +172,7 @@ public abstract class CrudTest implements ElepyTest {
         final long count = resourceCrud.count();
         final Resource resource = validObject();
         resource.setUniqueField("uniqueCreate");
-        final String s = elepy.getObjectMapper().writeValueAsString(resource);
+        final String s = elepy.objectMapper().writeValueAsString(resource);
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
@@ -192,7 +194,7 @@ public abstract class CrudTest implements ElepyTest {
         resource1.setUniqueField("uniqueMultiCreate");
 
 
-        final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
+        final String s = elepy.objectMapper().writeValueAsString(new Resource[]{resource, resource1});
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
@@ -210,7 +212,7 @@ public abstract class CrudTest implements ElepyTest {
         final Resource resource1 = validObject();
         resource1.setUniqueField("uniqueMultiCreate1");
 
-        final String s = elepy.getObjectMapper().writeValueAsString(new Resource[]{resource, resource1});
+        final String s = elepy.objectMapper().writeValueAsString(new Resource[]{resource, resource1});
 
         final HttpResponse<String> postRequest = Unirest.post(url + "/resources").body(s).asString();
 
@@ -262,6 +264,58 @@ public abstract class CrudTest implements ElepyTest {
         Assertions.assertEquals("uniqueUpdate", updatePartialId.get().getUniqueField());
         Assertions.assertEquals("ryan", updatePartialId.get().getMARKDOWN());
         Assertions.assertEquals(200, patch.getStatus(), patch.getBody());
+    }
+
+    @Test
+    void can_SortDescending() {
+        final Resource resource1 = validObject();
+        final Resource resource2 = validObject();
+
+        resource1.setTextField("resource1");
+        resource2.setTextField("resource2");
+
+
+        resourceCrud.create(resource1, resource2);
+
+        final Page<Resource> search = resourceCrud.search(new Query("", List.of()),
+                new PageSettings(1, Integer.MAX_VALUE,
+                        List.of(new PropertySort("textField", SortOption.DESCENDING))
+                )
+        );
+
+
+        assertThat(search.getValues().get(0).getTextField())
+                .isEqualTo("resource2");
+
+        assertThat(search.getValues().get(1).getTextField())
+                .isEqualTo("resource1");
+
+    }
+
+    @Test
+    void can_SortAscending() {
+        final Resource resource1 = validObject();
+        final Resource resource2 = validObject();
+
+
+        resource2.setTextField("resource2");
+        resource1.setTextField("resource1");
+
+
+        resourceCrud.create(resource1, resource2);
+
+        final Page<Resource> search = resourceCrud.search(new Query("", List.of()),
+                new PageSettings(1, Integer.MAX_VALUE,
+                        List.of(new PropertySort("textField", SortOption.ASCENDING))
+                )
+        );
+
+        assertThat(search.getValues().get(0).getTextField())
+                .isEqualTo("resource1");
+        assertThat(search.getValues().get(1).getTextField())
+                .isEqualTo("resource2");
+
+
     }
 
     protected synchronized Resource validObject() {

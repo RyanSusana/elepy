@@ -18,15 +18,6 @@ public class UploadTest {
     private static final String UPLOAD_DIR = "src/test/resources/uploads";
     private DirectoryFileService directoryFileService;
 
-    @BeforeEach
-    @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
-
-        directoryFileService = new DirectoryFileService(UPLOAD_DIR);
-
-        directoryFileService.ensureDirsMade();
-    }
-
     @BeforeAll
     public static void clear() {
 
@@ -63,18 +54,28 @@ public class UploadTest {
                 Files.exists(pathToBeDeleted), "Directory still exists");
     }
 
+    @BeforeEach
+    @SuppressWarnings("unchecked")
+    public void setUp() throws Exception {
+
+        directoryFileService = new DirectoryFileService(UPLOAD_DIR);
+
+        directoryFileService.ensureRootFolderExists();
+    }
+
     @AfterEach
     void tearDown() throws IOException {
         deleteDir();
 
     }
+
     @Test
     void testUploadText() throws IOException {
 
         String filePath = "src/test/resources/textFileToUpload.txt";
 
 
-        final UploadedFile text = UploadedFile.of("text", Files.newInputStream(Paths.get(filePath)), "textFileToUpload.txt");
+        final FileUpload text = FileUpload.of("textFileToUpload.txt", "text", Files.newInputStream(Paths.get(filePath)), Files.size(Paths.get(filePath)));
 
         directoryFileService.uploadFile(text);
 
@@ -94,12 +95,12 @@ public class UploadTest {
     void testReadText() throws IOException {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
 
-        final UploadedFile uploadedFile = directoryFileService.readFile("textFileToUpload.txt").orElse(null);
-        assertNotNull(uploadedFile);
+        final FileUpload fileUpload = directoryFileService.readFile("textFileToUpload.txt").orElse(null);
+        assertNotNull(fileUpload);
 
-        assertEquals("textFileToUpload.txt", uploadedFile.getName());
-        assertEquals("TEST", IOUtils.toString(uploadedFile.getContent()));
-        assertEquals("text/plain", uploadedFile.getContentType());
+        assertEquals("textFileToUpload.txt", fileUpload.getName());
+        assertEquals("TEST", IOUtils.toString(fileUpload.getContent()));
+        assertEquals("text/plain", fileUpload.getContentType());
     }
 
     @Test
@@ -124,7 +125,7 @@ public class UploadTest {
     @Test
     void testReadFileNonExistentThrows04() throws IOException {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
-        final Optional<UploadedFile> uploadedFile = directoryFileService.readFile("nonExistent.txt");
+        final Optional<FileUpload> uploadedFile = directoryFileService.readFile("nonExistent.txt");
 
         assertTrue(uploadedFile.isEmpty());
         assertEquals(1, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());

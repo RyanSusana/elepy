@@ -2,9 +2,13 @@ package com.elepy.http;
 
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
+import com.elepy.auth.UserAuthenticationService;
+import com.elepy.dao.Filter;
 import com.elepy.dao.*;
-import com.elepy.describers.Model;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.di.ElepyContext;
+import com.elepy.exceptions.ElepyException;
+import com.elepy.models.Model;
+import com.elepy.uploads.FileUpload;
 import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;
@@ -57,38 +61,18 @@ public interface Request {
 
     String[] queryParamValues(String key);
 
-    List<UploadedFile> uploadedFiles(String key);
+    List<FileUpload> uploadedFiles(String key);
 
-    default UploadedFile uploadedFile(String key) {
+    default FileUpload uploadedFile(String key) {
 
-        final List<UploadedFile> uploadedFiles = uploadedFiles(key);
+        final List<FileUpload> fileUploads = uploadedFiles(key);
 
-        return uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
-    }
-
-    default User loggedInUser() {
-        return attribute("user");
-    }
-
-
-    default void addPermissions(String... permissions) {
-        permissions().addPermissions(permissions);
-    }
-
-    default Permissions permissions() {
-        Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
-
-        Optional.ofNullable(loggedInUser()).ifPresent(user -> {
-            permissions.addPermissions(Permissions.LOGGED_IN);
-            permissions.addPermissions(user.getPermissions());
-        });
-
-        attribute("permissions", permissions);
-
-        return permissions;
+        return fileUploads.isEmpty() ? null : fileUploads.get(0);
     }
 
     void attribute(String attribute, Object value);
+
+    Set<String> attributes();
 
     /**
      * @return The ID of the model a.k.a request.params("id")
@@ -121,6 +105,68 @@ public interface Request {
         }
         return new HashSet<>(Collections.singletonList(modelId()));
     }
+
+    default UserAuthenticationService userAuthenticationCenter() {
+        return attribute("authCenter");
+    }
+
+    default ElepyContext elepy() {
+        return attribute("elepyContext");
+    }
+
+    default UserAuthenticationService authService() {
+        return elepy().getDependency(UserAuthenticationService.class);
+    }
+
+    default void tryToLogin() {
+        try {
+            authService().tryToLogin(this);
+        } catch (ElepyException | NullPointerException ignored) {
+        }
+    }
+
+    default Optional<User> loggedInUser() {
+        tryToLogin();
+        return Optional.ofNullable(attribute("user"));
+    }
+
+    default User loggedInUserOrThrow() {
+        return loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
+    }
+
+    default Permissions permissions() {
+        Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
+
+        loggedInUser().ifPresent(user -> {
+            permissions.addPermissions(Permissions.LOGGED_IN);
+            permissions.addPermissions(user.getPermissions());
+        });
+
+        attribute("permissions", permissions);
+
+        return permissions;
+    }
+
+    default void addPermissions(String... permissions) {
+        permissions().addPermissions(permissions);
+    }
+
+
+    default boolean hasPermissions(Collection<String> requiredPermissions) {
+        return permissions().hasPermissions(requiredPermissions);
+    }
+
+    default void requirePermissions(String... requiredPermissions) {
+        requirePermissions(Arrays.asList(requiredPermissions));
+    }
+
+    default void requirePermissions(Collection<String> requiredPermissions) {
+        tryToLogin();
+        if (!hasPermissions(requiredPermissions)) {
+            throw new ElepyException("User is not authorized.", 401);
+        }
+    }
+
 
     /**
      * @return The ID of the model a.k.a request.params("id)
@@ -169,8 +215,8 @@ public interface Request {
         return propertySorts;
     }
 
-    default List<FilterQuery> filtersForModel(Class restModelType) {
-        final List<FilterQuery> filterQueries = new ArrayList<>();
+    default List<Filter> filtersForModel(Class restModelType) {
+        final List<Filter> filterQueries = new ArrayList<>();
         for (String queryParam : queryParams()) {
             if (queryParam.contains("_")) {
                 String[] propertyNameFilter = queryParam.split("_");
@@ -182,8 +228,8 @@ public interface Request {
 
                 FilterType.getByQueryString(propertyNameFilter[propertyNameFilter.length - 1]).ifPresent(filterType1 -> {
                     FilterableField filterableField = new FilterableField(restModelType, propertyName);
-                    FilterQuery filterQuery = new FilterQuery(filterableField, filterType1, queryParams(queryParam));
-                    filterQueries.add(filterQuery);
+                    Filter filter = new Filter(filterableField, filterType1, queryParams(queryParam));
+                    filterQueries.add(filter);
                 });
             }
         }

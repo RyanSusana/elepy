@@ -14,17 +14,12 @@ import java.util.TreeMap;
 
 public class SparkService implements HttpService {
 
+    private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
     private final Service http;
     private final Elepy elepy;
-
     private Map<RouteKey, Route> routes;
-
     private int counter;
-
     private boolean ignitedOnce = false;
-
-
-    private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
 
 
     public SparkService(Service service, Elepy elepy) {
@@ -62,6 +57,15 @@ public class SparkService implements HttpService {
     public void stop() {
         http.stop();
         http.awaitStop();
+    }
+
+    @Override
+    public void staticFiles(String path, StaticFileLocation location) {
+        if (location.equals(StaticFileLocation.EXTERNAL)) {
+            http.staticFiles.externalLocation(path);
+        } else {
+            http.staticFiles.location(path);
+        }
     }
 
     public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler) {
@@ -117,24 +121,19 @@ public class SparkService implements HttpService {
 
     private void igniteRoute(Route extraRoute) {
         logger.debug(String.format("Ignited Route: [%s] %s", extraRoute.getMethod().name(), extraRoute.getPath()));
-        if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
 
-            http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
+        http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
 
-                SparkContext sparkContext = new SparkContext(request, response);
+            SparkContext sparkContext = new SparkContext(request, response);
+            if (!extraRoute.getPermissions().isEmpty()) {
+                sparkContext.requirePermissions(extraRoute.getPermissions());
+                new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
+            }
+            extraRoute.getHttpContextHandler().handle(sparkContext);
 
-                if (!extraRoute.getPermissions().isEmpty()) {
-                    elepy.userLogin().tryToLogin(sparkContext.request());
-                    new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
-                }
-                if (extraRoute.getAccessLevel().equals(AccessLevel.PROTECTED)) {
-                    elepy.getAllAdminFilters().authenticate(sparkContext);
-                }
-                extraRoute.getHttpContextHandler().handle(sparkContext);
+            return response.body();
+        }));
 
-                return response.body();
-            }));
-        }
     }
 
 

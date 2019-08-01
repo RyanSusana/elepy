@@ -1,14 +1,13 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.auth.Token;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationCenter;
+import com.elepy.auth.UserAuthenticationService;
 import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.TokenAuthenticationMethod;
 import com.elepy.dao.CrudFactory;
-import com.elepy.describers.Model;
-import com.elepy.describers.ModelChange;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
@@ -20,9 +19,13 @@ import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
 import com.elepy.igniters.ModelEngine;
+import com.elepy.models.Model;
+import com.elepy.models.ModelChange;
 import com.elepy.uploads.DefaultFileService;
+import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadModule;
+import com.elepy.uploads.FileUploadExtension;
+import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,22 +44,21 @@ import java.util.*;
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
-    private HttpService http;
-    private final List<ElepyModule> modules;
+    private final List<ElepyExtension> modules;
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
+    private HttpService http;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
-    private List<Class<? extends Filter>> adminFilterClasses;
     private List<Route> routes;
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass;
     private CrudFactory defaultCrudFactoryImplementation;
     private List<Class<?>> routingClasses;
     private ModelEngine modelEngine;
-    private UserAuthenticationCenter userAuthenticationCenter;
+    private UserAuthenticationService userAuthenticationService;
 
     private List<Configuration> configurations;
     private List<EventHandler> stopEventHandlers;
@@ -66,7 +68,7 @@ public class Elepy implements ElepyContext {
     }
 
     public Elepy(Service http) {
-        this.userAuthenticationCenter = new UserAuthenticationCenter();
+        this.userAuthenticationService = new UserAuthenticationService();
         this.stopEventHandlers = new ArrayList<>();
         this.configurations = new ArrayList<>();
         this.modules = new ArrayList<>();
@@ -81,13 +83,12 @@ public class Elepy implements ElepyContext {
         this.configSlug = "/config";
         this.routes = new ArrayList<>();
         this.routingClasses = new ArrayList<>();
-        this.adminFilterClasses = new ArrayList<>();
         this.modelEngine = new ModelEngine(this);
 
-        withBaseObjectEvaluator(new DefaultObjectEvaluator<>());
+        withBaseEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
-        withUploads(new DefaultFileService());
-        getObjectMapper()
+        withFileService(new DefaultFileService());
+        objectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -115,10 +116,10 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return The context containing all the context objects
+     * @return The elepyContext containing all the elepy objects
      * @see ElepyContext
      */
-    public DefaultElepyContext getContext() {
+    public DefaultElepyContext context() {
         return context;
     }
 
@@ -144,7 +145,7 @@ public class Elepy implements ElepyContext {
      *
      * @return the base object evaluator
      */
-    public ObjectEvaluator<Object> getBaseObjectEvaluator() {
+    public ObjectEvaluator<Object> baseEvaluator() {
         return this.baseObjectEvaluator;
     }
 
@@ -156,17 +157,9 @@ public class Elepy implements ElepyContext {
         return this.initialized;
     }
 
-    /**
-     * @return a filter, containing all {@link Filter}s associated with Elepy.
-     * @see Filter
-     */
-    public Filter getAllAdminFilters() {
-        return adminFilters;
-    }
-
     @Override
-    public ObjectMapper getObjectMapper() {
-        return this.context.getObjectMapper();
+    public ObjectMapper objectMapper() {
+        return this.context.objectMapper();
     }
 
     @Override
@@ -190,20 +183,6 @@ public class Elepy implements ElepyContext {
         return context.initializeElepyObject(cls);
     }
 
-
-    /**
-     * Adds a {@link Filter} administrative checking service.
-     *
-     * @param filter the {@link Filter}
-     * @return The {@link com.elepy.Elepy} instance
-     * @see Filter
-     */
-    public Elepy addAdminFilter(Filter filter) {
-        checkConfig();
-        adminFilters.add(filter);
-        return this;
-    }
-
     /**
      * Switches the HttpService of Elepy. This can be used to swap to Vertx, Sparkjava, Javalin, etc.
      *
@@ -216,19 +195,6 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    /**
-     * Adds a {@link Filter} administrative checking service.
-     *
-     * @param filterClass the {@link Filter} class
-     * @return The {@link com.elepy.Elepy} instance
-     * @see Filter
-     */
-    public Elepy addAdminFilter(Class<? extends Filter> filterClass) {
-        checkConfig();
-        adminFilterClasses.add(filterClass);
-        return this;
-    }
-
 
     /**
      * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
@@ -238,7 +204,7 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
 
-    public Elepy addExtension(ElepyModule module) {
+    public Elepy addExtension(ElepyExtension module) {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start().");
         }
@@ -279,7 +245,7 @@ public class Elepy implements ElepyContext {
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
      * object is a Database for Elepy or another component to use.
      * <p>
-     * The context object is bound with a unique key. The key is a combination of the object's class
+     * The elepy object is bound with a unique key. The key is a combination of the object's class
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
@@ -431,7 +397,7 @@ public class Elepy implements ElepyContext {
      * @see ObjectEvaluator
      * @see com.elepy.annotations.Evaluators
      */
-    public Elepy withBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
+    public Elepy withBaseEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
         checkConfig();
         this.baseObjectEvaluator = baseObjectEvaluator;
         return this;
@@ -481,7 +447,7 @@ public class Elepy implements ElepyContext {
     /**
      * @return The Default CrudFactory of Elepy. The Default CrudFactory is what creates Crud's for Elepy's models.
      */
-    public CrudFactory getDefaultCrudFactory() {
+    public CrudFactory defaultCrudFactory() {
         if (defaultCrudFactoryImplementation == null) {
             if (defaultCrudFactoryClass == null) {
                 throw new ElepyConfigException("No default CrudFactory selected, please configure one.");
@@ -498,7 +464,7 @@ public class Elepy implements ElepyContext {
      * @param ipAddress the IP address.
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy withIPAdress(String ipAddress) {
+    public Elepy withIPAddress(String ipAddress) {
         checkConfig();
         http.ipAddress(ipAddress);
         return this;
@@ -546,14 +512,14 @@ public class Elepy implements ElepyContext {
      * @return a model description representing everything you need to know about a RestModel
      */
     @SuppressWarnings("unchecked")
-    public <T> Model<T> getModelDescriptionFor(Class<T> clazz) {
+    public <T> Model<T> modelFor(Class<T> clazz) {
         return modelEngine.getModelForClass(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Model<?>> getModelDescriptions() {
+    public List<Model<?>> models() {
         return modelEngine.getModels();
     }
 
@@ -564,7 +530,7 @@ public class Elepy implements ElepyContext {
      * @param fileService The file service
      * @return the Elepy instance
      */
-    public Elepy withUploads(FileService fileService) {
+    public Elepy withFileService(FileService fileService) {
         this.registerDependency(FileService.class, fileService);
         return this;
     }
@@ -590,14 +556,6 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return the list of Elepy RestModels
-     */
-    public List<Class<?>> getModels() {
-        return models;
-    }
-
-
-    /**
      * @param tClass      the class of the model
      * @param modelChange the change to execute to the model
      * @return the Elepy instance
@@ -618,9 +576,6 @@ public class Elepy implements ElepyContext {
     }
 
     private void beforeConfiguration() {
-        for (ElepyModule module : modules) {
-            module.beforeElepyConstruction(http, new ElepyPreConfiguration(this));
-        }
         for (Configuration configuration : configurations) {
             configuration.before(new ElepyPreConfiguration(this));
         }
@@ -630,17 +585,20 @@ public class Elepy implements ElepyContext {
         for (Configuration configuration : configurations) {
             configuration.after(new ElepyPostConfiguration(this));
         }
-        for (ElepyModule module : modules) {
-            module.afterElepyConstruction(http, new ElepyPostConfiguration(this));
+        for (ElepyExtension module : modules) {
+            module.setup(http, new ElepyPostConfiguration(this));
         }
     }
 
 
     private void init() {
-        addModel(User.class);
-        addExtension(new UploadModule());
 
-        registerDependency(userAuthenticationCenter);
+        addModel(Token.class);
+        addModel(User.class);
+        addModel(FileReference.class);
+        addExtension(new FileUploadExtension());
+
+        registerDependency(userAuthenticationService);
 
         setupLoggingAndExceptions();
 
@@ -650,11 +608,9 @@ public class Elepy implements ElepyContext {
 
         models.forEach(modelEngine::addModel);
 
-
         setupAuth();
         context.resolveDependencies();
 
-        setupFilters();
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
@@ -664,28 +620,36 @@ public class Elepy implements ElepyContext {
 
         context.strictMode(true);
 
+        logger.info(String.format(LogUtils.banner, http.port()));
+
     }
 
-    // TODO figure out a better way to handle authentication
     private void setupAuth() {
-        this.registerDependency(this.initializeElepyObject(UserLoginService.class));
-        final TokenAuthenticationMethod tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
+        final var userLoginService = this.initializeElepyObject(UserLoginService.class);
+
+
+        registerDependency(userLoginService);
+        final var tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
+
+        final var basicAuthenticationMethod = this.initializeElepyObject(BasicAuthenticationMethod.class);
 
         registerDependency(tokenAuthenticationMethod);
+
+        userAuthenticationService.addAuthenticationMethod(tokenAuthenticationMethod);
+        userAuthenticationService.addAuthenticationMethod(basicAuthenticationMethod);
+
         http.get("/elepy-login-check", ctx -> {
-            userAuthenticationCenter.tryToLogin(ctx.request());
+            ctx.loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));
-
         });
-        userLogin().addAuthenticationMethod(tokenAuthenticationMethod);
 
-        http.post("elepy-token-login", tokenAuthenticationMethod::tokenLogin);
-        userLogin().addAuthenticationMethod(this.initializeElepyObject(BasicAuthenticationMethod.class));
+        http.post("/elepy-token-login", tokenAuthenticationMethod::tokenLogin);
+
     }
 
     private void injectModules() {
         try {
-            for (ElepyModule module : modules) {
+            for (ElepyExtension module : modules) {
                 context.injectFields(module);
             }
         } catch (Exception e) {
@@ -699,20 +663,6 @@ public class Elepy implements ElepyContext {
         }
 
     }
-
-    private void setupFilters() {
-        //            for (Filter adminFilter : adminFilters) {
-//                //context.injectFields(adminFilter);
-//                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
-//            }
-        for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
-            Filter filter = initializeElepyObject(adminFilterClass);
-            adminFilters.add(filter);
-            addRouting(ReflectionUtils.scanForRoutes(filter));
-        }
-
-    }
-
 
     private void igniteAllRoutes() {
         for (Route extraRoute : routes) {
@@ -733,7 +683,7 @@ public class Elepy implements ElepyContext {
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
             if (!request.method().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.info(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+                logger.debug(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
         });
         http.options("/*", (request, response) -> response.result(""));
 
@@ -767,10 +717,5 @@ public class Elepy implements ElepyContext {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling start()");
         }
-    }
-
-    public UserAuthenticationCenter userLogin() {
-
-        return this.userAuthenticationCenter;
     }
 }

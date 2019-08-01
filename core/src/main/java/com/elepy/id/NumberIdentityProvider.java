@@ -24,21 +24,21 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
     }
 
     public void provideId(T item, Crud<T> dao, Class<?> idType) {
-        Field idField = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+        Field idProperty = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
 
-        idField.setAccessible(true);
+        idProperty.setAccessible(true);
         try {
-            Serializable id = (Serializable) idField.get(item);
+            Serializable id = (Serializable) idProperty.get(item);
 
 
             long longId = id == null ? -1 : Long.parseLong(id.toString());
 
             if (longId <= 0 || dao.getById(id).isPresent()) {
-                idField.set(item, generateId(dao, org.apache.commons.lang3.ClassUtils.primitiveToWrapper(idType)));
+                idProperty.set(item, generateId(dao, org.apache.commons.lang3.ClassUtils.primitiveToWrapper(idType)));
             }
 
         } catch (IllegalAccessException e) {
-            throw new ElepyException("Failed to reflectively access: " + idField.getName(), 500);
+            throw new ElepyException("Failed to reflectively access: " + idProperty.getName(), 500);
         }
     }
 

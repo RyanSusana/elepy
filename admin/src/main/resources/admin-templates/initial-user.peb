@@ -8,8 +8,8 @@
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
           integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-    <link rel="SHORTCUT ICON" href="/admin-resources/images/favicon.png"/>
-    <link rel="stylesheet" href="/admin-resources/css/main.css">
+    <link rel="SHORTCUT ICON" href="https://cdn.jsdelivr.net/npm/elepy-style@1.0/images/favicon.png"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/elepy-style@1.0/css/main.css">
     <title>Elepy Admin Initial User Registration</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.42/js/uikit.min.js"></script>
@@ -32,7 +32,8 @@
 
 
             <div class="login-logo uk-background-primary">
-                <img class="logo-image" src="/admin-resources/images/logo-light.svg" alt="logo">
+                <img class="logo-image" src="https://cdn.jsdelivr.net/npm/elepy-style@1.0/images/logo-light.svg"
+                     alt="logo">
             </div>
 
             <div class="login-box-content uk-padding">
@@ -61,7 +62,8 @@
                 <div class="uk-margin">
                     <label class="uk-form-label" for="form-stacked-text">Confirm Password</label>
                     <div class="uk-form-controls">
-                        <input name="password" class="uk-input" v-on:keyup.enter="register" v-model="confirmPassword"
+                        <input name="confirm-password" class="uk-input" v-on:keyup.enter="register"
+                               v-model="confirmPassword"
                                type="password"
                                placeholder="Confirm Password">
                     </div>
@@ -84,7 +86,44 @@
 </div>
 
 
-<script src="/admin-resources/js/register.js"></script>
+<script>
+    const app = new Vue({
+        delimiters: ['((', '))'],
+        el: "#register-app",
+        data: {
+
+            confirmPassword: "",
+            user: {
+
+                username: "",
+                password: ""
+            }
+        },
+        methods: {
+
+
+            register: function () {
+                if (this.confirmPassword === this.user.password) {
+                    let selfReference = this;
+                    axios.post("/users", selfReference.user).then(function (response) {
+
+                        if (response.status === 200) {
+                            window.location = "/elepy-login?initialUser=true"
+                        }
+                    })
+                            .catch(function (error) {
+                                console.log(error.response.status);
+                                UIkit.notification(error.response.data.message, {status: 'danger'})
+
+                            });
+                } else {
+                    UIkit.notification("Passwords do not match!", {status: 'danger'})
+                }
+
+            }
+        }
+    });
+</script>
 </body>
 
 </html>

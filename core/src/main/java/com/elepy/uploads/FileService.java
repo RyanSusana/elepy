@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FileService {
-    void uploadFile(UploadedFile file);
+    void uploadFile(FileUpload file);
 
-    Optional<UploadedFile> readFile(String name);
+    Optional<FileUpload> readFile(String path);
 
     List<String> listFiles();
 
-    void deleteFile(String name);
+    void deleteFile(String path);
+
 }

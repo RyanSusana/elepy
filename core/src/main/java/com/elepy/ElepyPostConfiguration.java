@@ -2,12 +2,11 @@ package com.elepy;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.Crud;
-import com.elepy.describers.Model;
-import com.elepy.describers.ModelChange;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.http.Filter;
 import com.elepy.http.Route;
+import com.elepy.models.Model;
+import com.elepy.models.ModelChange;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -36,44 +35,11 @@ public class ElepyPostConfiguration {
      * @return the base object evaluator
      */
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return elepy.getBaseObjectEvaluator();
+        return elepy.baseEvaluator();
     }
 
     public ObjectMapper getObjectMapper() {
-        return elepy.getObjectMapper();
-    }
-
-
-    /**
-     * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
-     * Consider adding the ElepyAdminPanel(in the elepy-admin dependency).
-     *
-     * @param module The module
-     */
-    public void addExtension(ElepyModule module) {
-        elepy.addExtension(module);
-    }
-
-    /**
-     * Adds a model to the void instance
-     *
-     * @param clazz The class of the model you want to add. The class must also be annotated with
-     *              {@link RestModel}
-     * @see RestModel
-     */
-    public void addModel(Class<?> clazz) {
-        elepy.addModel(clazz);
-    }
-
-    /**
-     * Adds an array of models to the void instance
-     *
-     * @param classes An array of model classes. All classes must be annotated with
-     *                {@link RestModel}
-     * @see RestModel
-     */
-    public void addModels(Class<?>... classes) {
-        elepy.addModels(classes);
+        return elepy.objectMapper();
     }
 
     /**
@@ -81,7 +47,7 @@ public class ElepyPostConfiguration {
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
      * object is a Database for void or another component to use.
      * <p>
-     * The context object is bound with a unique key. The key is a combination of the object's class
+     * The elepy object is bound with a unique key. The key is a combination of the object's class
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
@@ -139,18 +105,6 @@ public class ElepyPostConfiguration {
     }
 
     /**
-     * Adds a package of models annotated with {@link RestModel} in a package.
-     * <p>
-     * void then uses reflection to scan this package for {@link RestModel}s.
-     *
-     * @param packageName the package to scan.
-     * @see #addModels(Class[])
-     */
-    public void addModelPackage(String packageName) {
-        elepy.addModelPackage(packageName);
-    }
-
-    /**
      * Notifies void that you will need a dependency in the lazy(by default) future.
      * All dependencies must be satisfied before {@link Elepy#start()} ends
      *
@@ -198,14 +152,6 @@ public class ElepyPostConfiguration {
         elepy.addRouting(classesWithRoutes);
     }
 
-    /**
-     * @return a filter, containing all {@link Filter}s associated with Elepy.
-     * @see Filter
-     */
-    public Filter getAllAdminFilters() {
-        return elepy.getAllAdminFilters();
-    }
-
     public <T> T getDependency(Class<T> cls) {
         return elepy.getDependency(cls);
     }
@@ -235,14 +181,14 @@ public class ElepyPostConfiguration {
      * @return a model description representing everything you need to know about a RestModel
      */
     public <T> Model<T> getModelDescriptionFor(Class<T> clazz) {
-        return elepy.getModelDescriptionFor(clazz);
+        return elepy.modelFor(clazz);
     }
 
     /**
      * @return All ModelContext
      */
     public List<Model<?>> getModelDescriptions() {
-        return elepy.getModelDescriptions();
+        return elepy.models();
     }
 
     /**

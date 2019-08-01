@@ -21,7 +21,7 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
     public User getUserFromRequest(Request request) {
 
         final Optional<String[]> authorizationOpt = this.basicCredentials(request);
-        if (!authorizationOpt.isPresent()) {
+        if (authorizationOpt.isEmpty()) {
             return null;
         }
 

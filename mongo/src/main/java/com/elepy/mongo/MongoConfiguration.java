@@ -28,6 +28,11 @@ public class MongoConfiguration implements Configuration {
         return new MongoConfiguration(mongoClient, database, bucket);
     }
 
+    public static MongoConfiguration inMemory() {
+
+        return of(InMemoryClientFactory.createInMemoryClient(), "in-memory-database", "in-memory-fileservice");
+    }
+
     @Override
     public void before(ElepyPreConfiguration elepy) {
         elepy.registerDependency(DB.class, mongoClient.getDB(databaseName));

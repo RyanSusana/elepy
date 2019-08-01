@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Elepy - The Headless Content Management System</title>
+    <link href="favicon.png" rel="icon" type="image/png"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <meta content="Description" name="description">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <link href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 25rem;
+
+            --sidebar-nav-margin: 0;
+            --sidebar-padding: 0;
+        }
+
+        .elepy-sidebar {
+            padding: 25px;
+        }
+
+        .logo {
+
+            background: url(images/banner.jpg) no-repeat center center;
+            background-size: cover;
+            width: 100%;
+            height: 8rem;
+            padding: 0;
+        }
+
+
+        .banner {
+
+            background: url(images/banner.jpg) no-repeat center center;
+            background-size: cover;
+            width: 100%;
+            height: 16rem;
+            background;
+            padding: 0;
+        }
+
+        body {
+            background: #eee;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+    window.$docsify = {
+        name: '',
+        repo: '',
+        loadSidebar: true,
+        subMaxLevel: 1,
+        themeable: {
+            readyTransition: false, // default
+            responsiveTables: false  // default
+        }
+    }
+</script>
+<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-java.min.js"></script>
+
+<script src="//cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
+</body>
+</html>

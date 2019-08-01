@@ -2,8 +2,8 @@ package com.elepy.annotations;
 
 
 import com.elepy.auth.Permissions;
-import com.elepy.routes.DefaultUpdate;
-import com.elepy.routes.UpdateHandler;
+import com.elepy.handlers.DefaultUpdate;
+import com.elepy.handlers.UpdateHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,9 +21,9 @@ public @interface Update {
      * The class that handles the functionality of deletes on this Resource.
      *
      * @return the route updateHandler
-     * @see com.elepy.routes.SimpleUpdate
+     * @see com.elepy.handlers.SimpleUpdate
      * @see DefaultUpdate
-     * @see com.elepy.routes.UpdateHandler
+     * @see com.elepy.handlers.UpdateHandler
      */
     Class<? extends UpdateHandler> handler() default DefaultUpdate.class;
 

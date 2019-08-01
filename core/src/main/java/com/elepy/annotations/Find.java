@@ -1,10 +1,10 @@
 package com.elepy.annotations;
 
 
-import com.elepy.routes.DefaultFindMany;
-import com.elepy.routes.DefaultFindOne;
-import com.elepy.routes.FindManyHandler;
-import com.elepy.routes.FindOneHandler;
+import com.elepy.handlers.DefaultFindMany;
+import com.elepy.handlers.DefaultFindOne;
+import com.elepy.handlers.FindManyHandler;
+import com.elepy.handlers.FindOneHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

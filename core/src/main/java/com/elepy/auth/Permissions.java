@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class Permissions {
-    public static final String SUPER_USER = "SUPER_USER";
-    public static final String CAN_ADMINISTRATE_USERS = "CAN_ADMIN_USERS";
-    public static final String LOGGED_IN = "LOGGED_IN";
+    public static final String SUPER_USER = "owner";
+    public static final String CAN_ADMINISTRATE_FILES = "files";
+    public static final String CAN_ADMINISTRATE_USERS = "users";
+    public static final String LOGGED_IN = "authenticated";
     public static final String[] NONE = new String[]{};
     public static final String[] DEFAULT = new String[]{LOGGED_IN};
 
@@ -28,7 +30,8 @@ public class Permissions {
         if (grantedPermissions.contains(SUPER_USER) || permissionsToCheck.isEmpty()) {
             return true;
         }
-        return (grantedPermissions.containsAll(permissionsToCheck));
+        return (grantedPermissions.stream().map(String::toLowerCase).collect(Collectors.toSet())
+                .containsAll(permissionsToCheck.stream().map(String::toLowerCase).collect(Collectors.toSet())));
     }
 
 

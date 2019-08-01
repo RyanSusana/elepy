@@ -1,6 +1,5 @@
 package com.elepy.mongo;
 
-import com.elepy.annotations.RestModel;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.mongo.querybuilding.MongoFilterTemplateFactory;
@@ -13,8 +12,6 @@ import com.mongodb.DB;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import spark.utils.StringUtils;
 
 import java.io.Serializable;
@@ -25,8 +22,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class MongoDao<T> implements Crud<T> {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMongoDao.class);
 
     private Jongo jongo;
 
@@ -52,14 +47,12 @@ public abstract class MongoDao<T> implements Crud<T> {
     @Override
     public List<T> searchInField(Field field, String qry) {
         final String propertyName = ReflectionUtils.getPropertyName(field);
-        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new SearchQuery(null, null, null, 1L, Integer.MAX_VALUE), (int) collection().count("{#: #}", propertyName, qry)).getValues();
+        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new PageSettings(1L, Integer.MAX_VALUE, List.of()), (int) collection().count("{#: #}", propertyName, qry)).getValues();
     }
 
     private Find addDefaultSort(Find find) {
-        RestModel restModel = getType().getAnnotation(RestModel.class);
-        if (restModel != null) {
-            find.sort(String.format("{%s: %d}", restModel.defaultSortField(), restModel.defaultSortDirection().getVal()));
-        }
+        final String sort = String.format("{%s: %d}", getModel().getDefaultSortField(), getModel().getDefaultSortDirection().getVal());
+        find.sort(sort);
         return find;
     }
 
@@ -100,9 +93,9 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private String getIdFieldProp() {
-        Optional<Field> idField = ReflectionUtils.getIdField(getType());
-        if (idField.isPresent()) {
-            return ReflectionUtils.getPropertyName(idField.get());
+        Optional<Field> idProperty = ReflectionUtils.getIdField(getType());
+        if (idProperty.isPresent()) {
+            return ReflectionUtils.getPropertyName(idProperty.get());
         }
         return "id";
     }
@@ -113,8 +106,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         try {
             collection().save(item);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ElepyException(e.getMessage());
+            throw new ElepyException(e.getMessage(), 500, e);
         }
     }
 
@@ -128,7 +120,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         return id.get();
     }
 
-    private MongoFilters fromQueryFilters(List<FilterQuery> filterQueries) {
+    private MongoFilters fromQueryFilters(List<Filter> filterQueries) {
         return new MongoFilters(
                 filterQueries
                         .stream()
@@ -138,7 +130,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         );
     }
 
-    private Page<T> toPage(Find find, SearchQuery pageSearch, int amountOfResultsWithThatQuery) {
+    private Page<T> toPage(Find find, PageSettings pageSearch, int amountOfResultsWithThatQuery) {
 
 
         final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(getType()).iterator());
@@ -153,7 +145,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public Page<T> search(Query query, PageSettings settings) {
-        MongoFilters mongoFilters = fromQueryFilters(query.getFilterQueries());
+        MongoFilters mongoFilters = fromQueryFilters(query.getFilters());
 
         MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), getType());
 

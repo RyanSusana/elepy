@@ -1,6 +1,6 @@
 package com.elepy.admin.annotations;
 
-import com.elepy.admin.concepts.RestModelView;
+import com.elepy.admin.concepts.ModelView;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface View {
-    Class<? extends RestModelView> value();
+    Class<? extends ModelView> value();
 }

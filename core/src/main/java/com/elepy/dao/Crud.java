@@ -2,8 +2,8 @@ package com.elepy.dao;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Unique;
-import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.models.Model;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -25,6 +25,10 @@ public interface Crud<T> {
 
 
     Page<T> search(Query query, PageSettings settings);
+
+    default Page<T> search(Query query) {
+        return search(query, new PageSettings(1L, Integer.MAX_VALUE, List.of()));
+    }
 
     /**
      * Queries a database in search of a model item with a specific ID

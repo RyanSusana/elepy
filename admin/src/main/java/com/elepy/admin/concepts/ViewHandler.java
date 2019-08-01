@@ -3,105 +3,96 @@ package com.elepy.admin.concepts;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.annotations.View;
-import com.elepy.describers.Model;
+import com.elepy.admin.views.DefaultView;
+import com.elepy.admin.views.FileView;
+import com.elepy.http.HttpService;
+import com.elepy.models.Model;
+import com.elepy.uploads.FileReference;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ViewHandler {
 
 
+    private final List<Model<?>> models;
+    private final HttpService http;
     private ElepyAdminPanel adminPanel;
 
-    private Map<Model<?>, RestModelView> models;
 
-    public ViewHandler(ElepyAdminPanel adminPanel) {
+    public ViewHandler(List<Model<?>> models, ElepyAdminPanel adminPanel, HttpService http) {
         this.adminPanel = adminPanel;
+        this.http = http;
+        this.models = models;
     }
 
 
-    public void setupModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        this.models = mapModels(elepyPostConfiguration);
-    }
+    public void setupModels(ElepyPostConfiguration elepy) {
+        var models = getModelsFromElepy(elepy);
 
+        models.forEach((elepyModel, modelView) -> {
 
-    public void initializeRoutes(ElepyPostConfiguration elepyPostConfiguration) {
-
-        for (Model<?> descriptor : models.keySet()) {
-            adminPanel.http().get("/admin/config" + descriptor.getSlug(), (request, response) -> {
+            http.get("/admin/config" + elepyModel.getSlug(), (request, response) -> {
                 response.type("application/json");
-                response.result(elepyPostConfiguration.getObjectMapper().writeValueAsString(
-                        descriptor
-                ));
+                response.json(elepyModel);
             });
-        }
 
-        models.forEach((modelDescription, restModelView) -> {
-            if (restModelView == null) {
+            http.get("/admin" + elepyModel.getSlug(), (request, response) -> {
 
-                //Default View
-                adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
+                Map<String, Object> renderModel = new HashMap<>();
 
-                    Map<String, Object> model = new HashMap<>();
-                    model.put("currentDescriptor", modelDescription);
-                    response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/model.peb"));
-                });
-            } else {
+                String content = modelView.renderView(request, elepyModel);
 
-                //Custom View
-                adminPanel.http().get("/admin" + modelDescription.getSlug(), (request, response) -> {
+                Document document = Jsoup.parse(content);
 
-                    Map<String, Object> model = new HashMap<>();
+                Elements styles = document.select("style");
+                Elements stylesheets = document.select("stylesheet");
 
-                    String content = restModelView.renderView(modelDescription);
-
-                    Document document = Jsoup.parse(content);
-
-                    Elements styles = document.select("style");
-                    Elements stylesheets = document.select("stylesheet");
-
-                    stylesheets.remove();
-                    styles.remove();
+                stylesheets.remove();
+                styles.remove();
 
 
-                    model.put("styles", styles);
-                    model.put("stylesheets", stylesheets.stream().map(sheet -> {
-                        if (sheet.hasText()) {
-                            return sheet.text();
-                        } else if (sheet.hasAttr("src")) {
-                            return sheet.attr("src");
-                        }
-                        return "";
-                    }).collect(Collectors.toSet()));
-                    model.put("content", document.body().html());
-                    model.put("currentDescriptor", modelDescription);
-                    response.result(adminPanel.renderWithDefaults(request, model, "admin-templates/custom-model.peb"));
-                });
-            }
+                renderModel.put("styles", styles);
+                renderModel.put("stylesheets", stylesheets.stream().map(sheet -> {
+                    if (sheet.hasText()) {
+                        return sheet.text();
+                    } else if (sheet.hasAttr("src")) {
+                        return sheet.attr("src");
+                    }
+                    return "";
+                }).collect(Collectors.toSet()));
+                renderModel.put("content", document.body().html());
+                renderModel.put("model", elepyModel);
+                renderModel.put("models", models.keySet());
+                response.result(adminPanel.renderWithDefaults(renderModel, "admin-templates/model.peb"));
+            });
         });
     }
 
-    private Map<Model<?>, RestModelView> mapModels(ElepyPostConfiguration elepyPostConfiguration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        Map<Model<?>, RestModelView> modelsToReturn = new HashMap<>();
-        for (Model<?> modelContext : elepyPostConfiguration.getModelDescriptions()) {
+    private Map<Model<?>, ModelView> getModelsFromElepy(ElepyPostConfiguration elepyPostConfiguration) {
+        Map<Model<?>, ModelView> modelsToReturn = new HashMap<>();
 
-            if (modelContext.getJavaClass().isAnnotationPresent(View.class)) {
+        models
 
-                final View annotation = modelContext.getJavaClass().getAnnotation(View.class);
-                final RestModelView restModelView = elepyPostConfiguration.initializeElepyObject(annotation.value());
+                .forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
 
-                modelsToReturn.put(modelContext, restModelView);
-            } else {
-                modelsToReturn.put(modelContext, null);
-            }
-        }
         return modelsToReturn;
     }
 
+    private ModelView getViewFromModel(Model<?> model, ElepyPostConfiguration elepyPostConfiguration) {
+        if (model.getJavaClass().equals(FileReference.class)) {
+            return new FileView();
+        } else if (model.getJavaClass().isAnnotationPresent(View.class)) {
+            final View annotation = model.getJavaClass().getAnnotation(View.class);
+            return elepyPostConfiguration.initializeElepyObject(annotation.value());
+        } else {
+            return elepyPostConfiguration.initializeElepyObject(DefaultView.class);
+        }
+    }
 
 }

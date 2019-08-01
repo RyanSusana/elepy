@@ -3,9 +3,9 @@ package com.elepy.hibernate;
 import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.dao.*;
-import com.elepy.describers.Model;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.Model;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,8 +91,8 @@ public class HibernateDao<T> implements Crud<T> {
 
 
         final List<Predicate> filterList = new ArrayList<>();
-        for (FilterQuery filterQuery : query.getFilterQueries()) {
-            filterList.add(HibernatePredicateFactory.fromFilter(root, cb, filterQuery));
+        for (Filter filter : query.getFilters()) {
+            filterList.add(HibernatePredicateFactory.fromFilter(root, cb, filter));
         }
 
 
@@ -302,8 +302,8 @@ public class HibernateDao<T> implements Crud<T> {
     private List<Field> getSearchableFields() {
         List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class, Unique.class);
 
-        Field idField = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idField"));
-        fields.add(idField);
+        Field idProperty = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idProperty"));
+        fields.add(idProperty);
 
 
         fields.removeIf(field -> !field.getType().equals(String.class));

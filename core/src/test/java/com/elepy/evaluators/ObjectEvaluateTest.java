@@ -1,33 +1,31 @@
 package com.elepy.evaluators;
 
 import com.elepy.Base;
+import com.elepy.Resource;
+import com.elepy.ResourceArray;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ObjectEvaluateTest extends Base {
 
-    private ObjectEvaluator<Resource> resourceObjectEvaluator;
+    private ObjectEvaluator<Resource> evaluator;
 
     @BeforeEach
-    public void setUp() throws Exception {
-
-        this.resourceObjectEvaluator = new DefaultObjectEvaluator<>();
-
+    public void setUp() {
+        this.evaluator = new DefaultObjectEvaluator<>();
     }
 
 
     @Test
     public void testValidObject() {
-        assertDoesNotThrow(() -> resourceObjectEvaluator.evaluate(validObject(), Resource.class));
-
+        assertDoesNotThrow(() -> evaluator.evaluate(validObject()));
     }
 
     @Test
@@ -52,22 +50,113 @@ public class ObjectEvaluateTest extends Base {
         exceptionTest(resource);
     }
 
+
     @Test
-    public void testRecursiveEvaluation() throws Exception {
+    void array_WithInvalidLength_ShouldThrow() {
 
-        Resource resource = validObject();
-        Resource inner = validObject();
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = new ResourceArray();
 
-        inner.setNumberMin10Max50(BigDecimal.valueOf(9));
-        resource.setInnerObject(inner);
+        resourceArray.setArrayStringMax2Min1TextWithMinimumLengthOf10(
 
-        exceptionTest(resource);
+                List.of("hihihihihihihi", "hihihihihihihi", "hihihihihihihi")
+
+        );
+
+        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+    }
+
+    @Test
+    void arrayString_WithValidLength_and_InvalidString_ShouldThrow() {
+
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = validResourceWithArrays();
+
+        resourceArray.setArrayStringMax2Min1TextWithMinimumLengthOf10(
+                List.of("hi")
+        );
+
+        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+    }
+
+
+    @Test
+    void arrayString_WithValidLength_and_ValidString_ShouldNotThrow() {
+
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = validResourceWithArrays();
+
+        resourceArray.setArrayStringMax2Min1TextWithMinimumLengthOf10(
+
+                List.of("hihihihihihihi", "hihihihihihihi")
+
+        );
+
+        assertDoesNotThrow(() -> evaluator.evaluate(resourceArray));
+    }
+
+    @Test
+    void arrayNumber_WithValidLength_and_ValidNumbers_ShouldNotThrow() {
+
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = validResourceWithArrays();
+
+        resourceArray.setArrayNumberMax2Min1NumberWithMinimumOf10(
+                List.of(10, Integer.MAX_VALUE)
+        );
+
+        assertDoesNotThrow(() -> evaluator.evaluate(resourceArray));
+    }
+
+    @Test
+    void arrayNumber_WithValidLength_and_InvalidNumbers_ShouldThrow() {
+
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = validResourceWithArrays();
+
+        resourceArray.setArrayNumberMax2Min1NumberWithMinimumOf10(
+                List.of(1)
+        );
+
+        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+    }
+
+    @Test
+    void arrayObject_WithInvalidObject_ShouldThrow() {
+
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = validResourceWithArrays();
+
+        final Resource resource = validObject();
+
+        resource.setNumberMax40(BigDecimal.valueOf(50));
+        resourceArray.setArrayObject(List.of(resource));
+        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+    }
+
+    @Test
+    void arrayObject_With_ValidObject_ShouldNotThrow() {
+
+        final var evaluator = new DefaultObjectEvaluator<>();
+        final ResourceArray resourceArray = validResourceWithArrays();
+
+        resourceArray.setArrayObject(List.of(validObject()));
+        assertDoesNotThrow(() -> evaluator.evaluate(resourceArray));
+    }
+
+
+    private ResourceArray validResourceWithArrays() {
+        final ResourceArray resourceArray = new ResourceArray();
+
+        resourceArray.setArrayNumberMax2Min1NumberWithMinimumOf10(List.of(10));
+        resourceArray.setArrayStringMax2Min1TextWithMinimumLengthOf10(List.of("hihihihihihi"));
+
+        return resourceArray;
     }
 
     private void exceptionTest(Resource resource) throws Exception {
         try {
-
-            resourceObjectEvaluator.evaluate(resource, Resource.class);
+            evaluator.evaluate(resource);
             fail("This object should not be considered valid");
         } catch (ElepyException ignored) {
         }

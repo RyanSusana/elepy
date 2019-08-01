@@ -2,7 +2,7 @@ package com.elepy.mongo;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
@@ -28,23 +28,24 @@ public class MongoFileService implements FileService {
     }
 
     @Override
-    public void uploadFile(UploadedFile file) {
+    public void uploadFile(FileUpload file) {
         bucket.uploadFromStream(file.getName(), file.getContent(), new GridFSUploadOptions().metadata(new Document().append("contentType", file.getContentType())));
     }
 
     @Override
-    public Optional<UploadedFile> readFile(String name) {
+    public Optional<FileUpload> readFile(String path) {
         try {
-            final var file = findByName(name).orElseThrow();
+            final var file = findByName(path).orElseThrow();
 
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
             bucket.downloadToStream(file.getObjectId(), outputStream);
+
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
             outputStream.close();
             inputStream.close();
-            return Optional.of(new UploadedFile(file.getMetadata().getString("contentType"), inputStream, file.getFilename()));
+            return Optional.of(FileUpload.of(file.getFilename(), file.getMetadata().getString("contentType"), inputStream, file.getLength()));
         } catch (NoSuchElementException e) {
             return Optional.empty();
         } catch (Exception e) {
@@ -61,8 +62,8 @@ public class MongoFileService implements FileService {
     }
 
     @Override
-    public void deleteFile(String name) {
-        var file = findByName(name).orElseThrow(() -> new ElepyException(String.format("No file '%s' found", name), 404)).getObjectId();
+    public void deleteFile(String path) {
+        var file = findByName(path).orElseThrow(() -> new ElepyException(String.format("No file '%s' found", path), 404)).getObjectId();
 
         bucket.delete(file);
     }

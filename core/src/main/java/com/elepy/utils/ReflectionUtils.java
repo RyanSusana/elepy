@@ -76,10 +76,6 @@ public class ReflectionUtils {
         return getPropertyName(field);
     }
 
-    private static boolean hasId(Field field) {
-        return field.isAnnotationPresent(Identifier.class) || field.isAnnotationPresent(Id.class);
-    }
-
     public static Optional<Serializable> getId(Object object) {
 
         try {
@@ -90,37 +86,6 @@ public class ReflectionUtils {
             throw new ElepyException("Illegally accessing id field");
         }
 
-    }
-
-    public static Serializable getIdOrThrow(Object object) {
-
-        try {
-            Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
-            field.setAccessible(true);
-            return Optional.ofNullable((Serializable) field.get(object)).orElseThrow(() -> new ElepyException("No ID found", 404));
-        } catch (IllegalAccessException e) {
-            throw new ElepyException("Illegally accessing id field");
-        }
-
-    }
-
-    public static Object getPropertyFromObject(String property, Object obj) {
-        try {
-            return Optional.ofNullable(ReflectionUtils.getPropertyField(obj.getClass(), property))
-                    .orElseThrow(() -> new ElepyException(String.format("Property '%s' not found on the class '%s'", property, obj.getClass().getName()), 500))
-                    .get(obj);
-        } catch (IllegalAccessException e) {
-            throw new ElepyException("Failed to reflectively access an object", 500, e);
-        }
-
-    }
-
-    public static void setPropertyOnObject(String propertyName, Object object, Object value) {
-        try {
-            ReflectionUtils.getPropertyField(object.getClass(), propertyName).set(object, value);
-        } catch (IllegalAccessException e) {
-            throw new ElepyException("Failed to reflectively access an object", 500, e);
-        }
     }
 
     public static Serializable toObject(Class clazz, String value) {
@@ -154,7 +119,7 @@ public class ReflectionUtils {
         }
     }
 
-    public static Class<?> returnType(AccessibleObject field) {
+    public static Class<?> returnTypeOf(AccessibleObject field) {
         return (field instanceof Field) ? ((Field) field).getType() : ((Method) field).getReturnType();
     }
 

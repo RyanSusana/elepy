@@ -9,7 +9,7 @@
         <property name="hibernate.connection.username">SA</property>
         <property name="hibernate.connection.password"/>
 
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
         <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
     </session-factory>

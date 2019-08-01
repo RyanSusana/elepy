@@ -47,7 +47,7 @@ public interface ElepyContext {
         return (Crud<T>) getDependency(Crud.class, annotation.slug());
     }
 
-    default ObjectMapper getObjectMapper() {
+    default ObjectMapper objectMapper() {
         return getDependency(ObjectMapper.class);
     }
 

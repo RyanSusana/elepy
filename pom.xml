@@ -7,7 +7,7 @@
     <groupId>com.elepy</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0-beta-14</version>
+    <version>2.0.0</version>
 
     <name>Elepy</name>
     <description>A Restful API generator and Headless CMS</description>
@@ -18,6 +18,9 @@
         <junit.version>5.3.1</junit.version>
         <awaitility.version>3.1.2</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
+        <jackson.version>2.9.9</jackson.version>
+        <truth.version>1.0</truth.version>
+        <headlessMode>false</headlessMode>
     </properties>
 
     <licenses>
@@ -91,6 +94,12 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <version>${truth.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -174,13 +183,15 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <headlessMode>true</headlessMode>
                 <exclude.tests>**/slow/**</exclude.tests>
             </properties>
         </profile>
         <profile>
-            <id>slow</id>
+            <id>travis</id>
             <properties>
                 <exclude.tests>dont-exclude-anything</exclude.tests>
+                <headlessMode>true</headlessMode>
             </properties>
         </profile>
         <profile>

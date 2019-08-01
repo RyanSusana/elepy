@@ -1,7 +1,9 @@
 package com.elepy.evaluators;
 
+import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;
@@ -10,10 +12,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
+
+    private final Crud<T> crud;
+
+    public DefaultIntegrityEvaluator(ModelContext<T> modelContext) {
+        this.crud = modelContext.getCrud();
+    }
+
+    @ElepyConstructor
+    public DefaultIntegrityEvaluator(Crud<T> crud) {
+        this.crud = crud;
+    }
+
     @Override
-    public void evaluate(T item, Crud<T> dao, boolean insert) {
+    public void evaluate(T item, EvaluationType isACreate) {
         try {
-            checkUniqueness(item, dao, insert);
+            checkUniqueness(item, crud, isACreate.equals(EvaluationType.CREATE));
         } catch (IllegalAccessException e) {
             throw new ElepyException("Can't reflectively checkUniqueness()", 500);
         }
@@ -23,6 +37,9 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
 
         List<Field> uniqueFields = ReflectionUtils.getUniqueFields(item.getClass());
 
+        if (dao.count() == 0) {
+            return;
+        }
 
         Optional<Serializable> id = ReflectionUtils.getId(item);
 
@@ -50,6 +67,4 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
         }
 
     }
-
-
 }

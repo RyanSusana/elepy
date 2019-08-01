@@ -6,12 +6,12 @@ import com.elepy.annotations.DaoFactory;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.IdProvider;
 import com.elepy.dao.Crud;
-import com.elepy.describers.Model;
-import com.elepy.describers.ModelContext;
 import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
+import com.elepy.models.Model;
+import com.elepy.models.ModelContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class ModelContextExtraction {
         var annotation = modelType.getAnnotation(DaoFactory.class);
 
         var crudProvider = annotation == null ?
-                elepy.getDefaultCrudFactory()
+                elepy.defaultCrudFactory()
                 : elepy.initializeElepyObject(annotation.value());
 
         final Dao daoAnnotation = modelType.getAnnotation(Dao.class);

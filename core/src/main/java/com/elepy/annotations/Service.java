@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.routes.ServiceHandler;
+import com.elepy.handlers.ServiceHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

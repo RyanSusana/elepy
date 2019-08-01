@@ -1,12 +1,8 @@
 package com.elepy.evaluators;
 
-import com.elepy.dao.Crud;
-
+/**
+ * This evaluator evaluates if an object is valid within in respects to an {@link EvaluationType}.
+ */
 public interface IntegrityEvaluator<T> {
-
-    default void evaluate(T item, Crud<T> dao) {
-        evaluate(item, dao, false);
-    }
-
-    void evaluate(T item, Crud<T> dao, boolean insert);
+    void evaluate(T item, EvaluationType type) throws Exception;
 }

@@ -13,7 +13,6 @@ public class UserLoginService {
     @Inject
     private Crud<User> userDao;
 
-
     public Optional<User> login(String usernameOrEmail, String password) {
         Optional<User> user = getUser(usernameOrEmail);
 
@@ -35,4 +34,7 @@ public class UserLoginService {
         return Optional.empty();
     }
 
+    public Crud<User> getUserDao() {
+        return userDao;
+    }
 }

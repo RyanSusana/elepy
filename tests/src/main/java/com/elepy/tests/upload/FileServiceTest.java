@@ -2,11 +2,15 @@ package com.elepy.tests.upload;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
+import com.elepy.auth.Permissions;
+import com.elepy.dao.Crud;
 import com.elepy.tests.ElepyTest;
 import com.elepy.tests.basic.Resource;
+import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.io.IOUtils;
@@ -26,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class FileServiceTest implements ElepyTest {
 
-    private static int portCounter = 7900;
+    private static int portCounter = 8700;
     private final Configuration[] configurations;
     private final int port;
 
@@ -54,10 +58,12 @@ public abstract class FileServiceTest implements ElepyTest {
         elepy = new Elepy()
                 .addModel(Resource.class)
                 .addConfiguration(databaseConfiguration())
-                .withUploads(this.fileService)
+                .withFileService(this.fileService)
                 .onPort(port);
 
         List.of(configurations).forEach(elepy::addConfiguration);
+
+        elepy.http().before(ctx -> ctx.request().addPermissions(Permissions.LOGGED_IN));
         elepy.start();
     }
 
@@ -117,29 +123,41 @@ public abstract class FileServiceTest implements ElepyTest {
         testCanUploadAndRead("nature.mp4", "video/mp4");
     }
 
-    private UploadedFile testCanUploadAndRead(String fileName, String contentType) throws UnirestException, IOException {
-
-
+    private FileUpload testCanUploadAndRead(String originalFileName, String contentType) throws UnirestException, IOException {
         final int fileCountBeforeUpload = countFiles();
-        final InputStream resourceAsStream = inputStream(fileName);
+
+        final Crud<FileReference> references = elepy.getCrudFor(FileReference.class);
+
+        final HttpResponse<JsonNode> response = Unirest.post(url + "/uploads")
+                .field("files", inputStream(originalFileName), ContentType.create(tika.detect(inputStream(originalFileName), originalFileName)), originalFileName)
+                .asJson();
+
+        assertEquals(200, response.getStatus(), response.getBody().toString());
+
+        final String uploadedFileName = response.getBody().getObject()
+                .getJSONArray("files")
+                .getJSONObject(0).getString("uploadName");
+
+        final FileUpload fileUpload = fileService.readFile(uploadedFileName).orElseThrow(() ->
+                new AssertionFailedError("FileService did not recognize file: " + uploadedFileName));
 
 
-        final HttpResponse<String> response = Unirest.post(url + "/uploads")
-                .field("files", resourceAsStream, ContentType.create(tika.detect(resourceAsStream, fileName)), fileName).asString();
+        assertTrue(references.searchInField("uploadName", uploadedFileName)
+                        .stream().map(FileReference::getUploadName).anyMatch(uploadedFileName::equals),
+                String.format("Can't find '%s' in file references ", uploadedFileName)
+        );
+        assertEquals(fileUpload.getSize(), inputStream(originalFileName).readAllBytes().length, "File  size of uploaded file not equal to the actual file");
 
-
-        final UploadedFile uploadedFile = fileService.readFile(fileName).orElseThrow(() ->
-                new AssertionFailedError("FileService did not recognize file: " + fileName));
-
-        assertEquals(200, response.getStatus(), response.getBody());
         assertEquals(fileCountBeforeUpload + 1, countFiles(),
                 "File upload did not increase the count of Files");
-        assertTrue(uploadedFile.contentTypeEquals(contentType),
-                String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", fileName, contentType, uploadedFile.getContentType()));
-        assertTrue(IOUtils.contentEquals(inputStream(fileName), uploadedFile.getContent()),
-                String.format("Content doesn't match between the uploaded version and read version of '%s'", fileName));
+        assertTrue(fileUpload.contentTypeMatches(contentType),
+                String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, fileUpload.getContentType()));
 
-        return uploadedFile;
+
+        assertTrue(IOUtils.contentEquals(inputStream(originalFileName), fileUpload.getContent()),
+                String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName));
+
+        return fileUpload;
     }
 
 

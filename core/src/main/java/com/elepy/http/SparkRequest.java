@@ -1,7 +1,7 @@
 package com.elepy.http;
 
 import com.elepy.exceptions.ElepyException;
-import com.elepy.uploads.UploadedFile;
+import com.elepy.uploads.FileUpload;
 import spark.QueryParamsMap;
 
 import javax.servlet.MultipartConfigElement;
@@ -189,7 +189,7 @@ public class SparkRequest implements Request {
 
 
     @Override
-    public List<UploadedFile> uploadedFiles(String key) {
+    public List<FileUpload> uploadedFiles(String key) {
         final String contentType = headers("Content-Type");
 
         if (contentType != null && contentType.toLowerCase().contains("multipart/form-data")) {
@@ -202,7 +202,7 @@ public class SparkRequest implements Request {
             try {
                 return servletRequest.getParts().stream().filter(part -> part.getSubmittedFileName() != null && part.getName().equals(key)).map(part -> {
                             try {
-                                return UploadedFile.of(part.getContentType(), part.getInputStream(), part.getSubmittedFileName());
+                                return FileUpload.of(part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize());
                             } catch (IOException e) {
                                 throw new ElepyException("File upload failed", 500);
                             }

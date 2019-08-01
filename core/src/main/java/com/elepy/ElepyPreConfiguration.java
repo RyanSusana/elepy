@@ -2,11 +2,11 @@ package com.elepy;
 
 import com.elepy.annotations.RestModel;
 import com.elepy.dao.CrudFactory;
-import com.elepy.describers.ModelChange;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.http.Filter;
 import com.elepy.http.Route;
+import com.elepy.models.Model;
+import com.elepy.models.ModelChange;
 import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,22 +40,13 @@ public class ElepyPreConfiguration {
      * @return the base object evaluator
      */
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return elepy.getBaseObjectEvaluator();
+        return elepy.baseEvaluator();
     }
 
     public ObjectMapper getObjectMapper() {
-        return elepy.getObjectMapper();
+        return elepy.objectMapper();
     }
 
-    /**
-     * Adds a Spark {@link Filter} to controlled after.
-     *
-     * @param filter the {@link Filter}
-     * @see Filter
-     */
-    public void addAdminFilter(Filter filter) {
-        elepy.addAdminFilter(filter);
-    }
 
     /**
      * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
@@ -63,7 +54,7 @@ public class ElepyPreConfiguration {
      *
      * @param module The module
      */
-    public void addExtension(ElepyModule module) {
+    public void addExtension(ElepyExtension module) {
         elepy.addExtension(module);
     }
 
@@ -94,7 +85,7 @@ public class ElepyPreConfiguration {
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
      * object is a Database for void or another component to use.
      * <p>
-     * The context object is bound with a unique key. The key is a combination of the object's class
+     * The elepy object is bound with a unique key. The key is a combination of the object's class
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
@@ -212,14 +203,6 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * @return a filter, containing all {@link Filter}s associated with Elepy.
-     * @see Filter
-     */
-    public Filter getAllAdminFilters() {
-        return elepy.getAllAdminFilters();
-    }
-
-    /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
      *
@@ -249,14 +232,14 @@ public class ElepyPreConfiguration {
      * @param fileService The file service
      */
     public void withUploads(FileService fileService) {
-        elepy.withUploads(fileService);
+        elepy.withFileService(fileService);
     }
 
     /**
      * @return the list of Elepy RestModels
      */
-    public List<Class<?>> getModels() {
-        return elepy.getModels();
+    public List<Model<?>> models() {
+        return elepy.models();
     }
 
     /**
