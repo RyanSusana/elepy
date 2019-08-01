@@ -106,7 +106,7 @@ public abstract class BasicFunctionalityTest extends CrudTest {
     void can_Login_and_UpdateOtherUserPermissions() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
-        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.LOGGED_IN));
+        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.AUTHENTICATED));
 
         final HttpResponse<String> unauthorizedFind = Unirest
                 .put(userUrl + "/user")
@@ -125,7 +125,7 @@ public abstract class BasicFunctionalityTest extends CrudTest {
         assertEquals(401, unauthorizedFind.getStatus());
         assertEquals(2, userCrud.count());
         assertEquals(1, user.getPermissions().size());
-        assertEquals(Permissions.LOGGED_IN, user.getPermissions().get(0));
+        assertEquals(Permissions.AUTHENTICATED, user.getPermissions().get(0));
 
     }
 

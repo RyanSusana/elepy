@@ -23,7 +23,7 @@ import java.util.List;
 @Create(handler = UserCreate.class, requiredPermissions = {})
 @Find(findManyHandler = UserFind.class,
         findOneHandler = UserFind.class,
-        requiredPermissions = Permissions.LOGGED_IN
+        requiredPermissions = Permissions.AUTHENTICATED
 )
 @Update(handler = UserUpdate.class)
 @Delete(handler = UserDelete.class)

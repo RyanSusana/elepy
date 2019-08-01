@@ -29,6 +29,6 @@ public @interface Delete {
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default Permissions.LOGGED_IN;
+    String[] requiredPermissions() default Permissions.AUTHENTICATED;
 
 }
