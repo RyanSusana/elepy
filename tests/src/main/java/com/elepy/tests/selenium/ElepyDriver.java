@@ -32,7 +32,7 @@ public class ElepyDriver implements WebDriver {
     }
 
     public void waitTillCanSee(By by) {
-        await().atMost(40, TimeUnit.SECONDS).until(() -> {
+        await().atMost(20, TimeUnit.SECONDS).until(() -> {
             try {
 
                 final WebElement element = findElement(by);

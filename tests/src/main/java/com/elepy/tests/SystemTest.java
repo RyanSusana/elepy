@@ -17,6 +17,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
     private ElepyDriver driver;
     private Elepy elepySystemUnderTest;
 
+    private static int counter = 1339;
     private static ChromeDriver chromeDriver;
 
     @BeforeAll
@@ -25,7 +26,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
         final var chromeOptions = new ChromeOptions();
 
         if (headlessMode) {
-            chromeOptions.addArguments("--no-sandbox").addArguments("--headless").addArguments("--window-size=2120,1280");
+            chromeOptions.addArguments("--disable-gpu").addArguments("--no-sandbox").addArguments("--headless").addArguments("--window-size=2120,1280");
         }
 
 
@@ -55,7 +56,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         elepySystemUnderTest.addConfiguration(AdminPanel.newAdminPanel())
 
-                .onPort(1339)
+                .onPort(counter++)
                 .addModel(CantSeeThis.class)
                 .addModel(Product.class);
 
@@ -81,7 +82,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
     }
 
 
-    @Test
+    @Test()
     void testProductSave() {
         var products = elepySystemUnderTest.getCrudFor(Product.class);
 

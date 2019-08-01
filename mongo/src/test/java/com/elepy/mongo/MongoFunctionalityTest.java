@@ -21,7 +21,7 @@ public class MongoFunctionalityTest extends BasicFunctionalityTest {
         InetSocketAddress serverAddress = mongoServer.bind();
 
         MongoClient client = new MongoClient(new ServerAddress(serverAddress));
-        return MongoConfiguration.of(client, "test");
+        return MongoConfiguration.of(client, "test", "bucket");
     }
 
     @Override
