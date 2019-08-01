@@ -23,23 +23,21 @@ public interface HttpService {
 
     <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler);
 
-    default void addRoute(HttpMethod method, String path, AccessLevel accessLevel, HttpContextHandler contextHandler) {
+    default void addRoute(HttpMethod method, String path, HttpContextHandler contextHandler) {
         addRoute(RouteBuilder
                 .anElepyRoute()
                 .route(contextHandler)
                 .method(method)
                 .path(path)
-                .accessLevel(accessLevel)
                 .build());
     }
 
-    default void addRoute(HttpMethod method, String path, AccessLevel accessLevel, RequestResponseHandler requestResponseHandler) {
+    default void addRoute(HttpMethod method, String path, RequestResponseHandler requestResponseHandler) {
         addRoute(RouteBuilder
                 .anElepyRoute()
                 .route(ctx -> requestResponseHandler.handle(ctx.request(), ctx.response()))
                 .method(method)
                 .path(path)
-                .accessLevel(accessLevel)
                 .build());
     }
 
@@ -74,111 +72,62 @@ public interface HttpService {
 
     /////////// GET
 
-    default void get(String path, RequestResponseHandler requestResponseHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.GET, path, accessLevel, requestResponseHandler);
-    }
-
     default void get(String path, RequestResponseHandler requestResponseHandler) {
-        addRoute(HttpMethod.GET, path, AccessLevel.PUBLIC, requestResponseHandler);
-    }
-
-    default void get(String path, HttpContextHandler contextHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.GET, path, accessLevel, contextHandler);
+        addRoute(HttpMethod.GET, path, requestResponseHandler);
     }
 
     default void get(String path, HttpContextHandler contextHandler) {
-        addRoute(HttpMethod.GET, path, AccessLevel.PUBLIC, contextHandler);
+        addRoute(HttpMethod.GET, path, contextHandler);
     }
 
     ////////// POST
 
-    default void post(String path, RequestResponseHandler requestResponseHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.POST, path, accessLevel, requestResponseHandler);
-    }
-
     default void post(String path, RequestResponseHandler requestResponseHandler) {
-        addRoute(HttpMethod.POST, path, AccessLevel.PUBLIC, requestResponseHandler);
-    }
-
-    default void post(String path, HttpContextHandler contextHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.POST, path, accessLevel, contextHandler);
+        addRoute(HttpMethod.POST, path, requestResponseHandler);
     }
 
     default void post(String path, HttpContextHandler contextHandler) {
-        addRoute(HttpMethod.POST, path, AccessLevel.PUBLIC, contextHandler);
+        addRoute(HttpMethod.POST, path, contextHandler);
     }
 
     ///////// DELETE
 
-    default void delete(String path, RequestResponseHandler requestResponseHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.DELETE, path, accessLevel, requestResponseHandler);
-    }
-
     default void delete(String path, RequestResponseHandler requestResponseHandler) {
-        addRoute(HttpMethod.DELETE, path, AccessLevel.PUBLIC, requestResponseHandler);
-    }
-
-    default void delete(String path, HttpContextHandler contextHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.DELETE, path, accessLevel, contextHandler);
+        addRoute(HttpMethod.DELETE, path, requestResponseHandler);
     }
 
     default void delete(String path, HttpContextHandler contextHandler) {
-        addRoute(HttpMethod.DELETE, path, AccessLevel.PUBLIC, contextHandler);
+        addRoute(HttpMethod.DELETE, path, contextHandler);
     }
 
 
     //////// PUT
 
-    default void put(String path, RequestResponseHandler requestResponseHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.PUT, path, accessLevel, requestResponseHandler);
-    }
-
     default void put(String path, RequestResponseHandler requestResponseHandler) {
-        addRoute(HttpMethod.PUT, path, AccessLevel.PUBLIC, requestResponseHandler);
-    }
-
-    default void put(String path, HttpContextHandler contextHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.PUT, path, accessLevel, contextHandler);
+        addRoute(HttpMethod.PUT, path, requestResponseHandler);
     }
 
     default void put(String path, HttpContextHandler contextHandler) {
-        addRoute(HttpMethod.PUT, path, AccessLevel.PUBLIC, contextHandler);
+        addRoute(HttpMethod.PUT, path, contextHandler);
     }
-
     //////// PATCH
 
-    default void patch(String path, RequestResponseHandler requestResponseHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.PATCH, path, accessLevel, requestResponseHandler);
-    }
-
     default void patch(String path, RequestResponseHandler requestResponseHandler) {
-        addRoute(HttpMethod.PATCH, path, AccessLevel.PUBLIC, requestResponseHandler);
-    }
-
-    default void patch(String path, HttpContextHandler contextHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.PATCH, path, accessLevel, contextHandler);
+        addRoute(HttpMethod.PATCH, path, requestResponseHandler);
     }
 
     default void patch(String path, HttpContextHandler contextHandler) {
-        addRoute(HttpMethod.PATCH, path, AccessLevel.PUBLIC, contextHandler);
+        addRoute(HttpMethod.PATCH, path, contextHandler);
     }
 
     /////// OPTIONS
 
-    default void options(String path, RequestResponseHandler requestResponseHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.OPTIONS, path, accessLevel, requestResponseHandler);
-    }
-
     default void options(String path, RequestResponseHandler requestResponseHandler) {
-        addRoute(HttpMethod.OPTIONS, path, AccessLevel.PUBLIC, requestResponseHandler);
-    }
-
-    default void options(String path, HttpContextHandler contextHandler, AccessLevel accessLevel) {
-        addRoute(HttpMethod.OPTIONS, path, accessLevel, contextHandler);
+        addRoute(HttpMethod.OPTIONS, path, requestResponseHandler);
     }
 
     default void options(String path, HttpContextHandler contextHandler) {
-        addRoute(HttpMethod.OPTIONS, path, AccessLevel.PUBLIC, contextHandler);
+        addRoute(HttpMethod.OPTIONS, path, contextHandler);
     }
 
 }

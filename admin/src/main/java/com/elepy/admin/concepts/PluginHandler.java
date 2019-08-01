@@ -29,8 +29,8 @@ public class PluginHandler {
 
 
     public void setupRoutes(ElepyPostConfiguration elepyPostConfiguration) {
-        http.before("/plugins/*", ctx -> elepyPostConfiguration.getAllAdminFilters().authenticate(ctx));
-        http.before("/plugins/*/*", ctx -> elepyPostConfiguration.getAllAdminFilters().authenticate(ctx));
+        http.before("/plugins/*", ctx -> ctx.request().loggedInUserOrThrow());
+        http.before("/plugins/*/*", ctx -> ctx.request().loggedInUserOrThrow());
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
             plugin.setup(http, elepyPostConfiguration);
             http.get("/plugins/" + plugin.getSlug(), (request, response) -> {

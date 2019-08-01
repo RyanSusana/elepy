@@ -4,7 +4,6 @@ import com.elepy.annotations.RestModel;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.elepy.models.Model;
 import com.elepy.models.ModelChange;
@@ -151,14 +150,6 @@ public class ElepyPostConfiguration {
      */
     public void addRouting(Class<?>... classesWithRoutes) {
         elepy.addRouting(classesWithRoutes);
-    }
-
-    /**
-     * @return a filter, containing all {@link Filter}s associated with Elepy.
-     * @see Filter
-     */
-    public Filter getAllAdminFilters() {
-        return elepy.getAllAdminFilters();
     }
 
     public <T> T getDependency(Class<T> cls) {

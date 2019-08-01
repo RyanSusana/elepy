@@ -121,23 +121,19 @@ public class SparkService implements HttpService {
 
     private void igniteRoute(Route extraRoute) {
         logger.debug(String.format("Ignited Route: [%s] %s", extraRoute.getMethod().name(), extraRoute.getPath()));
-        if (!extraRoute.getAccessLevel().equals(AccessLevel.DISABLED)) {
 
-            http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
+        http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
 
-                SparkContext sparkContext = new SparkContext(request, response);
-                if (!extraRoute.getPermissions().isEmpty()) {
-                    sparkContext.requirePermissions(extraRoute.getPermissions());
-                    new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
-                }
-                if (extraRoute.getAccessLevel().equals(AccessLevel.PROTECTED)) {
-                    elepy.getAllAdminFilters().authenticate(sparkContext);
-                }
-                extraRoute.getHttpContextHandler().handle(sparkContext);
+            SparkContext sparkContext = new SparkContext(request, response);
+            if (!extraRoute.getPermissions().isEmpty()) {
+                sparkContext.requirePermissions(extraRoute.getPermissions());
+                new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
+            }
+            extraRoute.getHttpContextHandler().handle(sparkContext);
 
-                return response.body();
-            }));
-        }
+            return response.body();
+        }));
+
     }
 
 

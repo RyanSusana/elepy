@@ -4,7 +4,6 @@ import com.elepy.annotations.RestModel;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.http.Filter;
 import com.elepy.http.Route;
 import com.elepy.models.ModelChange;
 import com.elepy.uploads.FileService;
@@ -47,15 +46,6 @@ public class ElepyPreConfiguration {
         return elepy.getObjectMapper();
     }
 
-    /**
-     * Adds a Spark {@link Filter} to controlled after.
-     *
-     * @param filter the {@link Filter}
-     * @see Filter
-     */
-    public void addAdminFilter(Filter filter) {
-        elepy.addAdminFilter(filter);
-    }
 
     /**
      * Adds an extension to the Elepy. This module adds extra functionality to Elepy.
@@ -209,14 +199,6 @@ public class ElepyPreConfiguration {
      */
     public void addRouting(Class<?>... classesWithRoutes) {
         elepy.addRouting(classesWithRoutes);
-    }
-
-    /**
-     * @return a filter, containing all {@link Filter}s associated with Elepy.
-     * @see Filter
-     */
-    public Filter getAllAdminFilters() {
-        return elepy.getAllAdminFilters();
     }
 
     /**

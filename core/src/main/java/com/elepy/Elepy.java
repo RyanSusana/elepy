@@ -52,7 +52,6 @@ public class Elepy implements ElepyContext {
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
-    private List<Class<? extends Filter>> adminFilterClasses;
     private List<Route> routes;
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass;
@@ -84,7 +83,6 @@ public class Elepy implements ElepyContext {
         this.configSlug = "/config";
         this.routes = new ArrayList<>();
         this.routingClasses = new ArrayList<>();
-        this.adminFilterClasses = new ArrayList<>();
         this.modelEngine = new ModelEngine(this);
 
         withBaseObjectEvaluator(new DefaultObjectEvaluator());
@@ -159,14 +157,6 @@ public class Elepy implements ElepyContext {
         return this.initialized;
     }
 
-    /**
-     * @return a filter, containing all {@link Filter}s associated with Elepy.
-     * @see Filter
-     */
-    public Filter getAllAdminFilters() {
-        return adminFilters;
-    }
-
     @Override
     public ObjectMapper getObjectMapper() {
         return this.context.getObjectMapper();
@@ -193,20 +183,6 @@ public class Elepy implements ElepyContext {
         return context.initializeElepyObject(cls);
     }
 
-
-    /**
-     * Adds a {@link Filter} administrative checking service.
-     *
-     * @param filter the {@link Filter}
-     * @return The {@link com.elepy.Elepy} instance
-     * @see Filter
-     */
-    public Elepy addAdminFilter(Filter filter) {
-        checkConfig();
-        adminFilters.add(filter);
-        return this;
-    }
-
     /**
      * Switches the HttpService of Elepy. This can be used to swap to Vertx, Sparkjava, Javalin, etc.
      *
@@ -216,19 +192,6 @@ public class Elepy implements ElepyContext {
     public Elepy withHttpService(HttpService httpService) {
         checkConfig();
         this.http = httpService;
-        return this;
-    }
-
-    /**
-     * Adds a {@link Filter} administrative checking service.
-     *
-     * @param filterClass the {@link Filter} class
-     * @return The {@link com.elepy.Elepy} instance
-     * @see Filter
-     */
-    public Elepy addAdminFilter(Class<? extends Filter> filterClass) {
-        checkConfig();
-        adminFilterClasses.add(filterClass);
         return this;
     }
 
@@ -653,11 +616,9 @@ public class Elepy implements ElepyContext {
 
         models.forEach(modelEngine::addModel);
 
-
         setupAuth();
         context.resolveDependencies();
 
-        setupFilters();
         setupExtraRoutes();
         igniteAllRoutes();
         injectModules();
@@ -710,20 +671,6 @@ public class Elepy implements ElepyContext {
         }
 
     }
-
-    private void setupFilters() {
-        //            for (Filter adminFilter : adminFilters) {
-//                //elepy.injectFields(adminFilter);
-//                addRouting(ReflectionUtils.scanForRoutes(adminFilter));
-//            }
-        for (Class<? extends Filter> adminFilterClass : adminFilterClasses) {
-            Filter filter = initializeElepyObject(adminFilterClass);
-            adminFilters.add(filter);
-            addRouting(ReflectionUtils.scanForRoutes(filter));
-        }
-
-    }
-
 
     private void igniteAllRoutes() {
         for (Route extraRoute : routes) {

@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public final class RouteBuilder {
-    private AccessLevel accessLevel;
     private HttpContextHandler route;
     private HttpMethod method;
     private String path;
@@ -17,11 +16,6 @@ public final class RouteBuilder {
 
     public static RouteBuilder anElepyRoute() {
         return new RouteBuilder();
-    }
-
-    public RouteBuilder accessLevel(AccessLevel accessLevel) {
-        this.accessLevel = accessLevel;
-        return this;
     }
 
     public RouteBuilder route(HttpContextHandler route) {
@@ -50,6 +44,6 @@ public final class RouteBuilder {
     }
 
     public Route build() {
-        return new Route(path, method, accessLevel, route, acceptType, permissions);
+        return new Route(path, method, route, acceptType, permissions);
     }
 }
