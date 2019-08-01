@@ -85,7 +85,7 @@ public class Elepy implements ElepyContext {
         this.routingClasses = new ArrayList<>();
         this.modelEngine = new ModelEngine(this);
 
-        withBaseObjectEvaluator(new DefaultObjectEvaluator());
+        withBaseEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         withFileService(new DefaultFileService());
         objectMapper()
@@ -116,10 +116,10 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return The elepy containing all the elepy objects
+     * @return The elepyContext containing all the elepy objects
      * @see ElepyContext
      */
-    public DefaultElepyContext getContext() {
+    public DefaultElepyContext context() {
         return context;
     }
 
@@ -145,7 +145,7 @@ public class Elepy implements ElepyContext {
      *
      * @return the base object evaluator
      */
-    public ObjectEvaluator<Object> getBaseObjectEvaluator() {
+    public ObjectEvaluator<Object> baseEvaluator() {
         return this.baseObjectEvaluator;
     }
 
@@ -397,7 +397,7 @@ public class Elepy implements ElepyContext {
      * @see ObjectEvaluator
      * @see com.elepy.annotations.Evaluators
      */
-    public Elepy withBaseObjectEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
+    public Elepy withBaseEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
         checkConfig();
         this.baseObjectEvaluator = baseObjectEvaluator;
         return this;
@@ -447,7 +447,7 @@ public class Elepy implements ElepyContext {
     /**
      * @return The Default CrudFactory of Elepy. The Default CrudFactory is what creates Crud's for Elepy's models.
      */
-    public CrudFactory getDefaultCrudFactory() {
+    public CrudFactory defaultCrudFactory() {
         if (defaultCrudFactoryImplementation == null) {
             if (defaultCrudFactoryClass == null) {
                 throw new ElepyConfigException("No default CrudFactory selected, please configure one.");
@@ -464,7 +464,7 @@ public class Elepy implements ElepyContext {
      * @param ipAddress the IP address.
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy withIPAdress(String ipAddress) {
+    public Elepy withIPAddress(String ipAddress) {
         checkConfig();
         http.ipAddress(ipAddress);
         return this;
@@ -512,14 +512,14 @@ public class Elepy implements ElepyContext {
      * @return a model description representing everything you need to know about a RestModel
      */
     @SuppressWarnings("unchecked")
-    public <T> Model<T> getModelDescriptionFor(Class<T> clazz) {
+    public <T> Model<T> modelFor(Class<T> clazz) {
         return modelEngine.getModelForClass(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Model<?>> getModelDescriptions() {
+    public List<Model<?>> models() {
         return modelEngine.getModels();
     }
 
@@ -554,14 +554,6 @@ public class Elepy implements ElepyContext {
         stopEventHandlers.add(evt);
         return this;
     }
-
-    /**
-     * @return the list of Elepy RestModels
-     */
-    public List<Class<?>> getModels() {
-        return models;
-    }
-
 
     /**
      * @param tClass      the class of the model

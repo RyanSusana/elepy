@@ -63,7 +63,7 @@ public class ModelContextExtraction {
         var annotation = modelType.getAnnotation(DaoFactory.class);
 
         var crudProvider = annotation == null ?
-                elepy.getDefaultCrudFactory()
+                elepy.defaultCrudFactory()
                 : elepy.initializeElepyObject(annotation.value());
 
         final Dao daoAnnotation = modelType.getAnnotation(Dao.class);

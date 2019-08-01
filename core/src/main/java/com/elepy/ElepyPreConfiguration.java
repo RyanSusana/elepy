@@ -5,6 +5,7 @@ import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Route;
+import com.elepy.models.Model;
 import com.elepy.models.ModelChange;
 import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +40,7 @@ public class ElepyPreConfiguration {
      * @return the base object evaluator
      */
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return elepy.getBaseObjectEvaluator();
+        return elepy.baseEvaluator();
     }
 
     public ObjectMapper getObjectMapper() {
@@ -237,8 +238,8 @@ public class ElepyPreConfiguration {
     /**
      * @return the list of Elepy RestModels
      */
-    public List<Class<?>> getModels() {
-        return elepy.getModels();
+    public List<Model<?>> models() {
+        return elepy.models();
     }
 
     /**

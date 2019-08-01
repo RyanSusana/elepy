@@ -14,6 +14,6 @@ public class MainDriver {
     }
 
     public <T> ModelDriver<T> navigateToModel(Class<T> model) {
-        return navigateToModel(driver.elepy().getModelDescriptionFor(model));
+        return navigateToModel(driver.elepy().modelFor(model));
     }
 } 

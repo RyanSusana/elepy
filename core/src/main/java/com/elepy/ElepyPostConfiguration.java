@@ -35,7 +35,7 @@ public class ElepyPostConfiguration {
      * @return the base object evaluator
      */
     public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return elepy.getBaseObjectEvaluator();
+        return elepy.baseEvaluator();
     }
 
     public ObjectMapper getObjectMapper() {
@@ -181,14 +181,14 @@ public class ElepyPostConfiguration {
      * @return a model description representing everything you need to know about a RestModel
      */
     public <T> Model<T> getModelDescriptionFor(Class<T> clazz) {
-        return elepy.getModelDescriptionFor(clazz);
+        return elepy.modelFor(clazz);
     }
 
     /**
      * @return All ModelContext
      */
     public List<Model<?>> getModelDescriptions() {
-        return elepy.getModelDescriptions();
+        return elepy.models();
     }
 
     /**
