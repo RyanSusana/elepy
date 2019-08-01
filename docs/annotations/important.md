@@ -5,11 +5,11 @@ This annotation is the only one you __need__ to mark your POJO with to make it a
 
 _Example_
 ```java
-@RestModel( slug = "/products",
+@RestModel(slug = "/products",
             name = "Products",
             description = "The things that I'm selling",
             shouldDisplayOnCMS = true,
-            defaultSortField ='id',
+            defaultSortField = "id",
             defaultSortDirection = SortOption.ASCENDING)
 public class Products{
     private long id;
