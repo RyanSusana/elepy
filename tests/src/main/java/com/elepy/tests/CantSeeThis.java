@@ -2,7 +2,7 @@ package com.elepy.tests;
 
 import com.elepy.annotations.RestModel;
 
-@RestModel(slug = "no-way-josay", name = "Should not be able to see this message",
+@RestModel(slug = "/no-way-josay", name = "Should not be able to see this message",
         shouldDisplayOnCMS = false)
 public class CantSeeThis {
     private String id;

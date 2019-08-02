@@ -28,11 +28,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
         if (headlessMode) {
             chromeOptions.addArguments("--disable-gpu").addArguments("--no-sandbox").addArguments("--headless").addArguments("--window-size=2120,1280");
         }
-
-
         chromeDriver = new ChromeDriver(chromeOptions);
-
-
     }
 
     @AfterAll
