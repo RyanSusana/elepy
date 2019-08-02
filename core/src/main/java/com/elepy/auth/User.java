@@ -32,6 +32,7 @@ public class User {
 
     @Identifier
     @Id
+    @PrettyName("User ID")
     private String id;
 
     @Unique
@@ -50,6 +51,7 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "permission")
+    @PrettyName("Permissions")
     private List<String> permissions = new ArrayList<>();
 
 
