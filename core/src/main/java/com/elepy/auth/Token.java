@@ -1,6 +1,7 @@
 package com.elepy.auth;
 
 
+import com.elepy.annotations.Hidden;
 import com.elepy.annotations.RestModel;
 
 import javax.persistence.Column;
@@ -11,7 +12,8 @@ import java.util.Objects;
 
 @Entity(name = "elepy_token")
 @Table(name = "elepy_tokens")
-@RestModel(name = "Tokens", slug = "/tokens", shouldDisplayOnCMS = false)
+@RestModel(name = "Tokens", slug = "/tokens")
+@Hidden
 public class Token implements Comparable<Token> {
     @Id
     private String id;
