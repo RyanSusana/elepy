@@ -1,12 +1,8 @@
 # What This Guide is About
 
-This an explanation guide of how I implemented https://docs.elepy.com in Kotlin. It will focus on the `@View` annotation.
+This an explanation guide of how I implemented the old https://docs.elepy.com (now replaced by docsify) in Kotlin. It will focus on the `@View` annotation.
 
-# The RestModel in Action
-Here is a video of the MarkdownEditor in action.
-<iframe src="https://player.vimeo.com/video/325447625" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-# How I implemented it
+## How I implemented it
 It uses this custom RestModel:
 ```kotlin
 @RestModel(name = "Pages", slug = "/api/pages", defaultSortField = "title")
@@ -47,5 +43,7 @@ The `<style></style>` tag is what you should expect it to be, a place where you 
 
 The `<stylesheet src = "" />` tag is where you can point to additional stylesheets. They also appear in the `<head></head>`.
 
-# How Elepy uses this editor
-Elepy uses this editor to handle pages in https://elepy.com/docs. Further customization was applied to have it [integrate with GitHub](https://github.com/RyanSusana/elepy-wiki). It works like a charm ;).
+## The RestModel in Action
+Here is a video of the MarkdownEditor in action.
+
+<iframe src="https://player.vimeo.com/video/325447625" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>

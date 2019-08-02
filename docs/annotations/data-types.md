@@ -31,7 +31,7 @@ The evaluation of Dates works on a best guess approach if no format is specified
 
 _Example_
 ```java
-@DateTime(minimumDate = "", maximumDate = "", includeTime = true)
+@DateTime(minimumDate = "20190101", maximumDate = "20220101", includeTime = true, format ="yyyyMMdd")
 private Date effectiveDate;
 ```
 
@@ -49,12 +49,18 @@ __*Can only be used on Boolean type fields__
 
 
 # @FileReference
+A FileReference is a link to an uploaded File.
+You can add the maximumFileSize(in __Bytes__) and allowedMimeTypes to references.
 
 _Example_
+```java
+@FileReference(allowedMimeType = 'image/*', maximumFileSize = 10 * 1024 * 1024)
+private String bannerImage;
+```
 
 __*Can only be used on String fields.__
 
-# @Object
+# @InnerObject
 Inner Objects are completely supported by Elepy.
 An object can contain any amount of fields(keep in mind user-experience for your CMS users). 
 It can also contain any type of field, including other objects.
