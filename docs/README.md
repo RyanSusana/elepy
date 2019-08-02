@@ -1,5 +1,5 @@
 
-# Welcome to the documentation of Elepy!
+# Welcome to Elepy documentation!
 Glad you made it!
 
 ![A nice graphic](images/feature.gif)

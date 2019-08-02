@@ -1,5 +1,6 @@
 package com.elepy.utils;
 
+import com.elepy.annotations.DateTime;
 import com.elepy.annotations.PrettyName;
 import com.elepy.annotations.TrueFalse;
 import com.elepy.annotations.Uneditable;
@@ -87,7 +88,15 @@ public class MapperUtils {
         if (fieldType.equals(FieldType.NUMBER)) {
             return toNumberFromString(field, value);
         } else if (fieldType.equals(FieldType.DATE)) {
-            return toDateFromString(value);
+            final DateTime annotation = field.getAnnotation(DateTime.class);
+            final String format;
+
+            if (annotation == null) {
+                format = "";
+            } else {
+                format = annotation.format();
+            }
+            return toDateFromString(value, format);
         } else {
             return value;
         }
@@ -104,8 +113,8 @@ public class MapperUtils {
         return value;
     }
 
-    public static Serializable toDateFromString(String value) {
-        Date date = DateUtils.guessDate(value);
+    public static Serializable toDateFromString(String value, String format) {
+        Date date = DateUtils.guessDate(value, format);
 
         if (date == null) {
             return value;

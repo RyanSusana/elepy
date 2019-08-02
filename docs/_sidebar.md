@@ -13,17 +13,17 @@
     - [Data Type Annotations](annotations/data-types.md)
     - [Integrity Annotations](annotations/integrity.md)
     - [CMS-specific Annotations](annotations/cms.md)
-    - [Custom Functionality Annotations](annotations/custom.md)
+    - [Custom Functionality Annotations](annotations/custom-functionality.md)
     
 - Core Functionality
     - [Configuration](core-functionality/elepy.md)
     - [Rest API](core-functionality/rest.md)
     - [Routes](core-functionality/routes.md)
     - [Handlers](core-functionality/handlers.md)
+    - [Users & Permissions](core-functionality/users-permissions.md)
     
 - The CMS
     - [Getting Around](cms/getting-around.md)
-    - [Users & Permissions](cms/users-permissions.md)
     - [Files](cms/files.md)
 - Modules & Extensions
     - [MongoDB](modules/mongo.md)
