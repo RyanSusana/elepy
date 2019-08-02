@@ -1,6 +1,6 @@
-package com.elepy.admin.annotations;
+package com.elepy.annotations;
 
-import com.elepy.admin.concepts.ModelView;
+import com.elepy.models.ModelView;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
