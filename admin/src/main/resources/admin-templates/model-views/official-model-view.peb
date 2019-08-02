@@ -3,9 +3,9 @@
     <{{ theView }} v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 
-<stylesheet src="https://cdn.jsdelivr.net/npm/elepy-vue@0.5.3/dist/ElepyVue.css"/>
+<stylesheet src="https://cdn.jsdelivr.net/npm/elepy-vue@0.5.4/dist/ElepyVue.css"/>
 
-<script src="https://cdn.jsdelivr.net/npm/elepy-vue@0.5.3/dist/ElepyVue.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/elepy-vue@0.5.4/dist/ElepyVue.umd.min.js"></script>
 <script>
 
     console.log(new Vue().$options.components)
