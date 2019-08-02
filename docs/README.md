@@ -2,7 +2,7 @@
 # Welcome to Elepy documentation!
 Glad you made it!
 
-![A nice graphic](images/feature.gif)
+![A nice graphic](images/banner.gif)
 
 ### What is Elepy?
 
