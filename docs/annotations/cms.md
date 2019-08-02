@@ -18,7 +18,7 @@ class Product{
 ```
 
 # @Hidden
-This annotation signifies that a field should be hidden from the CMS.
+This annotation signifies that a field or model should be hidden from the CMS.
 
 _Example_
 ```java
@@ -26,6 +26,16 @@ _Example_
 private String keepOutOfCMS;
 ```
 
+When placed on a `@RestModel`, it hides the model from the CMS.
+
+_Example_
+```java
+@RestModel(...)
+@Hidden
+class HiddenModel{
+    long id;
+}
+```
 # @Importance
 This annotation defines the order of a field in the CMS. The higher the importance, the higher it's listed in the CMS.
 

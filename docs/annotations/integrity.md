@@ -29,6 +29,7 @@ __But__, there are ways you can create and assign your own Evaluators. Let's say
 
 You can use the `@Evaluators` to point to a PersonEvaluator(and maybe more, like a generic NameEvaluator) like so:
 
+_Example_
 ```java
 @RestModel(name = "Persons", slug = "/persons")
 @Evaluators(PersonEvaluator.class)
@@ -38,6 +39,7 @@ public class Person {
     //Getters and Setters. 
 }
 ```
+Where PersonEvaluator would be:
 
 ```java
 public class PersonEvaluator implements ObjectEvaluator<Person> {

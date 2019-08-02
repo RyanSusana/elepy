@@ -8,7 +8,6 @@ _Example_
 @RestModel(slug = "/products",
             name = "Products",
             description = "The things that I'm selling",
-            shouldDisplayOnCMS = true,
             defaultSortField = "id",
             defaultSortDirection = SortOption.ASCENDING)
 public class Products{
