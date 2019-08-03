@@ -23,8 +23,11 @@ public class ElepyIdUpdater implements org.jongo.ObjectIdUpdater {
 
     @Override
     public boolean mustGenerateObjectId(Object pojo) {
-        return ReflectionUtils.getId(pojo).map(o -> o instanceof String && ((String) o).trim().isEmpty()).orElse(true);
-
+    	Optional<Serializable> idFieldOptional = ReflectionUtils.getId(pojo);
+    	
+    	boolean generateId = idFieldOptional.map(o -> (o instanceof String && ((String) o).trim().isEmpty()) || (o instanceof Long && ((Long) o) == Long.MIN_VALUE) || (o instanceof Integer && ((Integer) o) == Integer.MIN_VALUE)).orElse(true);
+    	
+    	return generateId;
     }
 
     @Override
