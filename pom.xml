@@ -7,7 +7,7 @@
     <groupId>com.elepy</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0</version>
+    <version>2.0.0-RC-1</version>
 
     <name>Elepy</name>
     <description>A Restful API generator and Headless CMS</description>
@@ -183,7 +183,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <headlessMode>true</headlessMode>
                 <exclude.tests>**/slow/**</exclude.tests>
             </properties>
         </profile>

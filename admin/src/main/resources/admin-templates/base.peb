@@ -52,29 +52,8 @@
                 <div class="uk-section uk-section-secondary uk-light">
                     <div class="uk-container">
 
-                        <h3>About Elepy</h3>
-
-                        <div class="uk-grid-match uk-child-width-1-3@m" uk-grid>
-                            <div>
-                                <p>Elepy is a Rest API generation tool for Java/Kotlin developed by
-                                    <a
-                                            href="https://ryansusana.com">Ryan Susana</a>. It is extremely
-                                    customizable! The
-                                    library
-                                    comes bundled with an admin control panel that lets you easily control your
-                                    content.</p>
-                            </div>
-                            <div>
-                                <p>Because it's backed by MongoDB, it's able to handle extremely complex objects
-                                    with ease.</p>
-                            </div>
-                            <div>
-                                <p>Every part of the generation library is customizable. That means that you can use
-                                    Elepy to
-                                    handle really complicated application logic as well.</p>
-                            </div>
-                        </div>
-
+                        <h3>Welcome to the Elepy!</h3>
+                        <p>Click on a link in the sidebar to continue.</p>
                     </div>
                 </div>
             </div>

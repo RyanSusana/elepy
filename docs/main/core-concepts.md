@@ -1,5 +1,7 @@
 # Core Concepts {docsify-ignore-all}
 
+This chapter describes the core concepts and ideologies of Elepy.
+
 ## Happiness & Freedom
 Elepy empowers ___you___, the developer, first. 
 
@@ -8,7 +10,7 @@ Elepy empowers ___you___, the developer, first.
 - No limiting templates
 - No drag-and-drop creation of Models, like the traditional Headless CMS
 
-Just you, your __boilerplate-free__ code and your __happy__ smile. ;)
+Just you, your __boilerplate-free__ code, and your __happy__ smile. ;)
 
 ## Model-driven Approach
 ___Models are everything in Elepy.___

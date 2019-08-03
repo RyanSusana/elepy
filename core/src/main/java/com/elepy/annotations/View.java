@@ -1,14 +1,14 @@
 package com.elepy.annotations;
 
+import com.elepy.models.ModelView;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Signifies that this value is hidden from Elepy.
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.TYPE})
-public @interface Hidden {
+@Target({ElementType.TYPE})
+public @interface View {
+    Class<? extends ModelView> value();
 }

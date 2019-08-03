@@ -1,7 +1,6 @@
-package com.elepy.admin.concepts;
+package com.elepy.models;
 
 import com.elepy.http.Request;
-import com.elepy.models.Model;
 
 public interface ModelView<T> {
 

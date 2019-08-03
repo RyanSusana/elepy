@@ -10,9 +10,9 @@ public class Permissions {
     public static final String SUPER_USER = "owner";
     public static final String CAN_ADMINISTRATE_FILES = "files";
     public static final String CAN_ADMINISTRATE_USERS = "users";
-    public static final String LOGGED_IN = "authenticated";
+    public static final String AUTHENTICATED = "authenticated";
     public static final String[] NONE = new String[]{};
-    public static final String[] DEFAULT = new String[]{LOGGED_IN};
+    public static final String[] DEFAULT = new String[]{AUTHENTICATED};
 
 
     private final Set<String> grantedPermissions = new TreeSet<>();

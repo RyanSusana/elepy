@@ -13,6 +13,7 @@ public class DatePropertyConfig implements PropertyConfig {
     private final Date maximumDate;
     private final boolean includeTime;
 
+
     public DatePropertyConfig(Date minimumDate, Date maximumDate, boolean includeTime) {
         this.minimumDate = minimumDate;
         this.maximumDate = maximumDate;
@@ -22,9 +23,9 @@ public class DatePropertyConfig implements PropertyConfig {
     public static DatePropertyConfig of(AccessibleObject field) {
         final DateTime annotation = field.getAnnotation(DateTime.class);
         if (annotation != null) {
-            return new DatePropertyConfig(DateUtils.guessDate(annotation.minimumDate()), DateUtils.guessDate(annotation.maximumDate()), annotation.includeTime());
+            return new DatePropertyConfig(DateUtils.guessDate(annotation.minimumDate(), annotation.format()), DateUtils.guessDate(annotation.maximumDate(), annotation.format()), annotation.includeTime());
         } else {
-            return new DatePropertyConfig(DateUtils.guessDate("1970-01-01"), DateUtils.guessDate("2099-12-22"), true);
+            return new DatePropertyConfig(DateUtils.guessDate("1970-01-01", ""), DateUtils.guessDate("2099-12-22", ""), true);
         }
     }
 

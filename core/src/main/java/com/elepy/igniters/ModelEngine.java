@@ -62,13 +62,13 @@ public class ModelEngine {
 
         final Route build = anElepyRoute()
                 .path(configSlug)
-                .addPermissions(Permissions.LOGGED_IN)
+                .addPermissions(Permissions.AUTHENTICATED)
                 .method(HttpMethod.GET)
 
                 .route(ctx -> {
                     ctx.type("application/json");
 
-                    ctx.requirePermissions(Permissions.LOGGED_IN);
+                    ctx.requirePermissions(Permissions.AUTHENTICATED);
 
                     ctx.response().json(pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList()));
 

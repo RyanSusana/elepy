@@ -1,6 +1,7 @@
 package com.elepy.models.props;
 
 import com.elepy.annotations.Array;
+import com.elepy.annotations.InnerObject;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
 import com.elepy.models.Property;
@@ -63,7 +64,7 @@ public class ArrayPropertyConfig implements PropertyConfig {
             } else if (arrayType.equals(BOOLEAN)) {
                 return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, BooleanPropertyConfig.of(field));
             } else if (arrayType.equals(OBJECT)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, ObjectPropertyConfig.of(arrayGenericType));
+                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, ObjectPropertyConfig.of(arrayGenericType, field.getAnnotation(InnerObject.class)));
             }
 
         } else {

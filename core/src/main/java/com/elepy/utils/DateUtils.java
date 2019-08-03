@@ -42,9 +42,14 @@ public class DateUtils {
     private DateUtils() {
     }
 
-    public static Date guessDate(String string) {
-        final SimpleDateFormat dateFormat = guessDateFormat(string);
+    public static Date guessDate(String string, String format) {
 
+        final SimpleDateFormat dateFormat;
+        if (format.isBlank()) {
+            dateFormat = guessDateFormat(string);
+        } else {
+            dateFormat = new SimpleDateFormat(format);
+        }
         try {
             if (dateFormat == null) {
                 return new Date(Long.parseLong(string));
@@ -52,9 +57,7 @@ public class DateUtils {
                 return dateFormat.parse(string);
             }
         } catch (NumberFormatException | ParseException e) {
-
             throw new ElepyException(String.format("Can't parse the date '%s'.", string));
-
         }
     }
 

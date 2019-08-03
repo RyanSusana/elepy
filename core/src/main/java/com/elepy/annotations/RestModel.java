@@ -42,6 +42,4 @@ public @interface RestModel {
      */
     String defaultSortField() default "";
 
-    boolean shouldDisplayOnCMS() default true;
-
 }

@@ -63,7 +63,7 @@ public abstract class FileServiceTest implements ElepyTest {
 
         List.of(configurations).forEach(elepy::addConfiguration);
 
-        elepy.http().before(ctx -> ctx.request().addPermissions(Permissions.LOGGED_IN));
+        elepy.http().before(ctx -> ctx.request().addPermissions(Permissions.AUTHENTICATED));
         elepy.start();
     }
 

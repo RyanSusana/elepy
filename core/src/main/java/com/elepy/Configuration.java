@@ -7,13 +7,22 @@ public interface Configuration {
      *
      * @param elepy A link to the Elepy object where extra configuration can happen
      */
-    void before(ElepyPreConfiguration elepy);
+    void preConfig(ElepyPreConfiguration elepy);
+
+    /**
+     * This method is called after the {@link #preConfig(ElepyPreConfiguration)} of all the Configurations is called useful if you want a list of
+     * everything associated with the Elepy instance
+     *
+     * @param elepy A link to the Elepy object where extra configuration can happen
+     */
+    default void afterPreConfig(ElepyPreConfiguration elepy) {
+    }
 
     /**
      * This method is used by Elepy to let a module execute it's functionality after Elepy is completely setup.
      *
      * @param elepy a link to Elepy after it has been constructed and all the dependencies have been set and Elepy specific routes have been generated
      */
-    void after(ElepyPostConfiguration elepy);
+    void postConfig(ElepyPostConfiguration elepy);
 
 } 

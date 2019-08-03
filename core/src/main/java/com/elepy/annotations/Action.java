@@ -1,9 +1,9 @@
 package com.elepy.annotations;
 
 import com.elepy.auth.Permissions;
+import com.elepy.handlers.ActionHandler;
 import com.elepy.http.ActionType;
 import com.elepy.http.HttpMethod;
-import com.elepy.handlers.ActionHandler;
 
 import java.lang.annotation.*;
 
@@ -26,5 +26,5 @@ public @interface Action {
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default Permissions.LOGGED_IN;
+    String[] requiredPermissions() default Permissions.AUTHENTICATED;
 }

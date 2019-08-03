@@ -2,11 +2,12 @@ package com.elepy.admin.concepts;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
-import com.elepy.admin.annotations.View;
 import com.elepy.admin.views.DefaultView;
 import com.elepy.admin.views.FileView;
+import com.elepy.annotations.View;
 import com.elepy.http.HttpService;
 import com.elepy.models.Model;
+import com.elepy.models.ModelView;
 import com.elepy.uploads.FileReference;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

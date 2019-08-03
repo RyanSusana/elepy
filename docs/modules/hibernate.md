@@ -2,13 +2,15 @@ This module is dedicated to the use of SQL(Through JPA/Hibernate) as a database 
 
 ## Download
 
+Latest Version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.elepy/elepy/badge.svg)](https://search.maven.org/search?q=com.elepy)
 ```xml
 <dependency>
     <artifactId>elepy-hibernate</artifactId>
     <groupId>com.elepy</groupId>
-    <version>THE ELEPY VERSION</version>
+    <version>${elepy.version}</version>
 </dependency>
 ```
+
 
 ## Usage
 __*MAKE SURE TO ANNOTATE ELEPY MODELS WITH THE NECESSARY JPA/HIBERNATE ANNOTATIONS__

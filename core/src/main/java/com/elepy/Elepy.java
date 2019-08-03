@@ -17,7 +17,10 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
-import com.elepy.http.*;
+import com.elepy.http.HttpService;
+import com.elepy.http.MultiFilter;
+import com.elepy.http.Route;
+import com.elepy.http.SparkService;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.Model;
 import com.elepy.models.ModelChange;
@@ -579,15 +582,11 @@ public class Elepy implements ElepyContext {
     	}
     }
 
-    private void beforeConfiguration() {
-        for (Configuration configuration : configurations) {
-            configuration.before(new ElepyPreConfiguration(this));
-        }
-    }
+
 
     private void afterElepyConstruction() {
         for (Configuration configuration : configurations) {
-            configuration.after(new ElepyPostConfiguration(this));
+            configuration.postConfig(new ElepyPostConfiguration(this));
         }
         for (ElepyExtension module : modules) {
             module.setup(http, new ElepyPostConfiguration(this));
@@ -596,19 +595,10 @@ public class Elepy implements ElepyContext {
 
 
     private void init() {
+        setupDefaultConfig();
 
-        addModel(Token.class);
-        addModel(User.class);
-        addModel(FileReference.class);
-        addExtension(new FileUploadExtension());
-
-        registerDependency(userAuthenticationService);
-
-        setupLoggingAndExceptions();
-
-        retrievePackageModels();
-        beforeConfiguration();
-        registerDependency(Filter.class, "protected", adminFilters);
+        configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
+        configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
         models.forEach(modelEngine::addModel);
 
@@ -626,6 +616,17 @@ public class Elepy implements ElepyContext {
 
         logger.info(String.format(LogUtils.banner, http.port()));
 
+    }
+
+    private void setupDefaultConfig() {
+        addModel(Token.class);
+        addModel(User.class);
+        addModel(FileReference.class);
+        addExtension(new FileUploadExtension());
+        registerDependency(userAuthenticationService);
+
+        setupLoggingAndExceptions();
+        retrievePackageModels();
     }
 
     private void setupAuth() {
@@ -715,6 +716,10 @@ public class Elepy implements ElepyContext {
             context.result(Message.of(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus()));
 
         });
+    }
+
+    List<Class<?>> modelClasses() {
+        return models;
     }
 
     private void checkConfig() {

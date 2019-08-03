@@ -2,7 +2,6 @@ package com.elepy.hibernate;
 
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
-import com.elepy.models.Model;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -53,11 +52,13 @@ public class HibernateConfiguration implements com.elepy.Configuration {
     }
 
     @Override
-    public void before(ElepyPreConfiguration elepy) {
-        for (Model<?> model : elepy.models()) {
-            hibernateConfiguration.addAnnotatedClass(model.getJavaClass());
-        }
+    public void preConfig(ElepyPreConfiguration elepy) {
 
+    }
+
+    @Override
+    public void afterPreConfig(ElepyPreConfiguration elepy) {
+        elepy.modelClasses().forEach(hibernateConfiguration::addAnnotatedClass);
 
         SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 
@@ -66,7 +67,7 @@ public class HibernateConfiguration implements com.elepy.Configuration {
     }
 
     @Override
-    public void after(ElepyPostConfiguration elepy) {
+    public void postConfig(ElepyPostConfiguration elepy) {
 
     }
 }

@@ -180,14 +180,14 @@ public class ElepyPostConfiguration {
      * @param <T>   The RestModel's type
      * @return a model description representing everything you need to know about a RestModel
      */
-    public <T> Model<T> getModelDescriptionFor(Class<T> clazz) {
+    public <T> Model<T> modelFor(Class<T> clazz) {
         return elepy.modelFor(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Model<?>> getModelDescriptions() {
+    public List<Model<?>> models() {
         return elepy.models();
     }
 

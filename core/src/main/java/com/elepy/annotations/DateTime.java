@@ -26,4 +26,6 @@ public @interface DateTime {
      * The maximum date. It supports a list of formats including UNIX timestamps, ISO time and simple 'YYYY-MM-dd''
      */
     String maximumDate() default "2099-12-22";
+
+    String format() default "";
 }

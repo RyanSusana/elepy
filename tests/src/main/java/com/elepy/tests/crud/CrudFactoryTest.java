@@ -12,12 +12,12 @@ public abstract class CrudFactoryTest extends CrudTest {
     public Configuration configuration() {
         return new Configuration() {
             @Override
-            public void before(ElepyPreConfiguration elepy) {
+            public void preConfig(ElepyPreConfiguration elepy) {
                 elepy.withDefaultCrudFactory(crudFactory());
             }
 
             @Override
-            public void after(ElepyPostConfiguration elepy) {
+            public void postConfig(ElepyPostConfiguration elepy) {
 
             }
         };

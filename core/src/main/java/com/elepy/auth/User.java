@@ -23,7 +23,7 @@ import java.util.List;
 @Create(handler = UserCreate.class, requiredPermissions = {})
 @Find(findManyHandler = UserFind.class,
         findOneHandler = UserFind.class,
-        requiredPermissions = Permissions.LOGGED_IN
+        requiredPermissions = Permissions.AUTHENTICATED
 )
 @Update(handler = UserUpdate.class)
 @Delete(handler = UserDelete.class)
@@ -32,6 +32,7 @@ public class User {
 
     @Identifier
     @Id
+    @PrettyName("User ID")
     private String id;
 
     @Unique
@@ -50,6 +51,7 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "permission")
+    @PrettyName("Permissions")
     private List<String> permissions = new ArrayList<>();
 
 
