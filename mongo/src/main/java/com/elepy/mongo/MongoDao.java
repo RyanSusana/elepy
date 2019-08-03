@@ -34,7 +34,7 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     Jongo getJongo() {
         if (jongo == null) {
-            this.jongo = new Jongo(db(), new ElepyMapper(this));
+            this.jongo = new Jongo(db(), JongoMapperFactory.createMapper());
         }
         return jongo;
     }

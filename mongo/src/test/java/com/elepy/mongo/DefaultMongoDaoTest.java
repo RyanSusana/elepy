@@ -15,6 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -26,12 +27,9 @@ public class DefaultMongoDaoTest extends BaseFongo {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-
-
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
         defaultElepyContext.registerDependency(DB.class, getDb());
         defaultElepyContext.registerDependency(new ObjectMapper());
-
 
         defaultMongoDao = defaultElepyContext.initializeElepyObject(MongoCrudFactory.class).crudFor(ModelUtils.createModelFromClass(Resource.class));
 
@@ -40,13 +38,20 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
     @Test
     public void testCreate() {
-
-        defaultMongoDao.create(validObject());
-        defaultMongoDao.create(validObject());
+        final Resource resource1 = validObject();
+        resource1.setTextField("create");
+        final Resource resource2 = validObject();
+        defaultMongoDao.create(resource1);
+        defaultMongoDao.create(resource2);
 
         final long resources = jongo.getCollection("resources").count();
 
         assertEquals(2, resources);
+
+        assertThat(jongo.getCollection("resources").findOne("{_id: #}" + resource1.getId(), resource1.getId()).as(Resource.class).getTextField())
+                .isEqualTo("create");
+        assertThat(jongo.getCollection("resources").findOne("{id: #}" + resource1.getId(), resource1.getId()).as(Resource.class).getTextField())
+                .isEqualTo("create");
     }
 
     @Test

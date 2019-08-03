@@ -25,9 +25,11 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
         this.model = model;
         this.collectionName = collectionName.replaceAll("/", "");
         this.objectMapper = objectMapper;
-        this.jongo = new Jongo(db(), new ElepyMapper(this));
+
+        this.jongo = new Jongo(db(), JongoMapperFactory.createMapper());
 
     }
+
 
     @Override
     Jongo getJongo() {
