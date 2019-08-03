@@ -614,6 +614,8 @@ public class Elepy implements ElepyContext {
 
         context.strictMode(true);
 
+        modelEngine.executeChanges();
+
         logger.info(String.format(LogUtils.banner, http.port()));
 
     }

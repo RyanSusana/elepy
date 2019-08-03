@@ -32,7 +32,6 @@ public class ModelEngine {
         this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
         setupDescriptors(elepy.getConfigSlug(), elepy.http());
-        executeChanges();
     }
 
     public List<Model<?>> getModels() {
@@ -42,13 +41,15 @@ public class ModelEngine {
     public void addModel(Class<?> modelType) {
         final Model<?> modelFromClass = ModelUtils.createModelFromClass(modelType);
         pistons.add(new ModelPiston<>(modelFromClass, elepy));
+
+
     }
 
     public <T> void alterModel(Class<T> cls, ModelChange modelChange) {
         changesToImplement.put(cls, modelChange);
     }
 
-    private void executeChanges() {
+    public void executeChanges() {
         this.changesToImplement.forEach((cls, modelChange) -> pistons
                 .stream()
                 .filter(modelContext -> modelContext.getModel().getJavaClass().equals(cls))
