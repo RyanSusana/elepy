@@ -67,7 +67,7 @@ It can also contain any type of field, including other objects.
 
 _Example_
 ```java
-@Object
+@InnerObject
 private CustomObject customObject;
 ```
 
@@ -84,7 +84,7 @@ class CustomObject{
 }
 ```
 
-__NOTE: the @Object annotation is completely optional, as it provides no extra logic. Elepy handles CustomObject the same way without the annotation__
+__NOTE: the @InnerObject annotation is completely optional, as it provides no extra logic. Elepy handles CustomObject the same way without the annotation__
 
 # @Array
 Collections are supported in the form of Sets and Lists. The general grouping of collections is called `@Array`.
