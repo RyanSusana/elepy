@@ -78,14 +78,10 @@ public abstract class FileServiceTest implements ElepyTest {
     }
 
     @Test
-    void canNot_UploadSameFile_MoreThanOnce() throws UnirestException, IOException, InterruptedException {
+    void can_UploadSameFile_MoreThanOnce() throws UnirestException, IOException {
         testCanUploadAndRead("double.txt", "text/*");
 
-        final var assertionFailedError = assertThrows(AssertionFailedError.class, () ->
-                testCanUploadAndRead("double.txt", "text/*"));
-
-        assertEquals(409, assertionFailedError.getActual().getValue(),
-                "The returned status code by duplicates MUST be 409!");
+        assertDoesNotThrow(() -> testCanUploadAndRead("double.txt", "text/*"));
     }
 
     @Test
