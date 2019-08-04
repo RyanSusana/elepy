@@ -12,7 +12,7 @@ Elepy empowers ___you___, the developer, first.
 
 Just you, your __boilerplate-free__ code, and your __happy__ smile. ;)
 
-## Model-driven Approach
+## Annotation-based, Model-driven
 ___Models are everything in Elepy.___
 
 You define your CMS based on the models you imagine and Elepy handles the boilerplate. [Defining your models are as easy as annotating a plain old Java object.](/getting-started.md)

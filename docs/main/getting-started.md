@@ -8,7 +8,7 @@ Feel free to subscribe!
 # Step Zero: Basic Terminology
 Elepy knows the concept of RestModels. These are regular POJO(or Data Classes, for Kotlin users) annotated with the [@RestModel](/docs/annotations#restmodel) annotation. This is the domain objects of your CMS.
 And that leads us to the next term, CMS. CMS means [(Headless) Content Management System](https://en.wikipedia.org/wiki/Headless_content_management_system) in the context of Elepy.
-[More about the core concepts of Elepy can be found here](/coming-soon.md).    
+[More about the core concepts of Elepy can be found here](main/core-concepts.md).    
 # Step One: Install Elepy with Maven
 For this guide  we will use Elepy with an in-memory version of Mongo.
 The latest version of Elepy is:   
