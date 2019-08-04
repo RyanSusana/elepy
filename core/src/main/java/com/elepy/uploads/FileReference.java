@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,13 +22,6 @@ public class FileReference {
 
     @Id
     @Identifier
-    @Importance(-100)
-    private String uid;
-
-
-
-    @Unique
-    @Column(unique = true)
     @com.elepy.annotations.FileReference
     @Uneditable
     @PrettyName("File")
@@ -73,8 +65,8 @@ public class FileReference {
     public FileReference() {
     }
 
-    public FileReference(String uid, String name, String uploadName, String contentType, long size, Date createdDate) {
-        this.uid = uid;
+    public FileReference(String name, String uploadName, String contentType, long size, Date createdDate) {
+
         this.uploadName = uploadName;
         this.name = name;
         this.contentType = contentType;
@@ -88,7 +80,7 @@ public class FileReference {
     }
 
     public static FileReference newFileReference(FileUpload file) {
-        return new FileReference(UUID.randomUUID().toString(), file.getName(), file.getName(), file.getContentType(), file.getSize(), Calendar.getInstance().getTime());
+        return new FileReference(file.getName(), file.getName(), file.getContentType(), file.getSize(), Calendar.getInstance().getTime());
     }
 
     public Date getCreatedDate() {
@@ -99,13 +91,6 @@ public class FileReference {
         this.createdDate = createdDate;
     }
 
-    public String getUID() {
-        return uid;
-    }
-
-    public void setUID(String uid) {
-        this.uid = uid;
-    }
 
     public String getUploadName() {
         return uploadName;

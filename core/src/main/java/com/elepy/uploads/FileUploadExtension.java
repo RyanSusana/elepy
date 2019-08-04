@@ -54,9 +54,6 @@ public class FileUploadExtension implements ElepyExtension {
             uploadedFile.setName(generateUniqueFileName(originalName));
             reference.setUploadName(uploadedFile.getName());
 
-            this.fileCrud.searchInField("name", reference.getName()).stream().findFirst().ifPresent(file -> {
-                throw new ElepyException("There is already a file called: " + file.getName(), 409);
-            });
 
             fileService.uploadFile(uploadedFile);
             fileCrud.create(reference);

@@ -3,9 +3,9 @@ package com.elepy.uploads;
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.Message;
+import com.elepy.handlers.DeleteHandler;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
-import com.elepy.handlers.DeleteHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
@@ -22,7 +22,7 @@ public class FileReferenceDelete implements DeleteHandler<FileReference> {
 
         dao.getByIds(paramIds).forEach(fileReference -> {
             fileService.deleteFile(fileReference.getUploadName());
-            dao.deleteById(fileReference.getUID());
+            dao.deleteById(fileReference.getUploadName());
         });
 
         context.result(Message.of("Successfully deleted items", 200));
