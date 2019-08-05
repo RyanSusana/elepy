@@ -3,6 +3,8 @@ package com.elepy.auth;
 
 import com.elepy.annotations.Hidden;
 import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Service;
+import com.elepy.handlers.DisabledHandler;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +16,7 @@ import java.util.Objects;
 @Table(name = "elepy_tokens")
 @RestModel(name = "Tokens", slug = "/tokens")
 @Hidden
+@Service(DisabledHandler.class)
 public class Token implements Comparable<Token> {
     @Id
     private String id;
