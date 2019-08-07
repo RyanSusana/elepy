@@ -2,6 +2,7 @@ package com.elepy.uploads;
 
 import com.elepy.annotations.*;
 import com.elepy.auth.Permissions;
+import com.elepy.dao.SortOption;
 import com.elepy.handlers.DisabledHandler;
 
 import javax.persistence.Column;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RestModel(name = "Files", slug = "/files")
+@RestModel(name = "Files", slug = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
 @Update(handler = DisabledHandler.class)
 @Delete(handler = FileReferenceDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_FILES)
 @Entity(name = "elepy_files")
