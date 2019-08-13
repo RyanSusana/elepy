@@ -6,9 +6,10 @@ ___or if you prefer videos...___
 
 Feel free to subscribe!
 # Step Zero: Basic Terminology
-Elepy knows the concept of RestModels. These are regular POJO(or Data Classes, for Kotlin users) annotated with the [@RestModel](/docs/annotations#restmodel) annotation. This is the domain objects of your CMS.
+Elepy knows the concept of RestModels. These are regular POJO(or Data Classes, for Kotlin users) annotated with the [@RestModel](annotations/important?id=restmodel) annotation. This is the domain objects of your CMS.
 And that leads us to the next term, CMS. CMS means [(Headless) Content Management System](https://en.wikipedia.org/wiki/Headless_content_management_system) in the context of Elepy.
 [More about the core concepts of Elepy can be found here](main/core-concepts.md).    
+
 # Step One: Install Elepy with Maven
 For this guide  we will use Elepy with an in-memory version of Mongo.
 The latest version of Elepy is:   
@@ -67,8 +68,9 @@ public class Product {
 ```
 # Step Three: Configure Elepy
 
-In the `main()` of your application is where you usually configure and start Elepy. The most important part of the configuration is the Database setup. For MongDB you need to supply Elepy with a reference to your `DB` object. This can be done with the `connectDB(DB)` method or with the `registerDependency(Class, singleton)` method. After connecting your Database, you should start adding your RestModels with the `addModel(Class)`, `addModels(Class...)` and `addModelPackage(String)` methods. Once you do that, you might be interested in adding Extensions. The ElepyAdminPanel Extension is how you can add the Content Management System.
-
+In the `main()` of your application is where you usually configure and start Elepy. 
+The most important part of the configuration is the Database setup. 
+For in-memory Mongo, you can use the convenient `MongoConfiguration.inMemory()`, for more information about Mongo, you can visit [here](modules/mongo.md). 
 As you also may have noticed, the `Elepy` configuration object is of fluent nature.
 ``` java
 public static void main(String[] args) {

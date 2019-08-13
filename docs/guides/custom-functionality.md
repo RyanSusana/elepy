@@ -1,3 +1,5 @@
+# Custom Functionality
+
 _"Creating a basic API is cool and all, but what happens when I want to do my own thing?"_ - ___the curious Programmer___.
 
 In this guide I will show you how to do it the easy way!
