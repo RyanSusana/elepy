@@ -28,17 +28,21 @@ public class ModelUtils {
     }
 
     public static List<Property> describeClass(Class cls) {
+        return getDeclaredFields(cls).stream()
+                .map(ModelUtils::describeFieldOrMethod)
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+    }
+
+    public static List<AccessibleObject> getDeclaredFields(Class cls) {
         return Stream.concat(
-                Stream.of(cls.getDeclaredFields())
-                        .map(ModelUtils::describeFieldOrMethod),
+                Stream.of(cls.getDeclaredFields()),
                 Stream.of(cls.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(Generated.class))
-                        .map(ModelUtils::describeFieldOrMethod)
-        ).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+        ).collect(Collectors.toList());
     }
 
     public static Property describeFieldOrMethod(AccessibleObject accessibleObject) {
-        Property property = new Property();
 
         final boolean idProperty;
 
@@ -47,6 +51,16 @@ public class ModelUtils {
         } else {
             idProperty = false;
         }
+
+        Property property = createBasicProperty(accessibleObject, idProperty);
+
+        property.config(mapFieldTypeInformation(accessibleObject));
+        setupSearch(accessibleObject, property, idProperty);
+        return property;
+    }
+
+    public static Property createBasicProperty(AccessibleObject accessibleObject, boolean idProperty) {
+        Property property = new Property();
 
         final Column column = accessibleObject.getAnnotation(Column.class);
         final Importance importance = accessibleObject.getAnnotation(Importance.class);
@@ -59,9 +73,6 @@ public class ModelUtils {
         property.setImportance(importance == null ? 0 : importance.value());
         property.setUnique(accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
         property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
-
-        property.config(mapFieldTypeInformation(accessibleObject));
-        setupSearch(accessibleObject, property, idProperty);
         return property;
     }
 

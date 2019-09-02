@@ -40,6 +40,7 @@ public class ReflectionUtils {
         return fields;
     }
 
+
     @SafeVarargs
     public static Optional<Field> searchForFieldWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
         return searchForFieldsWithAnnotation(cls, annotations).stream().findFirst();

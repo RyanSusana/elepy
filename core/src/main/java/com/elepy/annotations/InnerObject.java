@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface InnerObject {
     String name() default "";
+
+    int recursionDepth() default 3;
 }

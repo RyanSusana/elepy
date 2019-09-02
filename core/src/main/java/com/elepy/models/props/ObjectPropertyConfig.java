@@ -9,6 +9,8 @@ import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ObjectPropertyConfig implements PropertyConfig {
     private final String objectName;
@@ -28,13 +30,85 @@ public class ObjectPropertyConfig implements PropertyConfig {
     }
 
     public static ObjectPropertyConfig of(Class<?> objectType, InnerObject annotation) {
-        final String featuredProperty = ReflectionUtils.searchForFieldWithAnnotation(objectType, Featured.class)
-                .map(ReflectionUtils::getPropertyName).orElse(null);
+        final String featuredProperty = getFeaturedProperty(objectType);
 
-        final String objectName = (annotation == null || annotation.name().isBlank()) ? objectType.getSimpleName() : annotation.name();
-        return new ObjectPropertyConfig(objectName, featuredProperty, ModelUtils.describeClass(objectType));
+        final String objectName = getObjectName(objectType, annotation);
+
+        return new ObjectPropertyConfig(objectName, featuredProperty, removeRecursiveProps(objectType, getRecursionDepth(annotation)));
     }
 
+    private static String getObjectName(Class<?> objectType, InnerObject annotation) {
+        return (annotation == null || annotation.name().isBlank()) ? objectType.getSimpleName() : annotation.name();
+    }
+
+    private static int getRecursionDepth(InnerObject annotation) {
+        return annotation == null ? 3 : annotation.recursionDepth();
+    }
+
+    private static String getFeaturedProperty(Class<?> objectType) {
+        return ReflectionUtils.searchForFieldWithAnnotation(objectType, Featured.class)
+                .map(ReflectionUtils::getPropertyName).orElse(null);
+    }
+
+    private static List<Property> removeRecursiveProps(Class cls, int recursionDepth) {
+        return ModelUtils.getDeclaredFields(cls).stream()
+                .map(accessibleObject -> {
+                    if (isObjectRecursive(cls, accessibleObject)) {
+                        return ObjectPropertyConfig.createRecursiveObjectPropertyTree(accessibleObject, recursionDepth, 0);
+                    } else {
+                        return ModelUtils.describeFieldOrMethod(accessibleObject);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+
+    private static Property createRecursiveObjectPropertyTree(AccessibleObject field, int maxDepth, int currentDepth) {
+        if (maxDepth == currentDepth) {
+            return null;
+        } else {
+            final Property property = ModelUtils.createBasicProperty(field, false);
+
+            property.setType(FieldType.OBJECT);
+
+
+            final Class<?> objectType = setBasicExtras(field, property);
+
+            final List<Property> properties = ModelUtils.getDeclaredFields(objectType).stream().map(accessibleObject -> {
+                if (ReflectionUtils.returnTypeOf(accessibleObject).equals(objectType)) {
+                    return createRecursiveObjectPropertyTree(field, maxDepth, currentDepth + 1);
+                } else {
+                    return ModelUtils.describeFieldOrMethod(accessibleObject);
+                }
+
+            }).filter(Objects::nonNull)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            property.setExtra("properties", properties);
+
+            return property;
+        }
+    }
+
+    private static Class<?> setBasicExtras(AccessibleObject field, Property property) {
+        final Class<?> objectType = ReflectionUtils.returnTypeOf(field);
+        final String featuredProperty = getFeaturedProperty(objectType);
+
+        final String objectName = getObjectName(objectType, null);
+
+        property.setExtra("objectName", objectName);
+        property.setExtra("featuredProperty", featuredProperty);
+        return objectType;
+    }
+
+    public static boolean isObjectRecursive(Class<?> recursionTypeToCheck, AccessibleObject prop) {
+        final Class<?> baseFieldType = ReflectionUtils.returnTypeOf(prop);
+
+        return baseFieldType.equals(recursionTypeToCheck);
+    }
 
     public static ObjectPropertyConfig of(Property property) {
         return new ObjectPropertyConfig(property.getExtra("objectName"), property.getExtra("featuredProperty"), property.getExtra("properties"));

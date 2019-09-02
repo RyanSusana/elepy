@@ -9,11 +9,14 @@ import com.elepy.models.TextType;
 import com.elepy.models.props.*;
 import com.elepy.uploads.FileUploadEvaluator;
 import com.elepy.utils.ModelUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.elepy.models.FieldType.*;
@@ -185,5 +188,16 @@ public class ModelUtilsTest {
         assertThat((FieldType) arrayEnum.getExtra("arrayType")).isEqualTo(FieldType.ENUM);
     }
 
+    @Test
+    void testRecursive() throws JsonProcessingException {
 
+        final List<Property> properties = ModelUtils.describeClass(RecursiveModel.class);
+
+
+        final var mapper = new ObjectMapper().writerWithDefaultPrettyPrinter();
+
+        System.out.println(mapper.writeValueAsString(properties));
+
+
+    }
 }
