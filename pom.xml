@@ -19,6 +19,7 @@
         <awaitility.version>3.1.2</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
         <jackson.version>2.9.9</jackson.version>
+        <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
     </properties>
