@@ -1,9 +1,9 @@
 package com.elepy.describers;
 
-public class RecursiveModel {
+public class StrongRecursiveModel {
     private String id;
 
-    private RecursiveObject recursiveObject;
+    private DirectRecursiveObject recursiveObject;
 
     public String getId() {
         return id;
@@ -13,11 +13,11 @@ public class RecursiveModel {
         this.id = id;
     }
 
-    public RecursiveObject getRecursiveObject() {
+    public DirectRecursiveObject getRecursiveObject() {
         return recursiveObject;
     }
 
-    public void setRecursiveObject(RecursiveObject recursiveObject) {
+    public void setRecursiveObject(DirectRecursiveObject recursiveObject) {
         this.recursiveObject = recursiveObject;
     }
 }

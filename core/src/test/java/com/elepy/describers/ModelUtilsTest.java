@@ -189,12 +189,14 @@ public class ModelUtilsTest {
     }
 
     @Test
-    void testRecursive() throws JsonProcessingException {
+    void testStrongRecursiveObject() throws JsonProcessingException {
 
-        final List<Property> properties = ModelUtils.describeClass(RecursiveModel.class);
-
+        final List<Property> properties = ModelUtils.describeClass(StrongRecursiveModel.class);
 
         final var mapper = new ObjectMapper().writerWithDefaultPrettyPrinter();
+
+        final Property rootRecursiveObjectProperty = properties.stream().filter(property -> property.getName().equals("recursiveObject")).findAny().orElseThrow();
+
 
         System.out.println(mapper.writeValueAsString(properties));
 
