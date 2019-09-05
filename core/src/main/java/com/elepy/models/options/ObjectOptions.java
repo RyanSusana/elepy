@@ -1,4 +1,4 @@
-package com.elepy.models.props;
+package com.elepy.models.options;
 
 import com.elepy.annotations.Featured;
 import com.elepy.annotations.InnerObject;
@@ -12,29 +12,34 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ObjectPropertyConfig implements PropertyConfig {
-    private final String objectName;
-    private final String featuredProperty;
-    private final List<Property> properties;
+public class ObjectOptions implements Options {
 
-    public ObjectPropertyConfig(String objectName, String featuredProperty, List<Property> properties) {
+    private String objectName;
+    private String featuredProperty;
+    private List<Property> properties;
+
+    private ObjectOptions(String objectName, String featuredProperty, List<Property> properties) {
         this.objectName = objectName;
         this.featuredProperty = featuredProperty;
         this.properties = properties;
     }
 
-    public static ObjectPropertyConfig of(AccessibleObject field) {
+    private ObjectOptions() {
+
+    }
+
+    public static ObjectOptions of(AccessibleObject field) {
         Class<?> objectType = ReflectionUtils.returnTypeOf(field);
         final InnerObject annotation = field.getAnnotation(InnerObject.class);
         return of(objectType, annotation);
     }
 
-    public static ObjectPropertyConfig of(Class<?> objectType, InnerObject annotation) {
+    public static ObjectOptions of(Class<?> objectType, InnerObject annotation) {
         final String featuredProperty = getFeaturedProperty(objectType);
 
         final String objectName = getObjectName(objectType, annotation);
 
-        return new ObjectPropertyConfig(objectName, featuredProperty, removeRecursiveProps(objectType, getRecursionDepth(annotation)));
+        return new ObjectOptions(objectName, featuredProperty, removeRecursiveProps(objectType, getRecursionDepth(annotation)));
     }
 
     private static String getObjectName(Class<?> objectType, InnerObject annotation) {
@@ -42,7 +47,7 @@ public class ObjectPropertyConfig implements PropertyConfig {
     }
 
     private static int getRecursionDepth(InnerObject annotation) {
-        return annotation == null ? 3 : annotation.recursionDepth();
+        return annotation == null ? 3 : annotation.maxRecursionDepth();
     }
 
     private static String getFeaturedProperty(Class<?> objectType) {
@@ -54,7 +59,7 @@ public class ObjectPropertyConfig implements PropertyConfig {
         return ModelUtils.getDeclaredFields(cls).stream()
                 .map(accessibleObject -> {
                     if (isObjectRecursive(cls, accessibleObject)) {
-                        return ObjectPropertyConfig.createRecursiveObjectPropertyTree(accessibleObject, recursionDepth, 0);
+                        return createRecursiveObjectOptionsTree(accessibleObject, recursionDepth, 1);
                     } else {
                         return ModelUtils.describeFieldOrMethod(accessibleObject);
                     }
@@ -65,20 +70,23 @@ public class ObjectPropertyConfig implements PropertyConfig {
     }
 
 
-    private static Property createRecursiveObjectPropertyTree(AccessibleObject field, int maxDepth, int currentDepth) {
+    private static Property createRecursiveObjectOptionsTree(AccessibleObject field, int maxDepth, int currentDepth) {
         if (maxDepth == currentDepth) {
             return null;
         } else {
-            final Property property = ModelUtils.createBasicProperty(field, false);
+            final Property property = new Property();
+
+            ModelUtils.setupPropertyBasics(field, false, property);
 
             property.setType(FieldType.OBJECT);
+            property.setOptions(new ObjectOptions());
 
 
             final Class<?> objectType = setBasicExtras(field, property);
 
             final List<Property> properties = ModelUtils.getDeclaredFields(objectType).stream().map(accessibleObject -> {
                 if (ReflectionUtils.returnTypeOf(accessibleObject).equals(objectType)) {
-                    return createRecursiveObjectPropertyTree(field, maxDepth, currentDepth + 1);
+                    return createRecursiveObjectOptionsTree(field, maxDepth, currentDepth + 1);
                 } else {
                     return ModelUtils.describeFieldOrMethod(accessibleObject);
                 }
@@ -87,7 +95,9 @@ public class ObjectPropertyConfig implements PropertyConfig {
                     .sorted()
                     .collect(Collectors.toList());
 
-            property.setExtra("properties", properties);
+
+            final ObjectOptions options = property.getOptions();
+            options.properties = properties;
 
             return property;
         }
@@ -95,12 +105,11 @@ public class ObjectPropertyConfig implements PropertyConfig {
 
     private static Class<?> setBasicExtras(AccessibleObject field, Property property) {
         final Class<?> objectType = ReflectionUtils.returnTypeOf(field);
-        final String featuredProperty = getFeaturedProperty(objectType);
 
-        final String objectName = getObjectName(objectType, null);
+        final ObjectOptions options = property.getOptions();
+        options.featuredProperty = getFeaturedProperty(objectType);
 
-        property.setExtra("objectName", objectName);
-        property.setExtra("featuredProperty", featuredProperty);
+        options.objectName = getObjectName(objectType, null);
         return objectType;
     }
 
@@ -108,19 +117,6 @@ public class ObjectPropertyConfig implements PropertyConfig {
         final Class<?> baseFieldType = ReflectionUtils.returnTypeOf(prop);
 
         return baseFieldType.equals(recursionTypeToCheck);
-    }
-
-    public static ObjectPropertyConfig of(Property property) {
-        return new ObjectPropertyConfig(property.getExtra("objectName"), property.getExtra("featuredProperty"), property.getExtra("properties"));
-    }
-
-
-    @Override
-    public void config(Property property) {
-        property.setType(FieldType.OBJECT);
-        property.setExtra("objectName", objectName);
-        property.setExtra("featuredProperty", featuredProperty);
-        property.setExtra("properties", properties);
     }
 
     public String getObjectName() {

@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 public @interface InnerObject {
     String name() default "";
 
-    int recursionDepth() default 3;
+    int maxRecursionDepth() default 3;
 }

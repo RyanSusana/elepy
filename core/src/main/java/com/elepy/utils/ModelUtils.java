@@ -10,15 +10,12 @@ import com.elepy.http.HttpMethod;
 import com.elepy.models.FieldType;
 import com.elepy.models.Model;
 import com.elepy.models.Property;
-import com.elepy.models.props.*;
+import com.elepy.models.options.*;
 
 import javax.persistence.Column;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,16 +49,22 @@ public class ModelUtils {
             idProperty = false;
         }
 
-        Property property = createBasicProperty(accessibleObject, idProperty);
+        Property property = createProperty(accessibleObject, idProperty);
 
-        property.config(mapFieldTypeInformation(accessibleObject));
         setupSearch(accessibleObject, property, idProperty);
         return property;
     }
 
-    public static Property createBasicProperty(AccessibleObject accessibleObject, boolean idProperty) {
-        Property property = new Property();
+    public static Property createProperty(AccessibleObject accessibleObject, boolean idProperty) {
+        Property property = createTypedProperty(accessibleObject);
 
+        setupPropertyBasics(accessibleObject, idProperty, property);
+
+        return property;
+    }
+
+
+    public static void setupPropertyBasics(AccessibleObject accessibleObject, boolean idProperty, Property property) {
         final Column column = accessibleObject.getAnnotation(Column.class);
         final Importance importance = accessibleObject.getAnnotation(Importance.class);
 
@@ -73,14 +76,13 @@ public class ModelUtils {
         property.setImportance(importance == null ? 0 : importance.value());
         property.setUnique(accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
         property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
-        return property;
     }
 
     private static void setupSearch(AccessibleObject accessibleObject, Property property, boolean idProperty) {
         property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idProperty);
-        var availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
+        Set<Map<String, String>> availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
 
-        property.setExtra("availableFilters", availableFilters);
+        //property.setExtra("availableFilters", availableFilters);
     }
 
     public static <T> Model<T> createModelFromClass(Class<T> classType) {
@@ -137,6 +139,41 @@ public class ModelUtils {
 
     }
 
+    private static Property createTypedProperty(AccessibleObject field) {
+        Property property = new Property();
+        FieldType fieldType = FieldType.guessType(field);
+
+
+        property.setType(fieldType);
+        property.setOptions(getOptions(field, fieldType));
+
+        return property;
+    }
+
+    private static Options getOptions(AccessibleObject field, FieldType fieldType) {
+        switch (fieldType) {
+            case TEXT:
+                return TextOptions.of(field);
+            case DATE:
+                return DateOptions.of(field);
+            case NUMBER:
+                return NumberOptions.of(field);
+            case ENUM:
+                return EnumOptions.of(field);
+            case OBJECT:
+                return ObjectOptions.of(field);
+            case BOOLEAN:
+                return BooleanOptions.of(field);
+            case ARRAY:
+                return ArrayOptions.of(field);
+            case FILE_REFERENCE:
+                return FileReferenceOptions.of(field);
+            default:
+                throw new ElepyConfigException(String.format("%s fields are not supported", fieldType.name()));
+
+        }
+    }
+
     private static void setupDefaultActions(Model<?> model) {
 
         var createPermissions = Optional
@@ -165,33 +202,6 @@ public class ModelUtils {
         model.setUpdateAction(HttpAction.of("Update", model.getSlug() + "/:id", updatePermissions, HttpMethod.PUT, ActionType.SINGLE));
         model.setDeleteAction(HttpAction.of("Delete", model.getSlug() + "/:id", deletePermissions, HttpMethod.DELETE, ActionType.SINGLE));
         model.setCreateAction(HttpAction.of("Create", model.getSlug(), createPermissions, HttpMethod.POST, ActionType.MULTIPLE));
-
-    }
-
-    private static PropertyConfig mapFieldTypeInformation(AccessibleObject field) {
-        FieldType fieldType = FieldType.guessType(field);
-
-        switch (fieldType) {
-            case TEXT:
-                return TextPropertyConfig.of(field);
-            case DATE:
-                return DatePropertyConfig.of(field);
-            case NUMBER:
-                return NumberPropertyConfig.of(field);
-            case ENUM:
-                return EnumPropertyConfig.of(field);
-            case OBJECT:
-                return ObjectPropertyConfig.of(field);
-            case BOOLEAN:
-                return BooleanPropertyConfig.of(field);
-            case ARRAY:
-                return ArrayPropertyConfig.of(field);
-            case FILE_REFERENCE:
-                return FileReferencePropertyConfig.of(field);
-            default:
-                throw new ElepyConfigException(String.format("%s fields are not supported", fieldType.name()));
-
-        }
 
     }
 

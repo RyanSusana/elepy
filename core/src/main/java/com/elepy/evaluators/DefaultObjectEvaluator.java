@@ -3,9 +3,10 @@ package com.elepy.evaluators;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 import com.elepy.models.Property;
-import com.elepy.models.props.DatePropertyConfig;
-import com.elepy.models.props.NumberPropertyConfig;
-import com.elepy.models.props.TextPropertyConfig;
+import com.elepy.models.options.ArrayOptions;
+import com.elepy.models.options.DateOptions;
+import com.elepy.models.options.NumberOptions;
+import com.elepy.models.options.TextOptions;
 import com.elepy.utils.ModelUtils;
 
 import java.lang.reflect.Field;
@@ -45,13 +46,14 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
         checkRequired(obj, property);
 
         if (property.getType().equals(FieldType.NUMBER)) {
-            checkNumberConfig(obj, NumberPropertyConfig.of(property), property.getPrettyName());
+
+            checkNumberConfig(obj, property.getOptions(), property.getPrettyName());
         }
         if (property.getType().equals(FieldType.TEXT)) {
-            checkTextConfig(obj, TextPropertyConfig.of(property), property.getPrettyName());
+            checkTextConfig(obj, property.getOptions(), property.getPrettyName());
         }
         if (property.getType().equals(FieldType.DATE)) {
-            checkDateConfig(obj, DatePropertyConfig.of(property), property.getPrettyName());
+            checkDateConfig(obj, property.getOptions(), property.getPrettyName());
         }
 
         if (property.getType().equals(FieldType.ARRAY)) {
@@ -65,23 +67,25 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
         Collection collection = (Collection) obj;
         final Object[] objects = (collection == null ? List.of() : collection).toArray();
 
+        final ArrayOptions options = property.getOptions();
 
-        final int maximumArrayLength = property.getExtra("maximumArrayLength");
-        final int minimumArrayLength = property.getExtra("minimumArrayLength");
+
+        final int maximumArrayLength = options.getMaximumArrayLength();
+        final int minimumArrayLength = options.getMinimumArrayLength();
 
         if (objects.length > maximumArrayLength || objects.length < minimumArrayLength) {
             throw new ElepyException(String.format("%s can only consist of between  %d and %d items, was %d", property.getPrettyName(), minimumArrayLength, maximumArrayLength, objects.length), 400);
         }
         for (Object arrayObject : objects) {
-            switch ((FieldType) property.getExtra("arrayType")) {
+            switch (options.getArrayType()) {
                 case DATE:
-                    checkDateConfig(arrayObject, DatePropertyConfig.of(property), property.getPrettyName());
+                    checkDateConfig(arrayObject, (DateOptions) options.getGenericOptions(), property.getPrettyName());
                     break;
                 case NUMBER:
-                    checkNumberConfig(arrayObject, NumberPropertyConfig.of(property), property.getPrettyName());
+                    checkNumberConfig(arrayObject, (NumberOptions) options.getGenericOptions(), property.getPrettyName());
                     break;
                 case TEXT:
-                    checkTextConfig(arrayObject, TextPropertyConfig.of(property), property.getPrettyName());
+                    checkTextConfig(arrayObject, (TextOptions) options.getGenericOptions(), property.getPrettyName());
                     break;
                 case OBJECT:
                     evaluateObject(arrayObject, arrayObject.getClass());
@@ -92,7 +96,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
     }
 
-    private void checkNumberConfig(Object obj, NumberPropertyConfig numberAnnotation, String prettyName) {
+    private void checkNumberConfig(Object obj, NumberOptions numberAnnotation, String prettyName) {
         if (obj == null) {
             obj = 0;
         }
@@ -106,7 +110,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
         }
     }
 
-    private void checkTextConfig(Object obj, TextPropertyConfig textAnnotation, String prettyName) {
+    private void checkTextConfig(Object obj, TextOptions textAnnotation, String prettyName) {
 
         String text = (obj == null ? "" : obj).toString();
 
@@ -115,7 +119,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
         }
     }
 
-    private void checkDateConfig(Object obj, DatePropertyConfig dateTimeAnnotation, String prettyName) {
+    private void checkDateConfig(Object obj, DateOptions dateTimeAnnotation, String prettyName) {
         Date date = obj == null ? new Date(0) : (Date) obj;
 
         Date min = dateTimeAnnotation.getMinimumDate();

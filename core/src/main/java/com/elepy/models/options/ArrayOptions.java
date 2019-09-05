@@ -1,11 +1,11 @@
-package com.elepy.models.props;
+package com.elepy.models.options;
 
 import com.elepy.annotations.Array;
 import com.elepy.annotations.InnerObject;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
-import com.elepy.models.Property;
 import com.elepy.utils.ReflectionUtils;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -14,24 +14,27 @@ import java.util.List;
 
 import static com.elepy.models.FieldType.*;
 
-public class ArrayPropertyConfig implements PropertyConfig {
-    private final boolean sortable;
-    private final int maximumArrayLength;
-    private final int minimumArrayLength;
+public class ArrayOptions implements Options {
 
-    private final FieldType arrayType;
-    private final PropertyConfig arrayConfig;
+    private boolean sortable;
+    private int maximumArrayLength;
+    private int minimumArrayLength;
 
-    public ArrayPropertyConfig(boolean sortable, int maximumArrayLength, int minimumArrayLength, FieldType arrayType, PropertyConfig arrayConfig) {
+    private FieldType arrayType;
+
+    @JsonUnwrapped
+    private Options genericOptions;
+
+    public ArrayOptions(boolean sortable, int maximumArrayLength, int minimumArrayLength, FieldType arrayType, Options genericOptions) {
         this.sortable = sortable;
         this.maximumArrayLength = maximumArrayLength;
         this.minimumArrayLength = minimumArrayLength;
         this.arrayType = arrayType;
-        this.arrayConfig = arrayConfig;
+        this.genericOptions = genericOptions;
     }
 
 
-    public static ArrayPropertyConfig of(AccessibleObject field) {
+    public static ArrayOptions of(AccessibleObject field) {
         if (field instanceof Field) {
 
             final Array annotation = field.getAnnotation(Array.class);
@@ -54,17 +57,17 @@ public class ArrayPropertyConfig implements PropertyConfig {
             }
 
             if (arrayType.equals(NUMBER)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, NumberPropertyConfig.of(field, arrayGenericType));
+                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, NumberOptions.of(field, arrayGenericType));
             } else if (arrayType.equals(TEXT)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, TextPropertyConfig.of(field));
+                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, TextOptions.of(field));
             } else if (arrayType.equals(ENUM)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, EnumPropertyConfig.of(arrayGenericType));
+                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, EnumOptions.of(arrayGenericType));
             } else if (arrayType.equals(DATE)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, DatePropertyConfig.of(field));
+                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, DateOptions.of(field));
             } else if (arrayType.equals(BOOLEAN)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, BooleanPropertyConfig.of(field));
+                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, BooleanOptions.of(field));
             } else if (arrayType.equals(OBJECT)) {
-                return new ArrayPropertyConfig(sortable, maximumArrayLength, minimumArrayLength, arrayType, ObjectPropertyConfig.of(arrayGenericType, field.getAnnotation(InnerObject.class)));
+                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, ObjectOptions.of(arrayGenericType, field.getAnnotation(InnerObject.class)));
             }
 
         } else {
@@ -73,13 +76,23 @@ public class ArrayPropertyConfig implements PropertyConfig {
         throw new ElepyConfigException(String.format("Unable to map the collection '%s'", ((Field) field).getName()));
     }
 
-    @Override
-    public void config(Property property) {
-        arrayConfig.config(property);
-        property.setType(FieldType.ARRAY);
-        property.setExtra("arrayType", arrayType);
-        property.setExtra("sortable", sortable);
-        property.setExtra("maximumArrayLength", maximumArrayLength);
-        property.setExtra("minimumArrayLength", minimumArrayLength);
+    public boolean isSortable() {
+        return sortable;
+    }
+
+    public int getMaximumArrayLength() {
+        return maximumArrayLength;
+    }
+
+    public int getMinimumArrayLength() {
+        return minimumArrayLength;
+    }
+
+    public FieldType getArrayType() {
+        return arrayType;
+    }
+
+    public Options getGenericOptions() {
+        return genericOptions;
     }
 }
