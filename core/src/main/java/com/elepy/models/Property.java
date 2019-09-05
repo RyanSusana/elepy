@@ -1,12 +1,10 @@
 package com.elepy.models;
 
-import com.elepy.models.props.PropertyConfig;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.elepy.models.options.Options;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class Property implements Comparable<Property> {
 
@@ -19,9 +17,24 @@ public class Property implements Comparable<Property> {
     private boolean hiddenFromCMS;
     private boolean searchable;
     private int importance;
-    private FieldType type;
-    private Map<String, Object> extraProperties = new HashMap<>();
 
+    @JsonUnwrapped
+    private Options options;
+
+    @SuppressWarnings("unchecked")
+    public <T extends Options> T getOptions() {
+        return (T) options;
+    }
+
+    public void setOptions(Options options) {
+        this.options = options;
+    }
+
+    public void setType(FieldType type) {
+        this.type = type;
+    }
+
+    private FieldType type;
 
     public boolean isHiddenFromCMS() {
         return hiddenFromCMS;
@@ -91,13 +104,9 @@ public class Property implements Comparable<Property> {
         return type;
     }
 
-    public void setType(FieldType type) {
-        this.type = type;
-    }
-
     @JsonProperty
     public boolean isPrimitive() {
-        return type != null && type.isPrimitive();
+        return type != null && getType().isPrimitive();
     }
 
     public boolean isSearchable() {
@@ -108,28 +117,6 @@ public class Property implements Comparable<Property> {
         this.searchable = searchable;
     }
 
-    public void config(PropertyConfig propertyConfig) {
-        propertyConfig.config(this);
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getExtraProperties() {
-        return extraProperties;
-    }
-
-
-    public void setExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties = extraProperties;
-    }
-
-    @JsonAnySetter
-    public void setExtra(String key, Object value) {
-        extraProperties.put(key, value);
-    }
-
-    public <T> T getExtra(String key) {
-        return (T) extraProperties.get(key);
-    }
 
     @Override
     public int compareTo(Property o) {

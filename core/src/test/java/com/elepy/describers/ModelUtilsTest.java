@@ -6,17 +6,16 @@ import com.elepy.models.FieldType;
 import com.elepy.models.Model;
 import com.elepy.models.Property;
 import com.elepy.models.TextType;
-import com.elepy.models.props.*;
+import com.elepy.models.options.*;
 import com.elepy.uploads.FileUploadEvaluator;
 import com.elepy.utils.ModelUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.elepy.models.FieldType.*;
@@ -41,7 +40,7 @@ public class ModelUtilsTest {
     void testCorrectDate() throws ParseException {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
         final Property property = modelFromClass.getProperty("date");
-        final DatePropertyConfig of = DatePropertyConfig.of(property);
+        final DateOptions of = property.getOptions();
 
         assertEquals(new Date(0), of.getMinimumDate());
         assertEquals(new SimpleDateFormat("yyyy-MM-dd").parse("2019-22-12"), of.getMaximumDate());
@@ -54,7 +53,7 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = modelFromClass.getProperty("minLen10MaxLen50");
-        final TextPropertyConfig of = TextPropertyConfig.of(property);
+        final TextOptions of = property.getOptions();
         assertEquals(TextType.TEXTAREA, of.getTextType());
         assertEquals(10, of.getMinimumLength());
         assertEquals(50, of.getMaximumLength());
@@ -67,7 +66,7 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = modelFromClass.getProperty("textType");
-        final EnumPropertyConfig of = EnumPropertyConfig.of(property);
+        final EnumOptions of = property.getOptions();
 
         assertTrue(of.getAvailableValues().stream().map(map -> map.get("enumValue")).collect(Collectors.toList()).contains("HTML"));
         assertThat(property.getType())
@@ -79,7 +78,7 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = modelFromClass.getProperty("resourceCustomObject");
-        final ObjectPropertyConfig of = ObjectPropertyConfig.of(property);
+        final ObjectOptions of = property.getOptions();
 
         assertThat(property.getType())
                 .isEqualTo(OBJECT);
@@ -97,7 +96,7 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = modelFromClass.getProperty("numberMin10Max50");
-        final NumberPropertyConfig of = NumberPropertyConfig.of(property);
+        final NumberOptions of = property.getOptions();
 
         assertEquals(10, of.getMinimum());
         assertEquals(50, of.getMaximum());
@@ -118,11 +117,11 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = modelFromClass.getProperty("fileReference");
-        final var reference = FileReferencePropertyConfig.of(property);
+        final FileReferenceOptions reference = (FileReferenceOptions) property.getOptions();
 
         assertThat(reference.getAllowedMimeType())
                 .isEqualTo("image/png");
-        assertThat(reference.getMaxSizeInBytes())
+        assertThat(reference.getMaximumFileSize())
                 .isEqualTo(FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE);
 
         assertThat(property.getType())
@@ -159,47 +158,92 @@ public class ModelUtilsTest {
         assertThat(modelFromClass.getFeaturedProperty()).isEqualTo("featuredProperty");
     }
 
-    //TODO consider splitting this into multiple tests and testing the extras
     @Test
     void testCorrectArray() {
         final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
 
-
-        final Property arrayString = model.getProperty("arrayString");
-        final Property arrayNumber = model.getProperty("arrayNumber");
-        final Property arrayDate = model.getProperty("arrayDate");
-        final Property arrayObject = model.getProperty("arrayObject");
-        final Property arrayBoolean = model.getProperty("arrayBoolean");
         final Property arrayEnum = model.getProperty("arrayEnum");
 
-
-        assertThat(arrayString.getType()).isEqualTo(FieldType.ARRAY);
-        assertThat(arrayNumber.getType()).isEqualTo(FieldType.ARRAY);
-        assertThat(arrayDate.getType()).isEqualTo(FieldType.ARRAY);
-        assertThat(arrayObject.getType()).isEqualTo(FieldType.ARRAY);
-        assertThat(arrayBoolean.getType()).isEqualTo(FieldType.ARRAY);
-        assertThat(arrayEnum.getType()).isEqualTo(FieldType.ARRAY);
-
-        assertThat((FieldType) arrayString.getExtra("arrayType")).isEqualTo(FieldType.TEXT);
-        assertThat((FieldType) arrayNumber.getExtra("arrayType")).isEqualTo(FieldType.NUMBER);
-        assertThat((FieldType) arrayDate.getExtra("arrayType")).isEqualTo(FieldType.DATE);
-        assertThat((FieldType) arrayObject.getExtra("arrayType")).isEqualTo(FieldType.OBJECT);
-        assertThat((FieldType) arrayBoolean.getExtra("arrayType")).isEqualTo(FieldType.BOOLEAN);
-        assertThat((FieldType) arrayEnum.getExtra("arrayType")).isEqualTo(FieldType.ENUM);
+        assertThat(arrayEnum.getType()).isEqualTo(ARRAY);
     }
 
     @Test
-    void testStrongRecursiveObject() throws JsonProcessingException {
+    void testCorrectArray_ENUM() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
 
+        final ArrayOptions arrayEnum = model.getProperty("arrayEnum").getOptions();
+
+        assertThat(arrayEnum.getArrayType()).isEqualTo(FieldType.ENUM);
+    }
+
+    @Test
+    void testCorrectArray_TEXT() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+
+        final ArrayOptions arrayString = model.getProperty("arrayString").getOptions();
+
+        assertThat(arrayString.getArrayType()).isEqualTo(FieldType.TEXT);
+    }
+
+
+    @Test
+    void testCorrectArray_NUMBER() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+
+        final ArrayOptions arrayNumber = model.getProperty("arrayNumber").getOptions();
+
+        assertThat(arrayNumber.getArrayType()).isEqualTo(FieldType.NUMBER);
+    }
+
+    @Test
+    void testCorrectArray_DATE() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+
+        final ArrayOptions arrayDate = model.getProperty("arrayDate").getOptions();
+
+        assertThat(arrayDate.getArrayType()).isEqualTo(FieldType.DATE);
+    }
+
+    @Test
+    void testCorrectArray_OBJECT() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+
+        final ArrayOptions arrayObject = model.getProperty("arrayObject").getOptions();
+
+        assertThat(arrayObject.getArrayType()).isEqualTo(FieldType.OBJECT);
+
+    }
+
+    @Test
+    void testCorrectArray_BOOLEAN() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+
+        final ArrayOptions arrayBoolean = model.getProperty("arrayBoolean").getOptions();
+
+        assertThat(arrayBoolean.getArrayType()).isEqualTo(FieldType.BOOLEAN);
+
+    }
+
+    @Test
+    void testStrongRecursiveObject() {
+        final int MAX_RECURSION_DEPTH = 8;
         final List<Property> properties = ModelUtils.describeClass(StrongRecursiveModel.class);
+        List<Property> currentProperties = properties;
 
-        final var mapper = new ObjectMapper().writerWithDefaultPrettyPrinter();
+        for (int i = 0; i < MAX_RECURSION_DEPTH; i++) {
+            currentProperties = goDeeper("recursiveObject", currentProperties);
+        }
 
-        final Property rootRecursiveObjectProperty = properties.stream().filter(property -> property.getName().equals("recursiveObject")).findAny().orElseThrow();
+        final List<Property> theDeepestRecursiveObject = currentProperties;
+        assertThrows(NoSuchElementException.class, () -> goDeeper("recursiveObject", theDeepestRecursiveObject));
+    }
 
+    private List<Property> goDeeper(String propertyName, List<Property> currentProperties) {
+        final Property recursiveObject = currentProperties.stream().filter(property -> property.getName().equals(propertyName)).findAny().orElseThrow();
 
-        System.out.println(mapper.writeValueAsString(properties));
+        final ObjectOptions options = recursiveObject.getOptions();
 
-
+        currentProperties = options.getProperties();
+        return currentProperties;
     }
 }
