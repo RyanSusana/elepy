@@ -39,7 +39,7 @@ public class ObjectOptions implements Options {
 
         final String objectName = getObjectName(objectType, annotation);
 
-        return new ObjectOptions(objectName, featuredProperty, removeRecursiveProps(objectType, getRecursionDepth(annotation)));
+        return new ObjectOptions(objectName, featuredProperty, describeProperties(objectType, getRecursionDepth(annotation)));
     }
 
     private static String getObjectName(Class<?> objectType, InnerObject annotation) {
@@ -55,10 +55,10 @@ public class ObjectOptions implements Options {
                 .map(ReflectionUtils::getPropertyName).orElse(null);
     }
 
-    private static List<Property> removeRecursiveProps(Class cls, int recursionDepth) {
-        return ModelUtils.getDeclaredFields(cls).stream()
+    private static List<Property> describeProperties(Class cls, int recursionDepth) {
+        return ModelUtils.getDeclaredProperties(cls).stream()
                 .map(accessibleObject -> {
-                    if (isObjectRecursive(cls, accessibleObject)) {
+                    if (isRecursive(cls, accessibleObject)) {
                         return createRecursiveObjectOptionsTree(accessibleObject, recursionDepth, 1);
                     } else {
                         return ModelUtils.describeFieldOrMethod(accessibleObject);
@@ -70,22 +70,28 @@ public class ObjectOptions implements Options {
     }
 
 
+    // This method takes over the infinite recursion that would otherwise happen during ModelUtils.describeFieldOrMethod
+    // It is meant to limit the amount of times the recursion  can happen, with a user-definable maxRecursionDepth property
+    // If the max depth is met, this property is  set to null
     private static Property createRecursiveObjectOptionsTree(AccessibleObject field, int maxDepth, int currentDepth) {
         if (maxDepth == currentDepth) {
             return null;
         } else {
+            final Class<?> fieldType = ReflectionUtils.returnTypeOf(field);
+            final boolean isArray = FieldType.guessByClass(fieldType).equals(FieldType.ARRAY);
+            final Class<?> objectType = isArray ? ReflectionUtils.getGenericType(field, 0) : fieldType;
             final Property property = new Property();
 
             ModelUtils.setupPropertyBasics(field, false, property);
 
-            property.setType(FieldType.OBJECT);
-            property.setOptions(new ObjectOptions());
+
+            final var options = new ObjectOptions();
+
+            setOptions(field, property, options);
 
 
-            final Class<?> objectType = setBasicExtras(field, property);
-
-            final List<Property> properties = ModelUtils.getDeclaredFields(objectType).stream().map(accessibleObject -> {
-                if (ReflectionUtils.returnTypeOf(accessibleObject).equals(objectType)) {
+            options.properties = ModelUtils.getDeclaredProperties(objectType).stream().map(accessibleObject -> {
+                if (isRecursive(objectType, accessibleObject)) {
                     return createRecursiveObjectOptionsTree(field, maxDepth, currentDepth + 1);
                 } else {
                     return ModelUtils.describeFieldOrMethod(accessibleObject);
@@ -95,28 +101,37 @@ public class ObjectOptions implements Options {
                     .sorted()
                     .collect(Collectors.toList());
 
-
-            final ObjectOptions options = property.getOptions();
-            options.properties = properties;
-
             return property;
         }
     }
 
-    private static Class<?> setBasicExtras(AccessibleObject field, Property property) {
+    private static void setOptions(AccessibleObject field, Property property, ObjectOptions options) {
+
+        final var fieldType = FieldType.guessType(field);
+
+        property.setType(fieldType);
+        property.setOptions(fieldType.equals(FieldType.ARRAY) ? ArrayOptions.of(field, options) : options);
+
         final Class<?> objectType = ReflectionUtils.returnTypeOf(field);
 
-        final ObjectOptions options = property.getOptions();
         options.featuredProperty = getFeaturedProperty(objectType);
 
         options.objectName = getObjectName(objectType, null);
-        return objectType;
+
     }
 
-    public static boolean isObjectRecursive(Class<?> recursionTypeToCheck, AccessibleObject prop) {
-        final Class<?> baseFieldType = ReflectionUtils.returnTypeOf(prop);
 
-        return baseFieldType.equals(recursionTypeToCheck);
+    // This method should check if a collection or object is recursive in nature
+    private static boolean isRecursive(Class<?> recursionTypeToCheck, AccessibleObject field) {
+        final var isACollection = FieldType.guessType(field).equals(FieldType.ARRAY);
+
+        if (isACollection && ReflectionUtils.getGenericType(field, 0).equals(recursionTypeToCheck)) {
+            return true;
+        } else {
+            final Class<?> fieldType = ReflectionUtils.returnTypeOf(field);
+
+            return fieldType.equals(recursionTypeToCheck);
+        }
     }
 
     public String getObjectName() {

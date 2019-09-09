@@ -117,7 +117,7 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = modelFromClass.getProperty("fileReference");
-        final FileReferenceOptions reference = (FileReferenceOptions) property.getOptions();
+        final FileReferenceOptions reference = property.getOptions();
 
         assertThat(reference.getAllowedMimeType())
                 .isEqualTo("image/png");
@@ -238,12 +238,36 @@ public class ModelUtilsTest {
         assertThrows(NoSuchElementException.class, () -> goDeeper("recursiveObject", theDeepestRecursiveObject));
     }
 
+    @Test
+    void testStrongRecursiveArray() {
+        final int MAX_RECURSION_DEPTH = 20;
+        final List<Property> properties = ModelUtils.describeClass(NavigationMenu.class);
+        List<Property> currentProperties = properties;
+
+        for (int i = 0; i < MAX_RECURSION_DEPTH; i++) {
+            if (i == 0) {
+                currentProperties = goDeeper("menuItems", currentProperties);
+            } else {
+                currentProperties = goDeeper("children", currentProperties);
+            }
+        }
+
+        final List<Property> theDeepestRecursiveObject = currentProperties;
+        assertThrows(NoSuchElementException.class, () -> goDeeper("children", theDeepestRecursiveObject));
+    }
+
     private List<Property> goDeeper(String propertyName, List<Property> currentProperties) {
         final Property recursiveObject = currentProperties.stream().filter(property -> property.getName().equals(propertyName)).findAny().orElseThrow();
 
-        final ObjectOptions options = recursiveObject.getOptions();
+        if (recursiveObject.getOptions() instanceof ArrayOptions) {
+            final ArrayOptions<ObjectOptions> options = recursiveObject.getOptions();
 
-        currentProperties = options.getProperties();
-        return currentProperties;
+            return options.getGenericOptions().getProperties();
+        } else {
+
+            final ObjectOptions options = recursiveObject.getOptions();
+
+            return options.getProperties();
+        }
     }
 }

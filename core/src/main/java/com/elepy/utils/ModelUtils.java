@@ -25,13 +25,13 @@ public class ModelUtils {
     }
 
     public static List<Property> describeClass(Class cls) {
-        return getDeclaredFields(cls).stream()
+        return getDeclaredProperties(cls).stream()
                 .map(ModelUtils::describeFieldOrMethod)
                 .sorted(Comparator.naturalOrder())
                 .collect(Collectors.toList());
     }
 
-    public static List<AccessibleObject> getDeclaredFields(Class cls) {
+    public static List<AccessibleObject> getDeclaredProperties(Class cls) {
         return Stream.concat(
                 Stream.of(cls.getDeclaredFields()),
                 Stream.of(cls.getDeclaredMethods())

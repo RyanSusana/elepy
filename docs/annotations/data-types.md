@@ -84,7 +84,8 @@ class CustomObject{
 }
 ```
 
-__NOTE: the @InnerObject annotation is completely optional, as it provides no extra logic. Elepy handles CustomObject the same way without the annotation__
+## Recursion
+Elepy supports one  type of recursion, _as of now_. Direct recursion
 
 # @Array
 Collections are supported in the form of Sets and Lists. The general grouping of collections is called `@Array`.

@@ -265,7 +265,7 @@ public class ReflectionUtils {
                 return tag.value();
             }
             try {
-                final Class<?> genericType = (Class) ((ParameterizedType) ((Field) type).getGenericType()).getActualTypeArguments()[0];
+                final Class<?> genericType = getGenericType((Field) type, 0);
                 if (genericType != null) {
                     RestModel restModel = genericType.getAnnotation(RestModel.class);
                     if (restModel != null) {
@@ -277,6 +277,10 @@ public class ReflectionUtils {
             }
         }
         return null;
+    }
+
+    public static Class getGenericType(AccessibleObject field, int parameterIndex) {
+        return (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[parameterIndex];
     }
 
     public static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {

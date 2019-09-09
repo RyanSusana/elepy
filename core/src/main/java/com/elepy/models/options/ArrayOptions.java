@@ -12,9 +12,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-import static com.elepy.models.FieldType.*;
+import static com.elepy.models.FieldType.guessByClass;
 
-public class ArrayOptions implements Options {
+public class ArrayOptions<T extends Options> implements Options {
 
     private boolean sortable;
     private int maximumArrayLength;
@@ -23,9 +23,9 @@ public class ArrayOptions implements Options {
     private FieldType arrayType;
 
     @JsonUnwrapped
-    private Options genericOptions;
+    private T genericOptions;
 
-    public ArrayOptions(boolean sortable, int maximumArrayLength, int minimumArrayLength, FieldType arrayType, Options genericOptions) {
+    public ArrayOptions(boolean sortable, int maximumArrayLength, int minimumArrayLength, FieldType arrayType, T genericOptions) {
         this.sortable = sortable;
         this.maximumArrayLength = maximumArrayLength;
         this.minimumArrayLength = minimumArrayLength;
@@ -35,11 +35,14 @@ public class ArrayOptions implements Options {
 
 
     public static ArrayOptions of(AccessibleObject field) {
+        return of(field, getArrayOptions(field));
+    }
+
+    public static ArrayOptions of(AccessibleObject field, Options options) {
         if (field instanceof Field) {
 
             final Array annotation = field.getAnnotation(Array.class);
 
-            final Class arrayGenericType = (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[0];
 
             final boolean isDefaultSortable = ReflectionUtils.returnTypeOf(field).isAssignableFrom(List.class);
 
@@ -48,32 +51,40 @@ public class ArrayOptions implements Options {
 
             boolean sortable = annotation == null ? isDefaultSortable : annotation.sortable();
 
-
+            final Class arrayGenericType = (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[0];
             final FieldType arrayType = guessByClass(arrayGenericType);
-
-            //Arrays of arrays not allowed
-            if (arrayType.equals(ARRAY)) {
-                throw new ElepyConfigException(String.format("Collections within Collections are not allowed please rethink the field '%s'", ((Field) field).getName()));
-            }
-
-            if (arrayType.equals(NUMBER)) {
-                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, NumberOptions.of(field, arrayGenericType));
-            } else if (arrayType.equals(TEXT)) {
-                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, TextOptions.of(field));
-            } else if (arrayType.equals(ENUM)) {
-                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, EnumOptions.of(arrayGenericType));
-            } else if (arrayType.equals(DATE)) {
-                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, DateOptions.of(field));
-            } else if (arrayType.equals(BOOLEAN)) {
-                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, BooleanOptions.of(field));
-            } else if (arrayType.equals(OBJECT)) {
-                return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, ObjectOptions.of(arrayGenericType, field.getAnnotation(InnerObject.class)));
-            }
+            return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, options);
 
         } else {
             throw new ElepyConfigException("In Elepy, property collections must be a field. Not a method.");
         }
-        throw new ElepyConfigException(String.format("Unable to map the collection '%s'", ((Field) field).getName()));
+    }
+
+    private static Options getArrayOptions(AccessibleObject field) {
+        final Class arrayGenericType = (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[0];
+
+        final FieldType arrayType = guessByClass(arrayGenericType);
+
+        switch (arrayType) {
+            case NUMBER:
+                return NumberOptions.of(field, arrayGenericType);
+            case TEXT:
+                return TextOptions.of(field);
+            case ENUM:
+                return EnumOptions.of(arrayGenericType);
+            case DATE:
+                return DateOptions.of(field);
+            case BOOLEAN:
+                return BooleanOptions.of(field);
+            case OBJECT:
+                return ObjectOptions.of(arrayGenericType, field.getAnnotation(InnerObject.class));
+            case FILE_REFERENCE:
+                return FileReferenceOptions.of(field);
+            case ARRAY:
+                throw new ElepyConfigException(String.format("Collections within Collections are not allowed please rethink the field '%s'", ((Field) field).getName()));
+            default:
+                throw new ElepyConfigException(String.format("FieldType '%s' not supported by Collections", arrayType.name()));
+        }
     }
 
     public boolean isSortable() {
@@ -92,7 +103,7 @@ public class ArrayOptions implements Options {
         return arrayType;
     }
 
-    public Options getGenericOptions() {
+    public T getGenericOptions() {
         return genericOptions;
     }
 }

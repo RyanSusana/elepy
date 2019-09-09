@@ -55,6 +55,9 @@ public enum FieldType {
         if (type.isEnum()) {
             return ENUM;
         }
+        if (isCollection(type)) {
+            return ARRAY;
+        }
 
         return getUnannotatedFieldType(type);
     }
