@@ -30,16 +30,16 @@ public class Model<T> {
         return defaultSortField;
     }
 
+    public void setDefaultSortField(String defaultSortField) {
+        this.defaultSortField = defaultSortField;
+    }
+
     public String getFeaturedProperty() {
         return featuredProperty;
     }
 
     public void setFeaturedProperty(String featuredProperty) {
         this.featuredProperty = featuredProperty;
-    }
-
-    public void setDefaultSortField(String defaultSortField) {
-        this.defaultSortField = defaultSortField;
     }
 
     public SortOption getDefaultSortDirection() {

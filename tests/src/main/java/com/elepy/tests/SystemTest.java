@@ -14,11 +14,10 @@ import static com.google.common.truth.Truth.assertThat;
 
 public abstract class SystemTest implements ElepyConfigHelper {
 
-    private ElepyDriver driver;
-    private Elepy elepySystemUnderTest;
-
     private static int counter = 1339;
     private static ChromeDriver chromeDriver;
+    private ElepyDriver driver;
+    private Elepy elepySystemUnderTest;
 
     @BeforeAll
     public static void startBrowser() {

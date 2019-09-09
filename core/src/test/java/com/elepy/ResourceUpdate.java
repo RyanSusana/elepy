@@ -2,8 +2,8 @@ package com.elepy;
 
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
-import com.elepy.http.Request;
 import com.elepy.handlers.SimpleUpdate;
+import com.elepy.http.Request;
 
 public class ResourceUpdate extends SimpleUpdate<Resource> {
 

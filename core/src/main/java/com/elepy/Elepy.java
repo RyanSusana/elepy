@@ -570,18 +570,17 @@ public class Elepy implements ElepyContext {
 
     private void retrievePackageModels() {
 
-    	if (!packages.isEmpty()) {
-    		Reflections reflections = new Reflections(packages);
-    		Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
-              
-    		if (annotated.isEmpty()) {
-    			logger.warn("No @RestModel(s) were found in the added package(s)! Check the package names for misspelling.");
-    		}
+        if (!packages.isEmpty()) {
+            Reflections reflections = new Reflections(packages);
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
 
-    		models.addAll(annotated);
-    	}
+            if (annotated.isEmpty()) {
+                logger.warn("No @RestModel(s) were found in the added package(s)! Check the package names for misspelling.");
+            }
+
+            models.addAll(annotated);
+        }
     }
-
 
 
     private void afterElepyConstruction() {

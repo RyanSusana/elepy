@@ -27,15 +27,12 @@ import static spark.Spark.halt;
 
 public class ElepyAdminPanel implements ElepyExtension {
 
+    private final PebbleEngine engine;
     private PluginHandler pluginHandler;
     private ViewHandler viewHandler;
     private boolean initiated = false;
-
     @Inject
     private Crud<User> userCrud;
-
-    private final PebbleEngine engine;
-
     private List<Model<?>> models;
 
 

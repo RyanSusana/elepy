@@ -2,8 +2,8 @@ package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
-import com.elepy.models.Model;
 import com.elepy.handlers.*;
+import com.elepy.models.Model;
 import com.elepy.utils.ReflectionUtils;
 
 import java.util.Optional;

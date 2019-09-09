@@ -12,12 +12,12 @@ public class Query {
         this.filters = filters;
     }
 
-    public String getSearchQuery() {
-        return searchQuery;
-    }
-
     public static QueryBuilder builder() {
         return QueryBuilder.aQuery();
+    }
+
+    public String getSearchQuery() {
+        return searchQuery;
     }
 
     public List<Filter> getFilters() {

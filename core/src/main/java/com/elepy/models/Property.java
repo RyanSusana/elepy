@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 
-
 public class Property implements Comparable<Property> {
 
     private String name;
@@ -20,6 +19,7 @@ public class Property implements Comparable<Property> {
 
     @JsonUnwrapped
     private Options options;
+    private FieldType type;
 
     @SuppressWarnings("unchecked")
     public <T extends Options> T getOptions() {
@@ -29,12 +29,6 @@ public class Property implements Comparable<Property> {
     public void setOptions(Options options) {
         this.options = options;
     }
-
-    public void setType(FieldType type) {
-        this.type = type;
-    }
-
-    private FieldType type;
 
     public boolean isHiddenFromCMS() {
         return hiddenFromCMS;
@@ -102,6 +96,10 @@ public class Property implements Comparable<Property> {
 
     public FieldType getType() {
         return type;
+    }
+
+    public void setType(FieldType type) {
+        this.type = type;
     }
 
     @JsonProperty

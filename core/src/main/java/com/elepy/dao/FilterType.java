@@ -35,14 +35,14 @@ public enum FilterType {
         return Arrays.stream(FilterType.values()).filter(filterType -> filterType.getName().equals(s)).findFirst();
     }
 
-    public boolean canBeUsedBy(FilterableField filterableField) {
-        return allowedFieldTypes.contains(filterableField.getFieldType());
-    }
-
     public static Set<FilterType> getForFieldType(FieldType fieldType) {
         return Stream.of(values())
                 .filter(filterType -> filterType.allowedFieldTypes.contains(fieldType))
                 .collect(Collectors.toSet());
+    }
+
+    public boolean canBeUsedBy(FilterableField filterableField) {
+        return allowedFieldTypes.contains(filterableField.getFieldType());
     }
 
     public Map<String, String> toMap() {
