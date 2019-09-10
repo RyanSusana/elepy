@@ -598,7 +598,6 @@ public class Elepy implements ElepyContext {
 
 
     private void init() {
-        preHttpSetup();
         setupDefaultConfig();
 
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
