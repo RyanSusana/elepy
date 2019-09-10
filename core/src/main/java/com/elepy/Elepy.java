@@ -39,6 +39,7 @@ import spark.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -63,6 +64,8 @@ public class Elepy implements ElepyContext {
     private ModelEngine modelEngine;
     private UserAuthenticationService userAuthenticationService;
 
+    private List<Consumer<HttpService>> httpActions;
+
     private List<Configuration> configurations;
     private List<EventHandler> stopEventHandlers;
 
@@ -78,6 +81,7 @@ public class Elepy implements ElepyContext {
         this.packages = new ArrayList<>();
         this.context = new DefaultElepyContext();
         this.adminFilters = new MultiFilter();
+        this.httpActions = new ArrayList<>();
         this.http = new SparkService(http, this);
 
         this.defaultCrudFactoryClass = null;
@@ -594,6 +598,7 @@ public class Elepy implements ElepyContext {
 
 
     private void init() {
+        preHttpSetup();
         setupDefaultConfig();
 
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
@@ -618,7 +623,6 @@ public class Elepy implements ElepyContext {
         logger.info(String.format(LogUtils.banner, http.port()));
 
     }
-
     private void setupDefaultConfig() {
         addModel(Token.class);
         addModel(User.class);
