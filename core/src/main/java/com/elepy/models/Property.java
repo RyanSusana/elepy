@@ -4,6 +4,9 @@ import com.elepy.models.options.Options;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
+import java.util.Map;
+import java.util.Set;
+
 
 public class Property implements Comparable<Property> {
 
@@ -19,7 +22,19 @@ public class Property implements Comparable<Property> {
 
     @JsonUnwrapped
     private Options options;
+
+
+    private Set<Map<String, String>> availableFilters;
     private FieldType type;
+
+
+    public Set<Map<String, String>> getAvailableFilters() {
+        return availableFilters;
+    }
+
+    public void setAvailableFilters(Set<Map<String, String>> availableFilters) {
+        this.availableFilters = availableFilters;
+    }
 
     @SuppressWarnings("unchecked")
     public <T extends Options> T getOptions() {

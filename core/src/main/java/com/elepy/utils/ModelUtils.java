@@ -82,7 +82,7 @@ public class ModelUtils {
         property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idProperty);
         Set<Map<String, String>> availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
 
-        //property.setExtra("availableFilters", availableFilters);
+        property.setAvailableFilters(availableFilters);
     }
 
     public static <T> Model<T> createModelFromClass(Class<T> classType) {
