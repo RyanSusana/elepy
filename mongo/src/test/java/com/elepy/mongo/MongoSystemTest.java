@@ -7,9 +7,11 @@ import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.TestInstance;
 
 import java.net.InetSocketAddress;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MongoSystemTest extends SystemTest {
 
     private MongoServer mongoServer;

@@ -33,6 +33,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
     @AfterAll
     public static void afterAll() {
         chromeDriver.quit();
+        chromeDriver = null;
     }
 
     @AfterEach
