@@ -107,6 +107,6 @@ public class DirectoryFileService implements FileService {
     }
 
     private String encodeFileName(String decodedFileName) {
-        return decodedFileName.replaceAll("/", "_");
+        return decodedFileName.replaceAll(Matcher.quoteReplacement(File.separator), "_");
     }
 }
