@@ -1,6 +1,5 @@
 package com.elepy.http;
 
-import com.elepy.Elepy;
 import com.elepy.auth.UserPermissionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +15,13 @@ public class SparkService implements HttpService {
 
     private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
     private final Service http;
-    private final Elepy elepy;
     private Map<RouteKey, Route> routes;
     private int counter;
     private boolean ignitedOnce = false;
 
 
-    public SparkService(Service service, Elepy elepy) {
-        this.http = service;
-        this.elepy = elepy;
+    public SparkService() {
+        this.http = Service.ignite();
         this.routes = new TreeMap<>();
     }
 

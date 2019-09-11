@@ -1,6 +1,7 @@
 package com.elepy.vertx;
 
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.http.*;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -9,8 +10,10 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import org.eclipse.jetty.util.MultiMap;
+import spark.HaltException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -114,19 +117,20 @@ public class VertxService implements HttpService {
 
     @Override
     public void addRoute(Route route) {
-        this.routes.put(new RouteKey(counter++), route);
+        if (ignitedOnce) {
+            throw new ElepyConfigException("Can't add routes after server has ignited");
+        } else {
+            this.routes.put(new RouteKey(counter++), route);
+        }
     }
 
     @Override
     public void ignite() {
 
-        if (ignitedOnce) {
-            throw new ElepyConfigException("Can't add routes after server has ignited");
-        }
-
         router.route().handler(BodyHandler.create()
                 .setMergeFormAttributes(true)
                 .setUploadsDirectory(System.getProperty("java.io.tmpdir")));
+        router.route().handler(CookieHandler.create());
         igniteBefore();
         igniteRoutes();
         igniteAfter();
@@ -150,6 +154,7 @@ public class VertxService implements HttpService {
         if (staticHandler != null) {
             router.route().handler(staticHandler);
         }
+
     }
 
     private void igniteFinal() {
@@ -184,8 +189,9 @@ public class VertxService implements HttpService {
     private void endRoute(RoutingContext routingContext) {
         final Object responseBody = routingContext.get(VertxResponse.RESPONSE_KEY);
 
+
         if (responseBody == null) {
-            routingContext.response().end("");
+            routingContext.response().end("<h2>404 Not Found</h2>");
         } else if (responseBody instanceof byte[]) {
             routingContext.response().end(Buffer.buffer((byte[]) responseBody));
         } else {
@@ -199,7 +205,15 @@ public class VertxService implements HttpService {
                 Optional.ofNullable(path).map(router::route).orElse(router.route())
                         .handler(handleSafely(routingContext -> contextHandlers
                                 .forEach(contextHandler -> {
-                                    contextHandler.handleWithExceptions(new VertxContext(routingContext));
+                                    try {
+                                        contextHandler.handle(new VertxContext(routingContext));
+                                    } catch (HaltException e) {
+                                        endRoute(routingContext);
+                                    } catch (ElepyException e) {
+                                        throw e;
+                                    } catch (Exception e) {
+                                        throw new ElepyException(e.getMessage(), 500, e);
+                                    }
                                     routingContext.next();
                                 }))));
     }

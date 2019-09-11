@@ -17,10 +17,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
-import com.elepy.http.HttpService;
-import com.elepy.http.MultiFilter;
-import com.elepy.http.Route;
-import com.elepy.http.SparkService;
+import com.elepy.http.*;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.Model;
 import com.elepy.models.ModelChange;
@@ -52,7 +49,7 @@ public class Elepy implements ElepyContext {
     private final List<String> packages;
     private final List<Class<?>> models;
     private final DefaultElepyContext context;
-    private HttpService http;
+    private HttpServiceConfiguration http;
     private String configSlug;
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private MultiFilter adminFilters;
@@ -69,11 +66,8 @@ public class Elepy implements ElepyContext {
     private List<Configuration> configurations;
     private List<EventHandler> stopEventHandlers;
 
-    public Elepy() {
-        this(Service.ignite().port(1337));
-    }
 
-    public Elepy(Service http) {
+    public Elepy() {
         this.userAuthenticationService = new UserAuthenticationService();
         this.stopEventHandlers = new ArrayList<>();
         this.configurations = new ArrayList<>();
@@ -82,7 +76,7 @@ public class Elepy implements ElepyContext {
         this.context = new DefaultElepyContext();
         this.adminFilters = new MultiFilter();
         this.httpActions = new ArrayList<>();
-        this.http = new SparkService(http, this);
+        this.http = new HttpServiceConfiguration(new SparkService());
 
         this.defaultCrudFactoryClass = null;
 
@@ -91,6 +85,9 @@ public class Elepy implements ElepyContext {
         this.routes = new ArrayList<>();
         this.routingClasses = new ArrayList<>();
         this.modelEngine = new ModelEngine(this);
+
+
+        this.http.port(1337);
 
         withBaseEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
@@ -198,7 +195,7 @@ public class Elepy implements ElepyContext {
      */
     public Elepy withHttpService(HttpService httpService) {
         checkConfig();
-        this.http = httpService;
+        this.http.setImplementation(httpService);
         return this;
     }
 
@@ -615,6 +612,8 @@ public class Elepy implements ElepyContext {
 
         afterElepyConstruction();
 
+        http.ignite();
+
         context.strictMode(true);
 
         modelEngine.executeChanges();
@@ -622,6 +621,7 @@ public class Elepy implements ElepyContext {
         logger.info(String.format(LogUtils.banner, http.port()));
 
     }
+
     private void setupDefaultConfig() {
         addModel(Token.class);
         addModel(User.class);
@@ -677,7 +677,6 @@ public class Elepy implements ElepyContext {
         for (Route extraRoute : routes) {
             http.addRoute(extraRoute);
         }
-        http.ignite();
     }
 
 

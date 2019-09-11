@@ -1,5 +1,6 @@
 package com.elepy.vertx;
 
+import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Session;
 import com.elepy.uploads.FileUpload;
@@ -34,6 +35,7 @@ public class VertxRequest implements Request {
     public String method() {
         return request.rawMethod();
     }
+
 
     @Override
     public String scheme() {
@@ -100,11 +102,26 @@ public class VertxRequest implements Request {
 
     @Override
     public String cookie(String name) {
+
+        routingContext.cookies().stream().forEach(cookie -> System.out.println(cookie.getName()));
         return routingContext.cookies().stream()
                 .filter(cookie -> cookie.getName().equals(name))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse(null);
+    }
+
+    @Override
+    public void tryToLogin() {
+        try {
+
+            String cookieToken = cookie("ELEPY_TOKEN");
+
+            System.out.println(cookieToken);
+            authService().tryToLogin(this);
+        } catch (ElepyException | NullPointerException ignored) {
+
+        }
     }
 
     @Override

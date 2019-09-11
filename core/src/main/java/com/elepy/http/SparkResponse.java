@@ -54,11 +54,6 @@ public class SparkResponse implements Response {
         return response.body();
     }
 
-    @Override
-    public HttpServletResponse servletResponse() {
-        return response.raw();
-    }
-
     public void redirect(String location) {
         response.redirect(location);
     }

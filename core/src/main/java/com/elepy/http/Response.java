@@ -5,8 +5,6 @@ import com.elepy.exceptions.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.servlet.http.HttpServletResponse;
-
 public interface Response {
     ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
@@ -19,8 +17,6 @@ public interface Response {
     void result(byte[] bytes);
 
     String result();
-
-    HttpServletResponse servletResponse();
 
     void type(String type);
 

@@ -1,11 +1,10 @@
 package com.elepy.vertx;
 
 import com.elepy.http.Response;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.impl.CookieImpl;
-
-import javax.servlet.http.HttpServletResponse;
 
 
 public class VertxResponse implements Response {
@@ -17,7 +16,7 @@ public class VertxResponse implements Response {
     public VertxResponse(RoutingContext routingContext) {
         this.routingContext = routingContext;
         this.response = routingContext.response();
-        routingContext.put(RESPONSE_KEY, "");
+        response.putHeader("Content-Type", "text/html");
     }
 
     @Override
@@ -32,22 +31,17 @@ public class VertxResponse implements Response {
 
     @Override
     public void result(String body) {
-        routingContext.put(RESPONSE_KEY, body);
+        put(routingContext, RESPONSE_KEY, body);
     }
 
     @Override
     public void result(byte[] bytes) {
-        routingContext.put(RESPONSE_KEY, bytes);
+        put(routingContext, RESPONSE_KEY, bytes);
     }
 
     @Override
     public String result() {
         return routingContext.get(RESPONSE_KEY);
-    }
-
-    @Override
-    public HttpServletResponse servletResponse() {
-        return null;
     }
 
     @Override
@@ -76,6 +70,19 @@ public class VertxResponse implements Response {
         cookie.setMaxAge(maxAge);
 
         routingContext.cookies().add(cookie);
+
+        routingContext.addCookie(cookie);
+
+        routingContext.response().setChunked(true);
+        routingContext.response().putHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        routingContext.response().putHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "*");
+
+    }
+
+
+    private void put(RoutingContext routingContext, String k, Object v) {
+        routingContext.remove(k);
+        routingContext.put(k, v);
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.elepy.auth.UserAuthenticationService;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.Message;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.*;
 
@@ -180,10 +179,6 @@ public interface HttpContext {
 
     default String result() {
         return response().result();
-    }
-
-    default HttpServletResponse servletResponse() {
-        return response().servletResponse();
     }
 
     default void type(String type) {
