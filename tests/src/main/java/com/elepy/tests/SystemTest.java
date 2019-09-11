@@ -25,7 +25,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
         final var chromeOptions = new ChromeOptions();
 
         if (headlessMode) {
-            chromeOptions.addArguments("--disable-gpu", "--disable-dev-shm-usage'", "--no-sandbox", "--headless", "--window-size=2120,1280");
+            chromeOptions.addArguments("start-maximized", "disable-infobars", "--disable-extensions", "--disable-gpu", "--disable-dev-shm-usage'", "--no-sandbox", "--headless", "--window-size=2120,1280");
         }
         chromeDriver = new ChromeDriver(chromeOptions);
     }
