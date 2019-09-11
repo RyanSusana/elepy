@@ -28,11 +28,12 @@ public class DirectoryFileService implements FileService {
     private static String replaceNMatches(String input, String regex,
                                           String replacement, int numberOfTimes) {
 
+        final var quoteReplacement = Matcher.quoteReplacement(replacement);
         Matcher m = Pattern.compile(regex).matcher(input);
         StringBuilder sb = new StringBuilder();
         int i = 0;
         while (i++ < numberOfTimes && m.find()) {
-            m.appendReplacement(sb, replacement);
+            m.appendReplacement(sb, quoteReplacement);
         }
         m.appendTail(sb);
         return sb.toString();
