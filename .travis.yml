@@ -3,13 +3,13 @@ jdk:
   - openjdk11
 addons:
   chrome: stable
-#install: # Install ChromeDriver (64bits; replace 64 with 32 for 32bits).
-#  - wget -N http://chromedriver.storage.googleapis.com/75.0.3770.140/chromedriver_linux64.zip -P ~/
-#  - unzip ~/chromedriver_linux64.zip -d ~/
-#  - rm ~/chromedriver_linux64.zip
-#  - sudo mv -f ~/chromedriver /usr/local/share/
-#  - sudo chmod +x /usr/local/share/chromedriver
-#  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+install:
+  - wget -N http://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip -P ~/
+  - unzip ~/chromedriver_linux64.zip -d ~/
+  - rm ~/chromedriver_linux64.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 script:
   - whereis google-chrome-stable
   - whereis chromedriver
