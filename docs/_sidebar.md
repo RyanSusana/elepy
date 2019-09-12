@@ -22,9 +22,6 @@
     - [Handlers](core-functionality/handlers.md)
     - [Users & Permissions](core-functionality/users-permissions.md)
     
-- The CMS
-    - [Getting Around](cms/getting-around.md)
-    - [Files](cms/files.md)
 - Modules & Extensions
     - [MongoDB](modules/mongo.md)
     - [SQL & Hibernate](modules/hibernate.md)
