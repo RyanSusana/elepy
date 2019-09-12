@@ -44,14 +44,16 @@ public class HttpServiceConfiguration implements HttpService {
 
     @Override
     public void ignite() {
+
         if (implementation == null) {
             throw new ElepyConfigException("Please provide an implementation of HttpService to Elepy");
         }
 
-        started = true;
 
         actions.forEach(httpServiceConsumer -> httpServiceConsumer.accept(implementation));
         implementation.ignite();
+
+        started = true;
     }
 
     @Override
