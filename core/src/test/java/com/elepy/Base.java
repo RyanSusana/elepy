@@ -13,12 +13,13 @@ import static org.mockito.Mockito.*;
 
 public class Base {
 
-    private static int counter = -100;
+    private static int objectCounter = -100;
+    private static int portCounter = 4000;
 
     public synchronized Resource validObject() {
         Resource resource = new Resource();
 
-        resource.setId(counter++);
+        resource.setId(objectCounter++);
         resource.setMaxLen40("230428");
         resource.setMinLen20("My name is ryan and this is a string  with more than 20 chars");
         resource.setMinLen10MaxLen50("12345678910111213");
@@ -71,6 +72,13 @@ public class Base {
         doCallRealMethod().when(request).requirePermissions(any(String[].class));
 
         return context;
+    }
+
+    protected Elepy createElepy() {
+        return new Elepy().onPort(portCounter++)
+                .withDefaultCrudFactory(new MockCrudFactory());
+
+
     }
 
 }

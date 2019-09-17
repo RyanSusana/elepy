@@ -68,13 +68,16 @@ public class DefaultElepyContext implements ElepyContext {
             key = getCrudDependencyKey(cls);
         } else {
             key = new ContextKey<>(cls, tag);
-
         }
-        final T t = (T) contextMap.get(key);
-        if (t != null) {
-            return t;
+        if (contextMap.containsKey(key)) {
+            return (T) contextMap.get(key);
+        } else {
+            if (!strictMode) {
+                final var dependency = injector.initializeAndInject(cls);
+                contextMap.put(key, dependency);
+                return dependency;
+            }
         }
-
         throw new ElepyConfigException(String.format("No context object for %s available with the tag: %s", cls.getName(), tag));
     }
 

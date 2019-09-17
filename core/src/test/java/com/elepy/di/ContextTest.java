@@ -39,6 +39,8 @@ public class ContextTest extends Base {
         defaultElepyContext.registerDependency(Circular3.class);
         defaultElepyContext.registerDependency(Circular2.class);
         defaultElepyContext.registerDependency(Circular1.class);
+
+        defaultElepyContext.strictMode(true);
         ElepyDependencyInjectionException elepyDependencyInjectionException =
                 assertThrows(ElepyDependencyInjectionException.class, defaultElepyContext::resolveDependencies);
 
@@ -53,6 +55,7 @@ public class ContextTest extends Base {
         defaultElepyContext.registerDependency(Dependency1.class);
         defaultElepyContext.registerDependency(Unsatisfiable.class);
 
+        defaultElepyContext.strictMode(true);
         ElepyDependencyInjectionException elepyDependencyInjectionException =
                 assertThrows(ElepyDependencyInjectionException.class, defaultElepyContext::resolveDependencies);
 

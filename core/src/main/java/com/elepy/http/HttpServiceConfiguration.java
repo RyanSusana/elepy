@@ -17,8 +17,11 @@ public class HttpServiceConfiguration implements HttpService {
     private List<Consumer<HttpService>> actions = new ArrayList<>();
 
 
+    private int port;
+
     public HttpServiceConfiguration(HttpService implementation) {
         this.implementation = implementation;
+        port(1337);
     }
 
     private void add(Consumer<HttpService> action) {
@@ -36,7 +39,7 @@ public class HttpServiceConfiguration implements HttpService {
     @Override
     public int port() {
         if (!started) {
-            throw new ElepyConfigException("Server not yet started");
+            return this.port;
         } else {
             return implementation.port();
         }
@@ -69,6 +72,7 @@ public class HttpServiceConfiguration implements HttpService {
 
     @Override
     public void port(int port) {
+        this.port = port;
         add(http -> http.port(port));
     }
 
@@ -101,7 +105,6 @@ public class HttpServiceConfiguration implements HttpService {
 
     @Override
     public void after(String path, HttpContextHandler contextHandler) {
-
         add(http -> http.after(path, contextHandler));
     }
 
