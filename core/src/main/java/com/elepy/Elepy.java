@@ -100,7 +100,7 @@ public class Elepy implements ElepyContext {
 
 
     /**
-     * Spins up the embedded server and generates all the Elepy rout
+     * Spins up the embedded server and generates all the Elepy routes
      * After Elepy has started, no configuration methods can be called.
      *
      * @see #stop()
