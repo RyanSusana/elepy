@@ -89,6 +89,12 @@ public class ModelUtils {
         var model = new Model<T>();
         final RestModel restModel = classType.getAnnotation(RestModel.class);
 
+
+        if (restModel == null) {
+            throw new ElepyConfigException(String.format(
+                    "%s is not annotated with @RestModel", classType.getName()
+            ));
+        }
         model.setViewableOnCMS(!classType.isAnnotationPresent(Hidden.class));
         model.setSlug(restModel.slug());
         model.setName(restModel.name());
