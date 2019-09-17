@@ -691,7 +691,7 @@ public class Elepy implements ElepyContext {
             response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
             if (!request.method().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.debug(request.method() + "\t['" + request.uri() + "']: " + (System.currentTimeMillis() - ((Long) request.attribute("start"))) + "ms");
+                logger.debug(String.format("%s\t['%s']: %dms", request.method(), request.uri(), System.currentTimeMillis() - ((Long) request.attribute("start"))));
         });
         http.options("/*", (request, response) -> response.result(""));
 
