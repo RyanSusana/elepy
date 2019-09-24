@@ -33,13 +33,4 @@ public class VertxSession implements Session {
         return session.id();
     }
 
-    @Override
-    public void invalidate() {
-        session.destroy();
-    }
-
-    @Override
-    public void removeAttribute(String name) {
-        session.remove(name);
-    }
 }

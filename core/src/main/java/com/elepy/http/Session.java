@@ -12,8 +12,4 @@ public interface Session {
 
     String id();
 
-    void invalidate();
-
-
-    void removeAttribute(String name);
 }

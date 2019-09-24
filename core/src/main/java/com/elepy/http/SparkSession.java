@@ -30,13 +30,4 @@ public class SparkSession implements Session {
         return session.id();
     }
 
-    @Override
-    public void invalidate() {
-        session.invalidate();
-    }
-
-    @Override
-    public void removeAttribute(String name) {
-        session.removeAttribute(name);
-    }
 }

@@ -87,7 +87,6 @@ public class ElepyAdminPanel implements ElepyExtension {
         });
         http.get("/admin-logout", (request, response) -> {
             response.removeCookie("ELEPY_TOKEN");
-            request.session().invalidate();
             response.redirect("/elepy-login");
         });
         this.viewHandler.setupModels(elepy);
