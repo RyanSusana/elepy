@@ -463,18 +463,6 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Changes the IP address of the Elepy instance.
-     *
-     * @param ipAddress the IP address.
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy withIPAddress(String ipAddress) {
-        checkConfig();
-        http.ipAddress(ipAddress);
-        return this;
-    }
-
-    /**
      * Adds a route to be late initialized by Elepy.
      *
      * @param elepyRoute the route to add

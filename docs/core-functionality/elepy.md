@@ -6,7 +6,6 @@ The Elepy object is of fluent nature. Most of the methods in the class return th
 var elepy = new Elepy()                     // Begin creating
 
 .onPort(int)                                // Change the port
-.withIPAddress(String)                      // Change the IP Address
 .withHttpService(HttpService)               // Change the HttpService
 .withFileService(FileService)               // Change the FileService
 .withDefaultCrudFactory(CrudFactory)        // Change the default CrudFactory
