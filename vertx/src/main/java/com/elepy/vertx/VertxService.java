@@ -56,10 +56,6 @@ public class VertxService implements HttpService {
     }
 
     @Override
-    public void ipAddress(String ip) {
-    }
-
-    @Override
     public void port(int port) {
         this.port = port;
     }
