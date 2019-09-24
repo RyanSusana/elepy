@@ -25,13 +25,6 @@ public class SparkService implements HttpService {
         this.routes = new TreeMap<>();
     }
 
-
-    @Override
-    public void ipAddress(String ip) {
-
-        http.ipAddress(ip);
-    }
-
     @Override
     public void port(int port) {
         http.port(port);

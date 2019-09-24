@@ -64,11 +64,6 @@ public class HttpServiceConfiguration implements HttpService {
         add(HttpService::stop);
     }
 
-    @Override
-    public void ipAddress(String ip) {
-        add(http -> http.ipAddress(ip));
-    }
-
 
     @Override
     public void port(int port) {

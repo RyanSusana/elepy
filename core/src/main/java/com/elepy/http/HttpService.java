@@ -3,8 +3,6 @@ package com.elepy.http;
 
 public interface HttpService {
 
-    void ipAddress(String ip);
-
     void port(int port);
 
     int port();

@@ -26,7 +26,6 @@ public class VertxService implements HttpService {
     private final Vertx vertx;
     private final Router router;
     private int port = 1337;
-    private String ipAddress = "localhost";
     private Map<RouteKey, Route> routes;
     private int counter;
     private boolean ignitedOnce = false;
@@ -58,7 +57,6 @@ public class VertxService implements HttpService {
 
     @Override
     public void ipAddress(String ip) {
-        this.ipAddress = ip;
     }
 
     @Override
