@@ -33,7 +33,7 @@ public class FormDriver<T> {
     }
 
     public By getPropertyField(Property property) {
-        if (isPropertySupported(property)) {
+        if (!isPropertySupported(property)) {
             throw new IllegalArgumentException(String.format("Properties with the type '%s' are not supported by the test framework", property.getType()));
         }
         return By.cssSelector(String.format("*[property=\"%s\"] > :not(div)", property.getName()));
