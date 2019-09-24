@@ -52,6 +52,7 @@
         <module>basic</module>
         <module>file-uploads</module>
         <module>vertx</module>
+        <module>javalin</module>
     </modules>
 
     <distributionManagement>
