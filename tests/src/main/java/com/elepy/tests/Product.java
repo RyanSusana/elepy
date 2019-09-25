@@ -1,6 +1,7 @@
 package com.elepy.tests;
 
 import com.elepy.annotations.*;
+import com.elepy.models.TextType;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -29,16 +30,26 @@ public class Product {
     @PrettyName("Expiration Date")
     private Date date;
 
+
+    @Text(TextType.TEXTAREA)
+    private String shortDescription;
+
+    @Text(TextType.HTML)
+    private String htmlDescription;
+
+    @Text(TextType.MARKDOWN)
+    private String markdown;
+
     @TrueFalse(trueValue = "This product is awesome", falseValue = "This product is meh")
-    private boolean awesome;
+    private boolean productIsAwesome;
 
 
-    public boolean isAwesome() {
-        return awesome;
+    public boolean isProductIsAwesome() {
+        return productIsAwesome;
     }
 
-    public void setAwesome(boolean awesome) {
-        this.awesome = awesome;
+    public void setProductIsAwesome(boolean productIsAwesome) {
+        this.productIsAwesome = productIsAwesome;
     }
 
 
@@ -66,5 +77,27 @@ public class Product {
         this.price = price;
     }
 
+    public String getShortDescription() {
+        return shortDescription;
+    }
 
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public String getHtmlDescription() {
+        return htmlDescription;
+    }
+
+    public void setHtmlDescription(String htmlDescription) {
+        this.htmlDescription = htmlDescription;
+    }
+
+    public String getMarkdown() {
+        return markdown;
+    }
+
+    public void setMarkdown(String markdown) {
+        this.markdown = markdown;
+    }
 }

@@ -76,26 +76,39 @@ public abstract class SystemTest implements ElepyConfigHelper {
     }
 
 
-    @Test()
+    @Test
     void testProductSave() {
         var products = elepySystemUnderTest.getCrudFor(Product.class);
 
         Scenario
                 .with(driver)
                 .fromUserLogin("username", "password")
-
-                //Navigate to  /products
                 .navigateToModel(Product.class)
-
                 .startCreating()
                 .fillInField("price", BigDecimal.valueOf(200.00))
+                .fillInField("productIsAwesome", true)
+                .fillInField("shortDescription", "This is a short description")
+                .fillInField("htmlDescription", "This is a long description")
                 .save();
 
 
         assertThat(products.count())
                 .isEqualTo(1);
-        assertThat(products.getAll().get(0).getPrice().intValue())
+
+        final var product = products.getAll().get(0);
+
+        assertThat(product.getPrice().intValue())
                 .isEqualTo(200);
+
+        assertThat(product.isProductIsAwesome())
+                .isTrue();
+
+        assertThat(product.getHtmlDescription())
+                .isEqualTo("<p>This is a long description</p>");
+
+        assertThat(product.getShortDescription())
+                .isEqualTo("This is a short description");
+
     }
 
     @Test
