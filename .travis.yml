@@ -18,3 +18,5 @@ script:
   - whereis google-chrome-stable
   - whereis chromedriver
   - mvn clean test --quiet -Ptravis
+services:
+  - docker
