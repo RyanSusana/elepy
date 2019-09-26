@@ -1,16 +1,12 @@
 package com.elepy.javalin;
 
 
-import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Session;
 import com.elepy.uploads.FileUpload;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
-import spark.utils.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -156,13 +152,7 @@ public class JavalinRequest implements Request {
     }
 
     private FileUpload toElepyFile(UploadedFile uploadedFile) {
-        try {
-            final var fileBytes = IOUtils.toByteArray(uploadedFile.getContent());
-
-            return FileUpload.of(uploadedFile.getFilename(), uploadedFile.getContentType(), new ByteArrayInputStream(fileBytes), fileBytes.length);
-        } catch (IOException e) {
-            throw new ElepyException("Can't", 500);
-        }
+        return FileUpload.of(uploadedFile.getFilename(), uploadedFile.getContentType(), uploadedFile.getContent(), uploadedFile.getContentLength());
     }
 
 
