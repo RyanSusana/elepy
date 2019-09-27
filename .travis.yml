@@ -32,7 +32,7 @@ script:
 
 deploy:
   provider: script
-  script: "mvn clean install --settings .travis.settings.xml -Psign-artifacts -Ptravis -DskipTests=true -B -U -e"
+  script: "mvn clean deploy --settings .travis.settings.xml -Psign-artifacts -Ptravis -DskipTests=true -B -U -e"
   skip_cleanup: true
   on:
     branch: release
