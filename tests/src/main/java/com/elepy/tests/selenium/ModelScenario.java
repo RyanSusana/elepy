@@ -125,7 +125,7 @@ public class ModelScenario<T> extends LoggedInScenario {
         return getTable().findElements(By.tagName("tr")).size();
     }
 
-    private int getLastPageNumber() {
+    public int getLastPageNumber() {
         final var lastPageNumberWebElement = driver.findElement(By.className("pagination")).findElements(By.tagName("li")).get(2);
 
         final var pageNumberStrippedDown = lastPageNumberWebElement.getAttribute("innerHTML").replace("of ", "");
@@ -152,9 +152,8 @@ public class ModelScenario<T> extends LoggedInScenario {
     }
 
 
-    @Override
-    public ModelScenario<T> customFunction(Consumer<ElepyDriver> consumer) {
-        consumer.accept(driver);
+    public ModelScenario<T> custom(Consumer<ModelScenario<T>> consumer) {
+        consumer.accept(this);
         return this;
     }
 }

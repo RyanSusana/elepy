@@ -60,9 +60,8 @@ public class FormInputScenario<T> extends LoggedInScenario {
         }
     }
 
-    @Override
-    public FormInputScenario<T> customFunction(Consumer<ElepyDriver> consumer) {
-        consumer.accept(driver);
+    public FormInputScenario<T> custom(Consumer<FormInputScenario<T>> consumer) {
+        consumer.accept(this);
         return this;
     }
 }

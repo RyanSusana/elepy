@@ -111,7 +111,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
 
     @Test
-    void testProductSearch() throws InterruptedException {
+    void testProductSearch() {
         seedWithProducts(80);
 
         final var product = new Product();
@@ -123,23 +123,28 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         assertThat(productScenario.getRowSize())
                 .isEqualTo(2);
-
-        Thread.sleep(20000);
-
-
     }
 
     @Test
     void testPagination() {
         seedWithProducts(63);
 
-        final var scenario = driver
-                .createScenario()
-                .fromModel(Product.class)
-                .changeMaxRowSize(10)
-                .nextPage(6)
-                .previousPage()
-                .nextPage();
+        final var scenario =
+                driver
+                        .createScenario()
+                        .fromModel(Product.class)
+                        .changeMaxRowSize(10)
+
+                        //Make sure that the last page remains consistent
+                        .custom(scen -> IntStream.range(0, 6).forEach(i -> {
+                                    assertThat(scen.getLastPageNumber())
+                                            .isEqualTo(7);
+
+                                    scen.nextPage();
+                                })
+                        )
+                        .previousPage()
+                        .nextPage();
 
         assertThat(scenario.getRowSize())
                 .isEqualTo(3);
@@ -155,9 +160,6 @@ public abstract class SystemTest implements ElepyConfigHelper {
                 .fillInField("price", BigDecimal.valueOf(200.00))
                 .fillInField("productIsAwesome", true)
                 .fillInField("shortDescription", shortDescription)
-                .customFunction(driver1 -> {
-
-                })
                 .fillInField("htmlDescription", "This is a long description")
                 .fillInField("markdown", "This is markdown")
                 .save();

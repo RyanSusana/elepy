@@ -4,7 +4,6 @@ import com.elepy.auth.User;
 import org.openqa.selenium.By;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static org.awaitility.Awaitility.await;
 
@@ -29,11 +28,5 @@ public class LoginScenario extends GenericScenario {
         driver.elepy().getCrudFor(User.class).searchInField("username", username).get(0);
 
         return new HomepageScenario(driver);
-    }
-
-    @Override
-    public LoginScenario customFunction(Consumer<ElepyDriver> consumer) {
-        consumer.accept(driver);
-        return this;
     }
 } 
