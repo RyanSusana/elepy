@@ -26,6 +26,7 @@ script:
   - whereis google-chrome-stable
   - whereis chromedriver
   - gpg --version
+  - gpg2 --version
   - mvn clean test --quiet -Ptravis -DskipTests=true
 
 deploy:
