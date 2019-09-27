@@ -25,11 +25,11 @@ install:
 script:
   - whereis google-chrome-stable
   - whereis chromedriver
-  - mvn clean test --quiet -Ptravis
+  - mvn clean test --quiet -Ptravis -DskipTests=true
 
 deploy:
   provider: script
-  script: "mvn clean deploy --settings .travis.settings.xml -Psign-artifacts -Ptravis -DskipTests=true -B -U"
+  script: "mvn clean deploy --settings .travis.settings.xml -Psign-artifacts -Ptravis -DskipTests=true -B -U -e"
   skip_cleanup: true
   on:
     branch: release
