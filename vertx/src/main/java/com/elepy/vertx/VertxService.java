@@ -2,6 +2,7 @@ package com.elepy.vertx;
 
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.HaltException;
 import com.elepy.http.*;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -13,7 +14,6 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import org.eclipse.jetty.util.MultiMap;
-import spark.HaltException;
 
 import java.util.HashMap;
 import java.util.Map;

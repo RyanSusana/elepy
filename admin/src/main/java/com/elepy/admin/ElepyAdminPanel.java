@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static spark.Spark.halt;
+import static com.elepy.exceptions.HaltException.halt;
 
 
 public class ElepyAdminPanel implements ElepyExtension {

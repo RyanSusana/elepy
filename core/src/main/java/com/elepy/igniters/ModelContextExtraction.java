@@ -30,7 +30,7 @@ public class ModelContextExtraction {
     private static <T> IdentityProvider<T> extractIdProvider(Model<T> model, Elepy elepy) {
         var classType = model.getJavaClass();
         if (classType.isAnnotationPresent(IdProvider.class)) {
-            return elepy.initializeElepyObject(classType.getAnnotation(IdProvider.class).value());
+            return elepy.initialize(classType.getAnnotation(IdProvider.class).value());
         } else {
             return new DefaultIdentityProvider<>();
         }
@@ -46,7 +46,7 @@ public class ModelContextExtraction {
         if (annotation != null) {
             for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {
                 if (objectEvaluatorClass != null) {
-                    final ObjectEvaluator<T> constructor = elepy.initializeElepyObject(objectEvaluatorClass);
+                    final ObjectEvaluator<T> constructor = elepy.initialize(objectEvaluatorClass);
                     objectEvaluators.add(constructor);
                 }
             }
@@ -64,11 +64,11 @@ public class ModelContextExtraction {
 
         var crudProvider = annotation == null ?
                 elepy.defaultCrudFactory()
-                : elepy.initializeElepyObject(annotation.value());
+                : elepy.initialize(annotation.value());
 
         final Dao daoAnnotation = modelType.getAnnotation(Dao.class);
         if (daoAnnotation != null) {
-            return elepy.initializeElepyObject(daoAnnotation.value());
+            return elepy.initialize(daoAnnotation.value());
         } else {
             return crudProvider.crudFor(model);
         }

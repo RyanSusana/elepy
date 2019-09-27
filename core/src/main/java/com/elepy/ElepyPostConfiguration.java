@@ -172,7 +172,7 @@ public class ElepyPostConfiguration {
     }
 
     public <T> T initializeElepyObject(Class<? extends T> cls) {
-        return elepy.initializeElepyObject(cls);
+        return elepy.initialize(cls);
     }
 
     /**

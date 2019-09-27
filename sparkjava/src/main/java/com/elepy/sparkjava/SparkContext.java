@@ -1,4 +1,8 @@
-package com.elepy.http;
+package com.elepy.sparkjava;
+
+import com.elepy.http.HttpContext;
+import com.elepy.http.Request;
+import com.elepy.http.Response;
 
 public class SparkContext implements HttpContext {
     private final SparkRequest request;

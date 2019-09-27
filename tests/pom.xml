@@ -16,9 +16,7 @@
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-admin</artifactId>

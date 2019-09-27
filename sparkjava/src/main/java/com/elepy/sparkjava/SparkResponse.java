@@ -1,4 +1,6 @@
-package com.elepy.http;
+package com.elepy.sparkjava;
+
+import com.elepy.http.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

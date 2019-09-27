@@ -1,4 +1,6 @@
-package com.elepy.http;
+package com.elepy.sparkjava;
+
+import com.elepy.http.Session;
 
 import java.util.Set;
 

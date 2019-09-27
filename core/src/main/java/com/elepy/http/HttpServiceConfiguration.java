@@ -19,9 +19,17 @@ public class HttpServiceConfiguration implements HttpService {
 
     private int port;
 
+    public HttpServiceConfiguration() {
+        this(null);
+    }
+
     public HttpServiceConfiguration(HttpService implementation) {
         this.implementation = implementation;
         port(1337);
+    }
+
+    public boolean hasImplementation() {
+        return implementation != null;
     }
 
     private void add(Consumer<HttpService> action) {

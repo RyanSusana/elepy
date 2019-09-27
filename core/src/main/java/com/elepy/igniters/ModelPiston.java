@@ -133,7 +133,7 @@ public class ModelPiston<T> {
             return new ArrayList<>();
         } else {
             return Arrays.stream(extraRoutesAnnotation.value())
-                    .map(aClass -> ReflectionUtils.scanForRoutes(elepy.initializeElepyObject(aClass)))
+                    .map(aClass -> ReflectionUtils.scanForRoutes(elepy.initialize(aClass)))
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
         }
@@ -151,7 +151,7 @@ public class ModelPiston<T> {
         for (Action actionAnnotation : actionAnnotations) {
 
             final HttpAction action = ModelUtils.actionToHttpAction(slug, actionAnnotation);
-            final ActionHandler<T> actionHandler = elepy.initializeElepyObject(actionAnnotation.handler());
+            final ActionHandler<T> actionHandler = elepy.initialize(actionAnnotation.handler());
 
             final RouteBuilder route = anElepyRoute()
                     .addPermissions(actionAnnotation.requiredPermissions())

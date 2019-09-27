@@ -9,8 +9,8 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import spark.utils.IOUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

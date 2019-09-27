@@ -49,6 +49,12 @@
         </dependency>
         <dependency>
             <groupId>com.elepy</groupId>
+            <artifactId>elepy-sparkjava</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
             <artifactId>elepy-tests</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

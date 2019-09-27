@@ -1,6 +1,7 @@
 package com.elepy;
 
 import com.elepy.http.HttpContext;
+import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 
@@ -75,7 +76,9 @@ public class Base {
     }
 
     protected Elepy createElepy() {
+
         return new Elepy().onPort(portCounter++)
+                .withHttpService(mock(HttpService.class))
                 .withDefaultCrudFactory(new MockCrudFactory());
 
 

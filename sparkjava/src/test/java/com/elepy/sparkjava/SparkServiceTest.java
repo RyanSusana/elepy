@@ -1,7 +1,6 @@
-package com.elepy.vertx;
+package com.elepy.sparkjava;
 
 import com.elepy.http.HttpService;
-import com.elepy.http.SparkService;
 import com.elepy.tests.http.HttpServiceTest;
 
 public class SparkServiceTest extends HttpServiceTest {

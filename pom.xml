@@ -53,6 +53,7 @@
         <module>file-uploads</module>
         <module>vertx</module>
         <module>javalin</module>
+        <module>sparkjava</module>
     </modules>
 
     <distributionManagement>

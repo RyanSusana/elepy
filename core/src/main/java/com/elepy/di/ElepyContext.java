@@ -53,5 +53,15 @@ public interface ElepyContext {
 
     Set<ContextKey> getDependencyKeys();
 
-    <T> T initializeElepyObject(Class<? extends T> cls);
+    <T> T initialize(Class<? extends T> cls);
+
+    @SuppressWarnings("unchecked")
+    default <T> T initialize(String className) {
+        try {
+            return (T) initialize(Class.forName(className));
+        } catch (ClassNotFoundException e) {
+            throw new ElepyConfigException(String.format("Missing class '%s', make sure you have your dependencies in order", className));
+        }
+
+    }
 }

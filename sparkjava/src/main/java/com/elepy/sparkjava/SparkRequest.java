@@ -1,6 +1,8 @@
-package com.elepy.http;
+package com.elepy.sparkjava;
 
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.Request;
+import com.elepy.http.Session;
 import com.elepy.uploads.FileUpload;
 import spark.QueryParamsMap;
 

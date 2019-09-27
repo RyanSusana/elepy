@@ -9,9 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>elepy-basic</artifactId>
+    <artifactId>elepy-sparkjava</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
@@ -19,13 +25,10 @@
         </dependency>
         <dependency>
             <groupId>com.elepy</groupId>
-            <artifactId>elepy-sparkjava</artifactId>
+            <artifactId>elepy-tests</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.elepy</groupId>
-            <artifactId>elepy-admin</artifactId>
-            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

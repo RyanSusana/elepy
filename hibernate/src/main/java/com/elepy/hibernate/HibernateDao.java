@@ -7,6 +7,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Model;
 import com.elepy.utils.ReflectionUtils;
+import com.elepy.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -15,7 +16,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.utils.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.criteria.*;

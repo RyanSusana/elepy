@@ -20,23 +20,23 @@ public class ModelServiceExtraction<T> {
 
         Optional.ofNullable(classType.getAnnotation(Delete.class))
                 .filter(annotation -> !annotation.handler().equals(DefaultDelete.class))
-                .ifPresent(annotation -> serviceBuilder.delete(elepy.initializeElepyObject(annotation.handler())));
+                .ifPresent(annotation -> serviceBuilder.delete(elepy.initialize(annotation.handler())));
 
         Optional.ofNullable(classType.getAnnotation(Update.class))
                 .filter(annotation -> !annotation.handler().equals(DefaultUpdate.class))
-                .ifPresent(annotation -> serviceBuilder.update(elepy.initializeElepyObject(annotation.handler())));
+                .ifPresent(annotation -> serviceBuilder.update(elepy.initialize(annotation.handler())));
 
         Optional.ofNullable(classType.getAnnotation(Create.class))
                 .filter(annotation -> !annotation.handler().equals(DefaultCreate.class))
-                .ifPresent(annotation -> serviceBuilder.create(elepy.initializeElepyObject(annotation.handler())));
+                .ifPresent(annotation -> serviceBuilder.create(elepy.initialize(annotation.handler())));
 
         Optional.ofNullable(classType.getAnnotation(Find.class))
                 .ifPresent(findAnnotation -> {
                     if (!findAnnotation.findManyHandler().equals(DefaultFindMany.class)) {
-                        serviceBuilder.findMany(elepy.initializeElepyObject(findAnnotation.findManyHandler()));
+                        serviceBuilder.findMany(elepy.initialize(findAnnotation.findManyHandler()));
                     }
                     if (!findAnnotation.findOneHandler().equals(DefaultFindOne.class)) {
-                        serviceBuilder.findOne(elepy.initializeElepyObject(findAnnotation.findOneHandler()));
+                        serviceBuilder.findOne(elepy.initialize(findAnnotation.findOneHandler()));
                     }
                 });
 
@@ -52,7 +52,7 @@ public class ModelServiceExtraction<T> {
         ServiceBuilder<T> serviceBuilder = new ServiceBuilder<>();
 
         if (serviceAnnotation != null) {
-            ServiceHandler<T> initialService = elepy.initializeElepyObject(serviceAnnotation.value());
+            ServiceHandler<T> initialService = elepy.initialize(serviceAnnotation.value());
             elepy.addRouting(ReflectionUtils.scanForRoutes(initialService));
             serviceBuilder.defaultFunctionality(initialService);
         }

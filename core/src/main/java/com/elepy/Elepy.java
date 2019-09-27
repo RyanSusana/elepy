@@ -17,7 +17,10 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
-import com.elepy.http.*;
+import com.elepy.http.HttpService;
+import com.elepy.http.HttpServiceConfiguration;
+import com.elepy.http.MultiFilter;
+import com.elepy.http.Route;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.Model;
 import com.elepy.models.ModelChange;
@@ -32,11 +35,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -45,48 +46,32 @@ import java.util.function.Consumer;
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
-    private final List<ElepyExtension> modules;
-    private final List<String> packages;
-    private final List<Class<?>> models;
-    private final DefaultElepyContext context;
-    private HttpServiceConfiguration http;
-    private String configSlug;
+
+    private final List<ElepyExtension> modules = new ArrayList<>();
+    private final List<String> packages = new ArrayList<>();
+    private final List<Class<?>> models = new ArrayList<>();
+    private final DefaultElepyContext context = new DefaultElepyContext();
+    private HttpServiceConfiguration http = new HttpServiceConfiguration();
+    private String configSlug = "/config";
     private ObjectEvaluator<Object> baseObjectEvaluator;
-    private MultiFilter adminFilters;
-    private List<Route> routes;
+    private MultiFilter adminFilters = new MultiFilter();
+    private List<Route> routes = new ArrayList<>();
     private boolean initialized = false;
-    private Class<? extends CrudFactory> defaultCrudFactoryClass;
+    private Class<? extends CrudFactory> defaultCrudFactoryClass = null;
     private CrudFactory defaultCrudFactoryImplementation;
-    private List<Class<?>> routingClasses;
-    private ModelEngine modelEngine;
-    private UserAuthenticationService userAuthenticationService;
+    private List<Class<?>> routingClasses = new ArrayList<>();
+    private ModelEngine modelEngine = new ModelEngine(this);
+    private UserAuthenticationService userAuthenticationService = new UserAuthenticationService();
 
-    private List<Consumer<HttpService>> httpActions;
-
-    private List<Configuration> configurations;
-    private List<EventHandler> stopEventHandlers;
+    private List<Configuration> configurations = new ArrayList<>();
+    private List<EventHandler> stopEventHandlers = new ArrayList<>();
 
 
     public Elepy() {
-        this.userAuthenticationService = new UserAuthenticationService();
-        this.stopEventHandlers = new ArrayList<>();
-        this.configurations = new ArrayList<>();
-        this.modules = new ArrayList<>();
-        this.packages = new ArrayList<>();
-        this.context = new DefaultElepyContext();
-        this.adminFilters = new MultiFilter();
-        this.httpActions = new ArrayList<>();
-        this.http = new HttpServiceConfiguration(new SparkService());
+        init();
+    }
 
-        this.defaultCrudFactoryClass = null;
-
-        this.models = new ArrayList<>();
-        this.configSlug = "/config";
-        this.routes = new ArrayList<>();
-        this.routingClasses = new ArrayList<>();
-        this.modelEngine = new ModelEngine(this);
-
-
+    private void init() {
         this.http.port(1337);
 
         withBaseEvaluator(new DefaultObjectEvaluator());
@@ -106,7 +91,30 @@ public class Elepy implements ElepyContext {
      * @see #stop()
      */
     public final void start() {
-        this.init();
+        setupDefaultConfig();
+
+        configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
+        configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
+
+        models.forEach(modelEngine::addModel);
+
+        setupAuth();
+        context.resolveDependencies();
+
+        setupExtraRoutes();
+        igniteAllRoutes();
+        injectModules();
+        initialized = true;
+
+        afterElepyConstruction();
+
+        http.ignite();
+
+        context.strictMode(true);
+
+        modelEngine.executeChanges();
+
+        logger.info(String.format(LogUtils.banner, http.port()));
     }
 
     /**
@@ -136,7 +144,7 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return The {@link Service} related with this Elepy instance.
+     * @return The  related with this Elepy instance.
      */
     public HttpService http() {
         return http;
@@ -177,15 +185,16 @@ public class Elepy implements ElepyContext {
     }
 
     @Override
-    public <T> T initializeElepyObject(Class<? extends T> cls) {
+    public <T> T initialize(Class<? extends T> cls) {
 
         try {
             context.resolveDependencies();
         } catch (ElepyConfigException ignored) {
             //silent fail, just tries to pre-resolve everything
         }
-        return context.initializeElepyObject(cls);
+        return context.initialize(cls);
     }
+
 
     /**
      * Switches the HttpService of Elepy. This can be used to swap to Vertx, Sparkjava, Javalin, etc.
@@ -456,7 +465,7 @@ public class Elepy implements ElepyContext {
             if (defaultCrudFactoryClass == null) {
                 throw new ElepyConfigException("No default CrudFactory selected, please configure one.");
             }
-            defaultCrudFactoryImplementation = initializeElepyObject(defaultCrudFactoryClass);
+            defaultCrudFactoryImplementation = initialize(defaultCrudFactoryClass);
         }
 
         return defaultCrudFactoryImplementation;
@@ -581,35 +590,6 @@ public class Elepy implements ElepyContext {
         }
     }
 
-
-    private void init() {
-        setupDefaultConfig();
-
-        configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
-        configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
-
-        models.forEach(modelEngine::addModel);
-
-        setupAuth();
-        context.resolveDependencies();
-
-        setupExtraRoutes();
-        igniteAllRoutes();
-        injectModules();
-        initialized = true;
-
-        afterElepyConstruction();
-
-        http.ignite();
-
-        context.strictMode(true);
-
-        modelEngine.executeChanges();
-
-        logger.info(String.format(LogUtils.banner, http.port()));
-
-    }
-
     private void setupDefaultConfig() {
         addModel(Token.class);
         addModel(User.class);
@@ -619,16 +599,22 @@ public class Elepy implements ElepyContext {
 
         setupLoggingAndExceptions();
         retrievePackageModels();
+
+        if (!http.hasImplementation()) {
+            http.setImplementation(initialize(Defaults.HTTP_SERVICE));
+        }
     }
 
+
+
     private void setupAuth() {
-        final var userLoginService = this.initializeElepyObject(UserLoginService.class);
+        final var userLoginService = this.initialize(UserLoginService.class);
 
 
         registerDependency(userLoginService);
-        final var tokenAuthenticationMethod = this.initializeElepyObject(TokenAuthenticationMethod.class);
+        final var tokenAuthenticationMethod = this.initialize(TokenAuthenticationMethod.class);
 
-        final var basicAuthenticationMethod = this.initializeElepyObject(BasicAuthenticationMethod.class);
+        final var basicAuthenticationMethod = this.initialize(BasicAuthenticationMethod.class);
 
         registerDependency(tokenAuthenticationMethod);
 
@@ -656,7 +642,7 @@ public class Elepy implements ElepyContext {
 
     private void setupExtraRoutes() {
         for (Class<?> routingClass : routingClasses) {
-            addRouting(ReflectionUtils.scanForRoutes(initializeElepyObject(routingClass)));
+            addRouting(ReflectionUtils.scanForRoutes(initialize(routingClass)));
         }
 
     }

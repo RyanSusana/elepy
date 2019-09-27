@@ -7,12 +7,12 @@ import com.elepy.mongo.querybuilding.MongoFilters;
 import com.elepy.mongo.querybuilding.MongoQuery;
 import com.elepy.mongo.querybuilding.MongoSearch;
 import com.elepy.utils.ReflectionUtils;
+import com.elepy.utils.StringUtils;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-import spark.utils.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

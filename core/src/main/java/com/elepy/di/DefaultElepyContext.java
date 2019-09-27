@@ -140,7 +140,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     @Override
-    public <T> T initializeElepyObject(Class<? extends T> cls) {
+    public <T> T initialize(Class<? extends T> cls) {
         return injector.initializeAndInject(cls);
     }
 

@@ -112,7 +112,7 @@ class DependencyResolver {
         Map<ContextKey, Object> toAdd = new HashMap<>();
         for (ContextKey contextKey : unsatisfiedKeys) {
             try {
-                Object o = elepyContext.initializeElepyObject(contextKey.getType());
+                Object o = elepyContext.initialize(contextKey.getType());
                 ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), ReflectionUtils.getDependencyTag(contextKey.getType()));
                 elepyContext.registerDependency(objectContextKey.getType(), objectContextKey.getTag(), o);
 
