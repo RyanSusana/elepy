@@ -9,33 +9,33 @@ import org.openqa.selenium.By;
 import static com.google.common.truth.Truth.assertThat;
 import static org.awaitility.Awaitility.await;
 
-public class Scenario {
+public class Scenarios {
     private final ElepyDriver driver;
 
 
-    public Scenario(ElepyDriver driver) {
+    public Scenarios(ElepyDriver driver) {
         this.driver = driver;
     }
 
-    public static Scenario with(ElepyDriver elepyDriver) {
-        return new Scenario(elepyDriver);
+    public static Scenarios with(ElepyDriver elepyDriver) {
+        return new Scenarios(elepyDriver);
     }
 
-    public <T> ModelDriver<T> fromModel(Class<T> model) {
+    public <T> ModelScenario<T> fromModel(Class<T> model) {
         return fromUserLogin("admin", "admin").navigateToModel(model);
     }
 
-    public <T> ModelDriver<T> fromModel(Model<T> model) {
+    public <T> ModelScenario<T> fromModel(Model<T> model) {
         return fromUserLogin("admin", "admin").navigateToModel(model);
     }
 
-    public MainDriver fromUserLogin(String user, String pass) {
+    public HomepageScenario fromUserLogin(String user, String pass) {
         return fromInitialUser(user, pass).login(user, pass);
     }
 
-    public LoginDriver fromInitialUser(String username, String password) {
+    public LoginScenario fromInitialUser(String username, String password) {
         createInialUser(username, password);
-        return new LoginDriver(driver);
+        return new LoginScenario(driver);
     }
 
     public User createInialUser(String username, String password) {

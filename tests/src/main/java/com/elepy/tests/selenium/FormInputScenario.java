@@ -8,25 +8,35 @@ import com.elepy.tests.selenium.actions.FillInNumber;
 import com.elepy.tests.selenium.actions.FillInText;
 import org.openqa.selenium.By;
 
-public class FormDriver<T> {
+import java.util.Map;
+import java.util.function.Consumer;
+
+public class FormInputScenario<T> extends LoggedInScenario {
 
     public static final By SAVE_BUTTON = By.className("save-button");
-    private final ElepyDriver driver;
     private final Model<T> model;
 
-    public FormDriver(ElepyDriver driver, Model<T> model) {
-        this.driver = driver;
+    public FormInputScenario(ElepyDriver driver, Model<T> model) {
+        super(driver);
         this.model = model;
     }
 
     @SuppressWarnings("unchecked")
-    public FormDriver<T> fillInField(String propertyName, Object value) {
+    public FormInputScenario<T> fillInField(String propertyName, Object value) {
         final var property = model.getProperty(propertyName);
-        getActionFor(property).fillIn(value);
+
+        if (value != null)
+            getActionFor(property).fillIn(value);
         return this;
     }
 
-    public ModelDriver<T> save() {
+    public FormInputScenario<T> fillInFields(Map<String, Object> fields) {
+        fields.forEach(this::fillInField);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ModelScenario<T> save() {
         driver.findElement(SAVE_BUTTON).click();
 
         final By by = By.cssSelector(".uk-notification");
@@ -34,7 +44,7 @@ public class FormDriver<T> {
         driver.waitTillCanSee(by);
         driver.findElement(by).click();
         driver.waitTillCantSee(by);
-        return new ModelDriver<>(model, driver);
+        return new ModelScenario<>(model, driver);
     }
 
     private FillIn getActionFor(Property property) {
@@ -48,5 +58,11 @@ public class FormDriver<T> {
             default:
                 throw new IllegalArgumentException(String.format("The property '%s' is not supported", property.getName()));
         }
+    }
+
+    @Override
+    public FormInputScenario<T> customFunction(Consumer<ElepyDriver> consumer) {
+        consumer.accept(driver);
+        return this;
     }
 }

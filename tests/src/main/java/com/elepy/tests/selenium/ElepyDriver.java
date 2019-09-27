@@ -31,6 +31,10 @@ public class ElepyDriver implements WebDriver {
         return elepy;
     }
 
+    public Scenarios createScenario() {
+        return Scenarios.with(this);
+    }
+
     public void waitTillCanSee(By by) {
         await().atMost(20, TimeUnit.SECONDS).until(() -> {
             try {

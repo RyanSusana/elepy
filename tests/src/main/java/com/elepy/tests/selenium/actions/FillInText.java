@@ -1,10 +1,13 @@
 package com.elepy.tests.selenium.actions;
 
 import com.elepy.models.Property;
+import com.elepy.models.TextType;
 import com.elepy.models.options.TextOptions;
 import com.elepy.tests.selenium.ElepyDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import static org.awaitility.Awaitility.await;
 
 public class FillInText implements FillIn<String> {
 
@@ -42,18 +45,14 @@ public class FillInText implements FillIn<String> {
         targetInputElement().sendKeys(value);
     }
 
-    // i.e click the markdown box before typing,
-    // or clicking <code> before filling in html
     private void doPreSetup() {
         final TextOptions options = property.getOptions();
 
-        switch (options.getTextType()) {
-            case HTML:
-                //click the raw html box
-                break;
-            case MARKDOWN:
-                //click the markdown box
-                break;
+        if (options.getTextType() == TextType.MARKDOWN) {//click the markdown box
+            final var compiledMarkdown = propertyBox().findElement(By.cssSelector(".compiled-markdown"));
+            compiledMarkdown.click();
+
+            await().until(() -> compiledMarkdown.getCssValue("display").equals("none"));
         }
     }
 }

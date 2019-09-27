@@ -3,6 +3,7 @@ package com.elepy.tests.selenium.actions;
 import com.elepy.models.Property;
 import com.elepy.tests.selenium.ElepyDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import static org.awaitility.Awaitility.await;
 
@@ -22,8 +23,7 @@ public class FillInBoolean implements FillIn<Boolean> {
         final var input = driver.findElement(getPropertyField(property)).findElement(By.cssSelector(".pad")).findElement(By.tagName("input"));
 
         if (input.isSelected() != value) {
-            input.click();
-
+            input.sendKeys(Keys.SPACE);
             await().until(() -> input.isSelected() == value);
         }
     }

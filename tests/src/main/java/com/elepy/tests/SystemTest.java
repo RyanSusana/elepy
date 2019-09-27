@@ -3,12 +3,16 @@ package com.elepy.tests;
 import com.elepy.Elepy;
 import com.elepy.admin.AdminPanel;
 import com.elepy.tests.selenium.ElepyDriver;
-import com.elepy.tests.selenium.Scenario;
+import com.elepy.tests.selenium.ModelScenario;
+import com.elepy.tests.selenium.Scenarios;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -62,15 +66,16 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     @Test
     void canCreateUser() {
-        Scenario
+        Scenarios
                 .with(driver)
                 .fromUserLogin("Ryan", "Susana");
+
+
     }
 
     @Test
     void createInitialUser() {
-
-        Scenario
+        Scenarios
                 .with(driver)
                 .fromInitialUser("Username", "Password");
     }
@@ -79,17 +84,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
     @Test
     void testProductSave() {
         var products = elepySystemUnderTest.getCrudFor(Product.class);
-
-        Scenario
-                .with(driver)
-                .fromUserLogin("username", "password")
-                .navigateToModel(Product.class)
-                .startCreating()
-                .fillInField("price", BigDecimal.valueOf(200.00))
-                .fillInField("productIsAwesome", true)
-                .fillInField("shortDescription", "This is a short description")
-                .fillInField("htmlDescription", "This is a long description")
-                .save();
+        productCreationScenario("This is a short description");
 
 
         assertThat(products.count())
@@ -109,12 +104,85 @@ public abstract class SystemTest implements ElepyConfigHelper {
         assertThat(product.getShortDescription())
                 .isEqualTo("This is a short description");
 
+        assertThat(product.getMarkdown())
+                .isEqualTo("This is markdown");
+
+    }
+
+
+    @Test
+    void testProductSearch() throws InterruptedException {
+        seedWithProducts(80);
+
+        final var product = new Product();
+
+        product.setShortDescription("Should find one too");
+        final var productScenario = productCreationScenario("Should find one")
+                .create(product)
+                .search("Should find one");
+
+        assertThat(productScenario.getRowSize())
+                .isEqualTo(2);
+
+        Thread.sleep(20000);
+
+
     }
 
     @Test
-    void testCantSeeNonViewableModel() throws InterruptedException {
+    void testPagination() {
+        seedWithProducts(63);
 
-        Scenario
+        final var scenario = driver
+                .createScenario()
+                .fromModel(Product.class)
+                .changeMaxRowSize(10)
+                .nextPage(6)
+                .previousPage()
+                .nextPage();
+
+        assertThat(scenario.getRowSize())
+                .isEqualTo(3);
+
+    }
+
+    private ModelScenario<Product> productCreationScenario(String shortDescription) {
+        return driver
+                .createScenario()
+                .fromUserLogin("username", "password")
+                .navigateToModel(Product.class)
+                .startCreating()
+                .fillInField("price", BigDecimal.valueOf(200.00))
+                .fillInField("productIsAwesome", true)
+                .fillInField("shortDescription", shortDescription)
+                .customFunction(driver1 -> {
+
+                })
+                .fillInField("htmlDescription", "This is a long description")
+                .fillInField("markdown", "This is markdown")
+                .save();
+    }
+
+    private void seedWithProducts(int amount) {
+
+        final var seededProducts = IntStream.range(1, amount + 1).mapToObj(
+                i -> {
+                    Product product = new Product();
+
+                    product.setId(i);
+                    product.setShortDescription("Seeded product " + i);
+                    product.setDate(Calendar.getInstance().getTime());
+                    return product;
+                }
+        ).collect(Collectors.toList());
+
+        elepySystemUnderTest.getCrudFor(Product.class).create(seededProducts);
+    }
+
+    @Test
+    void testCantSeeNonViewableModel() {
+
+        Scenarios
                 .with(driver)
                 .fromModel(CantSeeThis.class);
 

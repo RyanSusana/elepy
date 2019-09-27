@@ -32,6 +32,7 @@ public class Product {
 
 
     @Text(TextType.TEXTAREA)
+    @Searchable
     private String shortDescription;
 
     @Text(TextType.HTML)
