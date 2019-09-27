@@ -7,6 +7,14 @@ jdk:
   - openjdk11
 addons:
   chrome: stable
+
+services:
+  - docker
+
+before_install:
+  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+
 install:
   - wget -N http://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip -P ~/
   - unzip ~/chromedriver_linux64.zip -d ~/
@@ -18,5 +26,10 @@ script:
   - whereis google-chrome-stable
   - whereis chromedriver
   - mvn clean test --quiet -Ptravis
-services:
-  - docker
+
+deploy:
+  provider: script
+  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy -Psign-artifacts"
+  skip_cleanup: true
+  on:
+    tags: true
