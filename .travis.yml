@@ -29,7 +29,7 @@ script:
 
 deploy:
   provider: script
-  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy -Psign-artifacts"
+  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy -Psign-artifacts -Ptravis"
   skip_cleanup: true
   on:
     tags: true
