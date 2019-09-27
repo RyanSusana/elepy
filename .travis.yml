@@ -25,6 +25,7 @@ install:
 script:
   - whereis google-chrome-stable
   - whereis chromedriver
+  - export GPG_TTY=`tty`
   - gpg --version
   #  - gpg2 --version
   - mvn clean test --quiet -Ptravis -DskipTests=true
