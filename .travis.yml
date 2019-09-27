@@ -25,6 +25,7 @@ install:
 script:
   - whereis google-chrome-stable
   - whereis chromedriver
+  - gpg --version
   - mvn clean test --quiet -Ptravis -DskipTests=true
 
 deploy:
