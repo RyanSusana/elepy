@@ -51,7 +51,7 @@ public class HibernateDao<T> implements Crud<T> {
         loadLazyCollections(values);
 
         final long remainder = amountOfResultsWithThatQuery % pageSize;
-        long amountOfPages = amountOfResultsWithThatQuery / pageNumber;
+        long amountOfPages = amountOfResultsWithThatQuery / pageSize;
         if (remainder > 0) amountOfPages++;
 
         return new Page<>(pageNumber, amountOfPages, values);
