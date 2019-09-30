@@ -11,10 +11,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth8.assertThat;
 
 public abstract class SystemTest implements ElepyConfigHelper {
 
@@ -64,10 +66,13 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     }
 
+    public ElepyDriver driver() {
+        return driver;
+    }
+
     @Test
     void canCreateUser() {
-        Scenarios
-                .with(driver)
+        driver.createScenario()
                 .fromUserLogin("Ryan", "Susana");
 
 
@@ -75,9 +80,25 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     @Test
     void createInitialUser() {
-        Scenarios
-                .with(driver)
+        driver.createScenario()
                 .fromInitialUser("Username", "Password");
+    }
+
+    @Test
+    void testProductDeleteSingle() {
+        final var productIds = seedWithProducts(5).stream().map(Product::getId).collect(Collectors.toList());
+
+        final var toDelete = productIds.get(0);
+        var products = elepySystemUnderTest.getCrudFor(Product.class);
+        driver.createScenario()
+                .fromModel(Product.class)
+                .delete(toDelete);
+
+        assertThat(products.count())
+                .isEqualTo(4);
+
+        assertThat(products.getById(toDelete))
+                .isEmpty();
     }
 
 
@@ -165,7 +186,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
                 .save();
     }
 
-    private void seedWithProducts(int amount) {
+    private List<Product> seedWithProducts(int amount) {
 
         final var seededProducts = IntStream.range(1, amount + 1).mapToObj(
                 i -> {
@@ -179,6 +200,9 @@ public abstract class SystemTest implements ElepyConfigHelper {
         ).collect(Collectors.toList());
 
         elepySystemUnderTest.getCrudFor(Product.class).create(seededProducts);
+
+
+        return seededProducts;
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -14,7 +15,7 @@ import static org.awaitility.Awaitility.await;
 public class ModelScenario<T> extends LoggedInScenario {
 
     private static final By ADD_BUTTON = By.xpath("//*[@id=\"add-button\"]");
-    private static final By EDIT_BUTTON = By.xpath("//*[@id=\"edit-button\"]");
+    private static final By YES_BUTTON = By.cssSelector(".uk-modal.uk-open .uk-modal-footer .uk-button-primary");
 
     private final Model<T> model;
     private final ElepyDriver driver;
@@ -35,10 +36,32 @@ public class ModelScenario<T> extends LoggedInScenario {
     public FormInputScenario<T> startEditing(String modelId) {
         driver.findElement(ADD_BUTTON).click();
 
-        final By by = By.cssSelector(String.format("*[row='%s'] *[action='edit']", modelId));
+        clickAction(modelId, "edit");
+
         driver.waitTillCanSee(FormInputScenario.SAVE_BUTTON);
         return new FormInputScenario<>(driver, model);
     }
+
+    public ModelScenario<T> delete(Serializable id) {
+        return delete(id, false);
+    }
+
+    public ModelScenario<T> delete(Serializable id, boolean withSearch) {
+        if (withSearch) {
+            search(id.toString());
+        }
+
+        final var tableHtml = getTableHtml();
+
+        clickAction(id.toString(), "delete");
+        driver.waitTillCanSee(YES_BUTTON);
+        driver.findElement(YES_BUTTON).click();
+
+
+        waitUntilChange(tableHtml);
+        return this;
+    }
+
 
     public ModelScenario<T> search(String query) {
         return search(query, true);
@@ -151,6 +174,13 @@ public class ModelScenario<T> extends LoggedInScenario {
         return getTable().getAttribute("innerHTML");
     }
 
+    private void clickAction(String id, String action) {
+        final var format = String.format("*[row='%s'] *[action='%s']", id, action);
+        final By by = By.cssSelector(format);
+
+        driver.findElement(by).click();
+
+    }
 
     public ModelScenario<T> custom(Consumer<ModelScenario<T>> consumer) {
         consumer.accept(this);
