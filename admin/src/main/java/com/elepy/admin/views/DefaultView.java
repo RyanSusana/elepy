@@ -1,7 +1,11 @@
 package com.elepy.admin.views;
 
+import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Inject;
+
 public class DefaultView extends OfficialView {
-    public DefaultView() {
-        super("elepy-default");
+    @ElepyConstructor
+    public DefaultView(@Inject ElepyResourceLocation resourceLocation) {
+        super("elepy-default", resourceLocation);
     }
 }

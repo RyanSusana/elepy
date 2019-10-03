@@ -15,9 +15,11 @@ abstract class OfficialView implements ModelView<Object> {
 
     private final String vueTemplate;
     private PebbleEngine engine = new PebbleEngine.Builder().build();
+    private final ElepyResourceLocation location;
 
-    OfficialView(String vueTemplate) {
+    OfficialView(String vueTemplate, ElepyResourceLocation location) {
         this.vueTemplate = vueTemplate;
+        this.location = location;
     }
 
     @Override
@@ -26,6 +28,10 @@ abstract class OfficialView implements ModelView<Object> {
         Map<String, Object> model = new HashMap<>();
         model.put("model", elepyModel);
         model.put("theView", vueTemplate);
+
+        model.put("jsLocation", location.getJsLocation());
+        model.put("cssLocation", location.getCssLocation());
+
         Writer writer = new StringWriter();
         try {
             engine.getTemplate("admin-templates/model-views/official-model-view.peb").evaluate(writer, model);

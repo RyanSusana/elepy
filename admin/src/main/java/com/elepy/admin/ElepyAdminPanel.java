@@ -27,7 +27,8 @@ import static com.elepy.exceptions.HaltException.halt;
 
 public class ElepyAdminPanel implements ElepyExtension {
 
-    private final PebbleEngine engine;
+    private final PebbleEngine engine = new PebbleEngine.Builder().build();
+
     private PluginHandler pluginHandler;
     private ViewHandler viewHandler;
     private boolean initiated = false;
@@ -37,11 +38,6 @@ public class ElepyAdminPanel implements ElepyExtension {
 
 
     private NoUserFoundHandler noUserFoundHandler;
-
-
-    public ElepyAdminPanel() {
-        this.engine = new PebbleEngine.Builder().build();
-    }
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {

@@ -1,0 +1,56 @@
+<template>
+    <VueEditor
+            :value="value"
+            @input="handleInput"
+            useCustomImageHandler
+            v-on:imageAdded="handleImageAdded"
+    ></VueEditor>
+</template>
+
+<style lang="scss">
+    .ql-editor {
+        background-color: white;
+    }
+</style>
+
+<script>
+    import {VueEditor} from "vue2-editor";
+    import Utils from "../../utils.mjs";
+    import axios from "axios";
+
+    export default {
+        components: {VueEditor},
+
+        props: ["value", "field"],
+        data() {
+            return {
+                content: this.value
+            };
+        },
+        methods: {
+            handleInput(e) {
+                this.content = e;
+                this.$emit("input", e);
+            },
+            handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+                var formData = new FormData();
+                formData.append("files", file);
+
+                axios({
+                    url: Utils.url + "/uploads",
+                    method: "POST",
+                    data: formData
+                })
+                    .then(result => {
+                        let file = result.data.files[0];
+                        let url = Utils.url + "/uploads/" + file.uploadName;
+                        Editor.insertEmbed(cursorLocation, "image", url);
+                        resetUploader();
+                    })
+                    .catch(err => {
+                        Utils.displayError(err);
+                    });
+            }
+        }
+    };
+</script>

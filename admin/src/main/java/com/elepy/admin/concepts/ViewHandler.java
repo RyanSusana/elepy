@@ -78,16 +78,14 @@ public class ViewHandler {
     private Map<Model<?>, ModelView> getModelsFromElepy(ElepyPostConfiguration elepyPostConfiguration) {
         Map<Model<?>, ModelView> modelsToReturn = new HashMap<>();
 
-        models
-
-                .forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
+        models.forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
 
         return modelsToReturn;
     }
 
     private ModelView getViewFromModel(Model<?> model, ElepyPostConfiguration elepyPostConfiguration) {
         if (model.getJavaClass().equals(FileReference.class)) {
-            return new FileView();
+            return elepyPostConfiguration.initializeElepyObject(FileView.class);
         } else if (model.getJavaClass().isAnnotationPresent(View.class)) {
             final View annotation = model.getJavaClass().getAnnotation(View.class);
             return elepyPostConfiguration.initializeElepyObject(annotation.value());

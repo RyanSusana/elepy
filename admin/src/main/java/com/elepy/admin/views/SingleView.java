@@ -1,8 +1,12 @@
 package com.elepy.admin.views;
 
+import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Inject;
+
 public class SingleView extends OfficialView {
 
-    public SingleView() {
-        super("elepy-single");
+    @ElepyConstructor
+    public SingleView(@Inject ElepyResourceLocation resourceLocation) {
+        super("elepy-single", resourceLocation);
     }
 }

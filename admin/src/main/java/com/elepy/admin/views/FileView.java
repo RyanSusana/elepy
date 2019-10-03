@@ -1,8 +1,12 @@
 package com.elepy.admin.views;
 
+import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Inject;
+
 public class FileView extends OfficialView {
-    public FileView() {
-        super("elepy-file");
+    @ElepyConstructor
+    public FileView(@Inject ElepyResourceLocation resourceLocation) {
+        super("elepy-file", resourceLocation);
     }
 
 }

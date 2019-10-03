@@ -1,0 +1,70 @@
+{
+  "name": "elepy-vue",
+  "version": "2.1.0",
+  "main": "src/index.js",
+  "browser": {
+    ".": "src/Elepy.vue"
+  },
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build-bundle": "vue-cli-service build --target lib --name ElepyVue src/index.js",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "axios": "^0.18.1",
+    "lodash": "latest",
+    "marked": "^0.7.0",
+    "misbehave": "^0.3.0",
+    "moment": "^2.24.0",
+    "prismjs": "^1.16.0",
+    "uikit": "^3.1.6",
+    "vue": "^2.6.6",
+    "vue-ctk-date-time-picker": "^2.1.1",
+    "vue-shortkey": "^3.1.7",
+    "vue2-editor": "^2.9.1",
+    "vuedraggable": "^2.23.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@vue/cli-plugin-babel": "^3.9.2",
+    "@vue/cli-plugin-eslint": "^3.9.2",
+    "@vue/cli-service": "^3.9.3",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "vue-cli-plugin-vuetify": "^0.5.0",
+    "vue-template-compiler": "^2.5.21"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
