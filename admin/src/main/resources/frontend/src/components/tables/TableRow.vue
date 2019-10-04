@@ -131,7 +131,7 @@
         },
         methods: {
             selectChange() {
-                this.$emit("tableRowSelected", this.data[this.idProperty]);
+                this.$emit("tableRowSelected", this.data[this.model.idProperty]);
             },
             editData() {
                 EventBus.$emit("editData", this.data);
