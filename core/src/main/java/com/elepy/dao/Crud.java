@@ -38,7 +38,7 @@ public interface Crud<T> {
      */
     Optional<T> getById(final Serializable id);
 
-    default List<T> getByIds(final Iterable<Serializable> ids) {
+    default List<T> getByIds(final Iterable<? extends Serializable> ids) {
         return Lists.newArrayList(ids).stream().map(this::getById).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     }
 
