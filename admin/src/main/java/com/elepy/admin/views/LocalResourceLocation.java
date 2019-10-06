@@ -38,8 +38,8 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
             for (URL resourceURL : Resources.getResourceURLs(Resources.class, u -> {
                 return !u.getFile().endsWith(".class");
             })) {
-                if (resourceURL.getFile().contains("frontend")) {
-                    return true;
+                if (resourceURL.getFile().contains("frontend/dist")) {
+                    throw new ElepyConfigException(resourceURL.getFile());
                 }
             }
         } catch (Exception e) {
