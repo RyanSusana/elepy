@@ -20,7 +20,7 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
              var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
             this.css = cssStream.readAllBytes();
             this.js = jsStream.readAllBytes();
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
 
             throw new ElepyConfigException("Error loading Static Resources", e);
         }
