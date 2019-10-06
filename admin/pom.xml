@@ -20,7 +20,6 @@
                     <exclude>**/node_modules/**</exclude>
                     <exclude>**/node/**</exclude>
                     <exclude>**/public/**</exclude>
-                    <exclude>**/src/**</exclude>
                 </excludes>
             </resource>
         </resources>
