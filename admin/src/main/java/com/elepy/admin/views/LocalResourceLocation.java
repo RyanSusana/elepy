@@ -18,8 +18,9 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
 
     public LocalResourceLocation() {
-        try (var cssStream = getResource("frontend/dist/ElepyVue.css");
-             var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
+        var cssStream = getResource("frontend/dist/ElepyVue.css");
+        var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js");
+        try {
             this.css = IOUtils.toByteArray(cssStream);
             this.js = IOUtils.toByteArray(jsStream);
         } catch (IOException | NullPointerException e) {
