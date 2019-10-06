@@ -28,7 +28,7 @@ script:
   - export GPG_TTY=`tty`
   - gpg --version
   #  - gpg2 --version
-  - mvn clean test --errors -Ptravis
+  - mvn clean test -q -Ptravis
 
 deploy:
   - provider: script
