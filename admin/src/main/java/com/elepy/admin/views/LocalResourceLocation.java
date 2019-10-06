@@ -40,7 +40,9 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
     private boolean containsFrontend() {
         try {
             final var collect = Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend")).map(Path::toString)
-                    .map(s -> s.replace("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend", "")).collect(Collectors.joining(","));
+                    .map(s -> s.replace("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend", ""))
+                    .filter(s -> !s.contains(".") && !s.contains("_"))
+                    .collect(Collectors.joining(","));
 
             throw new ElepyConfigException(collect);
 

@@ -199,7 +199,7 @@
         <profile>
             <id>travis</id>
             <properties>
-                <exclude.tests>%regex[^((?!SystemTest).)*$]</exclude.tests>
+                <exclude.tests>dont-exclude-anything</exclude.tests>
                 <headlessMode>true</headlessMode>
             </properties>
         </profile>
