@@ -36,6 +36,3 @@ deploy:
     skip_cleanup: true
     on:
       branch: release
-  - provider: npm
-    email: ryansusana@live.com
-    api_key: cf3c6635-21e6-438d-8acf-9a78a48bd625
