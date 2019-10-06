@@ -69,7 +69,6 @@ build/Release
 
 # Dependency directories
 **/node_modules/**
-**/dist/**
 **/node/**
 
 jspm_packages/
