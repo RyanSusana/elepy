@@ -6,10 +6,8 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpService;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
@@ -20,11 +18,8 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
 
     public LocalResourceLocation() {
-        for (File f : getResourceFolderFiles("frontend/dist")) {
-            System.out.println(f);
-        }
-        try (var cssStream = getResource("/frontend/dist/ElepyVue.css");
-             var jsStream = getResource("/frontend/dist/ElepyVue.umd.min.js")) {
+        try (var cssStream = getResource("frontend/dist/ElepyVue.css");
+             var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
             this.css = IOUtils.toByteArray(cssStream);
             this.js = IOUtils.toByteArray(jsStream);
         } catch (IOException | NullPointerException e) {
@@ -32,14 +27,8 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
         }
     }
 
-    private static File[] getResourceFolderFiles(String folder) {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        URL url = loader.getResource(folder);
-        String path = url.getPath();
-        return new File(path).listFiles();
-    }
     private InputStream getResource(String name) {
-        return this.getClass().getResourceAsStream(name);
+        return this.getClass().getClassLoader().getResourceAsStream(name);
     }
 
     @Override
