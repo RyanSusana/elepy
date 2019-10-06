@@ -53,7 +53,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         this.configureElepy(elepySystemUnderTest);
 
-        elepySystemUnderTest.addConfiguration(AdminPanel.newAdminPanel())
+        elepySystemUnderTest.addConfiguration(AdminPanel.fromLocalBuild())
 
                 .onPort(counter++)
                 .addModel(CantSeeThis.class)
