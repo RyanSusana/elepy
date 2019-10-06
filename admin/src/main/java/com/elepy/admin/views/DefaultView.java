@@ -5,7 +5,7 @@ import com.elepy.annotations.Inject;
 
 public class DefaultView extends OfficialView {
     @ElepyConstructor
-    public DefaultView(@Inject ElepyResourceLocation resourceLocation) {
+    public DefaultView(@Inject ResourceLocation resourceLocation) {
         super("elepy-default", resourceLocation);
     }
 }

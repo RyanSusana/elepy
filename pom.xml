@@ -7,7 +7,7 @@
     <groupId>com.elepy</groupId>
     <artifactId>elepy</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.0</version>
+    <version>${revision}</version>
 
     <name>Elepy</name>
     <description>A Restful API generator and Headless CMS</description>
@@ -22,6 +22,7 @@
         <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
+        <revision>2.1.0</revision>
     </properties>
 
     <licenses>

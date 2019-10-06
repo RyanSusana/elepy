@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build-bundle": "vue-cli-service build --target lib --name ElepyVue src/index.js",
+    "build-bundle": "vue-cli-service build --target lib --name ElepyVue src/index.js --compressed",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

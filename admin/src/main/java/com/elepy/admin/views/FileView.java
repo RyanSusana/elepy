@@ -5,7 +5,7 @@ import com.elepy.annotations.Inject;
 
 public class FileView extends OfficialView {
     @ElepyConstructor
-    public FileView(@Inject ElepyResourceLocation resourceLocation) {
+    public FileView(@Inject ResourceLocation resourceLocation) {
         super("elepy-file", resourceLocation);
     }
 

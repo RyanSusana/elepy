@@ -53,8 +53,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         this.configureElepy(elepySystemUnderTest);
 
-
-        elepySystemUnderTest.addConfiguration(AdminPanel.newAdminPanel())
+        elepySystemUnderTest.addConfiguration(AdminPanel.fromLocalBuild())
 
                 .onPort(counter++)
                 .addModel(CantSeeThis.class)
@@ -99,6 +98,23 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         assertThat(products.getById(toDelete))
                 .isEmpty();
+    }
+
+    @Test
+    void testProductDeleteMultiple() {
+        final var productIds = seedWithProducts(5).stream().map(Product::getId).collect(Collectors.toList());
+
+        productIds.remove(1);
+
+        var products = elepySystemUnderTest.getCrudFor(Product.class);
+        driver.createScenario()
+                .fromModel(Product.class)
+                .selectRowsById(productIds)
+                .deleteSelected();
+
+        assertThat(products.count())
+                .isEqualTo(1);
+
     }
 
 

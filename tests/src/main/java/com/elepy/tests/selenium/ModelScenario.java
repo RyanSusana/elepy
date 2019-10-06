@@ -3,6 +3,7 @@ package com.elepy.tests.selenium;
 import com.elepy.models.Model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
@@ -36,7 +37,7 @@ public class ModelScenario<T> extends LoggedInScenario {
     public FormInputScenario<T> startEditing(String modelId) {
         driver.findElement(ADD_BUTTON).click();
 
-        clickAction(modelId, "edit");
+        clickSingleAction(modelId, "edit");
 
         driver.waitTillCanSee(FormInputScenario.SAVE_BUTTON);
         return new FormInputScenario<>(driver, model);
@@ -53,15 +54,55 @@ public class ModelScenario<T> extends LoggedInScenario {
 
         final var tableHtml = getTableHtml();
 
-        clickAction(id.toString(), "delete");
-        driver.waitTillCanSee(YES_BUTTON);
-        driver.findElement(YES_BUTTON).click();
+        clickSingleAction(id.toString(), "delete");
+        confirm();
 
 
         waitUntilChange(tableHtml);
         return this;
     }
 
+    public ModelScenario<T> deleteSelected() {
+        final var tableHtml = getTableHtml();
+        clickMultiAction("delete")
+                .confirm();
+
+        waitUntilChange(tableHtml);
+        return this;
+
+    }
+
+    public ModelScenario<T> confirm() {
+        driver.waitTillCanSee(YES_BUTTON);
+        driver.findElement(YES_BUTTON).click();
+        return this;
+    }
+
+    public ModelScenario<T> selectRowsById(Iterable<? extends Serializable> ids) {
+
+        for (Serializable id : ids) {
+            getTable().findElement(By.cssSelector(String.format("*[row='%s'] input[type=checkbox]", String.valueOf(id)))).sendKeys(Keys.SPACE);
+        }
+        return this;
+    }
+
+
+    public ModelScenario<T> clickSingleAction(String id, String action) {
+        final var format = String.format("*[row='%s'] *[action='%s']", id, action);
+        final By by = By.cssSelector(format);
+
+        driver.findElement(by).click();
+        return this;
+
+    }
+
+    public ModelScenario<T> clickMultiAction(String action) {
+        driver.findElement(By.cssSelector(".multi-action")).click();
+        final var dropdownSelector = By.cssSelector(".uk-drop");
+        driver.waitTillCanSee(dropdownSelector);
+        driver.findElement(dropdownSelector).findElement(By.cssSelector(String.format("*[action='%s']", action))).click();
+        return this;
+    }
 
     public ModelScenario<T> search(String query) {
         return search(query, true);
@@ -174,13 +215,6 @@ public class ModelScenario<T> extends LoggedInScenario {
         return getTable().getAttribute("innerHTML");
     }
 
-    private void clickAction(String id, String action) {
-        final var format = String.format("*[row='%s'] *[action='%s']", id, action);
-        final By by = By.cssSelector(format);
-
-        driver.findElement(by).click();
-
-    }
 
     public ModelScenario<T> custom(Consumer<ModelScenario<T>> consumer) {
         consumer.accept(this);

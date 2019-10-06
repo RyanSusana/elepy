@@ -28,7 +28,7 @@
         methods: {
             getModel() {
                 axios.get(Utils.url + "/config").then(response => {
-                    this.selectedModel = response.data[1];
+                    this.selectedModel = response.data[0];
                     this.selectedModel.url = this.url;
                 });
             }

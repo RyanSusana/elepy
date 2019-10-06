@@ -16,6 +16,7 @@ import java.util.Date;
 @Find(requiredPermissions = {})
 @Entity(name = "Products")
 @Table(name = "products")
+@Action(name = "Delete All", handler = DeleteAllAction.class)
 public class Product {
 
     @PrettyName("Product ID")

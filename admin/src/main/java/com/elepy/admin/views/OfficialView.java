@@ -15,9 +15,9 @@ abstract class OfficialView implements ModelView<Object> {
 
     private final String vueTemplate;
     private PebbleEngine engine = new PebbleEngine.Builder().build();
-    private final ElepyResourceLocation location;
+    private final ResourceLocation location;
 
-    OfficialView(String vueTemplate, ElepyResourceLocation location) {
+    OfficialView(String vueTemplate, ResourceLocation location) {
         this.vueTemplate = vueTemplate;
         this.location = location;
     }

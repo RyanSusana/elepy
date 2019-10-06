@@ -6,7 +6,7 @@ import com.elepy.annotations.Inject;
 public class SingleView extends OfficialView {
 
     @ElepyConstructor
-    public SingleView(@Inject ElepyResourceLocation resourceLocation) {
+    public SingleView(@Inject ResourceLocation resourceLocation) {
         super("elepy-single", resourceLocation);
     }
 }
