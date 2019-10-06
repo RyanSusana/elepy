@@ -70,6 +70,8 @@ build/Release
 # Dependency directories
 **/node_modules/**
 **/dist/**
+**/node/**
+
 jspm_packages/
 
 # TypeScript v1 declaration files
