@@ -10,6 +10,8 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
@@ -21,9 +23,16 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     public LocalResourceLocation() {
 
-        if (!containsFrontend()) {
-            throw new ElepyConfigException("NO FRONTEND");
+//        if (!containsFrontend()) {
+//            throw new ElepyConfigException("NO FRONTEND");
+//        }
+
+        try {
+            Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend"));
+        } catch (IOException e) {
+            throw new ElepyConfigException(e.getMessage(), e);
         }
+
         try (var cssStream = getResource("frontend/dist/ElepyVue.css");
              var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
             this.css = IOUtils.toByteArray(cssStream);
@@ -39,7 +48,7 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
                 return !u.getFile().endsWith(".class");
             })) {
                 if (resourceURL.getFile().contains("frontend/src")) {
-                    throw new ElepyConfigException(resourceURL.getFile().replace("/home/travis/build/RyanSusana", ""));
+                    throw new ElepyConfigException(resourceURL.getFile().replace("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend", ""));
                 }
             }
         } catch (Exception e) {
