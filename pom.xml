@@ -126,9 +126,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
-                    <excludes>
-                        <exclude>${exclude.tests}</exclude>
-                    </excludes>
+                    <!--                    <excludes>-->
+                    <!--                        <exclude>${exclude.tests}</exclude>-->
+                    <!--                    </excludes>-->
+                    <includes>${exclude.tests}</includes>
                     <printSummary>true</printSummary>
                 </configuration>
             </plugin>
@@ -199,7 +200,7 @@
         <profile>
             <id>travis</id>
             <properties>
-                <exclude.tests>^((?!SystemTest).)*$</exclude.tests>
+                <exclude.tests>**SystemTest**</exclude.tests>
                 <headlessMode>true</headlessMode>
             </properties>
         </profile>
