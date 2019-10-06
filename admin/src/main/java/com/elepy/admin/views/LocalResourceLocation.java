@@ -2,16 +2,16 @@ package com.elepy.admin.views;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.admin.Resources;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpService;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
@@ -23,15 +23,10 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     public LocalResourceLocation() {
 
-//        if (!containsFrontend()) {
-//            throw new ElepyConfigException("NO FRONTEND");
-//        }
-
-        try {
-            Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend"));
-        } catch (IOException e) {
-            throw new ElepyConfigException(e.getMessage(), e);
+        if (!containsFrontend()) {
+            throw new ElepyConfigException("NO FRONTEND");
         }
+
 
         try (var cssStream = getResource("frontend/dist/ElepyVue.css");
              var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
@@ -44,16 +39,24 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     private boolean containsFrontend() {
         try {
-            for (URL resourceURL : Resources.getResourceURLs(Resources.class, u -> {
-                return !u.getFile().endsWith(".class");
-            })) {
-                if (resourceURL.getFile().contains("frontend/src")) {
-                    throw new ElepyConfigException(resourceURL.getFile().replace("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend", ""));
+            final var collect = Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend")).map(Path::toString).collect(Collectors.toList());
+
+            for (String s : collect) {
+                if (s.contains("dist")) {
+                    throw new ElepyConfigException("Has dist");
                 }
+
             }
-        } catch (Exception e) {
+            for (String s : collect) {
+                if (s.contains("src")) {
+                    throw new ElepyConfigException("Has src");
+                }
+
+            }
+        } catch (IOException e) {
             throw new ElepyConfigException(e.getMessage(), e);
         }
+
         return false;
     }
 
