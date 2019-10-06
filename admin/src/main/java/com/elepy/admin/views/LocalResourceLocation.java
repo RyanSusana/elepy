@@ -35,7 +35,7 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     private boolean containsFrontend() {
         try {
-            for (URL resourceURL : Resources.getResourceURLs()) {
+            for (URL resourceURL : Resources.getResourceURLs(u -> !u.getFile().endsWith(".class"))) {
                 if (resourceURL.getFile().contains("frontend")) {
                     return true;
                 }
