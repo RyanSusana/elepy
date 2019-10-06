@@ -4,6 +4,7 @@ import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpService;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,16 +13,16 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     public static final String JS_LOCATION = "/admin/resources/ElepyVue.js";
     public static final String CSS_LOCATION = "/admin/resources/ElepyVue.css";
-    private final byte[] css, js;
+    private final byte[] css;
+    private final byte[] js;
 
 
     public LocalResourceLocation() {
         try (var cssStream = getResource("frontend/dist/ElepyVue.css");
              var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
-            this.css = cssStream.readAllBytes();
-            this.js = jsStream.readAllBytes();
+            this.css = IOUtils.toByteArray(cssStream);
+            this.js = IOUtils.toByteArray(jsStream);
         } catch (IOException | NullPointerException e) {
-
             throw new ElepyConfigException("Error loading Static Resources", e);
         }
     }
