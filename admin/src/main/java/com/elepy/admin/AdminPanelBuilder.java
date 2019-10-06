@@ -3,6 +3,8 @@ package com.elepy.admin;
 import com.elepy.admin.views.CdnResourceLocation;
 import com.elepy.admin.views.ResourceLocation;
 import com.elepy.exceptions.ElepyConfigException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -13,6 +15,9 @@ public class AdminPanelBuilder {
 
 
     private ResourceLocation resourceLocation;
+
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminPanel.class);
 
     public AdminPanelBuilder withResourceLocation(ResourceLocation resourceLocation) {
         this.resourceLocation = resourceLocation;
@@ -35,9 +40,10 @@ public class AdminPanelBuilder {
                 throw new ElepyConfigException("Error reading Elepy version", e);
             }
 
+            logger.warn(String.format("Using ElepyVue version '%s'", properties.getProperty("elepyVersion")));
             resourceLocation = new CdnResourceLocation(
-                    String.format("https://cdn.jsdelivr.net/npm/elepy-vue@%s/dist/ElepyVue.css", properties.getProperty("version")),
-                    String.format("https://cdn.jsdelivr.net/npm/elepy-vue@%s/dist/ElepyVue.umd.min.js", properties.getProperty("version"))
+                    String.format("https://cdn.jsdelivr.net/npm/elepy-vue@%s/dist/ElepyVue.css", properties.getProperty("elepyVersion")),
+                    String.format("https://cdn.jsdelivr.net/npm/elepy-vue@%s/dist/ElepyVue.umd.min.js", properties.getProperty("elepyVersion"))
             );
         }
 
