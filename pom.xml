@@ -23,7 +23,6 @@
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
         <revision>2.2.0</revision>
-        <org.slf4j.simpleLogger.defaultLogLevel>warning</org.slf4j.simpleLogger.defaultLogLevel>
     </properties>
 
     <licenses>
