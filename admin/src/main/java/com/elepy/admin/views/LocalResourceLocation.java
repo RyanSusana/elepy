@@ -8,10 +8,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Collectors;
 
 public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
@@ -22,12 +18,6 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
 
     public LocalResourceLocation() {
-
-        if (!containsFrontend()) {
-            throw new ElepyConfigException("NO FRONTEND");
-        }
-
-
         try (var cssStream = getResource("frontend/dist/ElepyVue.css");
              var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
             this.css = IOUtils.toByteArray(cssStream);
@@ -37,20 +27,7 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
         }
     }
 
-    private boolean containsFrontend() {
-        try {
-            final var collect = Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend")).map(Path::toString)
-                    .map(s -> s.replace("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend", ""))
-                    .filter(s -> !s.contains(".") && !s.contains("_"))
-                    .collect(Collectors.joining(","));
 
-            throw new ElepyConfigException(collect);
-
-        } catch (IOException e) {
-            throw new ElepyConfigException(e.getMessage(), e);
-        }
-
-    }
 
     private InputStream getResource(String name) {
         return this.getClass().getClassLoader().getResourceAsStream(name);

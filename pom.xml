@@ -23,6 +23,7 @@
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
         <revision>2.1.0</revision>
+        <org.slf4j.simpleLogger.defaultLogLevel>warning</org.slf4j.simpleLogger.defaultLogLevel>
     </properties>
 
     <licenses>
@@ -82,12 +83,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.21</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
