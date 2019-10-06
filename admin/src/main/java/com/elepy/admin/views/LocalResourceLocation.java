@@ -39,7 +39,7 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
                 return !u.getFile().endsWith(".class");
             })) {
                 if (resourceURL.getFile().contains("frontend/src")) {
-                    throw new ElepyConfigException(resourceURL.getFile());
+                    throw new ElepyConfigException(resourceURL.getFile().replace("/home/travis/build/RyanSusana", ""));
                 }
             }
         } catch (Exception e) {
