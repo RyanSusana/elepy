@@ -23,6 +23,7 @@ public class Resources {
     private static void iterateFileSystem(File r, ResourceURLFilter f,
                                           Set<URL> s) throws MalformedURLException, IOException {
         File[] files = r.listFiles();
+
         for (File file : files) {
             if (file.isDirectory()) {
                 iterateFileSystem(file, f, s);
