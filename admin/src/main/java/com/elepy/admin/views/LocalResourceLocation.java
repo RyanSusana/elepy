@@ -39,25 +39,16 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     private boolean containsFrontend() {
         try {
-            final var collect = Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend")).map(Path::toString).collect(Collectors.toList());
+            final var collect = Files.list(Paths.get("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend")).map(Path::toString)
+                    .map(s -> s.replace("/home/travis/build/RyanSusana/elepy/admin/target/classes/frontend", "")).collect(Collectors.joining(","));
 
-            for (String s : collect) {
-                if (s.contains("dist")) {
-                    throw new ElepyConfigException("Has dist");
-                }
 
-            }
-            for (String s : collect) {
-                if (s.contains("src")) {
-                    throw new ElepyConfigException("Has src");
-                }
+            throw new ElepyConfigException(collect);
 
-            }
         } catch (IOException e) {
             throw new ElepyConfigException(e.getMessage(), e);
         }
 
-        return false;
     }
 
     private InputStream getResource(String name) {
