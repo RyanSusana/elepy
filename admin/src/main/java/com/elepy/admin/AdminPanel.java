@@ -21,11 +21,20 @@ public class AdminPanel implements Configuration {
         this.resourceLocation = location;
     }
 
+    @Deprecated(forRemoval = true)
     public static AdminPanel newAdminPanel() {
         return newBuilder().build();
     }
 
-    public static AdminPanel fromLocalBuild() {
+    public static AdminPanel cdn() {
+        return newBuilder().build();
+    }
+
+    public static AdminPanel cdn(String version) {
+        return newBuilder().withCDNVersion(version).build();
+    }
+
+    public static AdminPanel local() {
         logger.warn("Using the local version of ElepyVue. This might cause unnecessary egress traffic. ");
         return newBuilder().withResourceLocation(new LocalResourceLocation()).build();
     }

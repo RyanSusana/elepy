@@ -24,6 +24,10 @@ public class AdminPanelBuilder {
         return this;
     }
 
+    public AdminPanelBuilder withCDNVersion(String version) {
+        return withResourceLocation(CdnResourceLocation.version(version));
+    }
+
     public AdminPanelBuilder withExtension(ElepyAdminPanel elepyAdminPanel) {
         this.elepyAdminPanel = elepyAdminPanel;
         return this;
@@ -40,11 +44,8 @@ public class AdminPanelBuilder {
                 throw new ElepyConfigException("Error reading Elepy version", e);
             }
 
-            logger.warn(String.format("Using ElepyVue version '%s'", properties.getProperty("elepyVersion")));
-            resourceLocation = new CdnResourceLocation(
-                    String.format("https://cdn.jsdelivr.net/npm/elepy-vue@%s/dist/ElepyVue.css", properties.getProperty("elepyVersion")),
-                    String.format("https://cdn.jsdelivr.net/npm/elepy-vue@%s/dist/ElepyVue.umd.min.js", properties.getProperty("elepyVersion"))
-            );
+            logger.info(String.format("Using ElepyVue version '%s'", properties.getProperty("elepyVersion")));
+            resourceLocation = CdnResourceLocation.version(properties.getProperty("elepyVersion"));
         }
 
         if (elepyAdminPanel == null) {
