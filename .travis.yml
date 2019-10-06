@@ -28,7 +28,7 @@ script:
   - export GPG_TTY=`tty`
   - gpg --version
   #  - gpg2 --version
-  - mvn clean test -q -Ptravis
+  - mvn clean test -B -Ptravis -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 deploy:
   - provider: script
