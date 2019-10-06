@@ -26,8 +26,6 @@ script:
   - whereis google-chrome-stable
   - whereis chromedriver
   - export GPG_TTY=`tty`
-  - gpg --version
-  #  - gpg2 --version
   - mvn test -B -Ptravis -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 deploy:
@@ -35,4 +33,4 @@ deploy:
     script: "mvn deploy --settings .travis.maven.settings.xml -Psign-artifacts -Ptravis -DskipTests=true -B -U -e"
     skip_cleanup: true
     on:
-      branch: release
+      tags: true
