@@ -22,7 +22,7 @@
         <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
-        <revision>2.1.0</revision>
+        <revision>2.2.0</revision>
         <org.slf4j.simpleLogger.defaultLogLevel>warning</org.slf4j.simpleLogger.defaultLogLevel>
     </properties>
 
