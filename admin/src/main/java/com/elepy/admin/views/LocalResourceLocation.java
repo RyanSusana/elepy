@@ -23,7 +23,7 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
             this.css = IOUtils.toByteArray(cssStream);
             this.js = IOUtils.toByteArray(jsStream);
         } catch (IOException | NullPointerException e) {
-            throw new ElepyConfigException("Error loading Static Resources", e);
+            throw new ElepyConfigException("Error loading static resources", e);
         }
     }
 

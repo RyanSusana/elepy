@@ -46,7 +46,7 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <arguments>version ${project.version} --allow-same-version</arguments>
                         </configuration>
@@ -66,7 +66,7 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <arguments>run build-bundle</arguments>
                         </configuration>
