@@ -11,6 +11,7 @@
 
     <artifactId>elepy-hibernate</artifactId>
 
+    <name>Elepy Hibernate</name>
     <build>
         <plugins>
             <plugin>

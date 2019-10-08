@@ -11,6 +11,7 @@
 
     <artifactId>elepy-mongo</artifactId>
 
+    <name>Elepy Mongo</name>
     <build>
         <plugins>
             <plugin>

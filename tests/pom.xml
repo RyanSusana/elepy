@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>elepy-tests</artifactId>
-
+<name>Elepy Tests</name>
     <dependencies>
         <dependency>
             <groupId>com.elepy</groupId>

@@ -11,6 +11,8 @@
 
     <artifactId>elepy-javalin</artifactId>
 
+    <name>Elepy Javalin</name>
+
 
     <dependencies>
         <dependency>

@@ -10,6 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>elepy-admin</artifactId>
+    <name>Elepy Admin</name>
     <build>
         <resources>
             <resource>
@@ -123,7 +124,7 @@
 
     <profiles>
         <profile>
-            <id>sign-artifacts</id>
+            <id>travis</id>
             <build>
                 <plugins>
                     <plugin>

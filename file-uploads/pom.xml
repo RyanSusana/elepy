@@ -11,6 +11,8 @@
 
     <artifactId>elepy-uploads</artifactId>
 
+    <name>Elepy File Uploads</name>
+
     <build>
         <plugins>
             <plugin>

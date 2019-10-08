@@ -11,6 +11,8 @@
 
     <artifactId>elepy-vertx</artifactId>
 
+    <name>Elepy Vert.x</name>
+
     <build>
         <plugins>
             <plugin>
