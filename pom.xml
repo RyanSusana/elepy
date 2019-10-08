@@ -22,7 +22,7 @@
         <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
-        <revision>2.2.6</revision>
+        <revision>2.2.7</revision>
     </properties>
 
     <licenses>
@@ -57,16 +57,16 @@
         <module>sparkjava</module>
     </modules>
 
-<!--        <distributionManagement>-->
-<!--            <snapshotRepository>-->
-<!--                <id>ossrh</id>-->
-<!--                <url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--            </snapshotRepository>-->
-<!--            <repository>-->
-<!--                <id>ossrh</id>-->
-<!--                <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-<!--            </repository>-->
-<!--        </distributionManagement>-->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -170,17 +170,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
         </plugins>
 
     </build>
