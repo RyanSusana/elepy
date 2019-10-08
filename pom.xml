@@ -22,7 +22,7 @@
         <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
-        <revision>2.2.3</revision>
+        <revision>2.2.4</revision>
     </properties>
 
     <licenses>
@@ -198,7 +198,7 @@
         <profile>
             <id>travis</id>
             <properties>
-                <exclude.tests>**</exclude.tests>
+                <exclude.tests>dont-exclude-anything</exclude.tests>
                 <headlessMode>true</headlessMode>
             </properties>
         </profile>
@@ -213,6 +213,32 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>flatten-maven-plugin</artifactId>
+                        <version>1.0.1</version>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                            <outputDirectory>target</outputDirectory>
+                            <pomElements>
+                                <name/>
+                                <description/>
+                                <developers/>
+                                <contributors/>
+                                <url/>
+                                <scm/>
+                            </pomElements>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>flatten</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>flatten</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
