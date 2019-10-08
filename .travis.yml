@@ -26,6 +26,8 @@ script:
   - whereis google-chrome-stable
   - whereis chromedriver
   - export GPG_TTY=`tty`
+  - gpg --version
+  - gpg2 --version
   - mvn test -B -Ptravis -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 deploy:
