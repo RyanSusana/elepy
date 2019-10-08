@@ -22,7 +22,7 @@
         <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
-        <revision>2.2.4</revision>
+        <revision>2.2.5</revision>
     </properties>
 
     <licenses>
@@ -57,16 +57,16 @@
         <module>sparkjava</module>
     </modules>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
+<!--        <distributionManagement>-->
+<!--            <snapshotRepository>-->
+<!--                <id>ossrh</id>-->
+<!--                <url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--            </snapshotRepository>-->
+<!--            <repository>-->
+<!--                <id>ossrh</id>-->
+<!--                <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+<!--            </repository>-->
+<!--        </distributionManagement>-->
 
     <dependencies>
         <dependency>
@@ -146,6 +146,7 @@
                 <version>3.1.0</version>
                 <configuration>
                     <javadocVersion>11</javadocVersion>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>
                 <executions>
                     <execution>
@@ -243,6 +244,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
+
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
