@@ -33,7 +33,7 @@ script:
 
 deploy:
   - provider: script
-    script: "mvn deploy --settings .travis.maven.settings.xml -Psign-artifacts -Ptravis -DskipTests=true -B -U -e"
+    script: bash deploy.sh $TRAVIS_TAG
     skip_cleanup: true
     on:
       tags: true
