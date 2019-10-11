@@ -68,7 +68,7 @@
 
         <FileField
                 :field="field"
-                :value="value "
+                :value="value || ''"
                 @input="handleInput"
                 v-if="trueFieldType === 'FILE_REFERENCE'"
         />
@@ -159,6 +159,8 @@
         },
         methods: {
             handleInput(e) {
+                console.log(e);
+
                 this.$emit("input", e);
             }
         }

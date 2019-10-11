@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :uid="_uid">
         <progress
                 :max="fileUploadSize"
                 :value="totalUploaded"
@@ -110,7 +110,11 @@
         },
         mounted() {
             let vm = this;
-            UIkit.upload(".js-upload", {
+
+            let id = "div[property=" + vm.field.name + "] > div[uid='" + vm._uid + "'] .js-upload";
+
+            let upload = document.querySelector(id);
+            UIkit.upload(upload, {
                 url:
                     Utils.url +
                     "/uploads" +
@@ -162,10 +166,8 @@
                 },
                 completeAll: function () {
                     let file = JSON.parse(arguments[0].response).files[0];
-                    //let url = arguments[0].responseURL.split("?")[0];
 
                     let fileLocation = "/uploads/" + file.uploadName;
-
                     vm.handleInput(fileLocation);
                 }
             });

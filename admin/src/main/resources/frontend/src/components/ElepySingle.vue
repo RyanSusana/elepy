@@ -76,7 +76,7 @@
         name: "ElepySingle",
         data() {
             return {
-                item: null,
+                item: {},
                 itemCopy: null,
                 isLoading: false,
                 isSaved: false

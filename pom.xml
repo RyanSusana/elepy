@@ -22,7 +22,7 @@
         <tika.version>1.22</tika.version>
         <truth.version>1.0</truth.version>
         <headlessMode>false</headlessMode>
-        <revision>2.2.8</revision>
+        <revision>2.2.9</revision>
     </properties>
 
     <licenses>

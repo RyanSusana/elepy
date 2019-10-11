@@ -1,7 +1,7 @@
 <template>
     <div class="uk-flex uk-height-1-1">
         <div class="uk-width-1-1 uk-height-1-1">
-            <Elepy :model="selectedModel" v-if="selectedModel!=null"/>
+            <ElepySingle :model="selectedModel" v-if="selectedModel!=null"/>
         </div>
     </div>
 </template>
@@ -28,7 +28,7 @@
         methods: {
             getModel() {
                 axios.get(Utils.url + "/config").then(response => {
-                    this.selectedModel = response.data[0];
+                    this.selectedModel = response.data[3];
                     this.selectedModel.url = this.url;
                 });
             }
