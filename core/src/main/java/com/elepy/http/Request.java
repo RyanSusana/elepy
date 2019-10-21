@@ -190,14 +190,14 @@ public interface Request {
     }
 
 
-    default List<PropertySort> sortingForModel(Model<?> restModelType) {
+    default List<PropertySort> sortingForModel(Model<?> model) {
         String[] sorts = queryParamValues("sort");
 
         List<PropertySort> propertySorts = new ArrayList<>();
 
 
         if (sorts == null || sorts.length == 0) {
-            final PropertySort propertySort = new PropertySort(restModelType.getDefaultSortField(), restModelType.getDefaultSortDirection());
+            final PropertySort propertySort = new PropertySort(model.getDefaultSortField(), model.getDefaultSortDirection());
             propertySorts.add(propertySort);
         } else {
             for (String sort : sorts) {
