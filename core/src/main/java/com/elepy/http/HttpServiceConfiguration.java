@@ -89,7 +89,12 @@ public class HttpServiceConfiguration implements HttpService {
     @Override
     public void staticFiles(String path, StaticFileLocation location) {
         //Add staticfiles to the front
-        this.actions.add(0, http -> http.staticFiles(path, location));
+        if (started) {
+           implementation.staticFiles(path,location);
+        } else {
+            this.actions.add(0, http -> http.staticFiles(path, location));
+        }
+
     }
 
     @Override
