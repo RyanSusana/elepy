@@ -37,9 +37,6 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
 
         List<Field> uniqueFields = ReflectionUtils.getUniqueFields(item.getClass());
 
-        if (dao.count() == 0) {
-            return;
-        }
 
         Optional<Serializable> id = ReflectionUtils.getId(item);
 

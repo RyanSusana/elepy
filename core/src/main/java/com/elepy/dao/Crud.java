@@ -174,17 +174,12 @@ public interface Crud<T> {
         delete(Arrays.asList(ids));
     }
 
-    /**
-     * @param query The searchTerm
-     * @return The number of items in the search.
-     */
-    long count(String query);
+    default long count(Query query) {
+        return search(query, new PageSettings(1, Integer.MAX_VALUE, List.of())).getValues().size();
+    }
 
-    /**
-     * @return A count of all the items in the CRUD
-     */
     default long count() {
-        return count("");
+        return count(new Query(null, List.of()));
     }
 
     /**

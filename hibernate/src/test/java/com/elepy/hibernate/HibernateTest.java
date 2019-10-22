@@ -116,18 +116,6 @@ public class HibernateTest {
     }
 
     @Test
-    public void testCountSearch() {
-
-        final Resource resource = validObject();
-        resourceCrud.create(resource);
-
-
-        final long searchable = resourceCrud.count("searcha");
-        assertEquals(1, searchable);
-
-    }
-
-    @Test
     public void testSearchInField() throws NoSuchFieldException {
 
         final Resource resource = validObject();

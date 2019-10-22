@@ -67,20 +67,6 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     @Override
-    public long count(String query) {
-        if (StringUtils.isEmpty(query)) {
-            return collection().count();
-        }
-        if (query.startsWith("{") && query.endsWith("}")) {
-            return collection().count(query);
-        } else {
-            String queryCompiled = new MongoSearch(query, getType()).compile();
-
-            return collection().count(queryCompiled);
-        }
-    }
-
-    @Override
     public void deleteById(Serializable id) {
         collection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
     }

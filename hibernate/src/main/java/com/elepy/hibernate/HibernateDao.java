@@ -199,26 +199,7 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-    @Override
-    public long count(String q) {
 
-        try (Session session = sessionFactory.openSession()) {
-            if (StringUtils.isEmpty(q)) {
-                return count();
-            }
-
-            List<Field> searchables = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class);
-            searchables.add(ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException(String.format("%s does not have an identifying field", getType().getName()))));
-
-
-            String hql = "select count(*) from " + getType().getName() +
-                    (searchables.isEmpty() ? "" : (" WHERE " + searchables.stream().map(field -> field.getName() + " LIKE :searchTerm").collect(Collectors.joining(" OR "))));
-
-
-            return session.createQuery(hql, Long.class).setParameter("searchTerm", "%" + q + "%")
-                    .getSingleResult();
-        }
-    }
 
     @Override
     public Model<T> getModel() {

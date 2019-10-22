@@ -76,18 +76,6 @@ public class DefaultMongoDaoTest extends BaseFongo {
     }
 
     @Test
-    public void testCountSearch() {
-
-        final Resource resource = validObject();
-        defaultMongoDao.create(resource);
-
-
-        final long searchable = defaultMongoDao.count("searchab");
-        assertEquals(1, searchable);
-
-    }
-
-    @Test
     public void testMultiCreate() {
         final Resource resource = validObject();
         final Resource resource2 = validObject();
