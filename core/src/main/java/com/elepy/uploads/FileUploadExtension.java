@@ -42,7 +42,7 @@ public class FileUploadExtension implements ElepyExtension {
     }
 
     private void handleUpload(Request request, Response response) {
-        request.requirePermissions(Permissions.AUTHENTICATED);
+        request.requirePermissions(Permissions.CAN_ADMINISTRATE_FILES);
 
         final List<FileUpload> files = request.uploadedFiles("files");
         final List<FileReference> references = files.stream().map(uploadedFile -> {
