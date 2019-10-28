@@ -11,6 +11,8 @@
 
     <artifactId>elepy-firebase</artifactId>
 
+    <name>Elepy Firebase</name>
+
 
     <dependencies>
         <dependency>
