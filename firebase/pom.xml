@@ -12,4 +12,53 @@
     <artifactId>elepy-firebase</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>6.10.0</version>
+        </dependency>
+        <dependency>
+        <groupId>com.elepy</groupId>
+        <artifactId>elepy-core</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+    </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-sparkjava</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-nio</artifactId>
+            <version>0.116.0-alpha</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-tests</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-mongo</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>1.16.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
