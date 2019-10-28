@@ -6,6 +6,7 @@ import com.elepy.tests.selenium.ElepyDriver;
 import com.elepy.tests.selenium.ModelScenario;
 import com.elepy.tests.selenium.Scenarios;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -146,6 +147,23 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     }
 
+    @Test
+    void testMultiAction() {
+        final var products = seedWithProducts(5);
+
+        //Select all but index one
+        products.remove(1);
+
+        driver.createScenario()
+                .fromModel(Product.class)
+                .selectRowsById(products.stream().map(Product::getId).collect(Collectors.toList()))
+                .clickMultiAction("Delete All")
+                .custom(productModelScenario -> productModelScenario.driver().waitTillCanSee(By.cssSelector(".uk-notification")));
+
+        assertThat(elepySystemUnderTest.getCrudFor(Product.class).count())
+                .isEqualTo(1);
+
+    }
 
     @Test
     void testProductSearch() {

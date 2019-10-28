@@ -1,7 +1,6 @@
 package com.elepy.tests.selenium;
 
 import com.elepy.Elepy;
-import org.openqa.selenium.WebDriver;
 
 public abstract class GenericScenario {
     protected final ElepyDriver driver;
@@ -10,8 +9,8 @@ public abstract class GenericScenario {
         this.driver = driver;
     }
 
-    public WebDriver driver() {
-        return driver.webDriver();
+    public ElepyDriver driver() {
+        return driver;
     }
 
     public Elepy elepy() {

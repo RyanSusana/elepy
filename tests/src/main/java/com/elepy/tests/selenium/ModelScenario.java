@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.Serializable;
@@ -95,9 +96,8 @@ public class ModelScenario<T> extends LoggedInScenario {
         return this;
 
     }
-
     public ModelScenario<T> clickMultiAction(String action) {
-        driver.findElement(By.cssSelector(".multi-action")).click();
+        driver.findElement(By.cssSelector(".multi-action > a")).click();
         final var dropdownSelector = By.cssSelector(".uk-drop");
         driver.waitTillCanSee(dropdownSelector);
         driver.findElement(dropdownSelector).findElement(By.cssSelector(String.format("*[action='%s']", action))).click();
