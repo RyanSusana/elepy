@@ -1,9 +1,11 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.auth.User;
+import com.elepy.exceptions.ElepyException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static org.awaitility.Awaitility.await;
 
@@ -23,10 +25,24 @@ public class LoginScenario extends GenericScenario {
 
         driver.findElement(By.id("login-button")).click();
 
-        await().atMost(20, TimeUnit.SECONDS).until(() -> driver.getCurrentUrl().contains("admin"));
+        await().atMost(20, TimeUnit.SECONDS).until(() -> {
 
-        driver.elepy().getCrudFor(User.class).searchInField("username", username).get(0);
+            try {
+                return driver.findElement(By.cssSelector(".uk-notification")) != null;
+            } catch (NoSuchElementException e) {
+                return driver.getCurrentUrl().contains("admin");
+            }
+        });
 
-        return new HomepageScenario(driver);
+        if (driver.getCurrentUrl().contains("admin")) {
+            return new HomepageScenario(driver);
+        } else {
+            throw new ElepyException(String.format("Failed to login with '%s:%s'", username, password), 401);
+        }
+    }
+
+    public LoginScenario custom(Consumer<LoginScenario> consumer) {
+        consumer.accept(this);
+        return this;
     }
 } 

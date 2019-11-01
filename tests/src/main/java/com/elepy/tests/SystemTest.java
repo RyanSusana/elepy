@@ -1,7 +1,10 @@
 package com.elepy.tests;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.elepy.Elepy;
 import com.elepy.admin.AdminPanel;
+import com.elepy.auth.methods.JWTAuthenticationMethod;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.tests.selenium.ElepyDriver;
 import com.elepy.tests.selenium.ModelScenario;
 import com.elepy.tests.selenium.Scenarios;
@@ -18,6 +21,7 @@ import java.util.stream.IntStream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class SystemTest implements ElepyConfigHelper {
 
@@ -46,6 +50,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
     @AfterEach
     public void tearDown() {
         elepySystemUnderTest.stop();
+        chromeDriver.manage().deleteAllCookies();
     }
 
     @BeforeEach
@@ -56,6 +61,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         elepySystemUnderTest.addConfiguration(AdminPanel.local())
 
+                .addAuthenticationMethod(new JWTAuthenticationMethod(Algorithm.HMAC256("secret")))
                 .onPort(counter++)
                 .addModel(CantSeeThis.class)
                 .addModel(Product.class);
@@ -83,6 +89,16 @@ public abstract class SystemTest implements ElepyConfigHelper {
         driver.createScenario()
                 .fromInitialUser("Username", "Password");
     }
+
+    @Test
+    void testWrongPassword() {
+        assertThrows(ElepyException.class, () ->
+                driver.createScenario()
+                        .fromInitialUser("Username", "Password")
+                        .login("Username", "WrongPassword")
+        );
+    }
+
 
     @Test
     void testProductDeleteSingle() {

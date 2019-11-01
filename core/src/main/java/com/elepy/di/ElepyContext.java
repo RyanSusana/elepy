@@ -53,6 +53,10 @@ public interface ElepyContext {
 
     Set<ContextKey> getDependencyKeys();
 
+    default boolean hasDependency(Class<?> dependency) {
+        return getDependencyKeys().stream().anyMatch(contextKey -> dependency.equals(contextKey.getType()));
+    }
+
     <T> T initialize(Class<? extends T> cls);
 
     @SuppressWarnings("unchecked")

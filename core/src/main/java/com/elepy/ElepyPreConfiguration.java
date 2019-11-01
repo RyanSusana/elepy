@@ -1,6 +1,7 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.auth.UserAuthenticationService;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -246,6 +247,9 @@ public class ElepyPreConfiguration {
         return elepy.modelClasses();
     }
 
+    public UserAuthenticationService authenticationService(){
+        return elepy.authenticationService();
+    }
     /**
      * @param handler What to do when elepy stops gracefully
      */

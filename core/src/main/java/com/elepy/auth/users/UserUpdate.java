@@ -57,7 +57,7 @@ public class UserUpdate implements UpdateHandler<User> {
     }
 
     private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {
-        if (loggedInUser.getId().equals(userToUpdate.getId()) &&
+        if (loggedInUser.equals(userToUpdate) &&
                 !permissionsAreTheSame(loggedInUser, userToUpdate)) {
             throw new ElepyException("Can't update your own permissions", 403);
         }

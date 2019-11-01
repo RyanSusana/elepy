@@ -1,12 +1,12 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
+import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.Token;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationService;
-import com.elepy.auth.UserLoginService;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
-import com.elepy.auth.methods.TokenAuthenticationMethod;
+import com.elepy.auth.methods.PersistedTokenAuthenticationMethod;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
@@ -19,7 +19,6 @@ import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
-import com.elepy.http.MultiFilter;
 import com.elepy.http.Route;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.Model;
@@ -54,7 +53,6 @@ public class Elepy implements ElepyContext {
     private HttpServiceConfiguration http = new HttpServiceConfiguration();
     private String configSlug = "/config";
     private ObjectEvaluator<Object> baseObjectEvaluator;
-    private MultiFilter adminFilters = new MultiFilter();
     private List<Route> routes = new ArrayList<>();
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass = null;
@@ -91,9 +89,15 @@ public class Elepy implements ElepyContext {
      * @see #stop()
      */
     public final void start() {
+
         setupDefaultConfig();
 
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
+
+        if (userAuthenticationService.getTokenAuthenticationMethod().isEmpty()) {
+            addModel(Token.class);
+        }
+
         configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
         models.forEach(modelEngine::addModel);
@@ -103,7 +107,7 @@ public class Elepy implements ElepyContext {
 
         setupExtraRoutes();
         igniteAllRoutes();
-        injectModules();
+        injectExtensions();
         initialized = true;
 
         afterElepyConstruction();
@@ -162,6 +166,10 @@ public class Elepy implements ElepyContext {
     }
 
 
+    public UserAuthenticationService authenticationService() {
+        return userAuthenticationService;
+    }
+
     /**
      * @return if Elepy is initiated or not
      */
@@ -172,6 +180,10 @@ public class Elepy implements ElepyContext {
     @Override
     public ObjectMapper objectMapper() {
         return this.context.objectMapper();
+    }
+
+    public void injectFields(Object object) {
+        context.injectFields(object);
     }
 
     @Override
@@ -566,6 +578,11 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    public Elepy addAuthenticationMethod(AuthenticationMethod authenticationMethod){
+        authenticationService().addAuthenticationMethod(authenticationMethod);
+        return this;
+    }
+
     private void retrievePackageModels() {
 
         if (!packages.isEmpty()) {
@@ -591,7 +608,7 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupDefaultConfig() {
-        addModel(Token.class);
+
         addModel(User.class);
         addModel(FileReference.class);
         addExtension(new FileUploadExtension());
@@ -605,32 +622,17 @@ public class Elepy implements ElepyContext {
         }
     }
 
-
-
     private void setupAuth() {
-        final var userLoginService = this.initialize(UserLoginService.class);
+        addExtension(userAuthenticationService);
 
+        if (userAuthenticationService.getTokenAuthenticationMethod().isEmpty()) {
+            userAuthenticationService.addAuthenticationMethod(initialize(PersistedTokenAuthenticationMethod.class));
+        }
 
-        registerDependency(userLoginService);
-        final var tokenAuthenticationMethod = this.initialize(TokenAuthenticationMethod.class);
-
-        final var basicAuthenticationMethod = this.initialize(BasicAuthenticationMethod.class);
-
-        registerDependency(tokenAuthenticationMethod);
-
-        userAuthenticationService.addAuthenticationMethod(tokenAuthenticationMethod);
-        userAuthenticationService.addAuthenticationMethod(basicAuthenticationMethod);
-
-        http.get("/elepy-login-check", ctx -> {
-            ctx.loggedInUserOrThrow();
-            ctx.result(Message.of("Your are logged in", 200));
-        });
-
-        http.post("/elepy-token-login", tokenAuthenticationMethod::tokenLogin);
-
+        userAuthenticationService.addAuthenticationMethod(initialize(BasicAuthenticationMethod.class));
     }
 
-    private void injectModules() {
+    private void injectExtensions() {
         try {
             for (ElepyExtension module : modules) {
                 context.injectFields(module);

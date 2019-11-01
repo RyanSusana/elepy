@@ -102,9 +102,11 @@
                 let selfReference = this;
                 axios.post("/elepy-token-login", null, {
                     params: {
+                        "keepLoggedIn": selfReference.keepLoggedIn
+                    },
+                    auth: {
                         "username": selfReference.username,
                         "password": selfReference.password,
-                        "keepLoggedIn": selfReference.keepLoggedIn
                     }
                 }).then(function (response) {
                     window.location = "/admin"

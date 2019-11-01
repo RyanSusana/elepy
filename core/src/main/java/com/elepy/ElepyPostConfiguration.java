@@ -205,4 +205,9 @@ public class ElepyPostConfiguration {
     public void alterModel(Class<?> tClass, ModelChange modelChange) {
         elepy.alterModel(tClass, modelChange);
     }
+
+
+    public void injectFields(Object o) {
+        elepy.injectFields(o);
+    }
 }

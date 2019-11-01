@@ -16,7 +16,7 @@ public class UserDelete implements DeleteHandler<User> {
         final User toDelete = crud.getById(context.modelId()).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
         final User loggedInUser = context.request().loggedInUserOrThrow();
 
-        if (loggedInUser.getId().equals(toDelete.getId())) {
+        if (loggedInUser.equals(toDelete)) {
             throw new ElepyException("You can't delete yourself!", 403);
         }
         if (toDelete.getPermissions().contains(Permissions.SUPER_USER)) {
