@@ -198,12 +198,6 @@ public class Elepy implements ElepyContext {
 
     @Override
     public <T> T initialize(Class<? extends T> cls) {
-
-        try {
-            context.resolveDependencies();
-        } catch (ElepyConfigException ignored) {
-            //silent fail, just tries to pre-resolve everything
-        }
         return context.initialize(cls);
     }
 
