@@ -6,6 +6,7 @@ import com.elepy.annotations.Inject;
 import com.elepy.auth.Permissions;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
@@ -32,6 +33,14 @@ public class FileUploadExtension implements ElepyExtension {
     public void setup(HttpService httpService, ElepyPostConfiguration elepy) {
         httpService.post("/uploads", this::handleUpload);
         httpService.get("/uploads/:fileName", this::handleFileGet);
+        httpService.delete("/uploads/:fileName", this::handleFileDelete);
+    }
+
+    private void handleFileDelete(Request request, Response response) {
+
+        fileCrud.delete(request.params("fileName"));
+
+        response.result(Message.of("File removed",200));
     }
 
     private void handleFileGet(Request request, Response response) throws IOException {
@@ -40,6 +49,7 @@ public class FileUploadExtension implements ElepyExtension {
         response.type(file.getContentType());
         response.result(IOUtils.toByteArray(file.getContent()));
     }
+
 
     private void handleUpload(Request request, Response response) {
         request.requirePermissions(Permissions.CAN_ADMINISTRATE_FILES);

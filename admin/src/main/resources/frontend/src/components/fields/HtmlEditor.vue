@@ -3,7 +3,8 @@
             :value="value"
             @input="handleInput"
             useCustomImageHandler
-            v-on:imageAdded="handleImageAdded"
+            v-on:image-added="handleImageAdded"
+            v-on:image-removed="handleImageRemoved"
     ></VueEditor>
 </template>
 
@@ -47,6 +48,18 @@
                         Editor.insertEmbed(cursorLocation, "image", url);
                         resetUploader();
                     })
+                    .catch(err => {
+                        Utils.displayError(err);
+                    });
+            },
+
+            handleImageRemoved(image) {
+                axios({
+                    url: Utils.url + image,
+                    method: "DELETE",
+                }).then(result => {
+                    console.log("File deleted")
+                })
                     .catch(err => {
                         Utils.displayError(err);
                     });
