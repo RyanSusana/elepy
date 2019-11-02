@@ -29,14 +29,19 @@ public class MongoConfiguration implements Configuration {
     }
 
     public static MongoConfiguration inMemory() {
+        return inMemory("in-memory-database", "in-memory-fileservice");
+    }
 
-        return of(InMemoryClientFactory.createInMemoryClient(), "in-memory-database", "in-memory-fileservice");
+    public static MongoConfiguration inMemory(String database, String bucket) {
+        return of(InMemoryClientFactory.createInMemoryClient(), database, bucket);
     }
 
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
-        elepy.registerDependency(DB.class, mongoClient.getDB(databaseName));
-        elepy.withDefaultCrudFactory(MongoCrudFactory.class);
+        if (databaseName != null) {
+            elepy.registerDependency(DB.class, mongoClient.getDB(databaseName));
+            elepy.withDefaultCrudFactory(MongoCrudFactory.class);
+        }
 
         if (bucket != null) {
             elepy.withUploads(new MongoFileService(mongoClient.getDatabase(databaseName), null));

@@ -10,7 +10,7 @@ import com.google.cloud.storage.contrib.nio.testing.LocalStorageHelper;
 public class CloudStorageFileServiceTest extends FileServiceTest {
     @Override
     public Configuration databaseConfiguration() {
-        return MongoConfiguration.inMemory();
+        return MongoConfiguration.inMemory("test", null);
     }
 
     @Override
