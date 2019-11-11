@@ -39,11 +39,7 @@ public class FormInputScenario<T> extends LoggedInScenario {
     public ModelScenario<T> save() {
         driver.findElement(SAVE_BUTTON).click();
 
-        final By by = By.cssSelector(".uk-notification");
-
-        driver.waitTillCanSee(by);
-        driver.findElement(by).click();
-        driver.waitTillCantSee(by);
+        driver.closeNotifications();
         return new ModelScenario<>(model, driver);
     }
 

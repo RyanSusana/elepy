@@ -80,9 +80,8 @@ public abstract class SystemTest implements ElepyConfigHelper {
     void canCreateUser() {
         driver.createScenario()
                 .fromUserLogin("Ryan", "Susana");
-
-
     }
+
 
     @Test
     void createInitialUser() {
@@ -173,11 +172,28 @@ public abstract class SystemTest implements ElepyConfigHelper {
         driver.createScenario()
                 .fromModel(Product.class)
                 .selectRowsById(products.stream().map(Product::getId).collect(Collectors.toList()))
-                .clickMultiAction("Delete All")
+                .clickMultiAction("Remove")
                 .custom(productModelScenario -> productModelScenario.driver().waitTillCanSee(By.cssSelector(".uk-notification")));
 
         assertThat(elepySystemUnderTest.getCrudFor(Product.class).count())
                 .isEqualTo(1);
+
+    }
+
+
+    @Test
+    void testSingleAction() {
+        final var products = seedWithProducts(5);
+
+        driver.createScenario()
+                .fromModel(Product.class)
+                .clickSingleAction(products.get(0).getId(), "Remove")
+                .clickSingleAction(products.get(1).getId(), "Remove2")
+                .custom(scenario -> scenario.driver().waitForNotifications(2));
+
+
+        assertThat(elepySystemUnderTest.getCrudFor(Product.class).count())
+                .isEqualTo(3);
 
     }
 

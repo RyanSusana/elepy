@@ -20,31 +20,8 @@
                         uk-icon="pencil"
                         v-if="updateEnabled"
                 ></a>
+                <ActionsButton :actions="this.actions" v-if="this.actions.length >0" :ids="[id]"></ActionsButton>
 
-                <div class="uk-button-group" v-if="this.actions.length >0">
-                    <button
-                            @click="executeAction()"
-                            class="uk-button uk-button-primary action-button"
-                    >{{selectedAction.name}}
-                    </button>
-                    <div class="uk-inline">
-                        <button action="select" class="uk-button uk-button-primary action-select" type="button">
-                            <span uk-icon="icon:  triangle-down"></span>
-                        </button>
-                        <div uk-dropdown="mode: click; boundary: ! .uk-button-group; pos: bottom-right;">
-                            <div class="action-list">
-                                <div
-                                        :action="action.name"
-                                        :key="action.name"
-                                        class="action-item uk-text-center"
-                                        v-for="action in actions"
-                                        v-on:click="selectedAction = action"
-                                >{{action.name}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <a
                         @click="deleteData()"
                         action="delete"
@@ -106,6 +83,7 @@
     import UIkit from "uikit";
     import Utils from "../../utils";
     import EventBus from "../../event-bus.js";
+    import ActionsButton from "../settings/ActionsButton"
 
     const axios = require("axios/index");
     export default {
@@ -118,8 +96,13 @@
             "model",
             "updateEnabled"
         ],
-        components: {TableColumnData},
+        components: {TableColumnData, ActionsButton},
 
+        computed: {
+            id() {
+                return this.data[this.model.idProperty];
+            }
+        },
         data() {
             return {
                 selectedAction: {}
@@ -166,23 +149,6 @@
                         function () {
                         }
                     );
-            },
-            executeAction() {
-                axios({
-                    method: this.selectedAction.method,
-                    url:
-                        Utils.url +
-                        this.selectedAction.slug +
-                        "?id=" +
-                        this.data[this.model.idProperty]
-                })
-                    .then(response => {
-                        this.$emit("updateData");
-                        Utils.displayResponse(response);
-                    })
-                    .catch(function (error) {
-                        Utils.displayError(error);
-                    });
             }
         }
     };

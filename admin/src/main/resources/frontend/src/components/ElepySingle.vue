@@ -16,11 +16,16 @@
                             class="uk-button uk-button-default uk-margin-small-right"
                             v-if="itemIsLoaded && !isCreating"
                     >Reset to last saved</a>
+
+                    <ActionsButton class="uk-margin-small-right" :actions="model.actions"
+                                   :ids="[this.id]"
+                                    v-if="!isCreating && model.actions.length >0"></ActionsButton>
                     <a
                             @click="clear"
                             class="uk-button uk-button-danger uk-margin-small-right"
                             v-if="itemIsLoaded "
                     >Clear</a>
+
                 </div>
             </div>
             <div class="uk-container uk-margin-top" v-if="itemIsLoaded">
@@ -68,6 +73,9 @@
     import Utils from "../utils";
     import Vue from "vue";
 
+    import EventBus from "../event-bus";
+    import ActionsButton from "./settings/ActionsButton";
+
     const UIkit = require("uikit");
     const axios = require("axios/index");
 
@@ -84,7 +92,7 @@
         },
 
         props: ["model"],
-        components: {ObjectField},
+        components: {ObjectField, ActionsButton},
 
         computed: {
             //Return if it should be a PUT or POST
@@ -156,6 +164,10 @@
         },
         mounted() {
             this.getFirstRecord();
+            EventBus.$on("updateData", _ => {
+                console.log("update");
+                this.getFirstRecord();
+            });
             document.addEventListener("keydown", e => {
                 if (e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
                     e.preventDefault();

@@ -25,7 +25,6 @@
                         :model="model"
                         :selected-rows="selectedRows"
                         :updateEnabled="false"
-                        v-on:updateData="getModelData()"
                 />
             </slot>
         </template>

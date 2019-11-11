@@ -1,6 +1,6 @@
 <template>
     <div :class="{'is-loading': isLoading}">
-        <div class="uk-padding uk-padding-remove-top">
+        <div class="uk-padding uk-padding-remove-top elepy-table">
             <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" id="table-data">
                 <thead>
                 <tr>
@@ -91,6 +91,9 @@
     .is-loading {
         opacity: 0.3;
     }
+    .elepy-table{
+        min-height: 50vh;
+    }
 
     .uk-nav-divider {
         border-top: 1px solid #e5e5e5;
@@ -128,9 +131,7 @@
         components: {TableRow, EditModal, AddModal},
         computed: {
             singleActions() {
-                return this.model.actions.filter(
-                    action => action["actionType"] === "SINGLE"
-                );
+                return this.model.actions;
             },
             multiActions() {
                 return this.model.actions.filter(
@@ -216,7 +217,7 @@
                     );
             },
             updateData() {
-                this.$emit("updateData");
+                EventBus.$emit("updateData");
             },
             selectAll() {
                 this.deselectAll();

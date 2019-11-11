@@ -47,6 +47,23 @@ public class ElepyDriver implements WebDriver {
         });
     }
 
+    public void waitForNotifications(int amount) {
+        final By by = By.cssSelector(".uk-notification-message");
+
+        await().until(() -> findElements(by).size() >= amount);
+    }
+    public void waitForNotifications() {
+        waitForNotifications(1);
+    }
+
+    public void closeNotifications() {
+        final By by = By.cssSelector(".uk-notification");
+
+        waitTillCanSee(by);
+        findElements(by).forEach(WebElement::click);
+        waitTillCantSee(by);
+    }
+
     public void waitTillCantSee(By by) {
         await().atMost(40, TimeUnit.SECONDS).until(() -> {
             final WebElement element = findElement(by);
