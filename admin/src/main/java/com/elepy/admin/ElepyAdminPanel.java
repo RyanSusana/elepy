@@ -11,6 +11,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContextHandler;
 import com.elepy.http.HttpService;
+import com.elepy.http.Request;
 import com.elepy.models.Model;
 import com.mitchellbosecke.pebble.PebbleEngine;
 
@@ -20,6 +21,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static com.elepy.exceptions.HaltException.halt;
@@ -79,7 +81,7 @@ public class ElepyAdminPanel implements ElepyExtension {
 
             Map<String, Object> model = new HashMap<>();
             model.put("plugins", pluginHandler.getPlugins());
-            response.result(renderWithDefaults(model, "admin-templates/base.peb"));
+            response.result(renderWithDefaults(request, model, "admin-templates/base.peb"));
         });
         http.get("/admin-logout", (request, response) -> {
             response.removeCookie("ELEPY_TOKEN");
@@ -92,7 +94,7 @@ public class ElepyAdminPanel implements ElepyExtension {
 
 
     private void setupLogin(HttpService http) {
-        http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(new HashMap<>(), "admin-templates/login.peb")));
+        http.get("/elepy-login", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/login.peb")));
 
         http.before("/elepy-login", ctx -> {
             if (userCrud.count() <= 0) {
@@ -108,12 +110,13 @@ public class ElepyAdminPanel implements ElepyExtension {
                 halt();
             }
         });
-        http.get("/elepy-initial-user", (request, response) -> response.result(renderWithDefaults(new HashMap<>(), "admin-templates/initial-user.peb")));
+        http.get("/elepy-initial-user", (request, response) -> response.result(renderWithDefaults(request, new HashMap<>(), "admin-templates/initial-user.peb")));
     }
 
 
-    public String renderWithDefaults(Map<String, Object> model, String templatePath) throws IOException {
+    public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
         model.put("models", models);
+        model.put("properties", request.elepy().getDependency(Properties.class));
         model.put("plugins", pluginHandler.getPlugins());
         return render(model, templatePath);
     }

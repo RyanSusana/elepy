@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class ViewHandler {
@@ -70,7 +71,8 @@ public class ViewHandler {
                 renderModel.put("content", document.body().html());
                 renderModel.put("model", elepyModel);
                 renderModel.put("models", models.keySet());
-                response.result(adminPanel.renderWithDefaults(renderModel, "admin-templates/model.peb"));
+                renderModel.put("properties", request.elepy().getDependency(Properties.class));
+                response.result(adminPanel.renderWithDefaults(request,renderModel, "admin-templates/model.peb"));
             });
         });
     }

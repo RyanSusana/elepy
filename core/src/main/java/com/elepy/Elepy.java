@@ -35,7 +35,9 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -60,7 +62,7 @@ public class Elepy implements ElepyContext {
     private List<Class<?>> routingClasses = new ArrayList<>();
     private ModelEngine modelEngine = new ModelEngine(this);
     private UserAuthenticationService userAuthenticationService = new UserAuthenticationService();
-
+    private Properties properties = new Properties();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
 
@@ -72,6 +74,13 @@ public class Elepy implements ElepyContext {
     private void init() {
         this.http.port(1337);
 
+        try {
+            properties.load(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("elepy-default.properties")));
+        } catch (IOException e) {
+            throw new ElepyConfigException("Failed to load default Elepy properties", e);
+        }
+
+        registerDependency(Properties.class, properties);
         withBaseEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         withFileService(new DefaultFileService());
@@ -572,8 +581,19 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    public Elepy addAuthenticationMethod(AuthenticationMethod authenticationMethod){
+    public Elepy addAuthenticationMethod(AuthenticationMethod authenticationMethod) {
         authenticationService().addAuthenticationMethod(authenticationMethod);
+        return this;
+    }
+
+    public Elepy withProperties(URL url) {
+        try {
+            logger.warn("Propert");
+
+            properties.load(url.openStream());
+        } catch (IOException e) {
+            throw new ElepyConfigException("Failed to load properties", e);
+        }
         return this;
     }
 
@@ -603,6 +623,13 @@ public class Elepy implements ElepyContext {
 
     private void setupDefaultConfig() {
 
+        final var elepyProperties = getClass().getClassLoader().getResource("elepy.properties");
+
+        if (elepyProperties == null) {
+            logger.warn("No 'elepy.properties' file found");
+        } else {
+            withProperties(elepyProperties);
+        }
         addModel(User.class);
         addModel(FileReference.class);
         addExtension(new FileUploadExtension());

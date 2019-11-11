@@ -1,6 +1,6 @@
 <div id="sidebar" class="">
     <a href="/admin" class="sidebar-header uk-flex uk-flex-center">
-        <img class="banner-image" src="https://cdn.jsdelivr.net/npm/elepy-style@1.0/images/logo-light.svg" alt="logo">
+        <img class="banner-image" src="{{ properties.logo }}" alt="logo">
     </a>
     <div class="models uk-light">
         <h4 class="uk-heading-bullet">Resources</h4>

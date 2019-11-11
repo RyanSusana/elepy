@@ -8,8 +8,8 @@
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
           integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-    <link rel="SHORTCUT ICON" href="https://cdn.jsdelivr.net/npm/elepy-style@1.0/images/favicon.png"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/elepy-style@1.0/css/main.css">
+    <link rel="SHORTCUT ICON" href="https://cdn.jsdelivr.net/npm/elepy-style@1.1/images/favicon.png"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/elepy-style@1.1/css/main.css">
     <title>Elepy Admin Initial User Registration</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.42/js/uikit.min.js"></script>
@@ -31,8 +31,8 @@
              class="login-box uk-card uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s uk-margin-large-top">
 
 
-            <div class="login-logo uk-background-primary">
-                <img class="logo-image" src="https://cdn.jsdelivr.net/npm/elepy-style@1.0/images/logo-light.svg"
+            <div class="uk-background-primary">
+                <img src="{{ properties.logo }}"
                      alt="logo">
             </div>
 
