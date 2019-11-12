@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -29,7 +30,7 @@ public class FiltersTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        assertEquals("ryan", request.queryParams("hi"));
+        assertThat(request.queryParams("hi")).isEqualTo("ryan");
 
     }
 
@@ -65,10 +66,10 @@ public class FiltersTest {
 
         List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
-        assertEquals(1, filterQueries.size());
-        assertEquals("id", filterQueries.get(0).getFilterableField().getName());
-        assertEquals("1234", filterQueries.get(0).getFilterValue());
-        assertEquals(FilterType.EQUALS, filterQueries.get(0).getFilterType());
+        assertThat(filterQueries.size()).isEqualTo(1);
+        assertThat(filterQueries.get(0).getFilterableField().getName()).isEqualTo("id");
+        assertThat(filterQueries.get(0).getFilterValue()).isEqualTo("1234");
+        assertThat(filterQueries.get(0).getFilterType()).isEqualTo(FilterType.EQUALS);
 
     }
 
@@ -84,7 +85,7 @@ public class FiltersTest {
 
         List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
-        assertEquals(1, filterQueries.size());
+        assertThat(filterQueries.size()).isEqualTo(1);
     }
 
     @Test
@@ -99,7 +100,7 @@ public class FiltersTest {
 
         List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
-        assertEquals(0, filterQueries.size());
+        assertThat(filterQueries.size()).isEqualTo(0);
 
 
     }
@@ -114,10 +115,10 @@ public class FiltersTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        ElepyException elepyException = assertThrows(ElepyException.class, () -> request.filtersForModel(resourceClass));
+        ElepyException elepyException = assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> request.filtersForModel(resourceClass));
 
 
-        assertTrue(elepyException.getMessage().contains("id33_Ee"));
+        assertThat(elepyException.getMessage().contains("id33_Ee")).isTrue();
 
 
     }

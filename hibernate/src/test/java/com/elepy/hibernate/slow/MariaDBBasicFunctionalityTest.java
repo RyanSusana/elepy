@@ -1,6 +1,6 @@
 package com.elepy.hibernate.slow;
 
-import com.elepy.Configuration;
+import com.elepy.Elepy;
 import com.elepy.hibernate.DatabaseConfigurations;
 import com.elepy.tests.basic.BasicFunctionalityTest;
 import org.testcontainers.containers.JdbcDatabaseContainer;
@@ -15,10 +15,10 @@ public class MariaDBBasicFunctionalityTest extends BasicFunctionalityTest {
     private static final JdbcDatabaseContainer CONTAINER = new MariaDBContainer();
 
     @Override
-    public Configuration configuration() {
-        return DatabaseConfigurations.createTestContainerConfiguration(
+    public void configureElepy(Elepy elepy) {
+        elepy.addConfiguration(DatabaseConfigurations.createTestContainerConfiguration(
                 CONTAINER,
                 "org.hibernate.dialect.MariaDBDialect"
-        );
+        ));
     }
 }

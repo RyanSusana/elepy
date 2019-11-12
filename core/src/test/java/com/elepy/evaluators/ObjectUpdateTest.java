@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ObjectUpdateTest extends Base {
 
@@ -32,7 +32,7 @@ public class ObjectUpdateTest extends Base {
         Resource updatedNonEditable = validObject();
         updatedNonEditable.setNonEditable(UUID.randomUUID().toString());
 
-        assertThrows(Exception.class, () -> resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable));
+        assertThatExceptionOfType(Exception.class).isThrownBy(() -> resourceObjectUpdateEvaluator.evaluate(validObject(), updatedNonEditable));
     }
 
 

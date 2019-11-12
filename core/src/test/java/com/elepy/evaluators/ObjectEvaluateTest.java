@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.fail;
 
 
 public class ObjectEvaluateTest extends Base {
@@ -63,7 +65,7 @@ public class ObjectEvaluateTest extends Base {
 
         );
 
-        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> evaluator.evaluate(resourceArray));
     }
 
     @Test
@@ -76,7 +78,7 @@ public class ObjectEvaluateTest extends Base {
                 List.of("hi")
         );
 
-        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> evaluator.evaluate(resourceArray));
     }
 
 
@@ -118,7 +120,7 @@ public class ObjectEvaluateTest extends Base {
                 List.of(1)
         );
 
-        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> evaluator.evaluate(resourceArray));
     }
 
     @Test
@@ -131,7 +133,7 @@ public class ObjectEvaluateTest extends Base {
 
         resource.setNumberMax40(BigDecimal.valueOf(50));
         resourceArray.setArrayObject(List.of(resource));
-        assertThrows(ElepyException.class, () -> evaluator.evaluate(resourceArray));
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> evaluator.evaluate(resourceArray));
     }
 
     @Test

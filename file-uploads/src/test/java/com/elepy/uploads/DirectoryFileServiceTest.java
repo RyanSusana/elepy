@@ -6,6 +6,8 @@ import com.elepy.tests.upload.FileServiceTest;
 
 import java.util.Properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class DirectoryFileServiceTest extends FileServiceTest {
 
     private static final String UPLOAD_DIR = "src/test/resources/uploads";

@@ -1,9 +1,7 @@
 package com.elepy.tests;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import com.elepy.Elepy;
 import com.elepy.admin.AdminPanel;
-import com.elepy.auth.methods.JWTAuthenticationMethod;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.tests.selenium.ElepyDriver;
 import com.elepy.tests.selenium.ModelScenario;
@@ -60,8 +58,6 @@ public abstract class SystemTest implements ElepyConfigHelper {
         this.configureElepy(elepySystemUnderTest);
 
         elepySystemUnderTest.addConfiguration(AdminPanel.local())
-
-                .addAuthenticationMethod(new JWTAuthenticationMethod(Algorithm.HMAC256("secret")))
                 .onPort(counter++)
                 .addModel(CantSeeThis.class)
                 .addModel(Product.class);
@@ -91,11 +87,10 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     @Test
     void testWrongPassword() {
-        assertThrows(ElepyException.class, () ->
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() ->
                 driver.createScenario()
                         .fromInitialUser("Username", "Password")
-                        .login("Username", "WrongPassword")
-        );
+                        .login("Username", "WrongPassword"));
     }
 
 

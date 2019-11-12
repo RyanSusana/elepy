@@ -1,7 +1,8 @@
 package com.elepy;
 
 import com.elepy.annotations.RestModel;
-import com.elepy.auth.UserAuthenticationService;
+import com.elepy.auth.AuthenticationMethod;
+import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -12,6 +13,7 @@ import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Properties;
 
 /**
  * This is a class dedicated to the safe configuration of Elepy in Modules
@@ -247,9 +249,10 @@ public class ElepyPreConfiguration {
         return elepy.modelClasses();
     }
 
-    public UserAuthenticationService authenticationService(){
+    public UserAuthenticationExtension authenticationService() {
         return elepy.authenticationService();
     }
+
     /**
      * @param handler What to do when elepy stops gracefully
      */
@@ -263,5 +266,13 @@ public class ElepyPreConfiguration {
      */
     public void alterModel(Class<?> tClass, ModelChange modelChange) {
         elepy.alterModel(tClass, modelChange);
+    }
+
+    public void addAuthenticationMethod(AuthenticationMethod method) {
+        elepy.addAuthenticationMethod(method);
+    }
+
+    public Properties properties(){
+        return elepy.properties();
     }
 }

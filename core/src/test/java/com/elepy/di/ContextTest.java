@@ -15,7 +15,8 @@ import com.elepy.di.tree.*;
 import com.elepy.di.unsatisfiedconstructor.DelegationAssistant;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ContextTest extends Base {
 
@@ -42,9 +43,9 @@ public class ContextTest extends Base {
 
         defaultElepyContext.strictMode(true);
         ElepyDependencyInjectionException elepyDependencyInjectionException =
-                assertThrows(ElepyDependencyInjectionException.class, defaultElepyContext::resolveDependencies);
+                assertThatExceptionOfType(ElepyDependencyInjectionException.class).isThrownBy(defaultElepyContext::resolveDependencies);
 
-        assertEquals(2, elepyDependencyInjectionException.getAmount());
+        assertThat(elepyDependencyInjectionException.getAmount()).isEqualTo(2);
     }
 
     @Test
@@ -57,9 +58,9 @@ public class ContextTest extends Base {
 
         defaultElepyContext.strictMode(true);
         ElepyDependencyInjectionException elepyDependencyInjectionException =
-                assertThrows(ElepyDependencyInjectionException.class, defaultElepyContext::resolveDependencies);
+                assertThatExceptionOfType(ElepyDependencyInjectionException.class).isThrownBy(defaultElepyContext::resolveDependencies);
 
-        assertEquals(2, elepyDependencyInjectionException.getAmount());
+        assertThat(elepyDependencyInjectionException.getAmount()).isEqualTo(2);
     }
 
     @Test
@@ -81,11 +82,11 @@ public class ContextTest extends Base {
         defaultElepyContext.strictMode(true);
 
         ElepyDependencyInjectionException elepyDependencyInjectionException =
-                assertThrows(ElepyDependencyInjectionException.class, () -> {
+                assertThatExceptionOfType(ElepyDependencyInjectionException.class).isThrownBy(() -> {
                     defaultElepyContext.registerDependency(Unsatisfiable.class);
                 });
 
-        assertEquals(2, elepyDependencyInjectionException.getAmount());
+        assertThat(elepyDependencyInjectionException.getAmount()).isEqualTo(2);
     }
 
     @Test
@@ -114,7 +115,7 @@ public class ContextTest extends Base {
         defaultElepyContext.registerDependency(Node9.class);
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
-        assertEquals(9, defaultElepyContext.getDependencyKeys().size());
+        assertThat(defaultElepyContext.getDependencyKeys().size()).isEqualTo(9);
     }
 
     @Test
@@ -124,7 +125,7 @@ public class ContextTest extends Base {
         defaultElepyContext.registerDependency(Node1.class);
 
         assertDoesNotThrow(defaultElepyContext::resolveDependencies);
-        assertEquals(9, defaultElepyContext.getDependencyKeys().size());
+        assertThat(defaultElepyContext.getDependencyKeys().size()).isEqualTo(9);
     }
 
     @Test

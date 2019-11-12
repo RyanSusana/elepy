@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserAuthenticationService implements ElepyExtension {
+public class UserAuthenticationExtension implements ElepyExtension {
 
     @Inject
     private Crud<User> userCrud;

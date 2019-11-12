@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -58,7 +58,7 @@ public class HibernateTest {
         resourceCrud.create(validObject());
 
 
-        assertEquals(2, count());
+        assertThat(count()).isEqualTo(2);
     }
 
     @Test
@@ -86,9 +86,9 @@ public class HibernateTest {
                 new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>())
         );
 
-        assertEquals(1, resourcePage.getValues().size());
+        assertThat(resourcePage.getValues().size()).isEqualTo(1);
 
-        assertEquals("filterUnique", resourcePage.getValues().get(0).getUnique());
+        assertThat(resourcePage.getValues().get(0).getUnique()).isEqualTo("filterUnique");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class HibernateTest {
         final Resource resource = validObject();
         resourceCrud.create(resource);
         resourceCrud.deleteById(resource.getId());
-        assertEquals(0, count());
+        assertThat(count()).isEqualTo(0);
     }
 
 
@@ -111,7 +111,7 @@ public class HibernateTest {
                 new com.elepy.dao.Query("searchab", new ArrayList<>()),
                 new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>())
         );
-        assertEquals(1, searchable.getValues().size());
+        assertThat(searchable.getValues().size()).isEqualTo(1);
 
     }
 
@@ -125,7 +125,7 @@ public class HibernateTest {
         Field searchableField = Resource.class.getDeclaredField("searchableField");
         searchableField.setAccessible(true);
         final List<Resource> searchable = resourceCrud.searchInField("searchableField", "searchable");
-        assertEquals(1, searchable.size());
+        assertThat(searchable.size()).isEqualTo(1);
 
     }
 
@@ -136,7 +136,7 @@ public class HibernateTest {
 
         resourceCrud.create(Arrays.asList(resource, resource2));
 
-        assertEquals(2, count());
+        assertThat(count()).isEqualTo(2);
 
 
     }

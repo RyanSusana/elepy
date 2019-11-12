@@ -16,7 +16,7 @@ import org.junit.jupiter.api.TestInstance;
 import java.util.*;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DefaultMongoDaoTest extends BaseFongo {
@@ -46,7 +46,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
         final long resources = jongo.getCollection("resources").count();
 
-        assertEquals(2, resources);
+        assertThat(resources).isEqualTo(2);
 
         assertThat(jongo.getCollection("resources").findOne("{_id: #}" + resource1.getId(), resource1.getId()).as(Resource.class).getTextField())
                 .isEqualTo("create");
@@ -59,7 +59,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         final Resource resource = validObject();
         defaultMongoDao.create(resource);
         defaultMongoDao.deleteById(resource.getId());
-        assertEquals(0, count());
+        assertThat(count()).isEqualTo(0);
     }
 
 
@@ -71,7 +71,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
 
         final Page<Resource> searchable = defaultMongoDao.search(new Query("sear", new ArrayList<>()), new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>()));
-        assertEquals(1, searchable.getValues().size());
+        assertThat(searchable.getValues().size()).isEqualTo(1);
 
     }
 
@@ -84,7 +84,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
         defaultMongoDao.create(Arrays.asList(resource, resource2));
 
-        assertEquals(2, count());
+        assertThat(count()).isEqualTo(2);
 
 
     }
@@ -107,8 +107,8 @@ public class DefaultMongoDaoTest extends BaseFongo {
         final List<Resource> updatedTextFieldResources = defaultMongoDao.searchInField("textField", "NEW_VALUE");
         final List<Resource> updatedUniqueResources = defaultMongoDao.searchInField("unique", "NEW_UNIQUE_VAL");
 
-        assertEquals(2, updatedTextFieldResources.size());
-        assertEquals(0, updatedUniqueResources.size());
+        assertThat(updatedTextFieldResources.size()).isEqualTo(2);
+        assertThat(updatedUniqueResources.size()).isEqualTo(0);
 
     }
 

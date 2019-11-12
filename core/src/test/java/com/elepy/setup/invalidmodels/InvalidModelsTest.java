@@ -8,7 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class InvalidModelsTest extends Base {
 
@@ -27,9 +28,8 @@ public class InvalidModelsTest extends Base {
     @Test
     void testNoIdentifier() {
         final var elepyConfigException =
-                assertThrows(ElepyConfigException.class,
-                        () -> elepy.addModel(NoIdentifierField.class)
-                                .start());
+                assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(NoIdentifierField.class)
+                        .start());
 
 
         assertThat(elepyConfigException.getMessage())
@@ -39,9 +39,8 @@ public class InvalidModelsTest extends Base {
     @Test
     void testInvalidIdentifier() {
         final var elepyConfigException =
-                assertThrows(ElepyConfigException.class,
-                        () -> elepy.addModel(InvalidIdentifier.class)
-                                .start());
+                assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(InvalidIdentifier.class)
+                        .start());
 
         assertThat(elepyConfigException.getMessage())
                 .containsMatch("Long|String|Int");
@@ -50,9 +49,8 @@ public class InvalidModelsTest extends Base {
     @Test
     void testNoRestModelAnnotation() {
         final var elepyConfigException =
-                assertThrows(ElepyConfigException.class,
-                        () -> elepy.addModel(NoRestModelAnnotation.class)
-                                .start());
+                assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(NoRestModelAnnotation.class)
+                        .start());
 
         assertThat(elepyConfigException.getMessage())
                 .contains("@RestModel");

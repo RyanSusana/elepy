@@ -2,7 +2,7 @@ package com.elepy.http;
 
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationService;
+import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
@@ -106,7 +106,7 @@ public interface Request {
         return new HashSet<>(Collections.singletonList(modelId()));
     }
 
-    default UserAuthenticationService userAuthenticationCenter() {
+    default UserAuthenticationExtension userAuthenticationCenter() {
         return attribute("authCenter");
     }
 
@@ -114,8 +114,8 @@ public interface Request {
         return attribute("elepyContext");
     }
 
-    default UserAuthenticationService authService() {
-        return elepy().getDependency(UserAuthenticationService.class);
+    default UserAuthenticationExtension authService() {
+        return elepy().getDependency(UserAuthenticationExtension.class);
     }
 
     default void tryToLogin() {

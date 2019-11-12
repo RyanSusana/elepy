@@ -85,8 +85,7 @@ public abstract class HttpServiceTest {
 
         //assert it doesn't interfere with existing request.
         assertResponseReturns("get", "/test", "hi");
-        assertTrue(IOUtils.contentEquals(send.body(), inputStream("static/doggo.jpg")),
-                "Static file returning a wrong input stream");
+        assertThat(IOUtils.contentEquals(send.body(), inputStream("static/doggo.jpg"))).as("Static file returning a wrong input stream").isTrue();
 
 
     }
@@ -160,8 +159,8 @@ public abstract class HttpServiceTest {
 
         final HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals("Exception handled", send.body());
-        assertEquals(400, send.statusCode());
+        assertThat(send.body()).isEqualTo("Exception handled");
+        assertThat(send.statusCode()).isEqualTo(400);
     }
 
     @Test
@@ -186,8 +185,8 @@ public abstract class HttpServiceTest {
 
         final HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals("Exception handled", send.body());
-        assertEquals(400, send.statusCode());
+        assertThat(send.body()).isEqualTo("Exception handled");
+        assertThat(send.statusCode()).isEqualTo(400);
     }
 
     @Test
@@ -212,8 +211,8 @@ public abstract class HttpServiceTest {
 
         final HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals("Exception handled", send.body());
-        assertEquals(400, send.statusCode());
+        assertThat(send.body()).isEqualTo("Exception handled");
+        assertThat(send.statusCode()).isEqualTo(400);
     }
 
 
@@ -555,7 +554,7 @@ public abstract class HttpServiceTest {
         final List<FileUpload> fileUploads = atomicReference.get();
         final FileUpload fileUpload1 = fileUploads.get(0);
 
-        assertTrue(IOUtils.contentEquals(fileUpload1.getContent(), inputStream("cv.pdf")));
+        assertThat(IOUtils.contentEquals(fileUpload1.getContent(), inputStream("cv.pdf"))).isTrue();
     }
 
     @Test
@@ -575,8 +574,8 @@ public abstract class HttpServiceTest {
         final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
 
-        assertTrue(response.headers().firstValue("Content-Type").orElseThrow()
-                .equalsIgnoreCase("application/xml"));
+        assertThat(response.headers().firstValue("Content-Type").orElseThrow()
+                .equalsIgnoreCase("application/xml")).isTrue();
 
     }
 
@@ -598,7 +597,7 @@ public abstract class HttpServiceTest {
         final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
 
-        assertEquals(URI.create("http://www.google.com/"), response.uri());
+        assertThat(response.uri()).isEqualTo(URI.create("http://www.google.com/"));
 
     }
 
@@ -610,8 +609,8 @@ public abstract class HttpServiceTest {
 
         try {
             final HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            assertEquals(expectedResult, send.body());
-            assertEquals(200, send.statusCode());
+            assertThat(send.body()).isEqualTo(expectedResult);
+            assertThat(send.statusCode()).isEqualTo(200);
         } catch (IOException e) {
             throw new AssertionError("network error", e);
         } catch (InterruptedException e) {

@@ -128,7 +128,7 @@ public abstract class FileServiceTest implements ElepyTest {
                 .field("files", inputStream(originalFileName), ContentType.create(tika.detect(inputStream(originalFileName), originalFileName)), originalFileName)
                 .asJson();
 
-        assertEquals(200, response.getStatus(), response.getBody().toString());
+        assertThat(response.getStatus()).as(response.getBody().toString()).isEqualTo(200);
 
         final String uploadedFileName = response.getBody().getObject()
                 .getJSONArray("files")
@@ -138,20 +138,15 @@ public abstract class FileServiceTest implements ElepyTest {
                 new AssertionFailedError("FileService did not recognize file: " + uploadedFileName));
 
 
-        assertTrue(references.searchInField("uploadName", uploadedFileName)
-                        .stream().map(FileReference::getUploadName).anyMatch(uploadedFileName::equals),
-                String.format("Can't find '%s' in file references ", uploadedFileName)
-        );
-        assertEquals(fileUpload.getSize(), inputStream(originalFileName).readAllBytes().length, "File  size of uploaded file not equal to the actual file");
+        assertThat(references.searchInField("uploadName", uploadedFileName)
+                .stream().map(FileReference::getUploadName).anyMatch(uploadedFileName::equals)).as(String.format("Can't find '%s' in file references ", uploadedFileName)).isTrue();
+        assertThat(inputStream(originalFileName).readAllBytes().length).as("File  size of uploaded file not equal to the actual file").isEqualTo(fileUpload.getSize());
 
-        assertEquals(fileCountBeforeUpload + 1, countFiles(),
-                "File upload did not increase the count of Files");
-        assertTrue(fileUpload.contentTypeMatches(contentType),
-                String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, fileUpload.getContentType()));
+        assertThat(countFiles()).as("File upload did not increase the count of Files").isEqualTo(fileCountBeforeUpload + 1);
+        assertThat(fileUpload.contentTypeMatches(contentType)).as(String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, fileUpload.getContentType())).isTrue();
 
 
-        assertTrue(IOUtils.contentEquals(inputStream(originalFileName), fileUpload.getContent()),
-                String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName));
+        assertThat(IOUtils.contentEquals(inputStream(originalFileName), fileUpload.getContent())).as(String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName)).isTrue();
 
         return fileUpload;
     }

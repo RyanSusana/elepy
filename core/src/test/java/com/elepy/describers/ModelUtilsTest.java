@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 
 import static com.elepy.models.FieldType.*;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ModelUtilsTest {
 
@@ -30,9 +31,9 @@ public class ModelUtilsTest {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         //Should be + 1 because of the   @GeneratedField method
-        assertEquals(Resource.class.getDeclaredFields().length + 1, modelFromClass.getProperties().size());
-        assertEquals("id", modelFromClass.getProperties().get(0).getName());
-        assertEquals("generated", modelFromClass.getProperties().get(modelFromClass.getProperties().size() - 1).getName());
+        assertThat(modelFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length + 1);
+        assertThat(modelFromClass.getProperties().get(0).getName()).isEqualTo("id");
+        assertThat(modelFromClass.getProperties().get(modelFromClass.getProperties().size() - 1).getName()).isEqualTo("generated");
     }
 
 
@@ -42,8 +43,8 @@ public class ModelUtilsTest {
         final Property property = modelFromClass.getProperty("date");
         final DateOptions of = property.getOptions();
 
-        assertEquals(new Date(0), of.getMinimumDate());
-        assertEquals(new SimpleDateFormat("yyyy-MM-dd").parse("2019-22-12"), of.getMaximumDate());
+        assertThat(of.getMinimumDate()).isEqualTo(new Date(0));
+        assertThat(of.getMaximumDate()).isEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse("2019-22-12"));
         assertThat(property.getType())
                 .isEqualTo(DATE);
     }
@@ -54,9 +55,9 @@ public class ModelUtilsTest {
 
         final Property property = modelFromClass.getProperty("minLen10MaxLen50");
         final TextOptions of = property.getOptions();
-        assertEquals(TextType.TEXTAREA, of.getTextType());
-        assertEquals(10, of.getMinimumLength());
-        assertEquals(50, of.getMaximumLength());
+        assertThat(of.getTextType()).isEqualTo(TextType.TEXTAREA);
+        assertThat(of.getMinimumLength()).isEqualTo(10);
+        assertThat(of.getMaximumLength()).isEqualTo(50);
         assertThat(property.getType())
                 .isEqualTo(TEXT);
     }
@@ -68,7 +69,7 @@ public class ModelUtilsTest {
         final Property property = modelFromClass.getProperty("textType");
         final EnumOptions of = property.getOptions();
 
-        assertTrue(of.getAvailableValues().stream().map(map -> map.get("enumValue")).collect(Collectors.toList()).contains("HTML"));
+        assertThat(of.getAvailableValues().stream().map(map -> map.get("enumValue")).collect(Collectors.toList()).contains("HTML")).isTrue();
         assertThat(property.getType())
                 .isEqualTo(ENUM);
     }
@@ -98,8 +99,8 @@ public class ModelUtilsTest {
         final Property property = modelFromClass.getProperty("numberMin10Max50");
         final NumberOptions of = property.getOptions();
 
-        assertEquals(10, of.getMinimum());
-        assertEquals(50, of.getMaximum());
+        assertThat(of.getMinimum()).isEqualTo(10);
+        assertThat(of.getMaximum()).isEqualTo(50);
         assertThat(property.getType())
                 .isEqualTo(NUMBER);
     }
@@ -108,7 +109,7 @@ public class ModelUtilsTest {
     void testCorrectUnique() {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertTrue(modelFromClass.getProperty("unique").isUnique());
+        assertThat(modelFromClass.getProperty("unique").isUnique()).isTrue();
 
     }
 
@@ -134,14 +135,14 @@ public class ModelUtilsTest {
     void testCorrectRequired() {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertTrue(modelFromClass.getProperty("required").isRequired());
+        assertThat(modelFromClass.getProperty("required").isRequired()).isTrue();
     }
 
     @Test
     void testCorrectUneditable() {
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertFalse(modelFromClass.getProperty("nonEditable").isEditable());
+        assertThat(modelFromClass.getProperty("nonEditable").isEditable()).isFalse();
     }
 
     @Test
@@ -235,7 +236,7 @@ public class ModelUtilsTest {
         }
 
         final List<Property> theDeepestRecursiveObject = currentProperties;
-        assertThrows(NoSuchElementException.class, () -> goDeeper("recursiveObject", theDeepestRecursiveObject));
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> goDeeper("recursiveObject", theDeepestRecursiveObject));
     }
 
     @Test
@@ -253,7 +254,7 @@ public class ModelUtilsTest {
         }
 
         final List<Property> theDeepestRecursiveObject = currentProperties;
-        assertThrows(NoSuchElementException.class, () -> goDeeper("children", theDeepestRecursiveObject));
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> goDeeper("children", theDeepestRecursiveObject));
     }
 
     private List<Property> goDeeper(String propertyName, List<Property> currentProperties) {

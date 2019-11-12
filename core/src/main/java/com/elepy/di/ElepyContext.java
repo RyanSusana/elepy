@@ -5,6 +5,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Properties;
 import java.util.Set;
 
 public interface ElepyContext {
@@ -68,4 +69,5 @@ public interface ElepyContext {
         }
 
     }
+
 }

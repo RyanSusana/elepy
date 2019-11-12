@@ -4,7 +4,7 @@ import com.elepy.annotations.RestModel;
 import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.Token;
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationService;
+import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.PersistedTokenAuthenticationMethod;
 import com.elepy.dao.CrudFactory;
@@ -61,7 +61,7 @@ public class Elepy implements ElepyContext {
     private CrudFactory defaultCrudFactoryImplementation;
     private List<Class<?>> routingClasses = new ArrayList<>();
     private ModelEngine modelEngine = new ModelEngine(this);
-    private UserAuthenticationService userAuthenticationService = new UserAuthenticationService();
+    private UserAuthenticationExtension userAuthenticationExtension = new UserAuthenticationExtension();
     private Properties properties = new Properties();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
@@ -103,7 +103,7 @@ public class Elepy implements ElepyContext {
 
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
-        if (userAuthenticationService.getTokenAuthenticationMethod().isEmpty()) {
+        if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
             addModel(Token.class);
         }
 
@@ -175,8 +175,8 @@ public class Elepy implements ElepyContext {
     }
 
 
-    public UserAuthenticationService authenticationService() {
-        return userAuthenticationService;
+    public UserAuthenticationExtension authenticationService() {
+        return userAuthenticationExtension;
     }
 
     /**
@@ -597,6 +597,10 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    public Properties properties() {
+        return properties;
+    }
+
     private void retrievePackageModels() {
 
         if (!packages.isEmpty()) {
@@ -633,7 +637,7 @@ public class Elepy implements ElepyContext {
         addModel(User.class);
         addModel(FileReference.class);
         addExtension(new FileUploadExtension());
-        registerDependency(userAuthenticationService);
+        registerDependency(userAuthenticationExtension);
 
         setupLoggingAndExceptions();
         retrievePackageModels();
@@ -644,13 +648,13 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupAuth() {
-        addExtension(userAuthenticationService);
+        addExtension(userAuthenticationExtension);
 
-        if (userAuthenticationService.getTokenAuthenticationMethod().isEmpty()) {
-            userAuthenticationService.addAuthenticationMethod(initialize(PersistedTokenAuthenticationMethod.class));
+        if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
+            userAuthenticationExtension.addAuthenticationMethod(initialize(PersistedTokenAuthenticationMethod.class));
         }
 
-        userAuthenticationService.addAuthenticationMethod(initialize(BasicAuthenticationMethod.class));
+        userAuthenticationExtension.addAuthenticationMethod(initialize(BasicAuthenticationMethod.class));
     }
 
     private void injectExtensions() {

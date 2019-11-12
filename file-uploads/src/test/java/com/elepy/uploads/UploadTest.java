@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class UploadTest {
@@ -50,8 +50,7 @@ public class UploadTest {
                     }
                 });
 
-        Assertions.assertFalse(
-                Files.exists(pathToBeDeleted), "Directory still exists");
+        assertThat(Files.exists(pathToBeDeleted)).as("Directory still exists").isFalse();
     }
 
     @BeforeEach
@@ -82,13 +81,13 @@ public class UploadTest {
         final List<Path> collect = Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList());
 
 
-        Assertions.assertEquals(1, collect.size());
+        assertThat(collect.size()).isEqualTo(1);
 
         List<String> lines = Files.readAllLines(collect.get(0), UTF_8);
 
 
-        Assertions.assertEquals("TEST", lines.get(0));
-        Assertions.assertEquals("textFileToUpload.txt", collect.get(0).getFileName().toString());
+        assertThat(lines.get(0)).isEqualTo("TEST");
+        assertThat(collect.get(0).getFileName().toString()).isEqualTo("textFileToUpload.txt");
     }
 
     @Test
@@ -96,11 +95,11 @@ public class UploadTest {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
 
         final FileUpload fileUpload = directoryFileService.readFile("textFileToUpload.txt").orElse(null);
-        assertNotNull(fileUpload);
+        assertThat(fileUpload).isNotNull();
 
-        assertEquals("textFileToUpload.txt", fileUpload.getName());
-        assertEquals("TEST", IOUtils.toString(fileUpload.getContent()));
-        assertEquals("text/plain", fileUpload.getContentType());
+        assertThat(fileUpload.getName()).isEqualTo("textFileToUpload.txt");
+        assertThat(IOUtils.toString(fileUpload.getContent())).isEqualTo("TEST");
+        assertThat(fileUpload.getContentType()).isEqualTo("text/plain");
     }
 
     @Test
@@ -109,9 +108,9 @@ public class UploadTest {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
 
         final List<String> list = directoryFileService.listFiles();
-        assertEquals(1, list.size());
+        assertThat(list.size()).isEqualTo(1);
 
-        assertEquals("textFileToUpload.txt", list.get(0));
+        assertThat(list.get(0)).isEqualTo("textFileToUpload.txt");
     }
 
     @Test
@@ -119,7 +118,7 @@ public class UploadTest {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
 
         directoryFileService.deleteFile("textFileToUpload.txt");
-        assertEquals(0, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());
+        assertThat(Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size()).isEqualTo(0);
     }
 
     @Test
@@ -127,8 +126,8 @@ public class UploadTest {
         Files.copy(Paths.get("src/test/resources/textFileToUpload.txt"), Paths.get(UPLOAD_DIR + "/textFileToUpload.txt"));
         final Optional<FileUpload> uploadedFile = directoryFileService.readFile("nonExistent.txt");
 
-        assertTrue(uploadedFile.isEmpty());
-        assertEquals(1, Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size());
+        assertThat(uploadedFile.isEmpty()).isTrue();
+        assertThat(Files.list(Paths.get(UPLOAD_DIR)).collect(Collectors.toList()).size()).isEqualTo(1);
 
     }
 }

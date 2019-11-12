@@ -1,7 +1,7 @@
 package com.elepy.http;
 
 import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationService;
+import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.Message;
 
@@ -43,7 +43,7 @@ public interface HttpContext {
         return request().elepy();
     }
 
-    default UserAuthenticationService authService() {
+    default UserAuthenticationExtension authService() {
         return request().authService();
     }
 

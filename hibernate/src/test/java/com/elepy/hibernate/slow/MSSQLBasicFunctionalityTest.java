@@ -1,6 +1,7 @@
 package com.elepy.hibernate.slow;
 
 import com.elepy.Configuration;
+import com.elepy.Elepy;
 import com.elepy.hibernate.DatabaseConfigurations;
 import com.elepy.tests.basic.BasicFunctionalityTest;
 import org.testcontainers.containers.MSSQLServerContainer;
@@ -14,10 +15,10 @@ public class MSSQLBasicFunctionalityTest extends BasicFunctionalityTest {
     private static final MSSQLServerContainer MSSQL_SERVER_CONTAINER = new MSSQLServerContainer();
 
     @Override
-    public Configuration configuration() {
-        return DatabaseConfigurations.createTestContainerConfiguration(
+    public void configureElepy(Elepy elepy) {
+        elepy.addConfiguration(DatabaseConfigurations.createTestContainerConfiguration(
                 MSSQL_SERVER_CONTAINER,
                 "org.hibernate.dialect.SQLServerDialect"
-        );
+        ));
     }
 }
