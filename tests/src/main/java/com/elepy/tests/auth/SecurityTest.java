@@ -6,17 +6,17 @@ import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public abstract class TokenAuthenticationTest implements ElepyConfigHelper {
+public abstract class SecurityTest implements ElepyConfigHelper {
 
     private ElepySystemUnderTest elepy;
 
-    @BeforeAll
-    public void before() {
+    @BeforeEach
+    void before() {
         elepy = ElepySystemUnderTest.create();
 
         this.configureElepy(elepy);

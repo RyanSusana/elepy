@@ -17,16 +17,40 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.8.3</version>
+        </dependency>
+        <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <version>3.8.3</version>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-tests</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-hibernate</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-sparkjava</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
