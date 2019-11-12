@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class ContextTest extends Base {
 
@@ -42,10 +43,10 @@ public class ContextTest extends Base {
         defaultElepyContext.registerDependency(Circular1.class);
 
         defaultElepyContext.strictMode(true);
-        ElepyDependencyInjectionException elepyDependencyInjectionException =
-                assertThatExceptionOfType(ElepyDependencyInjectionException.class).isThrownBy(defaultElepyContext::resolveDependencies);
 
-        assertThat(elepyDependencyInjectionException.getAmount()).isEqualTo(2);
+        assertThatExceptionOfType(ElepyDependencyInjectionException.class)
+                .isThrownBy(defaultElepyContext::resolveDependencies);
+
     }
 
     @Test
@@ -57,10 +58,9 @@ public class ContextTest extends Base {
         defaultElepyContext.registerDependency(Unsatisfiable.class);
 
         defaultElepyContext.strictMode(true);
-        ElepyDependencyInjectionException elepyDependencyInjectionException =
-                assertThatExceptionOfType(ElepyDependencyInjectionException.class).isThrownBy(defaultElepyContext::resolveDependencies);
+        assertThatExceptionOfType(ElepyDependencyInjectionException.class)
+                .isThrownBy(defaultElepyContext::resolveDependencies);
 
-        assertThat(elepyDependencyInjectionException.getAmount()).isEqualTo(2);
     }
 
     @Test
@@ -81,12 +81,9 @@ public class ContextTest extends Base {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
         defaultElepyContext.strictMode(true);
 
-        ElepyDependencyInjectionException elepyDependencyInjectionException =
-                assertThatExceptionOfType(ElepyDependencyInjectionException.class).isThrownBy(() -> {
-                    defaultElepyContext.registerDependency(Unsatisfiable.class);
-                });
+        assertThatExceptionOfType(ElepyDependencyInjectionException.class)
+                .isThrownBy(() -> defaultElepyContext.registerDependency(Unsatisfiable.class));
 
-        assertThat(elepyDependencyInjectionException.getAmount()).isEqualTo(2);
     }
 
     @Test

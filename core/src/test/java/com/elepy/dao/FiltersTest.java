@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +36,7 @@ public class FiltersTest {
     @Test
     void testCanFindProperFilter() {
         assertThat(FilterType.getForFieldType(FieldType.NUMBER))
-                .containsExactly(
+                .containsExactlyInAnyOrder(
                         FilterType.GREATER_THAN,
                         FilterType.GREATER_THAN_OR_EQUALS,
                         FilterType.LESSER_THAN,
@@ -46,7 +45,7 @@ public class FiltersTest {
                         FilterType.NOT_EQUALS);
 
         assertThat(FilterType.getForFieldType(FieldType.TEXT))
-                .containsExactly(
+                .containsExactlyInAnyOrder(
                         FilterType.CONTAINS,
                         FilterType.EQUALS,
                         FilterType.NOT_EQUALS);
@@ -115,12 +114,9 @@ public class FiltersTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        ElepyException elepyException = assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> request.filtersForModel(resourceClass));
-
-
-        assertThat(elepyException.getMessage().contains("id33_Ee")).isTrue();
-
-
+        assertThatExceptionOfType(ElepyException.class)
+                .isThrownBy(() -> request.filtersForModel(resourceClass))
+                .withMessageContaining("id33_Ee");
     }
 
     private HttpContext mockedContextWithQueryMap(Map<String, String> map) {

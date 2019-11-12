@@ -10,6 +10,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
 public class UserPermissionFilterTest extends Base {
@@ -53,9 +54,9 @@ public class UserPermissionFilterTest extends Base {
         final HttpContext mockedContext = mockedContext();
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin"));
 
-        final ElepyException elepyException = assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> filter.authenticate(mockedContext));
+        assertThatExceptionOfType(ElepyException.class)
+                .isThrownBy(() -> filter.authenticate(mockedContext));
 
-        assertThat(elepyException.getStatus()).isEqualTo(401);
     }
 
     @Test
@@ -65,9 +66,8 @@ public class UserPermissionFilterTest extends Base {
 
 
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin"));
-        final ElepyException elepyException = assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> filter.authenticate(mockedContext));
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> filter.authenticate(mockedContext));
 
-        assertThat(elepyException.getStatus()).isEqualTo(401);
     }
 
     @Test
@@ -77,9 +77,8 @@ public class UserPermissionFilterTest extends Base {
 
 
         final UserPermissionFilter filter = new UserPermissionFilter(Arrays.asList("admin"));
-        final ElepyException elepyException = assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> filter.authenticate(mockedContext));
+        assertThatExceptionOfType(ElepyException.class).isThrownBy(() -> filter.authenticate(mockedContext));
 
-        assertThat(elepyException.getStatus()).isEqualTo(401);
     }
 
 

@@ -26,8 +26,6 @@ public class ObjectAtomicIntegrityTest extends Base {
 
         } catch (ElepyException errorMessage) {
             if (errorMessage.getMessage().contains("duplicate")) {
-
-
             } else {
                 fail("No duplicates found in arraylist");
             }

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

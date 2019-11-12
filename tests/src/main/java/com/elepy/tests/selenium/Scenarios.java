@@ -6,7 +6,7 @@ import com.elepy.models.Model;
 import org.mindrot.jbcrypt.BCrypt;
 import org.openqa.selenium.By;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 public class Scenarios {

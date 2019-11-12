@@ -19,7 +19,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.elepy.models.FieldType.*;
-import static com.google.common.truth.Truth.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 

@@ -7,8 +7,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class InvalidModelsTest extends Base {
@@ -27,32 +25,24 @@ public class InvalidModelsTest extends Base {
 
     @Test
     void testNoIdentifier() {
-        final var elepyConfigException =
-                assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(NoIdentifierField.class)
-                        .start());
 
+        assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(NoIdentifierField.class)
+                .start())
+                .withMessageContaining("@Identifier");
 
-        assertThat(elepyConfigException.getMessage())
-                .contains("@Identifier");
     }
 
     @Test
     void testInvalidIdentifier() {
-        final var elepyConfigException =
-                assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(InvalidIdentifier.class)
-                        .start());
-
-        assertThat(elepyConfigException.getMessage())
-                .containsMatch("Long|String|Int");
+        assertThatExceptionOfType(ElepyConfigException.class)
+                .isThrownBy(() -> elepy.addModel(InvalidIdentifier.class).start());
     }
 
     @Test
     void testNoRestModelAnnotation() {
-        final var elepyConfigException =
-                assertThatExceptionOfType(ElepyConfigException.class).isThrownBy(() -> elepy.addModel(NoRestModelAnnotation.class)
-                        .start());
+        assertThatExceptionOfType(ElepyConfigException.class)
+                .isThrownBy(() -> elepy.addModel(NoRestModelAnnotation.class).start())
+                .withMessageContaining("@RestModel");
 
-        assertThat(elepyConfigException.getMessage())
-                .contains("@RestModel");
     }
 }
