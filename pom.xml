@@ -23,7 +23,7 @@
         <truth.version>1.0</truth.version>
         <assertj.version>3.14.0</assertj.version>
         <headlessMode>false</headlessMode>
-        <revision>2.3.0</revision>
+        <revision>2.4.0</revision>
     </properties>
 
     <licenses>
