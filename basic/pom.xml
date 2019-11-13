@@ -28,5 +28,10 @@
             <artifactId>elepy-admin</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-jwt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
