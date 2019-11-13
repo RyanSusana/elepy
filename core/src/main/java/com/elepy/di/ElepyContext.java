@@ -5,7 +5,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Properties;
+import javax.validation.Validator;
 import java.util.Set;
 
 public interface ElepyContext {
@@ -50,6 +50,10 @@ public interface ElepyContext {
 
     default ObjectMapper objectMapper() {
         return getDependency(ObjectMapper.class);
+    }
+
+    default Validator validator() {
+        return getDependency(Validator.class);
     }
 
     Set<ContextKey> getDependencyKeys();

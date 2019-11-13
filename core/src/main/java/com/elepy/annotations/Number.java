@@ -15,12 +15,14 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Number {
     /**
-     * @return How small can this number be
+     * @deprecated use Java Bean Validation instead
      */
+    @Deprecated(forRemoval = true)
     float minimum() default Integer.MIN_VALUE;
 
     /**
-     * @return How big can this number be
+     * @deprecated use Java Bean Validation instead
      */
+    @Deprecated(forRemoval = true)
     float maximum() default Integer.MAX_VALUE;
 }

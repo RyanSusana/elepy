@@ -9,13 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Extra links to {@link ObjectEvaluator}s to be used to determine the validity of an object.
- * These will be ran in conjunction with {@link Elepy#baseEvaluator()} to validate objects.
- *
- * @see Elepy#baseEvaluator()
- * @see Elepy#withBaseEvaluator(ObjectEvaluator)
- * @see ObjectEvaluator
+ * @deprecated use Java Bean Validation instead
  */
+@Deprecated(forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Evaluators {

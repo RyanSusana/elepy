@@ -9,8 +9,16 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface Array {
 
+    /**
+     * @deprecated use Java Bean Validation instead
+     */
+    @Deprecated(forRemoval = true)
     int maximumArrayLength() default 10_000;
 
+    /**
+     * @deprecated use Java Bean Validation instead
+     */
+    @Deprecated(forRemoval = true)
     int minimumArrayLength() default 0;
 
     boolean sortable() default true;

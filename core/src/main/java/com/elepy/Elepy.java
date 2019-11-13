@@ -11,7 +11,6 @@ import com.elepy.dao.CrudFactory;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
-import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
@@ -31,10 +30,13 @@ import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.validator.HibernateValidator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -65,6 +67,10 @@ public class Elepy implements ElepyContext {
     private Properties properties = new Properties();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
+    private Validator validator = Validation.byDefaultProvider()
+            .providerResolver(() -> List.of(new HibernateValidator()))
+            .configure()
+            .buildValidatorFactory().getValidator();
 
 
     public Elepy() {
@@ -80,8 +86,8 @@ public class Elepy implements ElepyContext {
             throw new ElepyConfigException("Failed to load default Elepy properties", e);
         }
 
+        registerDependency(Validator.class, validator);
         registerDependency(Properties.class, properties);
-        withBaseEvaluator(new DefaultObjectEvaluator());
         registerDependency(ObjectMapper.class, new ObjectMapper());
         withFileService(new DefaultFileService());
         objectMapper()

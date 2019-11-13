@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Tag {
 
-
     /**
      * @return The name/tag you would like to give a context object.
      */

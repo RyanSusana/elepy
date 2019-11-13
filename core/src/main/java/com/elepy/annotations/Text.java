@@ -17,12 +17,14 @@ public @interface Text {
     TextType value() default TextType.TEXTFIELD;
 
     /**
-     * @return Minimum amount of characters per this field, per object.
+     * @deprecated use Java Bean Validation instead
      */
+    @Deprecated(forRemoval = true)
     int minimumLength() default 0;
 
     /**
-     * @return Minimum amount of characters per this field, per object.
+     * @deprecated use Java Bean Validation instead
      */
+    @Deprecated(forRemoval = true)
     int maximumLength() default Integer.MAX_VALUE;
 }

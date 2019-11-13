@@ -9,16 +9,43 @@ import com.elepy.models.options.NumberOptions;
 import com.elepy.models.options.TextOptions;
 import com.elepy.utils.ModelUtils;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
+
+    private final Validator validator;
+
+
+    public DefaultObjectEvaluator(Validator validator) {
+        this.validator = validator;
+    }
+
+
+    public DefaultObjectEvaluator() {
+        this(null);
+    }
+
+    @Override
     public void evaluate(Object o) throws Exception {
+
+
         Class c = o.getClass();
 
         evaluateObject(o, c);
+
+        if (validator != null) {
+            final var violations = validator.validate(o);
+            if (!violations.isEmpty()) {
+                throw new ElepyException(toString(violations));
+            }
+        }
     }
 
     private void evaluateObject(Object o, Class c) throws Exception {
@@ -33,6 +60,12 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
                 checkProperty(field.get(o), fieldDescriber);
             }
         }
+    }
+
+    private String toString(Set<? extends ConstraintViolation<?>> constraintViolations) {
+        return constraintViolations.stream()
+                .map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
+                .collect(Collectors.joining(", "));
     }
 
 
