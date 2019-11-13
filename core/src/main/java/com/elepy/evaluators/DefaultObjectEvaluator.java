@@ -64,10 +64,9 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
     private String toString(Set<? extends ConstraintViolation<?>> constraintViolations) {
         return constraintViolations.stream()
-                .map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
-                .collect(Collectors.joining(", "));
+                .map(cv -> cv == null ? "null" : cv.getPropertyPath().toString().replaceAll("\\."," -> " ) + ": " + cv.getMessage())
+                .collect(Collectors.joining(",\n"));
     }
-
 
     private void checkRequired(Object obj, Property property) {
         if (property.isRequired() && (obj == null || (obj instanceof Date && ((Date) obj).getTime() < 1000) || (obj instanceof String && ((String) obj).isEmpty()))) {

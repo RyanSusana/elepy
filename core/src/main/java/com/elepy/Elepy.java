@@ -12,6 +12,7 @@ import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
+import com.elepy.evaluators.PrettyNodeNameProvider;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ErrorMessageBuilder;
@@ -34,7 +35,6 @@ import org.hibernate.validator.HibernateValidator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.io.IOException;
@@ -67,9 +67,12 @@ public class Elepy implements ElepyContext {
     private Properties properties = new Properties();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
-    private Validator validator = Validation.byDefaultProvider()
-            .providerResolver(() -> List.of(new HibernateValidator()))
+    private Validator validator = Validation
+            .byProvider(HibernateValidator.class)
+
             .configure()
+            .propertyNodeNameProvider(new PrettyNodeNameProvider())
+
             .buildValidatorFactory().getValidator();
 
 
