@@ -118,6 +118,17 @@ public interface Request {
         return attribute("elepyContext");
     }
 
+    default void validate(Object o) {
+        final var violations = elepy().validator().validate(o);
+        if (!violations.isEmpty()) {
+            var message = violations.stream()
+                    .map(cv -> cv == null ? "null" : cv.getPropertyPath().toString().replaceAll("\\.", " -> ") + ": " + cv.getMessage())
+                    .collect(Collectors.joining(",\n"));
+
+            throw new ElepyException(message);
+        }
+    }
+
     default UserAuthenticationExtension authService() {
         return elepy().getDependency(UserAuthenticationExtension.class);
     }

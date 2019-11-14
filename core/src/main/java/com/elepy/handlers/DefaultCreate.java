@@ -7,7 +7,6 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
-import com.elepy.http.Response;
 import com.elepy.models.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.JavaType;
@@ -22,41 +21,6 @@ import java.util.List;
 public class DefaultCreate<T> implements CreateHandler<T> {
 
 
-    public T singleCreate(Response response, T item, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
-        evaluate(item, modelContext, dao);
-
-        create(response, dao, Collections.singletonList(item));
-        return item;
-    }
-
-
-    public void multipleCreate(Response response, List<T> items, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
-        if (ReflectionUtils.hasIntegrityRules(dao.getType())) {
-            new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
-        }
-
-        for (T item : items) {
-            evaluate(item, modelContext, dao);
-        }
-
-        create(response, dao, items);
-    }
-
-    private void evaluate(T item, ModelContext<T> modelContext, Crud<T> dao) throws Exception {
-        for (ObjectEvaluator<T> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(item);
-        }
-
-        modelContext.getIdentityProvider().provideId(item, dao);
-        new DefaultIntegrityEvaluator<T>(modelContext).evaluate(item, EvaluationType.CREATE);
-    }
-
-    private void create(Response response, Crud<T> dao, Iterable<T> items) {
-        dao.create(items);
-        response.status(200);
-        response.result(Message.of("Successfully created item", 201));
-    }
-
     @Override
     public void handleCreate(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
         String body = context.request().body();
@@ -65,11 +29,48 @@ public class DefaultCreate<T> implements CreateHandler<T> {
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(context.response(), ts, dao, modelContext);
+            multipleCreate(context, ts, dao, modelContext);
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            singleCreate(context.response(), item, dao, modelContext);
+            singleCreate(context, item, dao, modelContext);
         }
+
     }
+
+    private void singleCreate(HttpContext context, T item, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
+        evaluate(item, modelContext, context, dao);
+
+        create(context, dao, Collections.singletonList(item));
+    }
+
+
+    private void multipleCreate(HttpContext context, List<T> items, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
+        if (ReflectionUtils.hasIntegrityRules(dao.getType())) {
+            new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
+        }
+
+        for (T item : items) {
+            evaluate(item, modelContext, context, dao);
+        }
+        create(context, dao, items);
+    }
+
+    private void evaluate(T item, ModelContext<T> modelContext, HttpContext context, Crud<T> dao) throws Exception {
+        for (ObjectEvaluator<T> objectEvaluator : modelContext.getObjectEvaluators()) {
+            objectEvaluator.evaluate(item);
+        }
+
+        context.validate(item);
+
+        modelContext.getIdentityProvider().provideId(item, dao);
+        new DefaultIntegrityEvaluator<>(modelContext).evaluate(item, EvaluationType.CREATE);
+    }
+
+    private void create(HttpContext context, Crud<T> dao, Iterable<T> items) {
+        dao.create(items);
+        context.status(200);
+        context.result(Message.of("Successfully created item(s)", 201));
+    }
+
 }

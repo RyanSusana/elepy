@@ -35,6 +35,7 @@ import org.hibernate.validator.HibernateValidator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.io.IOException;
@@ -67,13 +68,6 @@ public class Elepy implements ElepyContext {
     private Properties properties = new Properties();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
-    private Validator validator = Validation
-            .byProvider(HibernateValidator.class)
-
-            .configure()
-            .propertyNodeNameProvider(new PrettyNodeNameProvider())
-
-            .buildValidatorFactory().getValidator();
 
 
     public Elepy() {
@@ -83,13 +77,18 @@ public class Elepy implements ElepyContext {
     private void init() {
         this.http.port(1337);
 
+        context.registerDependencySupplier(Validator.class, null,
+                () -> Validation
+                        .byProvider(HibernateValidator.class)
+                        .configure()
+                        .propertyNodeNameProvider(new PrettyNodeNameProvider())
+
+                        .buildValidatorFactory().getValidator());
         try {
             properties.load(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("elepy-default.properties")));
         } catch (IOException e) {
             throw new ElepyConfigException("Failed to load default Elepy properties", e);
         }
-
-        registerDependency(Validator.class, validator);
         registerDependency(Properties.class, properties);
         registerDependency(ObjectMapper.class, new ObjectMapper());
         withFileService(new DefaultFileService());

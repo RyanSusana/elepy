@@ -41,7 +41,7 @@ public class ModelContextExtraction {
         List<ObjectEvaluator<T>> objectEvaluators = new ArrayList<>();
 
         final Evaluators annotation = model.getJavaClass().getAnnotation(Evaluators.class);
-        objectEvaluators.add(new DefaultObjectEvaluator<>(elepy.validator()));
+        objectEvaluators.add(new DefaultObjectEvaluator<>());
 
         if (annotation != null) {
             for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {

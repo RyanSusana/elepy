@@ -267,13 +267,13 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     @Test
     void testCantSeeNonViewableModel() {
-
         Scenarios
                 .with(driver)
-                .fromModel(CantSeeThis.class);
+                .fromUserLogin("ryan", "susana")
+                .driver()
+                .navToUrl("/admin/no-way-josay");
 
         assertThat(driver.getPageSource()).contains("404");
-
     }
 
 }

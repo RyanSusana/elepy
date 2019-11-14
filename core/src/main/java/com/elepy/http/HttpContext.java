@@ -43,6 +43,10 @@ public interface HttpContext {
         return request().elepy();
     }
 
+    default void validate(Object o){
+        request().validate(o);
+    }
+
     default UserAuthenticationExtension authService() {
         return request().authService();
     }
