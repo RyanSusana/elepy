@@ -30,9 +30,7 @@ public class PersistedTokenAuthenticationMethod implements TokenAuthenticationMe
     @Override
     public Optional<User> authenticateUser(Request request) {
 
-        String cookieToken = request.cookie("ELEPY_TOKEN");
-
-        final String elepyToken = cookieToken == null ? request.headers("ELEPY_TOKEN") : cookieToken;
+        final String elepyToken = request.token();
 
         if (elepyToken == null) {
             return Optional.empty();

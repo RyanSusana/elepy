@@ -1,4 +1,4 @@
-package com.elepy.mongo;
+package com.elepy.mongo.fast;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;

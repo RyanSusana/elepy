@@ -1,10 +1,11 @@
-package com.elepy.mongo;
+package com.elepy.mongo.fast;
 
 import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.PageSettings;
 import com.elepy.dao.Query;
 import com.elepy.di.DefaultElepyContext;
+import com.elepy.mongo.MongoCrudFactory;
 import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;

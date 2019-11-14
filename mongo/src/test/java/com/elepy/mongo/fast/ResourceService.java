@@ -1,4 +1,4 @@
-package com.elepy.mongo;
+package com.elepy.mongo.fast;
 
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;

@@ -1,6 +1,7 @@
-package com.elepy.mongo;
+package com.elepy.mongo.fast;
 
 import com.elepy.Elepy;
+import com.elepy.mongo.MongoConfiguration;
 import com.elepy.tests.basic.BasicFunctionalityTest;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;

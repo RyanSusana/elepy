@@ -70,6 +70,10 @@ public interface Request {
         return fileUploads.isEmpty() ? null : fileUploads.get(0);
     }
 
+    default String token() {
+        return Optional.ofNullable(cookie("ELEPY_TOKEN")).orElse(headers("ELEPY_TOKEN"));
+    }
+
     void attribute(String attribute, Object value);
 
     Set<String> attributes();

@@ -1,4 +1,4 @@
-package com.elepy.mongo;
+package com.elepy.mongo.fast;
 
 import com.elepy.dao.Crud;
 import com.elepy.handlers.ActionHandler;

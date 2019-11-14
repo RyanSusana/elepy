@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class JWTAuthenticationMethod implements TokenAuthenticationMethod {
 
-    private static final int MAXIMUM_TOKEN_DURATION = 1000 * 60 * 60 ;
+    private static final int MAXIMUM_TOKEN_DURATION = 1000 * 60 * 60;
 
     private final Algorithm algorithm;
 
@@ -22,9 +22,9 @@ public class JWTAuthenticationMethod implements TokenAuthenticationMethod {
 
 
     @Override
-    public Optional<User> authenticateUser( Request request) {
+    public Optional<User> authenticateUser(Request request) {
 
-        final String token = request.cookie("ELEPY_TOKEN");
+        final String token = request.token();
 
         if (token == null) {
             return Optional.empty();

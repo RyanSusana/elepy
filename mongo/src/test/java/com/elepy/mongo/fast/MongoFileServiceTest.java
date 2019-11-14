@@ -1,6 +1,8 @@
-package com.elepy.mongo;
+package com.elepy.mongo.fast;
 
 import com.elepy.Configuration;
+import com.elepy.mongo.MongoConfiguration;
+import com.elepy.mongo.MongoFileService;
 import com.elepy.tests.upload.FileServiceTest;
 import com.elepy.uploads.FileService;
 import com.mongodb.MongoClient;
