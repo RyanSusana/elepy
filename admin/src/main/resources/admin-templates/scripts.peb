@@ -1,0 +1,12 @@
+<script src="https://unpkg.com/node-vibrant@3.1.4/dist/vibrant.min.js" crossorigin="anonymous"></script>
+
+<script>
+    Vibrant.from('{{ properties.logo }}').getPalette()
+            .then((palette) => {
+                document.documentElement.style
+                        .setProperty('--primary-color', palette.Vibrant.hex)
+                document.documentElement.style
+                        .setProperty('--primary-hover-color', palette.DarkVibrant.hex)
+            });
+
+</script>

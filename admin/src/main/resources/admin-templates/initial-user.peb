@@ -85,7 +85,7 @@
 
 </div>
 
-
+{% include "admin-templates/scripts.peb"%}
 <script>
     const app = new Vue({
         delimiters: ['((', '))'],

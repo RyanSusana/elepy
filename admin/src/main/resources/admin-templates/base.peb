@@ -65,11 +65,9 @@
 
 
 
-
+{% include "admin-templates/scripts.peb"%}
 {% block scripts %}
-<script>
 
-</script>
 {% endblock %}
 </body>
 

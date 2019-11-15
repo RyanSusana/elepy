@@ -73,6 +73,7 @@
     </div>
 </div>
 
+{% include "admin-templates/scripts.peb"%}
 
 <script>
 
