@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -74,28 +75,35 @@ public class Elepy implements ElepyContext {
         init();
     }
 
+    private void testSpeed(String name, Runnable runnable) {
+
+        final var l = System.currentTimeMillis();
+        runnable.run();
+        System.out.println(name + ": " + (System.currentTimeMillis() - l));
+    }
+
     private void init() {
         this.http.port(1337);
 
-        context.registerDependencySupplier(Validator.class, null,
+        registerDependencySupplier(Validator.class,
                 () -> Validation
                         .byProvider(HibernateValidator.class)
                         .configure()
                         .propertyNodeNameProvider(new PrettyNodeNameProvider())
 
                         .buildValidatorFactory().getValidator());
-        try {
-            properties.load(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("elepy-default.properties")));
-        } catch (IOException e) {
-            throw new ElepyConfigException("Failed to load default Elepy properties", e);
-        }
-        registerDependency(Properties.class, properties);
-        registerDependency(ObjectMapper.class, new ObjectMapper());
+
+
+        registerDependencySupplier(Properties.class, () -> properties);
+
+
         withFileService(new DefaultFileService());
-        objectMapper()
+
+
+        registerDependencySupplier(ObjectMapper.class, () -> new ObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
     }
 
 
@@ -107,7 +115,7 @@ public class Elepy implements ElepyContext {
      */
     public final void start() {
 
-        setupDefaultConfig();
+        setupDefaults();
 
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
@@ -277,7 +285,7 @@ public class Elepy implements ElepyContext {
 
 
     /**
-     * Attaches a context object to the Elepy instance. This object would then later be used
+     * Attaches a dependency to the Elepy instance. This object would then later be used
      * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
      * object is a Database for Elepy or another component to use.
      * <p>
@@ -301,7 +309,7 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Attaches a context object with a null tag.
+     * Attaches a dependency with a null tag.
      * <p>
      * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
@@ -318,7 +326,29 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Attaches a context object with a null tag, and guesses it's class type.
+     * Attaches a dependency supplier with a null tag.
+     * <p>
+     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
+     *
+     * @param cls    The class type of the object
+     * @param tag    The tag of the dependency
+     * @param object The object
+     * @param <T>    The type of the object
+     * @return The {@link com.elepy.Elepy} instance
+     * @see #registerDependency(Class, String, Object)
+     */
+    public <T> Elepy registerDependencySupplier(Class<T> cls, String tag, Supplier<? extends T> object) {
+        checkConfig();
+        context.registerDependencySupplier(cls, tag, object);
+        return this;
+    }
+
+    public <T> Elepy registerDependencySupplier(Class<T> cls, Supplier<? extends T> object) {
+        return registerDependencySupplier(cls, null, object);
+    }
+
+    /**
+     * Attaches a dependency with a null tag, and guesses it's class type.
      * <p>
      * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
@@ -334,7 +364,7 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Attaches a context object and guesses it's class type.
+     * Attaches a dependency and guesses it's class type.
      * <p>
      * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
@@ -555,7 +585,7 @@ public class Elepy implements ElepyContext {
      * @return the Elepy instance
      */
     public Elepy withFileService(FileService fileService) {
-        this.registerDependency(FileService.class, fileService);
+        this.registerDependencySupplier(FileService.class, () -> fileService);
         return this;
     }
 
@@ -633,7 +663,10 @@ public class Elepy implements ElepyContext {
         }
     }
 
-    private void setupDefaultConfig() {
+    private void setupDefaults() {
+
+        final var elepyDefaultProperties = getClass().getClassLoader().getResource("elepy-default.properties");
+        withProperties(Objects.requireNonNull(elepyDefaultProperties));
 
         final var elepyProperties = getClass().getClassLoader().getResource("elepy.properties");
 

@@ -11,24 +11,9 @@ import java.io.InputStream;
 
 public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
-    public static final String JS_LOCATION = "/admin/resources/ElepyVue.js";
-    public static final String CSS_LOCATION = "/admin/resources/ElepyVue.css";
-    private final byte[] css;
-    private final byte[] js;
-
-
-    public LocalResourceLocation() {
-        try (var cssStream = getResource("frontend/dist/ElepyVue.css");
-             var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
-            this.css = IOUtils.toByteArray(cssStream);
-            this.js = IOUtils.toByteArray(jsStream);
-        } catch (IOException | NullPointerException e) {
-            throw new ElepyConfigException("Error loading static resources", e);
-        }
-    }
-
-
-
+    private static final String JS_LOCATION = "/admin/resources/ElepyVue.js";
+    private static final String CSS_LOCATION = "/admin/resources/ElepyVue.css";
+    
     private InputStream getResource(String name) {
         return this.getClass().getClassLoader().getResourceAsStream(name);
     }
@@ -45,14 +30,23 @@ public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
-        http.get(CSS_LOCATION, ctx -> {
-            ctx.response().type("text/css");
-            ctx.response().result(css);
-        });
+        try (var cssStream = getResource("frontend/dist/ElepyVue.css");
+             var jsStream = getResource("frontend/dist/ElepyVue.umd.min.js")) {
+            var css = IOUtils.toByteArray(cssStream);
+            var js = IOUtils.toByteArray(jsStream);
 
-        http.get(JS_LOCATION, ctx -> {
-            ctx.response().type("text/javascript");
-            ctx.response().result(js);
-        });
+            http.get(CSS_LOCATION, ctx -> {
+                ctx.response().type("text/css");
+                ctx.response().result(css);
+            });
+
+            http.get(JS_LOCATION, ctx -> {
+                ctx.response().type("text/javascript");
+                ctx.response().result(js);
+            });
+        } catch (IOException | NullPointerException e) {
+            throw new ElepyConfigException("Error loading static resources", e);
+        }
+
     }
 }
