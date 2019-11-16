@@ -10,7 +10,7 @@ public enum FilterType {
 
     EQUALS("Equals", "equals", FieldType.values()),
     NOT_EQUALS("Not Equals", "notEquals", FieldType.values()),
-    CONTAINS("Contains", "contains", FieldType.TEXT),
+    CONTAINS("Contains", "contains", FieldType.TEXT, FieldType.ARRAY),
 
     //Numbers & Dates
     GREATER_THAN("Greater than", "gt", FieldType.NUMBER, FieldType.DATE),

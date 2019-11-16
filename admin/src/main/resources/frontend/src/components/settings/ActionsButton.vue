@@ -73,6 +73,7 @@
 <style scoped>
     .action-select{
         font-size: 1.2rem;
+        min-width: 20px;
     }
 
 </style>

@@ -3,6 +3,7 @@ import Vue from "vue";
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
 
+import "../scss/main.scss"
 const requireComponent = require.context(
     './components',
     false,
