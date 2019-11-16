@@ -11,8 +11,8 @@ import java.io.InputStream;
 
 public class LocalResourceLocation implements ResourceLocation, ElepyExtension {
 
-    private static final String JS_LOCATION = "/admin/resources/ElepyVue.js";
-    private static final String CSS_LOCATION = "/admin/resources/ElepyVue.css";
+    private static final String JS_LOCATION = "/admin-resources/ElepyVue.js";
+    private static final String CSS_LOCATION = "/admin-resources/ElepyVue.css";
     
     private InputStream getResource(String name) {
         return this.getClass().getClassLoader().getResourceAsStream(name);

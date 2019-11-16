@@ -18,8 +18,7 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/elepy-style@1.1/css/main.css">
-
+    <link rel="stylesheet" href="{{ cssLocation }}">
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.6/js/uikit.min.js"></script>

@@ -5,6 +5,7 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.concepts.ElepyAdminPanelPlugin;
 import com.elepy.admin.concepts.PluginHandler;
 import com.elepy.admin.concepts.ViewHandler;
+import com.elepy.admin.views.ResourceLocation;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
@@ -116,6 +117,7 @@ public class ElepyAdminPanel implements ElepyExtension {
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
         model.put("models", models);
+        model.put("cssLocation", request.elepy().getDependency(ResourceLocation.class).getCssLocation());
         model.put("properties", request.elepy().getDependency(Properties.class));
         model.put("plugins", pluginHandler.getPlugins());
         return render(model, templatePath);

@@ -1,12 +1,16 @@
 <script src="https://unpkg.com/node-vibrant@3.1.4/dist/vibrant.min.js" crossorigin="anonymous"></script>
 
 <script>
+    function adjust(color, amount) {
+        return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+    }
+
     Vibrant.from('{{ properties.logo }}').getPalette()
             .then((palette) => {
                 document.documentElement.style
                         .setProperty('--primary-color', palette.Vibrant.hex)
                 document.documentElement.style
-                        .setProperty('--primary-hover-color', palette.DarkVibrant.hex)
+                        .setProperty('--primary-hover-color', adjust(palette.Vibrant.hex, -10))
             });
 
 </script>

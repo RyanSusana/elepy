@@ -1,0 +1,48 @@
+.placeholder {
+
+}
+
+body {
+
+}
+
+.header {
+  .uk-card-title {
+    padding-right: 10px;
+    margin: 0;
+  }
+
+}
+
+.uk-search-input {
+  background-color: #eee;
+  margin-left: 10px;
+  width: auto;
+  flex-grow: 1;
+}
+
+.main-content {
+  padding-top: 0px;
+  margin-left: $sidebar-width;
+
+  //min-height: 100vh;
+  .data-section {
+    height: 70vh;
+    overflow-y: scroll;
+
+  }
+
+  .uk-container .uk-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  #content-form {
+    padding: 2rem;
+    margin-top: 20px;
+  }
+}
+
+.uk-modal-title {
+  color: black;
+}

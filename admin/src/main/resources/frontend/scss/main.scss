@@ -1,0 +1,213 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
+
+$primary-color: #39f;
+
+$dark-grey: #212121;
+
+:root {
+  --primary-color: #{$primary-color};
+  --primary-hover-color: #{darken($primary-color, 5%)};
+  --navbar-bg: var(--primary-color);
+  --navbar-hover-bg: var(--primary-hover-color);
+  --sidebar-color: white;
+  --sidebar-bg: #111;
+  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55);
+  --hover-bg: #99999933;
+  --text-color: #{$dark-grey};
+  --navbar-color: var(--sidebar-color);
+  --text-muted-color: lighten($dark-grey, 10%);
+  --link-color: var(--primary-color);
+  --link-hover-color: var(--primary-hover-color);
+}
+
+$sidebar-color: $primary-color;
+$global-link-color: $primary-color;
+
+$global-font-family: "Open Sans",
+sans-serif;
+$notification-message-background: lighten($dark-grey, 3%);
+$notification-message-color: #ccc;
+$global-primary-background: $primary-color;
+$dark-grey: #212121;
+$global-secondary-background: $dark-grey;
+$grey: #b2b2b2;
+$off-white: #f2f2f2;
+$light-grey: #cccccc;
+$progress-background: darken($dark-grey, 4%);
+
+$navbar-nav-item-hover-color: white;
+$logo-font-size: 1.6rem;
+$logo-color: white;
+$logo-hover-color: darken(white, 10%);
+$navbar-background: $primary-color;
+$navbar-nav-item-height: 50px;
+$navbar-nav-item-color: white;
+$navbar-nav-item-active-color: white;
+$global-background: lighten($off-white, 40%);
+
+$card-default-hover-background: white;
+
+$raleway: "Raleway",
+sans-serif;
+
+$quicksand: "Quicksand",
+sans-serif;
+$roboto-slab: "Roboto Slab",
+serif;
+
+.edit-modal-body {
+  min-height: 65vh !important;
+}
+
+.fas {
+  margin-right: 0.6em;
+}
+
+@mixin background-gradient($opacity: 1,
+  $behind: white,
+  $gradient: white,
+  $direction: to top) {
+  background: $gradient, $behind;
+}
+
+@mixin base-background($default: false) {
+  @if ($default) {
+    background-color: $dark-grey;
+  } @else {
+    @include background-gradient($behind: white, $opacity: 0.1);
+  }
+}
+
+@mixin tint-over($gradient, $opacity: 0.5) {
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: $gradient;
+    opacity: $opacity;
+  }
+}
+
+@import "~uikit/src/scss/variables-theme.scss";
+@import "~uikit/src/scss/mixins-theme.scss";
+
+@mixin hook-pagination-item-active() {
+  font-weight: bold;
+}
+
+@mixin hook-button-primary() {
+  background-color: var(--primary-color);
+}
+
+@mixin hook-button-primary-active() {
+  background-color: var(--primary-color);
+  background-color: var(--primary-hover-color);
+}
+
+@mixin hook-button-primary-hover() {
+  background-color: var(--primary-color);
+  background-color: var(--primary-hover-color);
+}
+
+@mixin hook-base-link() {
+  color: var(--primary-color);
+  color: var(--link-color);
+}
+
+@mixin hook-base-link-hover() {
+  color: var(--primary-color);
+  color: var(--link-color);
+  color: var(--link-hover-color);
+}
+
+@mixin hook-navbar-container() {
+  background: var(--primary-color);
+  background: var(--navbar-bg);
+}
+
+@mixin hook-badge() {
+  background: var(--primary-color);
+}
+
+@mixin hook-form-radio-checked() {
+  background: var(--primary-color);
+}
+
+@mixin hook-form-radio-checked-focus() {
+  background: var(--primary-hover-color);
+}
+
+.alternative-primary {
+  transition: 0.3s all !important;
+  background: $primary-color !important;
+
+  &:hover {
+    background: $primary-color !important;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+}
+
+
+@import "~uikit/src/scss/uikit-theme.scss";
+@import "components/sidebar";
+@import "components/nav";
+@import "components/main-content";
+
+@import "components/login";
+@import "components/sprites";
+
+.uk-button {
+  border-radius: $button-line-height;
+}
+
+.uk-button-large {
+  border-radius: $button-large-line-height;
+}
+
+
+.uk-background-primary {
+  background-color: $background-primary-background;
+  background-color: var(--primary-color);
+}
+
+pre {
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
+}
+
+[v-cloak] {
+  visibility: hidden;
+}
+
+@keyframes fadeInUpSmall {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInUpSmall {
+  animation-name: fadeInUpSmall;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}

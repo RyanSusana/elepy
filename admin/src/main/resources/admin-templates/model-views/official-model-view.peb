@@ -3,12 +3,9 @@
     <{{ theView }} v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 
-<stylesheet src="{{ cssLocation }}"/>
-
 <script src="{{ jsLocation }}"></script>
 <script>
 
-    console.log(new Vue().$options.components)
     const app = new Vue({
         el: '#app',
         delimiters: ['((', '))'],

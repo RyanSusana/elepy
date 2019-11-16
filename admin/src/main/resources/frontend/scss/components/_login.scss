@@ -1,0 +1,42 @@
+
+.login-section {
+
+  width: 100%;
+  height: 100%;
+  background: url(/images/section-background.svg) 50%, #FFFFFF;
+
+
+}
+
+#login-button {
+  margin-top: 2em;
+  width: 50%;
+  padding: 10px;
+  text-transform: none;
+  font-size: 1.08em;
+}
+
+
+.login-box {
+  border-radius: .3em;
+  overflow: hidden;
+
+  background: #FAFAFA;
+
+  box-shadow: 0 2px 1px #aaa;
+
+  hr {
+    border-top: 1px solid #aaa;
+  }
+}
+
+.login-box-content {
+
+}
+
+.login-logo {
+
+  .logo-image {
+    padding: 2.5em 4em;
+  }
+}
