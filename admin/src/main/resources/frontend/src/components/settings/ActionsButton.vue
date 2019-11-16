@@ -71,5 +71,8 @@
 </script>
 
 <style scoped>
+    .action-select{
+        font-size: 1.2rem;
+    }
 
 </style>

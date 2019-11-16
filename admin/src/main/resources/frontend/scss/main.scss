@@ -160,11 +160,11 @@ serif;
 @import "components/sprites";
 
 .uk-button {
-  border-radius: $button-line-height;
+  border-radius: $button-line-height/15;
 }
 
 .uk-button-large {
-  border-radius: $button-large-line-height;
+  border-radius: $button-large-line-height/15;
 }
 
 

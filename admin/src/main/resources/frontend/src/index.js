@@ -28,6 +28,3 @@ requireComponent.keys().forEach(fileName => {
         componentConfig.default || componentConfig
     )
 });
-
-
-import "../scss/main.scss";

@@ -5,7 +5,7 @@
                 <thead>
                 <tr>
                     <th class="uk-table-shrink">
-                        <div class="uk-flex uk-flex-middle">
+                        <div class="uk-flex uk-flex-middle options">
                             <input
                                     :checked="allSelected"
                                     class="uk-checkbox"
@@ -108,6 +108,10 @@
         .uk-button {
             padding: 0 10px;
         }
+    }
+    .options
+    {
+        min-width: 70px;
     }
 </style>
 <script>

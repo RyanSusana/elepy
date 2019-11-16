@@ -28,7 +28,7 @@
         methods: {
             getModel() {
                 axios.get(Utils.url + "/config").then(response => {
-                    this.selectedModel = response.data[4];
+                    this.selectedModel = response.data[2];
                     this.selectedModel.url = this.url;
                 });
             }
@@ -40,5 +40,7 @@
     };
 </script>
 
-<style>
+<style  lang="scss">
+
+    @import "../scss/main.scss";
 </style>
