@@ -18,6 +18,8 @@ public enum FilterType {
     GREATER_THAN_OR_EQUALS("Greater than or equal to", "gte", FieldType.NUMBER, FieldType.DATE),
     LESSER_THAN_OR_EQUALS("Lesser than or equal to", "lte", FieldType.NUMBER, FieldType.DATE),
 
+    //Strings
+    STARTS_WITH("Starts with", "startsWith", FieldType.TEXT, FieldType.ARRAY)
     ;
 
     private final String prettyName;

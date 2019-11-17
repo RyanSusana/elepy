@@ -23,8 +23,12 @@ public class MongoFilterTemplateFactory {
             case LESSER_THAN_OR_EQUALS:
                 return new MongoFilterTemplate("$lte", filter.getFilterableField(), filter.getFilterValue());
             case CONTAINS:
-                final Pattern pattern = Pattern.compile(".*" + filter.getFilterValue() + ".*", Pattern.CASE_INSENSITIVE);
-                return new MongoFilterTemplate("$regex", filter.getFilterableField(), pattern.toString());
+                final Pattern patternContains = Pattern.compile(".*" + filter.getFilterValue() + ".*", Pattern.CASE_INSENSITIVE);
+                return new MongoFilterTemplate("$regex", filter.getFilterableField(), patternContains.toString());
+            case STARTS_WITH:
+                final Pattern patternStartsWith = Pattern.compile( filter.getFilterValue() + ".*", Pattern.CASE_INSENSITIVE);
+                return new MongoFilterTemplate("$regex", filter.getFilterableField(), patternStartsWith.toString());
+
         }
         throw new ElepyException("Mongo does not support: " + filter.getFilterType().getName());
     }
