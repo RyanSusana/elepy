@@ -2,6 +2,7 @@ package com.elepy.firebase;
 
 import com.elepy.dao.Filter;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.FieldType;
 import com.google.cloud.firestore.Query;
 
 public class FirestoreQueryFactory {
@@ -20,6 +21,12 @@ public class FirestoreQueryFactory {
                 return query.whereLessThan(name, value);
             case LESSER_THAN_OR_EQUALS:
                 return query.whereLessThanOrEqualTo(name, value);
+            case CONTAINS:
+                if (filter.getFilterableField().getFieldType().equals(FieldType.ARRAY)) {
+                    return query.whereArrayContains(name, value);
+                } else {
+                    throw new ElepyException("Firestore 'CONTAINS' only works on arrays");
+                }
             default:
                 throw new ElepyException("Firestore does not support the filter: " + filter.getFilterType().getName());
         }
