@@ -38,7 +38,7 @@ public class DefaultCreate<T> implements CreateHandler<T> {
 
     }
 
-    private void singleCreate(HttpContext context, T item, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
+    protected void singleCreate(HttpContext context, T item, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
         evaluate(item, modelContext, context, dao);
 
         create(context, dao, Collections.singletonList(item));

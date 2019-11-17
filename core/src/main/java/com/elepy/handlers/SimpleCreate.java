@@ -30,7 +30,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             beforeCreate(item, context.request(), dao);
 
-            super.handleCreate(context, dao, modelContext, objectMapper);
+            super.singleCreate(context, item, dao, modelContext);
 
             afterCreate(item, dao);
             context.response().status(200);
