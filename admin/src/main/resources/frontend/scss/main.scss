@@ -124,20 +124,20 @@ serif;
 }
 
 @mixin hook-navbar-container() {
-  background: var(--primary-color);
-  background: var(--navbar-bg);
+  background-color: var(--primary-color);
+  background-color: var(--navbar-bg);
 }
 
 @mixin hook-badge() {
-  background: var(--primary-color);
+  background-color: var(--primary-color);
 }
 
 @mixin hook-form-radio-checked() {
-  background: var(--primary-color);
+  background-color: var(--primary-color);
 }
 
 @mixin hook-form-radio-checked-focus() {
-  background: var(--primary-hover-color);
+  background-color: var(--primary-hover-color);
 }
 
 .alternative-primary {
