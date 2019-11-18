@@ -7,7 +7,7 @@ import com.elepy.http.HttpMethod;
 
 import java.lang.annotation.*;
 
-@Repeatable(Actions.class)
+@Repeatable(Action.List.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Action {
@@ -27,4 +27,10 @@ public @interface Action {
      * A list of required permissions to execute this A
      */
     String[] requiredPermissions() default Permissions.AUTHENTICATED;
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE})
+    @interface List {
+        Action[] value();
+    }
 }
