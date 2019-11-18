@@ -394,7 +394,7 @@ public class Elepy implements ElepyContext {
      * all dependencies at the end of the {@link #start()} call.
      * <p>
      * By enabling strict mode, Elepy will check for unsatisfied/circular
-     * dependencies every time you call {@link #registerDependency(Class, String)} )}
+     * dependencies every time you call  )}
      *
      * @param strict enable/disable strict mode
      * @return The {@link com.elepy.Elepy} instance
