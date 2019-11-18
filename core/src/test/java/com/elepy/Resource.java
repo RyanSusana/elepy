@@ -71,6 +71,9 @@ public class Resource {
     @Uneditable
     private String nonEditable;
 
+    @Hidden
+    private String hidden;
+
     public Resource() {
     }
 
@@ -219,6 +222,14 @@ public class Resource {
         this.searchableField = searchableField;
     }
 
+
+    public String getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(String hidden) {
+        this.hidden = hidden;
+    }
 
     public int getId() {
         return id;

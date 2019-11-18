@@ -2,6 +2,7 @@ package com.elepy.describers;
 
 import com.elepy.Resource;
 import com.elepy.ResourceArray;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
 import com.elepy.models.Model;
 import com.elepy.models.Property;
@@ -23,6 +24,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ModelUtilsTest {
+
+    @Test
+    void testHiddenField() {
+
+        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+
+        assertThatExceptionOfType(ElepyConfigException.class)
+                .isThrownBy(() -> modelFromClass.getProperty("hidden"))
+                .withMessageContaining("hidden");
+    }
 
     @Test
     void testCorrectOrderingAndPropertySizeOfModel() {
