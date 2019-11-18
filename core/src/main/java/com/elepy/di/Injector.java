@@ -65,7 +65,7 @@ public class Injector {
     }
 
     private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {
-        final ContextKey<?> contextKey = ContextKey.forX(annotatedType);
+        final ContextKey<?> contextKey = ContextKey.forAnnotatedElement(annotatedType);
         return elepyContext.getDependency(contextKey.getType(), contextKey.getTag());
 
     }

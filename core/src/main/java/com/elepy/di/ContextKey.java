@@ -20,7 +20,7 @@ public class ContextKey<T> {
         this.tag = tag == null ? "" : tag;
     }
 
-    public static ContextKey<?> forX(AnnotatedElement element) {
+    public static ContextKey<?> forAnnotatedElement(AnnotatedElement element) {
 
         final Class<?> returnType = ReflectionUtils.returnTypeOf(element);
         if (Crud.class.equals(returnType)) {
