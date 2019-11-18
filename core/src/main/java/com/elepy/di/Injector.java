@@ -1,7 +1,6 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
-import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
 
@@ -9,7 +8,6 @@ import java.lang.reflect.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.elepy.utils.ReflectionUtils.getDependencyTag;
 import static com.elepy.utils.ReflectionUtils.getElepyAnnotatedConstructor;
 
 public class Injector {
@@ -67,23 +65,13 @@ public class Injector {
     }
 
     private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {
-        Inject annotation = annotatedType.getAnnotation(Inject.class);
-        if (annotation.type().equals(Object.class)) {
-            if (annotatedType instanceof Field) {
-                if (Crud.class.isAssignableFrom(((Field) annotatedType).getType())) {
-                    return elepyContext.getDependency(Crud.class, getDependencyTag(annotatedType));
-                } else {
-                    return elepyContext.getDependency(((Field) annotatedType).getType(), annotation.tag());
-                }
-            } else if (annotatedType instanceof Parameter) {
-                if (Crud.class.isAssignableFrom(((Parameter) annotatedType).getType())) {
-                    return elepyContext.getDependency(Crud.class, getDependencyTag(annotatedType));
-                } else {
-                    return elepyContext.getDependency(((Parameter) annotatedType).getType(), getDependencyTag(annotatedType));
-                }
-            }
+        if (annotatedType instanceof Field) {
+            return elepyContext.getDependency(((Field) annotatedType).getType());
+        } else if (annotatedType instanceof Parameter) {
+
+            return elepyContext.getDependency(((Parameter) annotatedType).getType());
         }
-        return elepyContext.getDependency(annotation.type(), annotation.tag());
+        return elepyContext.getDependency((Class<?>) annotatedType);
     }
 
     private Object getDependencyFromParameter(Parameter parameter) {
@@ -91,13 +79,11 @@ public class Injector {
         Inject inject = parameter.getAnnotation(Inject.class);
 
         if (inject != null) {
-            if (Crud.class.isAssignableFrom(parameter.getType())) {
-                return elepyContext.getDependency(Crud.class, getDependencyTag(parameter));
-            } else {
-                return elepyContext.getDependency(parameter.getType(), getDependencyTag(parameter));
-            }
+
+            return elepyContext.getDependency(parameter.getType());
+
         }
-        return elepyContext.getDependency(parameter.getType(), null);
+        return elepyContext.getDependency(parameter.getType());
     }
 
     private <T> T initializeObjectViaConstructor(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {

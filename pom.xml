@@ -20,10 +20,9 @@
         <unirest.version>1.4.9</unirest.version>
         <jackson.version>2.10.0</jackson.version>
         <tika.version>1.22</tika.version>
-        <truth.version>1.0</truth.version>
         <assertj.version>3.14.0</assertj.version>
         <headlessMode>false</headlessMode>
-        <revision>2.4.1</revision>
+        <revision>3.0.0-alpha-1</revision>
     </properties>
 
     <licenses>
@@ -106,12 +105,6 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.truth</groupId>
-            <artifactId>truth</artifactId>
-            <version>${truth.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -1,10 +1,13 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
+import com.elepy.annotations.RestModel;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
+import com.googlecode.gentyref.GenericTypeReflector;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -98,15 +101,17 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
 
-    private <T> ContextKey<T> getCrudKey(Class<T> cls) {
-        List<Map.Entry<ContextKey, Object>> first = dependencies.entrySet().stream().filter(contextKeyObjectEntry ->
-                contextKeyObjectEntry.getKey().getType().equals(cls)).collect(Collectors.toList());
+    private ContextKey getCrudKey(Class<?> cls) {
 
-        if (first.size() == 1) {
-            return first.get(0).getKey();
-        } else {
-            return new ContextKey<>(cls, null);
-        }
+        final var exactSuperType = (ParameterizedType) GenericTypeReflector.getExactSuperType(cls, Crud.class);
+
+        final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
+        final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
+        declaredAnnotation.slug();
+
+        return new ContextKey(Crud.class, declaredAnnotation.slug());
+
+
     }
 
 
