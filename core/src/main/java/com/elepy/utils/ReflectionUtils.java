@@ -6,6 +6,7 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Route;
 import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.googlecode.gentyref.GenericTypeReflector;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -123,6 +124,9 @@ public class ReflectionUtils {
     public static Class<?> returnTypeOf(AnnotatedElement field) {
         if (field instanceof AnnotatedType) {
             return (Class) ((AnnotatedType) field).getType();
+        }
+        if(field instanceof Parameter){
+            return GenericTypeReflector.erase(((Parameter) field).getType());
         }
         return (field instanceof Field) ? ((Field) field).getType() : ((Method) field).getReturnType();
     }

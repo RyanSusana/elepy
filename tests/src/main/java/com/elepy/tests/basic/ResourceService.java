@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class ResourceService extends DefaultService<Resource> {
 
-    @Inject(tag = "/resources", type = Crud.class)
+    @Inject
     private Crud<Resource> crud;
 
     @Route(path = "/resources/:id/extra", requiredPermissions = {}, method = HttpMethod.GET)
