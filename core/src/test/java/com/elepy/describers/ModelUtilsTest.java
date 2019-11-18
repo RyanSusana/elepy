@@ -40,8 +40,8 @@ public class ModelUtilsTest {
 
         final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        //Should be + 1 because of the   @GeneratedField method
-        assertThat(modelFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length + 1);
+        //Keep in mind that there is one hidden field
+        assertThat(modelFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length );
         assertThat(modelFromClass.getProperties().get(0).getName()).isEqualTo("id");
         assertThat(modelFromClass.getProperties().get(modelFromClass.getProperties().size() - 1).getName()).isEqualTo("generated");
     }
