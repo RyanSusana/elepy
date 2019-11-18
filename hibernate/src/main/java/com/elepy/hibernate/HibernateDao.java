@@ -39,6 +39,9 @@ public class HibernateDao<T> implements Crud<T> {
         this.objectMapper = objectMapper;
     }
 
+    public SessionFactory getSessionFactory(){
+        return sessionFactory;
+    }
 
     private Page<T> toPage(Query<T> query, int pageSize, long pageNumber, long amountOfResultsWithThatQuery) {
         final Query<T> q = query.setMaxResults(pageSize).setFirstResult(((int) pageNumber - 1) * pageSize);
