@@ -1,18 +1,17 @@
 package com.elepy.models.options;
 
 import com.elepy.annotations.Array;
-import com.elepy.annotations.InnerObject;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
+import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.*;
 import java.util.List;
 
-import static com.elepy.models.FieldType.guessByClass;
+import static com.elepy.models.FieldType.ARRAY;
+import static com.elepy.models.FieldType.guessFieldType;
 
 public class ArrayOptions<T extends Options> implements Options {
 
@@ -34,11 +33,11 @@ public class ArrayOptions<T extends Options> implements Options {
     }
 
 
-    public static ArrayOptions of(AccessibleObject field) {
+    public static ArrayOptions of(AnnotatedElement field) {
         return of(field, getArrayOptions(field));
     }
 
-    public static ArrayOptions of(AccessibleObject field, Options options) {
+    public static ArrayOptions of(AnnotatedElement field, Options options) {
         if (field instanceof Field) {
 
             final Array annotation = field.getAnnotation(Array.class);
@@ -51,8 +50,8 @@ public class ArrayOptions<T extends Options> implements Options {
 
             boolean sortable = annotation == null ? isDefaultSortable : annotation.sortable();
 
-            final Class arrayGenericType = (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[0];
-            final FieldType arrayType = guessByClass(arrayGenericType);
+            final AnnotatedType arrayGenericType = ((AnnotatedParameterizedType) ((Field) field).getAnnotatedType()).getAnnotatedActualTypeArguments()[0];
+            final FieldType arrayType = guessFieldType(arrayGenericType);
             return new ArrayOptions(sortable, maximumArrayLength, minimumArrayLength, arrayType, options);
 
         } else {
@@ -60,31 +59,18 @@ public class ArrayOptions<T extends Options> implements Options {
         }
     }
 
-    private static Options getArrayOptions(AccessibleObject field) {
-        final Class arrayGenericType = (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[0];
+    private static Options getArrayOptions(AnnotatedElement accessibleObject) {
+        final var genericType = (AnnotatedParameterizedType) ((Field) accessibleObject).getAnnotatedType();
 
-        final FieldType arrayType = guessByClass(arrayGenericType);
+        final var annotatedType = genericType.getAnnotatedActualTypeArguments()[0];
 
-        switch (arrayType) {
-            case NUMBER:
-                return NumberOptions.of(field, arrayGenericType);
-            case TEXT:
-                return TextOptions.of(field);
-            case ENUM:
-                return EnumOptions.of(arrayGenericType);
-            case DATE:
-                return DateOptions.of(field);
-            case BOOLEAN:
-                return BooleanOptions.of(field);
-            case OBJECT:
-                return ObjectOptions.of(arrayGenericType, field.getAnnotation(InnerObject.class));
-            case FILE_REFERENCE:
-                return FileReferenceOptions.of(field);
-            case ARRAY:
-                throw new ElepyConfigException(String.format("Collections within Collections are not allowed please rethink the field '%s'", ((Field) field).getName()));
-            default:
-                throw new ElepyConfigException(String.format("FieldType '%s' not supported by Collections", arrayType.name()));
+        final FieldType arrayType = guessFieldType(annotatedType);
+
+        if (arrayType.equals(ARRAY)) {
+            throw new ElepyConfigException("Elepy doesn't support multi-dimensional Collections");
         }
+        return ModelUtils.getOptions(annotatedType, arrayType);
+
     }
 
     public boolean isSortable() {

@@ -3,10 +3,12 @@ package com.elepy.models;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.Text;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.uploads.FileReference;
 import com.google.common.primitives.Primitives;
 
-import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -31,19 +33,29 @@ public enum FieldType {
     }
 
 
-    public static FieldType guessType(AccessibleObject property) {
+    public static FieldType guessFieldType(AnnotatedElement property) {
         if (property instanceof Field) {
-            return guessType((Field) property);
-        } else {
-            return guessType((Method) property);
+            return guessByField((Field) property);
+        } else if (property instanceof Method) {
+            return guessByMethod((Method) property);
+        } else if (property instanceof AnnotatedType) {
+            return guessByAnnotatedType((AnnotatedType) property);
+        } else if (property instanceof Class) {
+            return guessByClass((Class<?>) property);
         }
+
+        throw new ElepyConfigException("AnnotatedElement must be a Field, Method, Class, or Generic Type");
     }
 
-    public static FieldType guessType(Method method) {
+    private static FieldType guessByAnnotatedType(AnnotatedType annotatedType) {
+        return getByAnnotation(annotatedType).orElse(guessByClass((Class<?>) annotatedType.getType()));
+    }
+
+    private static FieldType guessByMethod(Method method) {
         return getByAnnotation(method).orElse(guessByClass(method.getReturnType()));
     }
 
-    public static FieldType guessType(java.lang.reflect.Field field) {
+    private static FieldType guessByField(java.lang.reflect.Field field) {
         if (isCollection(field.getType())) {
             return ARRAY;
         }
@@ -51,7 +63,7 @@ public enum FieldType {
         return getByAnnotation(field).orElse(guessByClass(field.getType()));
     }
 
-    public static FieldType guessByClass(Class<?> type) {
+    private static FieldType guessByClass(Class<?> type) {
         if (type.isEnum()) {
             return ENUM;
         }
@@ -72,7 +84,7 @@ public enum FieldType {
         return false;
     }
 
-    private static Optional<FieldType> getByAnnotation(AccessibleObject accessibleObject) {
+    private static Optional<FieldType> getByAnnotation(AnnotatedElement accessibleObject) {
         if (accessibleObject.isAnnotationPresent(com.elepy.annotations.FileReference.class)) {
             return Optional.of(FILE_REFERENCE);
         }

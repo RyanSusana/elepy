@@ -1,9 +1,7 @@
 package com.elepy;
 
-import com.elepy.annotations.Array;
 import com.elepy.annotations.Number;
-import com.elepy.annotations.RestModel;
-import com.elepy.annotations.Text;
+import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 
 import java.util.Date;
@@ -16,22 +14,29 @@ public class ResourceArray {
     private int id;
 
     private List<String> arrayString;
+
+    private List<@FileReference String> arrayFileReference;
     private Set<Integer> arrayNumber;
     private List<Date> arrayDate;
     private List<Resource> arrayObject;
     private List<FieldType> arrayEnum;
     private List<Boolean> arrayBoolean;
+    private List<Resource> arrayObjects;
 
 
     @Array(maximumArrayLength = 2, minimumArrayLength = 1)
-    @Text(minimumLength = 10)
-    private List<String> arrayStringMax2Min1TextWithMinimumLengthOf10;
+    private List<@Text(minimumLength = 10) String> arrayStringMax2Min1TextWithMinimumLengthOf10;
 
-    @Number(minimum = 10)
-    private List<Integer> arrayNumberMax2Min1NumberWithMinimumOf10;
+    private List<@Number(minimum = 10) Integer> arrayNumberMax2Min1NumberWithMinimumOf10;
 
 
-    private List<Resource> arrayObjects;
+    public List<String> getArrayFileReference() {
+        return arrayFileReference;
+    }
+
+    public void setArrayFileReference(List<String> arrayFileReference) {
+        this.arrayFileReference = arrayFileReference;
+    }
 
     public List<Resource> getArrayObjects() {
         return arrayObjects;

@@ -4,7 +4,7 @@ import com.elepy.annotations.Number;
 import com.elepy.models.NumberType;
 import com.elepy.utils.ReflectionUtils;
 
-import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 
 public class NumberOptions implements Options {
     private float minimum;
@@ -17,18 +17,13 @@ public class NumberOptions implements Options {
         this.numberType = numberType;
     }
 
-    public static NumberOptions of(AccessibleObject field) {
-        return of(field, ReflectionUtils.returnTypeOf(field));
-    }
-
-    //This method  was made to get number configuration from arrays by passing the actual  generic class type
-    public static NumberOptions of(AccessibleObject field, Class<?> actualNumberType) {
+    public static NumberOptions of(AnnotatedElement field) {
         final Number annotation = field.getAnnotation(Number.class);
         return new NumberOptions(
                 annotation == null ? Integer.MIN_VALUE : annotation.minimum(),
                 annotation == null ? Integer.MAX_VALUE : annotation.maximum(),
-                NumberType.guessType(actualNumberType)
-        );
+                NumberType.guessType(ReflectionUtils.returnTypeOf(field)
+                ));
     }
 
     public float getMinimum() {

@@ -3,7 +3,7 @@ package com.elepy.models.options;
 import com.elepy.annotations.Text;
 import com.elepy.models.TextType;
 
-import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 
 public class TextOptions implements Options {
     private int minimumLength;
@@ -16,7 +16,7 @@ public class TextOptions implements Options {
         this.textType = textType;
     }
 
-    public static TextOptions of(AccessibleObject accessibleObject) {
+    public static TextOptions of(AnnotatedElement accessibleObject) {
         final Text annotation = accessibleObject.getAnnotation(Text.class);
         return new TextOptions(
                 annotation == null ? 0 : annotation.minimumLength(),

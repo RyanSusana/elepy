@@ -15,6 +15,6 @@ public class NavigationMenu {
 
     private String subtitle;
 
-    @InnerObject(maxRecursionDepth = 20)
-    private List<NavigationItem> menuItems;
+
+    private List<@InnerObject(maxRecursionDepth = 20)NavigationItem> menuItems;
 } 

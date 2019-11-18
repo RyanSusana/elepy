@@ -4,6 +4,7 @@ import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class EnumOptions implements Options {
         return new EnumOptions(MapperUtils.getEnumMapValues(returnType));
     }
 
-    public static EnumOptions of(AccessibleObject field) {
+    public static EnumOptions of(AnnotatedElement field) {
         final Class<?> returnType = ReflectionUtils.returnTypeOf(field);
 
         return of((Class<? extends Enum<?>>) returnType);

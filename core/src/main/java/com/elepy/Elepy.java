@@ -75,13 +75,6 @@ public class Elepy implements ElepyContext {
         init();
     }
 
-    private void testSpeed(String name, Runnable runnable) {
-
-        final var l = System.currentTimeMillis();
-        runnable.run();
-        System.out.println(name + ": " + (System.currentTimeMillis() - l));
-    }
-
     private void init() {
         this.http.port(1337);
 
@@ -626,7 +619,7 @@ public class Elepy implements ElepyContext {
 
     public Elepy withProperties(URL url) {
         try {
-            logger.warn("Propert");
+            logger.warn("Properties file not found");
 
             properties.load(url.openStream());
         } catch (IOException e) {

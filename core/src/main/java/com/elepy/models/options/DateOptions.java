@@ -4,6 +4,7 @@ import com.elepy.annotations.DateTime;
 import com.elepy.utils.DateUtils;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import java.util.Date;
 
 public class DateOptions implements Options {
@@ -18,7 +19,7 @@ public class DateOptions implements Options {
         this.includeTime = includeTime;
     }
 
-    public static DateOptions of(AccessibleObject field) {
+    public static DateOptions of(AnnotatedElement field) {
         final DateTime annotation = field.getAnnotation(DateTime.class);
         if (annotation != null) {
             return new DateOptions(DateUtils.guessDate(annotation.minimumDate(), annotation.format()), DateUtils.guessDate(annotation.maximumDate(), annotation.format()), annotation.includeTime());

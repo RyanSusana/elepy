@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Signifies that this field is a Date.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.TYPE_USE, ElementType.METHOD})
 public @interface DateTime {
 
     /**

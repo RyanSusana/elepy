@@ -185,6 +185,16 @@ public class ModelUtilsTest {
         assertThat(arrayString.getArrayType()).isEqualTo(FieldType.TEXT);
     }
 
+    @Test
+    void testCorrectArray_FILE_REFERENCE() {
+        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+
+        final ArrayOptions arrayString = model.getProperty("arrayFileReference").getOptions();
+
+        assertThat(arrayString.getArrayType())
+                .isEqualTo(FILE_REFERENCE);
+    }
+
 
     @Test
     void testCorrectArray_NUMBER() {
@@ -257,7 +267,10 @@ public class ModelUtilsTest {
     }
 
     private List<Property> goDeeper(String propertyName, List<Property> currentProperties) {
-        final Property recursiveObject = currentProperties.stream().filter(property -> property.getName().equals(propertyName)).findAny().orElseThrow();
+        final Property recursiveObject = currentProperties.stream().filter(property -> property.getName()
+                .equals(propertyName))
+                .findAny()
+                .orElseThrow();
 
         if (recursiveObject.getOptions() instanceof ArrayOptions) {
             final ArrayOptions<ObjectOptions> options = recursiveObject.getOptions();

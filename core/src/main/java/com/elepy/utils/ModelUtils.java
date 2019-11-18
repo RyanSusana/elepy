@@ -14,6 +14,7 @@ import com.elepy.models.options.*;
 
 import javax.persistence.Column;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -147,7 +148,7 @@ public class ModelUtils {
 
     private static Property createTypedProperty(AccessibleObject field) {
         Property property = new Property();
-        FieldType fieldType = FieldType.guessType(field);
+        FieldType fieldType = FieldType.guessFieldType(field);
 
 
         property.setType(fieldType);
@@ -156,7 +157,7 @@ public class ModelUtils {
         return property;
     }
 
-    private static Options getOptions(AccessibleObject field, FieldType fieldType) {
+    public static Options getOptions(AnnotatedElement field, FieldType fieldType) {
         switch (fieldType) {
             case TEXT:
                 return TextOptions.of(field);

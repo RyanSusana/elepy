@@ -18,7 +18,7 @@ public class FilterableField {
         if (field == null) {
             throw new ElepyException(String.format("No properties titled '%s'", propertyName));
         }
-        this.fieldType = FieldType.guessType(field);
+        this.fieldType = FieldType.guessFieldType(field);
         this.name = ReflectionUtils.getPropertyName(field);
     }
 

@@ -8,6 +8,7 @@ import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class ObjectOptions implements Options {
 
     }
 
-    public static ObjectOptions of(AccessibleObject field) {
+    public static ObjectOptions of(AnnotatedElement field) {
         Class<?> objectType = ReflectionUtils.returnTypeOf(field);
         final InnerObject annotation = field.getAnnotation(InnerObject.class);
         return of(objectType, annotation);
@@ -78,7 +79,7 @@ public class ObjectOptions implements Options {
             return null;
         } else {
             final Class<?> fieldType = ReflectionUtils.returnTypeOf(field);
-            final boolean isArray = FieldType.guessByClass(fieldType).equals(FieldType.ARRAY);
+            final boolean isArray = FieldType.guessFieldType(fieldType).equals(FieldType.ARRAY);
             final Class<?> objectType = isArray ? ReflectionUtils.getGenericType(field, 0) : fieldType;
             final Property property = new Property();
 
@@ -107,7 +108,7 @@ public class ObjectOptions implements Options {
 
     private static void setOptions(AccessibleObject field, Property property, ObjectOptions options) {
 
-        final var fieldType = FieldType.guessType(field);
+        final var fieldType = FieldType.guessFieldType(field);
 
         property.setType(fieldType);
         property.setOptions(fieldType.equals(FieldType.ARRAY) ? ArrayOptions.of(field, options) : options);
@@ -123,7 +124,7 @@ public class ObjectOptions implements Options {
 
     // This method should check if a collection or object is recursive in nature
     private static boolean isRecursive(Class<?> recursionTypeToCheck, AccessibleObject field) {
-        final var isACollection = FieldType.guessType(field).equals(FieldType.ARRAY);
+        final var isACollection = FieldType.guessFieldType(field).equals(FieldType.ARRAY);
 
         if (isACollection && ReflectionUtils.getGenericType(field, 0).equals(recursionTypeToCheck)) {
             return true;

@@ -120,7 +120,10 @@ public class ReflectionUtils {
         }
     }
 
-    public static Class<?> returnTypeOf(AccessibleObject field) {
+    public static Class<?> returnTypeOf(AnnotatedElement field) {
+        if (field instanceof AnnotatedType) {
+            return (Class) ((AnnotatedType) field).getType();
+        }
         return (field instanceof Field) ? ((Field) field).getType() : ((Method) field).getReturnType();
     }
 

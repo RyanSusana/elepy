@@ -4,6 +4,7 @@ import com.elepy.annotations.FileReference;
 import com.elepy.uploads.FileUploadEvaluator;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 
 public class FileReferenceOptions implements Options {
     private String allowedMimeType;
@@ -14,10 +15,11 @@ public class FileReferenceOptions implements Options {
         this.maximumFileSize = maximumFileSize;
     }
 
-    public static FileReferenceOptions of(AccessibleObject accessibleObject) {
+    public static FileReferenceOptions of(AnnotatedElement accessibleObject){
         final var annotation = accessibleObject.getAnnotation(FileReference.class);
 
         return new FileReferenceOptions(annotation == null ? "*/*" : annotation.allowedMimeType(), annotation == null ? FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE : annotation.maximumFileSize());
+
     }
 
     public String getAllowedMimeType() {

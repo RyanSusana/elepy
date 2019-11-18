@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * Boxed or unboxed
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE_USE})
 public @interface Number {
     /**
      * @deprecated use Java Bean Validation instead
