@@ -41,7 +41,6 @@ public class ReflectionUtils {
         return fields;
     }
 
-
     @SafeVarargs
     public static Optional<Field> searchForFieldWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
         return searchForFieldsWithAnnotation(cls, annotations).stream().findFirst();
@@ -245,46 +244,6 @@ public class ReflectionUtils {
         return toReturn;
     }
 
-
-    /**
-     * Tries to get a tag from a {@link Field} or {@link Parameter}, defaults to null
-     *
-     * @param type Field or Parameter
-     * @return the guessed field
-     */
-    public static String getDependencyTag(AnnotatedElement type) {
-        Inject injectAnnotation = type.getAnnotation(Inject.class);
-
-        if (injectAnnotation != null && !injectAnnotation.tag().isEmpty()) {
-            return injectAnnotation.tag();
-        }
-
-        Tag tag = type.getAnnotation(Tag.class);
-        if (tag != null && !tag.value().isEmpty()) {
-            return tag.value();
-        }
-
-        if (type instanceof Field) {
-            Class<?> fieldType = ((Field) type).getType();
-
-            tag = fieldType.getAnnotation(Tag.class);
-            if (tag != null) {
-                return tag.value();
-            }
-            try {
-                final Class<?> genericType = getGenericType((Field) type, 0);
-                if (genericType != null) {
-                    RestModel restModel = genericType.getAnnotation(RestModel.class);
-                    if (restModel != null) {
-                        return restModel.slug();
-                    }
-                }
-            } catch (ClassCastException ignored) {
-                return null;
-            }
-        }
-        return null;
-    }
 
     public static Class getGenericType(AccessibleObject field, int parameterIndex) {
         return (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[parameterIndex];

@@ -2,7 +2,6 @@ package com.elepy.mongo.fast;
 
 
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.annotations.Inject;
 import com.elepy.annotations.Route;
 import com.elepy.dao.Crud;
 import com.elepy.http.HttpMethod;
@@ -14,7 +13,7 @@ public class ResourceExtraRoutes {
     private Crud<Resource> resourceCrud;
 
     @ElepyConstructor
-    public ResourceExtraRoutes(@Inject(tag = "/resources") Crud<Resource> resourceCrud) {
+    public ResourceExtraRoutes(Crud<Resource> resourceCrud) {
         this.resourceCrud = resourceCrud;
     }
 

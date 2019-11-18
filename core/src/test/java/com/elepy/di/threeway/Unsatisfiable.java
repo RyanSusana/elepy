@@ -1,8 +1,10 @@
 package com.elepy.di.threeway;
 
 import com.elepy.annotations.Inject;
+import com.elepy.dao.Crud;
 
 public class Unsatisfiable {
-    @Inject(tag = "no way")
-    Dependency1 dependency1;
+    //This is unsatisfiable
+    @Inject
+    Crud<Dependency1> dependency1;
 }

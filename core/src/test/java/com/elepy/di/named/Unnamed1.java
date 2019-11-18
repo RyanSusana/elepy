@@ -4,9 +4,9 @@ import com.elepy.annotations.Inject;
 
 public class Unnamed1 {
 
-    @Inject(tag = "named1")
+    @Inject
     private Named1 named1;
 
-    @Inject(tag = "named2")
+    @Inject
     private Named2 named2;
 }

@@ -14,7 +14,7 @@ public class ResourceExtraRoutes {
     private Crud<Resource> resourceCrud;
 
     @ElepyConstructor
-    public ResourceExtraRoutes(@Inject(tag = "/resources") Crud<Resource> resourceCrud) {
+    public ResourceExtraRoutes(Crud<Resource> resourceCrud) {
         this.resourceCrud = resourceCrud;
     }
 

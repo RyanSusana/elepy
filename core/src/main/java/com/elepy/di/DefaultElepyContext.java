@@ -12,18 +12,20 @@ public class DefaultElepyContext implements ElepyContext {
     private final Map<ContextKey, Object> dependencies;
     private final Map<ContextKey, Supplier> dependencySuppliers;
 
-    private final Injector injector;
-
     private List<ContextKey> preInitialisedDependencies;
     private boolean strictMode = false;
-    private DependencyResolver dependencyResolver;
+
+    private final Resolver resolver;
+    private final Injector injector;
+
 
     public DefaultElepyContext() {
         this.dependencies = new HashMap<>();
         this.dependencySuppliers = new HashMap<>();
 
-        this.dependencyResolver = new DependencyResolver(this);
         this.preInitialisedDependencies = new ArrayList<>();
+
+        this.resolver = new Resolver(this);
         this.injector = new Injector(this);
     }
 
@@ -65,7 +67,7 @@ public class DefaultElepyContext implements ElepyContext {
 
     public <T> T getDependency(Class<T> cls, String tag) {
 
-        final ContextKey<T> key = new ContextKey<>(cls,tag);
+        final ContextKey<T> key = new ContextKey<>(cls, tag);
 
         if (dependencies.containsKey(key)) {
             return (T) dependencies.get(key);
@@ -84,7 +86,7 @@ public class DefaultElepyContext implements ElepyContext {
 
 
     public void registerDependency(Class<?> clazz) {
-        registerDependency(clazz, ReflectionUtils.getDependencyTag(clazz));
+        registerDependency(clazz, (String) null);
     }
 
     public void registerDependency(Class<?> clazz, String tag) {
@@ -92,7 +94,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public void registerDependency(ContextKey contextKey) {
-        dependencyResolver.add(contextKey);
+        resolver.add(contextKey);
         if (strictMode) {
             resolveDependencies();
         }
@@ -103,7 +105,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public void resolveDependencies() {
-        dependencyResolver.tryToSatisfy();
+        resolver.tryToSatisfy();
         injectPreInitializedDependencies();
     }
 

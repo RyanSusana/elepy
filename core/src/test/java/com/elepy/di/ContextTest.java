@@ -87,17 +87,6 @@ public class ContextTest extends Base {
     }
 
     @Test
-    void testTaggedDependencies() {
-        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
-
-        defaultElepyContext.registerDependency(Named1.class);
-        defaultElepyContext.registerDependency(Named2.class);
-        defaultElepyContext.registerDependency(Unnamed1.class);
-
-        assertDoesNotThrow(defaultElepyContext::resolveDependencies);
-    }
-
-    @Test
     void testTreeDependenciesPreFilled() {
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
 

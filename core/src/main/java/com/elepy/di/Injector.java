@@ -10,16 +10,23 @@ import java.util.Optional;
 
 import static com.elepy.utils.ReflectionUtils.getElepyAnnotatedConstructor;
 
-public class Injector {
+class Injector {
 
 
     private final ElepyContext elepyContext;
 
-    public Injector(ElepyContext elepyContext) {
+    Injector(ElepyContext elepyContext) {
         this.elepyContext = elepyContext;
     }
 
-    public <T> T initializeAndInject(Class<? extends T> cls) {
+    /**
+     * Initializes  a class  while injecting dependencies.
+     *
+     * @param cls The class to initialize
+     * @param <T> The return type
+     * @return an initialized version of the class
+     */
+    <T> T initializeAndInject(Class<? extends T> cls) {
 
         try {
             T object = initializeObjectViaConstructor(cls);
@@ -31,18 +38,26 @@ public class Injector {
         }
     }
 
-    public void injectFields(Object object) {
+
+    /**
+     * Injects all the field of an object that are null  and are  annotated with {@link Inject}
+     *
+     * @param object the object to inject
+     */
+    void injectFields(Object object) {
         List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class);
 
-        try {
-            for (Field field : fields) {
+
+        for (Field field : fields) {
+            try {
                 if (field.get(object) == null) {
                     field.set(object, getDependencyForAnnotatedElement(field));
                 }
+            } catch (IllegalAccessException e) {
+                throw new ElepyConfigException("Failed to inject dependencies on field: " + field.getName(), e);
             }
-        } catch (IllegalAccessException e) {
-            throw new ElepyConfigException("Failed to instantiate an Elepy Object", e);
         }
+
     }
 
 
@@ -65,10 +80,11 @@ public class Injector {
     }
 
     private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {
-        final ContextKey<?> contextKey = ContextKey.forAnnotatedElement(annotatedType);
+        final var contextKey = ContextKey.forAnnotatedElement(annotatedType);
         return elepyContext.getDependency(contextKey.getType(), contextKey.getTag());
 
     }
+
     private <T> T initializeObjectViaConstructor(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 
         Optional<Constructor<? extends T>> emptyConstructor =

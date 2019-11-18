@@ -12,31 +12,28 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-class DependencyResolver {
-    private static final Logger logger = LoggerFactory.getLogger(DependencyResolver.class);
+class Resolver {
+    private static final Logger logger = LoggerFactory.getLogger(Resolver.class);
     private final DefaultElepyContext elepyContext;
     private final Set<Class> scannedClasses = new HashSet<>();
     private Set<ContextKey> unsatisfiedKeys = new HashSet<>();
     private Set<ContextKey> allDependencies = new HashSet<>();
 
 
-    DependencyResolver(DefaultElepyContext elepyContext) {
+    Resolver(DefaultElepyContext elepyContext) {
         this.elepyContext = elepyContext;
     }
 
-    private static ContextKey toKey(AnnotatedElement field) {
-
-        Inject annotation = field.getAnnotation(Inject.class);
-
-        final Class<?> type;
-
-        if (annotation == null || annotation.type().equals(Object.class)) {
-            type = ReflectionUtils.returnTypeOf(field);
-        } else {
-            type = annotation.type();
+    void tryToSatisfy() {
+        for (ContextKey unsatisfiedKey : new ArrayList<>(unsatisfiedKeys)) {
+            getAllInnerUnsatisfiedDependencies(unsatisfiedKey.getType());
         }
-        return new ContextKey<>(type, ReflectionUtils.getDependencyTag(field));
+        allDependencies.addAll(unsatisfiedKeys);
+        tryToSatisfy(false);
+    }
 
+    void add(ContextKey key) {
+        unsatisfiedKeys.add(key);
     }
 
     private String errorString(Set<ContextKey> keys) {
@@ -72,7 +69,7 @@ class DependencyResolver {
     }
 
     private void addAnnotatedElementDependency(AnnotatedElement element) {
-        ContextKey contextKey = toKey(element);
+        ContextKey contextKey = ContextKey.forAnnotatedElement(element);
         unsatisfiedKeys.add(contextKey);
 
         if (!scannedClasses.contains(contextKey.getType())) {
@@ -82,15 +79,7 @@ class DependencyResolver {
         }
     }
 
-    public void tryToSatisfy() {
-        for (ContextKey unsatisfiedKey : new ArrayList<>(unsatisfiedKeys)) {
-            getAllInnerUnsatisfiedDependencies(unsatisfiedKey.getType());
-        }
-        allDependencies.addAll(unsatisfiedKeys);
-        tryToSatisfy(false);
-    }
-
-    public void tryToSatisfy(boolean alreadyTried) {
+    private void tryToSatisfy(boolean alreadyTried) {
 
 
         if (alreadyTried) {
@@ -104,7 +93,7 @@ class DependencyResolver {
         for (ContextKey contextKey : unsatisfiedKeys) {
             try {
                 Object o = elepyContext.initialize(contextKey.getType());
-                ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), ReflectionUtils.getDependencyTag(contextKey.getType()));
+                ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), null);
                 elepyContext.registerDependency(objectContextKey.getType(), objectContextKey.getTag(), o);
 
 
@@ -129,9 +118,5 @@ class DependencyResolver {
 
     }
 
-
-    public void add(ContextKey key) {
-        unsatisfiedKeys.add(key);
-    }
 
 }

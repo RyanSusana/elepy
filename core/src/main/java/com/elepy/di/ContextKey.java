@@ -15,16 +15,24 @@ public class ContextKey<T> {
     private final Class<T> classType;
     private final String tag;
 
-    public ContextKey(Class<T> classType, String tag) {
+    ContextKey(Class<T> classType, String tag) {
         this.classType = classType;
         this.tag = tag == null ? "" : tag;
     }
 
-    public static ContextKey<?> forAnnotatedElement(AnnotatedElement element) {
+    public Class<T> getType() {
+        return classType;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    static ContextKey<?> forAnnotatedElement(AnnotatedElement element) {
 
         final Class<?> returnType = ReflectionUtils.returnTypeOf(element);
         if (Crud.class.equals(returnType)) {
-            return getTypeArgument(getType(element));
+            return getTypeArgument(toParameterizedType(element));
 
         } else if (Crud.class.isAssignableFrom(returnType)) {
             final var exactSuperType = (ParameterizedType) GenericTypeReflector.getExactSuperType(returnType, Crud.class);
@@ -35,7 +43,7 @@ public class ContextKey<T> {
         }
     }
 
-    private static ParameterizedType getType(AnnotatedElement annotatedElement) {
+    private static ParameterizedType toParameterizedType(AnnotatedElement annotatedElement) {
         if (annotatedElement instanceof Parameter) {
             return (ParameterizedType) ((Parameter) annotatedElement).getParameterizedType();
         } else {
@@ -49,15 +57,7 @@ public class ContextKey<T> {
         final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
         final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
 
-        return new ContextKey<>(Crud.class, declaredAnnotation.slug());
-    }
-
-    public Class<T> getType() {
-        return classType;
-    }
-
-    public String getTag() {
-        return tag;
+        return new ContextKey<>(Crud.class, declaredAnnotation == null ? null : declaredAnnotation.slug());
     }
 
     @Override

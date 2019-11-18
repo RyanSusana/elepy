@@ -1,7 +1,6 @@
 package com.elepy.auth.methods;
 
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.annotations.Inject;
 import com.elepy.auth.Token;
 import com.elepy.auth.TokenAuthenticationMethod;
 import com.elepy.auth.User;
@@ -21,7 +20,7 @@ public class PersistedTokenAuthenticationMethod implements TokenAuthenticationMe
     private final Map<Token, User> cached;
 
     @ElepyConstructor
-    public PersistedTokenAuthenticationMethod(@Inject(tag = "/tokens") Crud<Token> tokens) {
+    public PersistedTokenAuthenticationMethod(Crud<Token> tokens) {
 
         this.tokens = tokens;
         this.cached = new TreeMap<>();
