@@ -10,6 +10,7 @@ import com.elepy.utils.ReflectionUtils;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -34,6 +35,10 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     public MongoClient getMongoClient() {
         return db().getMongoClient();
+    }
+
+    public MongoDatabase getDatabase(){
+        return getMongoClient().getDatabase(db().getName());
     }
 
     Jongo getJongo() {
