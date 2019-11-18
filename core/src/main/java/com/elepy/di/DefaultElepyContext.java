@@ -1,13 +1,9 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
-import com.elepy.annotations.RestModel;
-import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
-import com.googlecode.gentyref.GenericTypeReflector;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -41,7 +37,7 @@ public class DefaultElepyContext implements ElepyContext {
 
     public <T> void registerDependency(T object, String tag) {
         ContextKey<?> contextKey = new ContextKey<>(object.getClass(), tag);
-        ensureUniqueDependency(contextKey);
+        ensureDependencyDoesntAlreadyExist(contextKey);
         dependencies.put(contextKey, object);
         preInitialisedDependencies.add(contextKey);
         if (strictMode) {
@@ -51,13 +47,13 @@ public class DefaultElepyContext implements ElepyContext {
 
     public <T> void registerDependencySupplier(Class<T> clazz, String tag, Supplier<? extends T> supplier) {
         ContextKey<T> contextKey = new ContextKey<>(clazz, tag);
-        ensureUniqueDependency(contextKey);
+        ensureDependencyDoesntAlreadyExist(contextKey);
         dependencySuppliers.put(contextKey, supplier);
     }
 
     public <T> void registerDependency(Class<T> cls, String tag, T object) {
         ContextKey<T> contextKey = new ContextKey<>(cls, tag);
-        ensureUniqueDependency(contextKey);
+        ensureDependencyDoesntAlreadyExist(contextKey);
         dependencies.put(contextKey, object);
         preInitialisedDependencies.add(contextKey);
         if (strictMode) {
@@ -66,15 +62,10 @@ public class DefaultElepyContext implements ElepyContext {
 
     }
 
-    private <T> void ensureUniqueDependency(ContextKey<T> key) {
-        if (strictMode && (dependencies.containsKey(key) || dependencySuppliers.containsKey(key))) {
-            throw new ElepyConfigException(String.format("Elepy already has a key with the class '%s' and the tag '%s'", key.getType(), key.getTag()));
-        }
-    }
 
     public <T> T getDependency(Class<T> cls, String tag) {
 
-        final ContextKey<T> key = getKey(cls, tag);
+        final ContextKey<T> key = new ContextKey<>(cls,tag);
 
         if (dependencies.containsKey(key)) {
             return (T) dependencies.get(key);
@@ -92,6 +83,13 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
 
+    public void registerDependency(Class<?> clazz) {
+        registerDependency(clazz, ReflectionUtils.getDependencyTag(clazz));
+    }
+
+    public void registerDependency(Class<?> clazz, String tag) {
+        registerDependency(new ContextKey<>(clazz, tag));
+    }
 
     public void registerDependency(ContextKey contextKey) {
         dependencyResolver.add(contextKey);
@@ -121,6 +119,12 @@ public class DefaultElepyContext implements ElepyContext {
         }
     }
 
+    private <T> void ensureDependencyDoesntAlreadyExist(ContextKey<T> key) {
+        if (strictMode && (dependencies.containsKey(key) || dependencySuppliers.containsKey(key))) {
+            throw new ElepyConfigException(String.format("Elepy already has a key with the class '%s' and the tag '%s'", key.getType(), key.getTag()));
+        }
+    }
+
     @Override
     public Set<ContextKey> getDependencyKeys() {
         return dependencies.keySet();
@@ -131,26 +135,5 @@ public class DefaultElepyContext implements ElepyContext {
         return injector.initializeAndInject(cls);
     }
 
-    private <T> ContextKey<T> getKey(Class<T> cls, String tag) {
-        if (tag == null && Crud.class.isAssignableFrom(cls)) {
-            return getCrudKey(cls);
-        } else {
-            return new ContextKey<>(cls, tag);
-        }
-    }
-
-
-    private ContextKey getCrudKey(Class<?> cls) {
-
-        final var exactSuperType = (ParameterizedType) GenericTypeReflector.getExactSuperType(cls, Crud.class);
-
-        final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
-        final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
-        declaredAnnotation.slug();
-
-        return new ContextKey(Crud.class, declaredAnnotation.slug());
-
-
-    }
 
 }
