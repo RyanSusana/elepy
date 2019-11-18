@@ -2,7 +2,6 @@ package com.elepy.di;
 
 import com.elepy.annotations.Inject;
 import com.elepy.exceptions.ElepyErrorMessage;
-import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +31,7 @@ class DependencyResolver {
         final Class<?> type;
 
         if (annotation == null || annotation.type().equals(Object.class)) {
-            if (field instanceof Field) {
-                type = ((Field) field).getType();
-            } else if (field instanceof Parameter) {
-                type = ((Parameter) field).getType();
-            } else {
-                throw new ElepyException("This should never be thrown: Annotated element is not a Field or Parameter", 500);
-            }
+            type = ReflectionUtils.returnTypeOf(field);
         } else {
             type = annotation.type();
         }
@@ -64,7 +57,6 @@ class DependencyResolver {
     private void getAllInnerUnsatisfiedDependencies(Class<?> root) {
 
         Optional<Constructor<?>> elepyAnnotatedConstructor =
-
                 ReflectionUtils.getElepyAnnotatedConstructor(root);
 
         if (elepyAnnotatedConstructor.isPresent()) {
@@ -72,7 +64,6 @@ class DependencyResolver {
                 addAnnotatedElementDependency(constructorParam);
             }
         }
-
 
         for (Field field : ReflectionUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
             addAnnotatedElementDependency(field);

@@ -10,7 +10,6 @@ import com.googlecode.gentyref.GenericTypeReflector;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class DefaultElepyContext implements ElepyContext {
 
@@ -92,36 +91,7 @@ public class DefaultElepyContext implements ElepyContext {
         throw new ElepyConfigException(String.format("No context object for %s available with the tag: %s", cls.getName(), tag));
     }
 
-    private <T> ContextKey<T> getKey(Class<T> cls, String tag) {
-        if (tag == null && Crud.class.isAssignableFrom(cls)) {
-            return getCrudKey(cls);
-        } else {
-            return new ContextKey<>(cls, tag);
-        }
-    }
 
-
-    private ContextKey getCrudKey(Class<?> cls) {
-
-        final var exactSuperType = (ParameterizedType) GenericTypeReflector.getExactSuperType(cls, Crud.class);
-
-        final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
-        final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
-        declaredAnnotation.slug();
-
-        return new ContextKey(Crud.class, declaredAnnotation.slug());
-
-
-    }
-
-
-    public void registerDependency(Class<?> clazz) {
-        registerDependency(clazz, ReflectionUtils.getDependencyTag(clazz));
-    }
-
-    public void registerDependency(Class<?> clazz, String tag) {
-        registerDependency(new ContextKey<>(clazz, tag));
-    }
 
     public void registerDependency(ContextKey contextKey) {
         dependencyResolver.add(contextKey);
@@ -161,5 +131,26 @@ public class DefaultElepyContext implements ElepyContext {
         return injector.initializeAndInject(cls);
     }
 
+    private <T> ContextKey<T> getKey(Class<T> cls, String tag) {
+        if (tag == null && Crud.class.isAssignableFrom(cls)) {
+            return getCrudKey(cls);
+        } else {
+            return new ContextKey<>(cls, tag);
+        }
+    }
+
+
+    private ContextKey getCrudKey(Class<?> cls) {
+
+        final var exactSuperType = (ParameterizedType) GenericTypeReflector.getExactSuperType(cls, Crud.class);
+
+        final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
+        final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
+        declaredAnnotation.slug();
+
+        return new ContextKey(Crud.class, declaredAnnotation.slug());
+
+
+    }
 
 }

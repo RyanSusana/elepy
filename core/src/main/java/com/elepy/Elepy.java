@@ -405,21 +405,6 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-
-    /**
-     * Notifies Elepy that you will need a dependency in the lazy(by default) future.
-     * All dependencies must be satisfied before {@link #start()} ends
-     *
-     * @param cls The class you that needs to satisfy the dependency
-     * @param tag The optional tag of the class
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy registerDependency(Class<?> cls, String tag) {
-        checkConfig();
-        this.context.registerDependency(cls, tag);
-        return this;
-    }
-
     /**
      * Notifies Elepy that you will need a dependency in the lazy(by default) future.
      * All dependencies must be satisfied before {@link #start()} ends.
