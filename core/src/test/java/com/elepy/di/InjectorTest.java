@@ -19,7 +19,7 @@ public class InjectorTest {
     }
 
     @Test
-    void name() {
+    void testCrudInjection() {
 
         defaultElepyContext.strictMode(true);
         defaultElepyContext.registerDependencySupplier(Crud.class, "/resources", MockCrudResource::new);
