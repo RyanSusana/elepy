@@ -29,11 +29,10 @@ public class ContextKey<T> {
     }
 
     static ContextKey<?> forAnnotatedElement(AnnotatedElement element) {
-
         final Class<?> returnType = ReflectionUtils.returnTypeOf(element);
+
         if (Crud.class.equals(returnType)) {
             return getTypeArgument(toParameterizedType(element));
-
         } else if (Crud.class.isAssignableFrom(returnType)) {
             final var exactSuperType = (ParameterizedType) GenericTypeReflector.getExactSuperType(returnType, Crud.class);
 

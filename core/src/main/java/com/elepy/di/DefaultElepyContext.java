@@ -6,6 +6,7 @@ import com.elepy.utils.ReflectionUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class DefaultElepyContext implements ElepyContext {
 
@@ -25,7 +26,7 @@ public class DefaultElepyContext implements ElepyContext {
 
         this.preInitialisedDependencies = new ArrayList<>();
 
-        this.resolver = new Resolver(this);
+        this.resolver = new Resolver();
         this.injector = new Injector(this);
     }
 
@@ -69,7 +70,9 @@ public class DefaultElepyContext implements ElepyContext {
 
         final ContextKey<T> key = new ContextKey<>(cls, tag);
 
-        if (dependencies.containsKey(key)) {
+        if (key.getType().equals(ElepyContext.class)) {
+            return (T) this;
+        } else if (dependencies.containsKey(key)) {
             return (T) dependencies.get(key);
         } else if (dependencySuppliers.containsKey(key)) {
             dependencies.put(key, dependencySuppliers.get(key).get());
@@ -94,10 +97,24 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public void registerDependency(ContextKey contextKey) {
-        resolver.add(contextKey);
+        resolver.addUnsatisfiedDependency(contextKey);
         if (strictMode) {
             resolveDependencies();
         }
+    }
+
+    public Set<ContextKey> getUnsatisfiedDependencies() {
+        return dependencies.entrySet().stream()
+                .filter(contextKeyObjectEntry -> Objects.isNull(contextKeyObjectEntry.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<ContextKey> getSatisfiedDependencies() {
+        return dependencies.entrySet().stream()
+                .filter(contextKeyObjectEntry -> Objects.nonNull(contextKeyObjectEntry.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 
     public void strictMode(boolean strictMode) {
@@ -105,7 +122,7 @@ public class DefaultElepyContext implements ElepyContext {
     }
 
     public void resolveDependencies() {
-        resolver.tryToSatisfy();
+        resolver.resolve(this);
         injectPreInitializedDependencies();
     }
 

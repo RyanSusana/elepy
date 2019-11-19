@@ -1,9 +1,11 @@
 package com.elepy.utils;
 
-import com.elepy.annotations.*;
+import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Identifier;
+import com.elepy.annotations.PrettyName;
+import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.http.Route;
 import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.googlecode.gentyref.GenericTypeReflector;
@@ -14,9 +16,11 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 
@@ -27,18 +31,11 @@ public class ReflectionUtils {
 
     @SafeVarargs
     public static List<Field> searchForFieldsWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
-        List<Field> fields = new ArrayList<>();
-        for (Field field : cls.getDeclaredFields()) {
-            field.setAccessible(true);
-            for (Class<? extends Annotation> annotation : annotations) {
-                if (field.isAnnotationPresent(annotation)) {
-                    fields.add(field);
-                    break;
-                }
-            }
+        return Arrays.stream(cls.getDeclaredFields())
+                .peek(field -> field.setAccessible(true))
+                .filter(field -> Stream.of(annotations).anyMatch(field::isAnnotationPresent))
+                .collect(Collectors.toList());
 
-        }
-        return fields;
     }
 
     @SafeVarargs
@@ -124,7 +121,7 @@ public class ReflectionUtils {
         if (field instanceof AnnotatedType) {
             return (Class) ((AnnotatedType) field).getType();
         }
-        if(field instanceof Parameter){
+        if (field instanceof Parameter) {
             return GenericTypeReflector.erase(((Parameter) field).getType());
         }
         return (field instanceof Field) ? ((Field) field).getType() : ((Method) field).getReturnType();
@@ -249,9 +246,9 @@ public class ReflectionUtils {
         return (Class) ((ParameterizedType) ((Field) field).getGenericType()).getActualTypeArguments()[parameterIndex];
     }
 
-    public static <T> Optional<Constructor<? extends T>> getElepyAnnotatedConstructor(Class<?> cls) {
+    public static <T> Optional<Constructor<? extends T>> getElepyConstructor(Class<T> cls) {
         for (Constructor constructor : cls.getConstructors()) {
-            if (constructor.isAnnotationPresent(ElepyConstructor.class)) {
+            if (constructor.isAnnotationPresent(ElepyConstructor.class) || constructor.getParameterCount() == 0) {
                 return Optional.of((Constructor<T>) constructor);
             }
         }

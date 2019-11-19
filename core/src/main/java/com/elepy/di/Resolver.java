@@ -6,102 +6,73 @@ import com.elepy.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class Resolver {
     private static final Logger logger = LoggerFactory.getLogger(Resolver.class);
-    private final DefaultElepyContext elepyContext;
-    private final Set<Class> scannedClasses = new HashSet<>();
-    private Set<ContextKey> unsatisfiedKeys = new HashSet<>();
-    private Set<ContextKey> allDependencies = new HashSet<>();
 
 
-    Resolver(DefaultElepyContext elepyContext) {
-        this.elepyContext = elepyContext;
+    private final Set<ContextKey> unsatisfiedDependencies ;
+    private final Set<ContextKey> satisfiedDependencies ;
+
+
+    Resolver() {
+        this.unsatisfiedDependencies = new HashSet<>();
+        this.satisfiedDependencies = new HashSet<>();
     }
 
-    void tryToSatisfy() {
-        for (ContextKey unsatisfiedKey : new ArrayList<>(unsatisfiedKeys)) {
-            getAllInnerUnsatisfiedDependencies(unsatisfiedKey.getType());
+    void addUnsatisfiedDependency(ContextKey contextKey) {
+        unsatisfiedDependencies.add(contextKey);
+    }
+
+    void resolve(DefaultElepyContext context) {
+        for (ContextKey unsatisfiedKey : new ArrayList<>(unsatisfiedDependencies)) {
+            findDependencies(unsatisfiedKey.getType())
+                    .forEach(this::addUnsatisfiedDependency);
         }
-        allDependencies.addAll(unsatisfiedKeys);
-        tryToSatisfy(false);
+        satisfiedDependencies.addAll(unsatisfiedDependencies);
+        resolve(false, context);
     }
 
-    void add(ContextKey key) {
-        unsatisfiedKeys.add(key);
+
+    private Stream<ContextKey<?>> findDependencies(Class<?> root) {
+        return Stream.concat(
+                findDependenciesInConstructor(root),
+                findDependenciesInFields(root)
+        );
+
     }
 
-    private String errorString(Set<ContextKey> keys) {
-        StringBuilder sb = new StringBuilder();
-
-        for (ContextKey key : keys) {
-            sb.append("[").append(key.getType().getSimpleName());
-
-
-            if (!key.getTag().isEmpty()) {
-                sb.append(": \"").append(key.getTag()).append("\"");
-            }
-            sb.append("], ");
-        }
-        return sb.toString();
+    private Stream<? extends ContextKey<?>> findDependenciesInFields(Class<?> root) {
+        return ReflectionUtils.searchForFieldsWithAnnotation(root, Inject.class)
+                .stream()
+                .map(ContextKey::forAnnotatedElement);
     }
 
-    private void getAllInnerUnsatisfiedDependencies(Class<?> root) {
-
-        Optional<Constructor<?>> elepyAnnotatedConstructor =
-                ReflectionUtils.getElepyAnnotatedConstructor(root);
-
-        if (elepyAnnotatedConstructor.isPresent()) {
-            for (Parameter constructorParam : elepyAnnotatedConstructor.get().getParameters()) {
-                addAnnotatedElementDependency(constructorParam);
-            }
-        }
-
-        for (Field field : ReflectionUtils.searchForFieldsWithAnnotation(root, Inject.class)) {
-            addAnnotatedElementDependency(field);
-
-        }
+    private Stream<? extends ContextKey<?>> findDependenciesInConstructor(Class<?> root) {
+        return ReflectionUtils.getElepyConstructor(root)
+                .map(constructor ->
+                        Arrays.stream(constructor.getParameters())
+                                .map(ContextKey::forAnnotatedElement))
+                .orElse(Stream.empty());
     }
 
-    private void addAnnotatedElementDependency(AnnotatedElement element) {
-        ContextKey contextKey = ContextKey.forAnnotatedElement(element);
-        unsatisfiedKeys.add(contextKey);
-
-        if (!scannedClasses.contains(contextKey.getType())) {
-            scannedClasses.add(contextKey.getType());
-
-            getAllInnerUnsatisfiedDependencies(contextKey.getType());
-        }
-    }
-
-    private void tryToSatisfy(boolean alreadyTried) {
-
-
+    private void resolve(boolean alreadyTried, DefaultElepyContext elepyContext) {
         if (alreadyTried) {
-            allDependencies.removeAll(elepyContext.getDependencyKeys());
-            throw new ElepyDependencyInjectionException(String.format("%n%nUnsatisfied or Circular Dependencies in: %s%nCurrent Dependencies: %s%nMissing Dependencies: %s%n", errorString(unsatisfiedKeys), errorString(elepyContext.getDependencyKeys()), errorString(allDependencies)), unsatisfiedKeys.size());
+            satisfiedDependencies.removeAll(elepyContext.getDependencyKeys());
+            throw new ElepyDependencyInjectionException(String.format("%n%nUnsatisfied or Circular Dependencies in: %s%nCurrent Dependencies: %s%nMissing Dependencies: %s%n", keysToString(unsatisfiedDependencies), keysToString(elepyContext.getDependencyKeys()), keysToString(satisfiedDependencies)), unsatisfiedDependencies.size());
         }
 
         alreadyTried = true;
         List<ContextKey> toRemove = new ArrayList<>();
-        Map<ContextKey, Object> toAdd = new HashMap<>();
-        for (ContextKey contextKey : unsatisfiedKeys) {
+        for (ContextKey contextKey : unsatisfiedDependencies) {
             try {
                 Object o = elepyContext.initialize(contextKey.getType());
                 ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), null);
                 elepyContext.registerDependency(objectContextKey.getType(), objectContextKey.getTag(), o);
-
-
-                toAdd.put(objectContextKey, o);
             } catch (ElepyErrorMessage e) {
-
-                logger.debug("Elepy error msg", e);
-            } catch (Exception e) {
 
                 logger.error("Dependency injection error", e);
             }
@@ -110,13 +81,31 @@ class Resolver {
                 toRemove.add(contextKey);
             }
         }
-        unsatisfiedKeys.removeAll(toRemove);
+        unsatisfiedDependencies.removeAll(toRemove);
 
-        if (!unsatisfiedKeys.isEmpty()) {
-            tryToSatisfy(alreadyTried);
+        if (!unsatisfiedDependencies.isEmpty()) {
+            resolve(alreadyTried, elepyContext);
         }
 
     }
 
+    private String keysToString(Set<ContextKey> keys) {
+        return keys.stream()
+                .map(this::keyToString)
+                .collect(Collectors.joining(","));
 
+    }
+
+    private String keyToString(ContextKey key) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append(key.getType().getSimpleName());
+
+        if (!key.getTag().isEmpty()) {
+            sb.append(": \"").append(key.getTag()).append("\"");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
