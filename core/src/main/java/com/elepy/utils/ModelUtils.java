@@ -57,7 +57,7 @@ public class ModelUtils {
         return property;
     }
 
-    public static Property createProperty(AccessibleObject accessibleObject, boolean idProperty) {
+    private static Property createProperty(AccessibleObject accessibleObject, boolean idProperty) {
         Property property = createTypedProperty(accessibleObject);
 
         setupPropertyBasics(accessibleObject, idProperty, property);
