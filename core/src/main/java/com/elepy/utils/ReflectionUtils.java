@@ -15,10 +15,8 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,9 +27,44 @@ public class ReflectionUtils {
     private ReflectionUtils() {
     }
 
+
+    private static Optional<Field> findFieldThatMatches(Class<?> root, Predicate<Field> predicate) {
+        for (Field declaredField : root.getDeclaredFields()) {
+            declaredField.setAccessible(true);
+            if (predicate.test(declaredField)) {
+                return Optional.of(declaredField);
+            }
+        }
+        if (root.getSuperclass() != null) {
+            return findFieldThatMatches(root.getSuperclass(), predicate);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static List<Field> findFieldsThatMatch(Class<?> root, Predicate<Field> predicate) {
+        return getAllFields(new LinkedList<>(), root).stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    public static List<Field> getAllFields(Class<?> type) {
+        return getAllFields(new LinkedList<>(), type);
+    }
+
+    private static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+        if (type.getSuperclass() != null && !type.getSuperclass().equals(Object.class)) {
+            getAllFields(fields, type.getSuperclass());
+        }
+
+        return fields;
+    }
+
+
     @SafeVarargs
     public static List<Field> searchForFieldsWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
-        return Arrays.stream(cls.getDeclaredFields())
+        return getAllFields(new LinkedList<>(), cls)
+                .stream()
                 .peek(field -> field.setAccessible(true))
                 .filter(field -> Stream.of(annotations).anyMatch(field::isAnnotationPresent))
                 .collect(Collectors.toList());
@@ -40,7 +73,8 @@ public class ReflectionUtils {
 
     @SafeVarargs
     public static Optional<Field> searchForFieldWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
-        return searchForFieldsWithAnnotation(cls, annotations).stream().findFirst();
+        return findFieldThatMatches(cls, field -> Stream.of(annotations)
+                .anyMatch(field::isAnnotationPresent));
     }
 
     public static String getPropertyName(AccessibleObject property) {
@@ -58,13 +92,7 @@ public class ReflectionUtils {
     }
 
     public static Field getPropertyField(Class<?> cls, String property) {
-        for (Field declaredField : cls.getDeclaredFields()) {
-            declaredField.setAccessible(true);
-            if (getPropertyName(declaredField).equals(property)) {
-                return declaredField;
-            }
-        }
-        return null;
+        return findFieldThatMatches(cls, field -> getPropertyName(field).equals(property)).orElse(null);
     }
 
     public static String getPrettyName(AccessibleObject field) {
@@ -128,20 +156,14 @@ public class ReflectionUtils {
     }
 
     public static Optional<Field> findFieldWithName(Class cls, String name) {
-        for (Field field : cls.getDeclaredFields()) {
+        return findFieldThatMatches(cls, field -> {
             if (field.isAnnotationPresent(JsonProperty.class)) {
                 final JsonProperty annotation = field.getAnnotation(JsonProperty.class);
-
-                if (annotation.value().equals(name)) {
-                    return Optional.of(field);
-                }
+                return annotation.value().equals(name);
             } else {
-                if (field.getName().equals(name)) {
-                    return Optional.of(field);
-                }
+                return field.getName().equals(name);
             }
-        }
-        return Optional.empty();
+        });
     }
 
     public static <T> Optional<Constructor<? extends T>> getEmptyConstructor(Class<?> cls) {

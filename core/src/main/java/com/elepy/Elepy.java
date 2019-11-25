@@ -653,14 +653,20 @@ public class Elepy implements ElepyContext {
         } else {
             withProperties(elepyProperties);
         }
-        addModel(User.class);
+
+        retrievePackageModels();
+
+        if (models.stream()
+                .noneMatch(User.class::isAssignableFrom)) {
+
+            addModel(User.class);
+        }
+
         addModel(FileReference.class);
         addExtension(new FileUploadExtension());
         registerDependency(userAuthenticationExtension);
 
         setupLoggingAndExceptions();
-        retrievePackageModels();
-
         if (!http.hasImplementation()) {
             http.setImplementation(initialize(Defaults.HTTP_SERVICE));
         }

@@ -32,9 +32,9 @@ public class ModelUtils {
                 .collect(Collectors.toList());
     }
 
-    public static List<AccessibleObject> getDeclaredProperties(Class cls) {
+    public static List<AccessibleObject> getDeclaredProperties(Class<?> cls) {
         return Stream.concat(
-                Stream.of(cls.getDeclaredFields())
+                ReflectionUtils.getAllFields(cls).stream()
                         .filter(field -> !field.isAnnotationPresent(Hidden.class)),
                 Stream.of(cls.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(Generated.class))
