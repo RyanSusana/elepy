@@ -23,8 +23,8 @@ public class ModelContext<T> {
         this.objectEvaluators = objectEvaluators;
     }
 
-    public Crud<T> getCrud() {
-        return crud;
+    public <C extends Crud<T>> C getCrud() {
+        return (C) crud;
     }
 
     public void setCrud(Crud<T> crud) {

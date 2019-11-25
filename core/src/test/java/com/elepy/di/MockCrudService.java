@@ -1,20 +1,26 @@
 package com.elepy.di;
 
+import com.elepy.Resource;
+import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Inject;
 
 public class MockCrudService {
 
     @Inject
-    private MockCrudResource crud;
+    private MockCrudGeneric<Resource> crudGeneric;
 
-    public MockCrudResource getCrud() {
-        return crud;
+    private final MockCrudResource crudResource;
+
+    @ElepyConstructor
+    public MockCrudService(@Inject MockCrudResource crudResource) {
+        this.crudResource = crudResource;
     }
 
-    public void setCrud(MockCrudResource crud) {
-        this.crud = crud;
+    public MockCrudGeneric<Resource> getCrudGeneric() {
+        return crudGeneric;
     }
 
-
-
+    public MockCrudResource getCrudResource() {
+        return crudResource;
+    }
 }

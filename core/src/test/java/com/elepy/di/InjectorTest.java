@@ -25,7 +25,10 @@ public class InjectorTest {
         defaultElepyContext.registerDependencySupplier(Crud.class, "/resources", MockCrudResource::new);
         final var mockCrudService = sut.initializeAndInject(MockCrudService.class);
 
-        assertThat(mockCrudService.getCrud())
+        assertThat(mockCrudService.getCrudGeneric())
+                .isNotNull();
+
+        assertThat(mockCrudService.getCrudResource())
                 .isNotNull();
     }
 }
