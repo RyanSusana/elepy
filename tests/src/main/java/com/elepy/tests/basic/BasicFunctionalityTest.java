@@ -13,6 +13,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
@@ -131,7 +131,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .asString();
 
 
-        final var token = getTokenResponse.getBody().replaceAll("\"","");
+        final var token = getTokenResponse.getBody().replaceAll("\"", "");
 
         final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("ELEPY_TOKEN", token).asString();
 
@@ -225,12 +225,15 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         createInitialUsersViaHttp();
 
         final HttpResponse<String> authorizedFind = Unirest
-                .delete(elepy + "/users" + "/admin")
+                .patch(elepy + "/users" + "/admin")
+                .queryString("password", "newPassword")
                 .basicAuth("user", "user")
                 .asString();
 
-        assertEquals(403, authorizedFind.getStatus());
-        assertTrue(userCrud.getById("admin").isPresent());
+        final var admin = userCrud.getById("admin").orElseThrow();
+        assertEquals(200, authorizedFind.getStatus());
+        assertThat(BCrypt.checkpw("newPassword", admin.getPassword()))
+                .isTrue();
     }
 
     @Test

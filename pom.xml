@@ -22,7 +22,7 @@
         <tika.version>1.22</tika.version>
         <assertj.version>3.14.0</assertj.version>
         <headlessMode>false</headlessMode>
-        <revision>2.5.0</revision>
+        <revision>2.5.1</revision>
     </properties>
 
     <licenses>
@@ -57,6 +57,7 @@
         <module>sparkjava</module>
         <module>firebase</module>
         <module>jwt</module>
+        <module>swagger</module>
     </modules>
 
     <distributionManagement>

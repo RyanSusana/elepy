@@ -9,7 +9,7 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.handlers.UpdateHandler;
+import com.elepy.handlers.DefaultUpdate;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,22 +17,21 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashSet;
 
-public class UserUpdate implements UpdateHandler<User> {
+public class UserUpdate extends DefaultUpdate<User> {
 
     @Override
-    public void handleUpdatePut(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
-
-
+    public User handleUpdate(HttpContext context, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
+        Crud<User> crud = modelContext.getCrud();
         User loggedInUser = context.loggedInUserOrThrow();
-        User userToUpdateAfter = objectMapper.readValue(context.body(), modelContext.getModelType());
 
+        User userToUpdateBefore = crud.getById(context.modelId()).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
+
+        User userToUpdateAfter = updatedObjectFromRequest(userToUpdateBefore, context.request(), objectMapper, modelContext.getModel());
 
         // You can only execute this if the updating user is yourself, or you can administrate users
         if (!userToUpdateAfter.equals(loggedInUser)) {
             context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
         }
-        User userToUpdateBefore = crud.getById(crud.getId(userToUpdateAfter)).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
-
         checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 
         //Elepy evaluation
@@ -58,6 +57,7 @@ public class UserUpdate implements UpdateHandler<User> {
 
         context.status(200);
         context.result(Message.of("The user has been updated", 200));
+        return userToUpdateAfter;
     }
 
     private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {
@@ -77,10 +77,5 @@ public class UserUpdate implements UpdateHandler<User> {
 
     private boolean permissionsAreTheSame(User user1, User user2) {
         return new HashSet<>(user1.getPermissions()).equals(new HashSet<>(user2.getPermissions()));
-    }
-
-    @Override
-    public void handleUpdatePatch(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
-        handleUpdatePut(context, crud, modelContext, objectMapper);
     }
 }
