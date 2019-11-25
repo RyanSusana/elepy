@@ -22,35 +22,39 @@ public class UserUpdate implements UpdateHandler<User> {
     @Override
     public void handleUpdatePut(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
 
-        //Make sure that you can administrate users
-        context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
 
         User loggedInUser = context.loggedInUserOrThrow();
-        User userToUpdate = objectMapper.readValue(context.body(), modelContext.getModelType());
-        User userToUpdateBefore = crud.getById(crud.getId(userToUpdate)).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
+        User userToUpdateAfter = objectMapper.readValue(context.body(), modelContext.getModelType());
 
-        checkPermissionIntegrity(loggedInUser, userToUpdate, userToUpdateBefore);
+
+        // You can only execute this if the updating user is yourself, or you can administrate users
+        if (!userToUpdateAfter.equals(loggedInUser)) {
+            context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
+        }
+        User userToUpdateBefore = crud.getById(crud.getId(userToUpdateAfter)).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
+
+        checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 
         //Elepy evaluation
-        new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdate);
+        new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
 
         for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(userToUpdate);
+            objectEvaluator.evaluate(userToUpdateAfter);
         }
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdate, EvaluationType.UPDATE);
+        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
 
         //If password is empty, use the old password
-        if (userToUpdate.getPassword().isEmpty()) {
-            userToUpdate.setPassword(userToUpdateBefore.getPassword());
+        if (userToUpdateAfter.getPassword().isEmpty()) {
+            userToUpdateAfter.setPassword(userToUpdateBefore.getPassword());
         }
 
         //Encrypt password if changed
-        if (!userToUpdate.getPassword().equals(userToUpdateBefore.getPassword())) {
-            userToUpdate.setPassword(BCrypt.hashpw(userToUpdate.getPassword(), BCrypt.gensalt()));
+        if (!userToUpdateAfter.getPassword().equals(userToUpdateBefore.getPassword())) {
+            userToUpdateAfter.setPassword(BCrypt.hashpw(userToUpdateAfter.getPassword(), BCrypt.gensalt()));
         }
 
         // Finalize update and respond
-        crud.update(userToUpdate);
+        crud.update(userToUpdateAfter);
 
         context.status(200);
         context.result(Message.of("The user has been updated", 200));

@@ -21,13 +21,17 @@ import java.util.Objects;
 )
 @Entity(name = "elepy_user")
 @Table(name = "elepy_users")
+
+// Required permission is handled in UserUpdate.class
 @Create(handler = UserCreate.class, requiredPermissions = {})
 @Find(findManyHandler = UserFind.class,
         findOneHandler = UserFind.class,
-        requiredPermissions = Permissions.AUTHENTICATED
+        requiredPermissions = Permissions.CAN_ADMINISTRATE_USERS
 )
+
+// Required permission is handled in UserUpdate.class
 @Update(handler = UserUpdate.class)
-@Delete(handler = UserDelete.class)
+@Delete(handler = UserDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_USERS)
 @Evaluators(UserEvaluator.class)
 public class User {
 
