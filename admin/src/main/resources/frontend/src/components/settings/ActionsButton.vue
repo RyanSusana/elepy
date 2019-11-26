@@ -3,7 +3,7 @@
         <button
                 @click="executeAction(selectedAction)"
                 class="uk-button uk-button-primary action-button"
-                :class="{multiple: filteredActions.length>1}"
+                :class="{'multiple': filteredActions.length>0}"
                 :action="selectedAction.name"
         >{{selectedAction.name}}
         </button>
