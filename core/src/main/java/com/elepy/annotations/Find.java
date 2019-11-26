@@ -6,16 +6,14 @@ import com.elepy.handlers.DefaultFindOne;
 import com.elepy.handlers.FindManyHandler;
 import com.elepy.handlers.FindOneHandler;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotation used to change the way Elepy handles finds.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
+@Inherited
 public @interface Find {
 
 

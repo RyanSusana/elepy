@@ -89,7 +89,6 @@ public class Elepy implements ElepyContext {
 
         registerDependencySupplier(Properties.class, () -> properties);
 
-
         withFileService(new DefaultFileService());
 
 
@@ -113,7 +112,7 @@ public class Elepy implements ElepyContext {
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
         if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
-            addModel(Token.class);
+            addDefaultModel(Token.class);
         }
 
         configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
@@ -617,20 +616,14 @@ public class Elepy implements ElepyContext {
         return properties;
     }
 
-    private void retrievePackageModels() {
-
-        if (!packages.isEmpty()) {
-            Reflections reflections = new Reflections(packages);
-            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class);
-
-            if (annotated.isEmpty()) {
-                logger.warn("No @RestModel(s) were found in the added package(s)! Check the package names for misspelling.");
-            }
-
-            models.addAll(annotated);
+    private void addDefaultModel(Class<?> model) {
+        if (models.stream()
+                .noneMatch(cls -> model.isAssignableFrom(cls))) {
+            addModel(model);
+        } else {
+            logger.info(String.format("Default %s model overridden", model.getAnnotation(RestModel.class).name()));
         }
     }
-
 
     private void afterElepyConstruction() {
         for (Configuration configuration : configurations) {
@@ -656,19 +649,36 @@ public class Elepy implements ElepyContext {
 
         retrievePackageModels();
 
-        if (models.stream()
-                .noneMatch(User.class::isAssignableFrom)) {
+        addDefaultModel(User.class);
+        addDefaultModel(FileReference.class);
 
-            addModel(User.class);
-        }
-
-        addModel(FileReference.class);
         addExtension(new FileUploadExtension());
         registerDependency(userAuthenticationExtension);
 
         setupLoggingAndExceptions();
         if (!http.hasImplementation()) {
             http.setImplementation(initialize(Defaults.HTTP_SERVICE));
+        }
+    }
+
+    private void retrievePackageModels() {
+
+        if (!packages.isEmpty()) {
+            // Adds packages and Default models to classpath scanning
+            final var reflections = new Reflections(packages, Defaults.MODELS);
+
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class, false);
+
+            // Removes defaults from the scanned classes
+            // This is done so that you can extend and override Elepy's defaults models.
+            // The Reflections library depends on this behaviour.
+            annotated.removeAll(Defaults.MODELS);
+
+            if (annotated.isEmpty()) {
+                logger.warn("No @RestModel(s) were found in the added package(s)! Check the package names for misspelling.");
+            }
+
+            annotated.forEach(this::addModel);
         }
     }
 

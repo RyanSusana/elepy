@@ -2,10 +2,7 @@ package com.elepy.annotations;
 
 import com.elepy.handlers.ServiceHandler;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * This defines the initial Service for a model. The service as a whole can be overriden.
@@ -18,6 +15,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
+@Inherited
 public @interface Service {
 
     /**

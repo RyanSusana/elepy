@@ -2,10 +2,7 @@ package com.elepy.annotations;
 
 import com.elepy.dao.CrudFactory;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * A link to the {@link CrudFactory} to be used to singleCreate Crud implementations for this
@@ -16,6 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
+@Inherited
 public @interface DaoFactory {
 
     Class<? extends CrudFactory> value();

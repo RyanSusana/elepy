@@ -43,7 +43,10 @@ public class ReflectionUtils {
     }
 
     public static List<Field> findFieldsThatMatch(Class<?> root, Predicate<Field> predicate) {
-        return getAllFields(new LinkedList<>(), root).stream().filter(predicate).collect(Collectors.toList());
+        return getAllFields(new LinkedList<>(), root)
+                .stream()
+                .peek(field -> field.setAccessible(true))
+                .filter(predicate).collect(Collectors.toList());
     }
 
     public static List<Field> getAllFields(Class<?> type) {
@@ -63,12 +66,9 @@ public class ReflectionUtils {
 
     @SafeVarargs
     public static List<Field> searchForFieldsWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
-        return getAllFields(new LinkedList<>(), cls)
-                .stream()
-                .peek(field -> field.setAccessible(true))
-                .filter(field -> Stream.of(annotations).anyMatch(field::isAnnotationPresent))
-                .collect(Collectors.toList());
-
+        return findFieldsThatMatch(cls,
+                field -> Stream.of(annotations).anyMatch(field::isAnnotationPresent)
+        );
     }
 
     @SafeVarargs

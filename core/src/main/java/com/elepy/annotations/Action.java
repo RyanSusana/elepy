@@ -10,6 +10,7 @@ import java.lang.annotation.*;
 @Repeatable(Action.List.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
+@Inherited
 public @interface Action {
 
     String name();
@@ -30,6 +31,7 @@ public @interface Action {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})
+    @Inherited
     @interface List {
         Action[] value();
     }
