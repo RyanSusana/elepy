@@ -38,20 +38,17 @@ public class User {
     @Identifier
     @Id
     @PrettyName("User ID")
+    @Importance(1)
     private String id;
 
     @Unique
     @Searchable
     @JsonProperty("username")
     @PrettyName("Username")
+    @Importance(1)
     @Text(maximumLength = 30)
     private String username;
 
-    @PrettyName("Password")
-    @JsonProperty("password")
-    @Importance(-1)
-    @Text(TextType.PASSWORD)
-    private String password;
 
     @ElementCollection
     @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
@@ -59,6 +56,12 @@ public class User {
     @PrettyName("Permissions")
     private List<String> permissions = new ArrayList<>();
 
+
+    @PrettyName("Password")
+    @JsonProperty("password")
+    @Importance(-1)
+    @Text(TextType.PASSWORD)
+    private String password;
 
     public User() {
 
