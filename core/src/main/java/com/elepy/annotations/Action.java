@@ -25,7 +25,7 @@ public @interface Action {
     ActionType actionType() default ActionType.MULTIPLE;
 
     /**
-     * A list of required permissions to execute this A
+     * A list of required permissions to execute this Action
      */
     String[] requiredPermissions() default Permissions.AUTHENTICATED;
 
