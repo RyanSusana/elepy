@@ -37,45 +37,6 @@
         max-width: 25vw;
     }
 
-    .action-button {
-        min-width: 150px;
-        font-size: 0.85em !important;
-        text-transform: none !important;
-    }
-
-    .action-list {
-        .action-item {
-            padding: 10px;
-            cursor: pointer;
-            box-sizing: border-box;
-
-            &:nth-child(2n) {
-                background: #f2f2f2;
-            }
-
-            &:hover {
-                box-shadow: inset 0 0 2px #39f;
-            }
-        }
-    }
-
-    .uk-button-group {
-        .uk-dropdown {
-            padding: 0 !important;
-        }
-    }
-
-    .action-select {
-        padding: 0 !important;
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-        margin-left: 1px !important;
-    }
-
-    .action-button {
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-    }
 </style>
 
 <script>

@@ -3,6 +3,7 @@
         <button
                 @click="executeAction(selectedAction)"
                 class="uk-button uk-button-primary action-button"
+                :class="{multiple: filteredActions.length>1}"
                 :action="selectedAction.name"
         >{{selectedAction.name}}
         </button>
@@ -70,10 +71,51 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .action-select{
         font-size: 1.2rem;
         min-width: 20px;
     }
+
+    .action-button {
+        min-width: 150px;
+        font-size: 0.85em !important;
+        text-transform: none !important;
+    }
+
+    .action-list {
+        .action-item {
+            padding: 10px;
+            cursor: pointer;
+            box-sizing: border-box;
+
+            &:nth-child(2n) {
+                background: #f2f2f2;
+            }
+
+            &:hover {
+                box-shadow: inset 0 0 2px #39f;
+            }
+        }
+    }
+
+    .uk-button-group {
+        .uk-dropdown {
+            padding: 0 !important;
+        }
+    }
+
+    .action-select {
+        padding: 0 !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        margin-left: 1px !important;
+    }
+
+    .action-button.multiple {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+
 
 </style>
