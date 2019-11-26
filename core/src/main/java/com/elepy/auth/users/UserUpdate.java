@@ -71,7 +71,7 @@ public class UserUpdate extends DefaultUpdate<User> {
 
         if (updatedPermissionsContainsSuperUser &&
                 !permissionsAreTheSame(userToUpdate, userBeforeUpdate)) {
-            throw new ElepyException(String.format("Can't add or remove '%s' permission to or from users", Permissions.SUPER_USER), 403);
+            throw new ElepyException(String.format("Can't edit the permissions of users that have the permission '%s'", Permissions.SUPER_USER), 403);
         }
     }
 
