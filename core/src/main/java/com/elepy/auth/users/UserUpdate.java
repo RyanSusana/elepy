@@ -34,6 +34,7 @@ public class UserUpdate extends DefaultUpdate<User> {
         }
         checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 
+        context.validate(userToUpdateAfter);
         //Elepy evaluation
         new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
 
