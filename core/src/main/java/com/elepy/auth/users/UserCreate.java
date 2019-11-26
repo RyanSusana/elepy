@@ -33,19 +33,14 @@ public class UserCreate implements CreateHandler<User> {
             if (user.getPermissions().contains(Permissions.SUPER_USER)) {
                 throw new ElepyException(String.format("Can't create users with the permission '%s'", Permissions.SUPER_USER), 403);
             }
-            for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-                objectEvaluator.evaluate(user);
-            }
-            new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
+            context.validate(user);
+            evaluateUser(modelContext, user);
+
 
             createUser(crud, user);
             context.response().result(Message.of("Successfully created user", 200));
         } else {
-            for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-                objectEvaluator.evaluate(user);
-            }
-            new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
-
+            evaluateUser(modelContext, user);
 
             user.getPermissions().add(Permissions.SUPER_USER);
 
@@ -58,6 +53,13 @@ public class UserCreate implements CreateHandler<User> {
             context.response().result(Message.of("Successfully created the user", 200));
 
         }
+    }
+
+    private void evaluateUser(ModelContext<User> modelContext, User user) throws Exception {
+        for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
+            objectEvaluator.evaluate(user);
+        }
+        new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
     }
 
     private void createUser(Crud<User> crud, User user) {
