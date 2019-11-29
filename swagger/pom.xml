@@ -11,6 +11,7 @@
 
     <artifactId>elepy-swagger</artifactId>
 
+    <name>Elepy Swagger</name>
 
     <dependencies>
         <dependency>
