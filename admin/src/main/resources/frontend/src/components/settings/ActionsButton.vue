@@ -38,7 +38,7 @@
         props: ["actions", "ids"],
         computed: {
             filteredActions() {
-                return this.actions.filter(action => action.name !== this.selectedAction.name)
+                return this.actions !== 'NONE' && this.actions.filter(action => action.name !== this.selectedAction.name)
             }
         },
         data() {

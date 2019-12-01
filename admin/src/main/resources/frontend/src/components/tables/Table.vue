@@ -139,7 +139,7 @@
             },
             multiActions() {
                 return this.model.actions.filter(
-                    action => action["actionType"] !== "SINGLE"
+                    action => action["actionType"] === "MULTIPLE"
                 );
             },
             tableFields() {
