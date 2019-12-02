@@ -73,9 +73,6 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         assertThat(getTokenResponse.getStatus())
                 .isEqualTo(401);
 
-//        assertThat(getTokenResponse.getBody().getObject().getString("message"))
-//                .contains("invalid");
-
     }
 
     @Test

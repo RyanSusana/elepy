@@ -4,7 +4,6 @@ import com.elepy.annotations.*;
 import com.elepy.auth.users.*;
 import com.elepy.dao.SortOption;
 import com.elepy.models.TextType;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -38,6 +37,7 @@ public class User {
     @Identifier
     @Id
     @PrettyName("User ID")
+    @JsonProperty("id")
     @Importance(1)
     private String id;
 
@@ -54,6 +54,7 @@ public class User {
     @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "permission")
     @PrettyName("Permissions")
+    @JsonProperty("permissions")
     private List<String> permissions = new ArrayList<>();
 
 
@@ -63,12 +64,12 @@ public class User {
     @Text(TextType.PASSWORD)
     private String password;
 
+
     public User() {
 
     }
 
-    @JsonCreator
-    public User(@JsonProperty("id") String id, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("permissions") List<String> permissions) {
+    public User(String id, String username, String password, List<String> permissions) {
         this.id = id;
         this.username = username;
         this.password = password;

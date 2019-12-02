@@ -4,6 +4,7 @@ import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.*;
 import com.elepy.exceptions.Message;
+import com.elepy.tests.CustomUser;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
 
-    private Crud<User> userCrud;
+    private Crud<? extends User> userCrud;
     private Crud<Resource> resourceCrud;
 
     private static int resourceCounter = -100;
@@ -40,6 +41,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         elepy = ElepySystemUnderTest.create();
 
         elepy.addModel(Resource.class);
+        elepy.addModel(CustomUser.class);
         this.configureElepy(elepy);
 
         elepy.start();
@@ -98,7 +100,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     }
 
     @Test
-    void can_Login_and_DeleteUsers() throws JsonProcessingException, UnirestException {
+    void can_Login_and_DeleteUsers_AsModerator() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
 
@@ -165,6 +167,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
     }
 
+
     @Test
     void cant_Login_and_UpdateSuperUsersPermission() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
@@ -218,6 +221,35 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         assertEquals(403, authorizedFind.getStatus());
         assertEquals(0, user.getPermissions().size());
+    }
+
+    @Test
+    void can_Login_and_UpdateYourself_withCustomField() throws JsonProcessingException, UnirestException {
+        createInitialUsersViaHttp();
+
+        final var user1 = new CustomUser();
+
+        user1.setId("user");
+        user1.setUsername("user");
+        user1.setEmail("email");
+        user1.setPassword("newPassword");
+
+
+        final HttpResponse<String> update = Unirest
+                .put(elepy + "/users/user")
+                .basicAuth("user", "user")
+                .body(json(user1))
+                .asString();
+
+        final CustomUser user = ((Crud<CustomUser>) userCrud).getById("user").orElseThrow();
+
+
+        assertEquals(200, update.getStatus());
+
+        assertThat(user.getEmail())
+                .isEqualTo("email");
+        assertThat(BCrypt.checkpw("newPassword", user.getPassword()))
+                .isTrue();
     }
 
     @Test
@@ -284,7 +316,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     }
 
     @Test
-    public void can_FilterAndSearchItems_as_Intended() throws IOException, UnirestException {
+    public void can_FilterAndSearchItems_AsIntended() throws IOException, UnirestException {
         Resource resource = validObject();
         resource.setUniqueField("filterUnique");
         resource.setNumberMax40(BigDecimal.valueOf(25));
