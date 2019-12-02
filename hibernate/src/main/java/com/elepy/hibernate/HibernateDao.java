@@ -7,7 +7,6 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Model;
 import com.elepy.utils.ReflectionUtils;
-import com.elepy.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -39,7 +38,7 @@ public class HibernateDao<T> implements Crud<T> {
         this.objectMapper = objectMapper;
     }
 
-    public SessionFactory getSessionFactory(){
+    public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
@@ -116,6 +115,9 @@ public class HibernateDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(Serializable id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         try (Session session = sessionFactory.openSession()) {
 
             final T t = session.get(getType(), id);
@@ -201,7 +203,6 @@ public class HibernateDao<T> implements Crud<T> {
             throw new ElepyException(e.getMessage());
         }
     }
-
 
 
     @Override
