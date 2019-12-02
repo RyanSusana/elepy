@@ -10,10 +10,13 @@ import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
+
 public class UserDelete implements DeleteHandler<User> {
     @Override
     public void handleDelete(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
-        final User toDelete = crud.getById(context.modelId()).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
+        final var id = context.modelId();
+        final User toDelete = crud.getById(id).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
         final User loggedInUser = context.request().loggedInUserOrThrow();
 
         if (loggedInUser.equals(toDelete)) {

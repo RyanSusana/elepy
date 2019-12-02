@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -38,6 +40,10 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
     @BeforeAll
     protected void setUpAll() {
+        HttpClient httpClient = HttpClients.custom()
+                .disableCookieManagement()
+                .build();
+        Unirest.setHttpClient(httpClient);
         elepy = ElepySystemUnderTest.create();
 
         elepy.addModel(Resource.class);
@@ -105,16 +111,21 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
 
         final HttpResponse<String> unauthorizedDelete = Unirest
-                .delete(elepy + "/users")
+                .delete(elepy + "/users/user")
                 .asString();
+
+        assertEquals(401, unauthorizedDelete.getStatus());
+
+
         final HttpResponse<String> authorizedDelete = Unirest
-                .delete(elepy + "/users" + "/user")
+                .delete(elepy + "/users/user")
                 .basicAuth("admin", "admin")
                 .asString();
 
+
+        final List<? extends User> all1 = userCrud.getAll();
         assertEquals(200, authorizedDelete.getStatus());
 
-        assertEquals(401, unauthorizedDelete.getStatus());
         assertEquals(1, userCrud.count());
 
     }
@@ -583,6 +594,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         assertEquals(200, response.getStatus());
         assertEquals(200, response2.getStatus());
+        assertThat(userCrud.count()).isEqualTo(2);
     }
 
 
