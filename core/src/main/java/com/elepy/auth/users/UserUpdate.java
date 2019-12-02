@@ -34,14 +34,7 @@ public class UserUpdate extends DefaultUpdate<User> {
         }
         checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 
-        context.validate(userToUpdateAfter);
-        //Elepy evaluation
-        new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
-
-        for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(userToUpdateAfter);
-        }
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
+        validateUpdate(context, modelContext, userToUpdateBefore, userToUpdateAfter);
 
         //If password is empty, use the old password
         if (userToUpdateAfter.getPassword().isEmpty()) {
@@ -59,6 +52,17 @@ public class UserUpdate extends DefaultUpdate<User> {
         context.status(200);
         context.result(Message.of("The user has been updated", 200));
         return userToUpdateAfter;
+    }
+
+    protected void validateUpdate(HttpContext context, ModelContext<User> modelContext, User userToUpdateBefore, User userToUpdateAfter) throws Exception {
+        context.validate(userToUpdateAfter);
+        //Elepy evaluation
+        new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
+
+        for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
+            objectEvaluator.evaluate(userToUpdateAfter);
+        }
+        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
     }
 
     private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {

@@ -150,7 +150,7 @@ public interface HttpContext {
     }
 
     default void requirePermissions(String... requiredPermissions) {
-        request().hasPermissions(List.of(requiredPermissions));
+        request().requirePermissions(requiredPermissions);
     }
 
     default void requirePermissions(Collection<String> requiredPermissions) {

@@ -27,32 +27,39 @@ public class UserCreate implements CreateHandler<User> {
             throw new ElepyException("Usernames can't be empty!", 400);
         }
         if (crud.count() > 0) {
-            context.loggedInUserOrThrow();
-            context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
-
-            if (user.getPermissions().contains(Permissions.SUPER_USER)) {
-                throw new ElepyException(String.format("Can't create users with the permission '%s'", Permissions.SUPER_USER), 403);
-            }
-            context.validate(user);
-            evaluateUser(modelContext, user);
-
-
-            createUser(crud, user);
-            context.response().result(Message.of("Successfully created user", 200));
+            createAdditionalUser(context, crud, modelContext, user);
         } else {
-            evaluateUser(modelContext, user);
-
-            user.getPermissions().add(Permissions.SUPER_USER);
-
-            if (user.getPassword().length() < 5) {
-                throw new ElepyException("Passwords must be more than 4 characters long!", 400);
-            }
-
-            createUser(crud, user);
-            context.response().result();
-            context.response().result(Message.of("Successfully created the user", 200));
-
+            createInitialUser(context, crud, modelContext, user);
         }
+    }
+
+    protected void createInitialUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
+        evaluateUser(modelContext, user);
+
+        user.getPermissions().add(Permissions.SUPER_USER);
+
+        if (user.getPassword().length() < 5) {
+            throw new ElepyException("Passwords must be more than 4 characters long!", 400);
+        }
+
+        createUser(crud, user);
+        context.response().result();
+        context.response().result(Message.of("Successfully created the user", 200));
+    }
+
+    protected void createAdditionalUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
+        context.loggedInUserOrThrow();
+        context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
+
+        if (user.getPermissions().contains(Permissions.SUPER_USER)) {
+            throw new ElepyException(String.format("Can't create users with the permission '%s'", Permissions.SUPER_USER), 403);
+        }
+        context.validate(user);
+        evaluateUser(modelContext, user);
+
+
+        createUser(crud, user);
+        context.response().result(Message.of("Successfully created user", 200));
     }
 
     private void evaluateUser(ModelContext<User> modelContext, User user) throws Exception {

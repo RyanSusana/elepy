@@ -227,7 +227,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final HttpResponse<String> authorizedFind = Unirest
                 .patch(elepy + "/users" + "/admin")
                 .queryString("password", "newPassword")
-                .basicAuth("user", "user")
+                .basicAuth("admin", "admin")
                 .asString();
 
         final var admin = userCrud.getById("admin").orElseThrow();
