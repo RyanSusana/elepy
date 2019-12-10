@@ -50,6 +50,8 @@ public class FiltersTest {
                 .containsExactlyInAnyOrder(
                         FilterType.CONTAINS,
                         FilterType.EQUALS,
+                        FilterType.NOT_NULL,
+                        FilterType.IS_NULL,
                         FilterType.STARTS_WITH,
                         FilterType.NOT_EQUALS);
     }
