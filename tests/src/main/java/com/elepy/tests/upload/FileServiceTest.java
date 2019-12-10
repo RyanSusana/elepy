@@ -4,7 +4,6 @@ import com.elepy.Configuration;
 import com.elepy.Elepy;
 import com.elepy.auth.Permissions;
 import com.elepy.dao.Crud;
-import com.elepy.tests.ElepyTest;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class FileServiceTest implements ElepyTest {
+public abstract class FileServiceTest {
 
     private static int portCounter = 8700;
     private final Configuration[] configurations;

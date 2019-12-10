@@ -27,6 +27,8 @@ public class FirestoreQueryFactory {
                 } else {
                     throw new ElepyException("Firestore 'CONTAINS' only works on arrays");
                 }
+            case IS_NULL:
+                return query.whereEqualTo(name, null);
             default:
                 throw new ElepyException("Firestore does not support the filter: " + filter.getFilterType().getName());
         }

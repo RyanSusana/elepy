@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 public enum FilterType {
 
     EQUALS("Equals", "equals", FieldType.values()),
+    NOT_NULL("Has Value", "notNull", FieldType.values()),
+    IS_NULL("Doesn't have value", "isNull", FieldType.values()),
     NOT_EQUALS("Not Equals", "notEquals", FieldType.values()),
     CONTAINS("Contains", "contains", FieldType.TEXT, FieldType.ARRAY),
 
@@ -19,8 +21,7 @@ public enum FilterType {
     LESSER_THAN_OR_EQUALS("Lesser than or equal to", "lte", FieldType.NUMBER, FieldType.DATE),
 
     //Strings
-    STARTS_WITH("Starts with", "startsWith", FieldType.TEXT, FieldType.ARRAY)
-    ;
+    STARTS_WITH("Starts with", "startsWith", FieldType.TEXT, FieldType.ARRAY);
 
     private final String prettyName;
     private final String name;

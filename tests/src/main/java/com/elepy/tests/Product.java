@@ -3,11 +3,11 @@ package com.elepy.tests;
 import com.elepy.annotations.*;
 import com.elepy.models.TextType;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @RestModel(name = "Products", slug = "/products")
 @Create(requiredPermissions = {})
@@ -23,7 +23,7 @@ public class Product {
     @PrettyName("Product ID")
     @Identifier(generated = false)
     @Id
-    private Integer id;
+    private Integer id = new Random().nextInt(1_000_000);
 
     @PrettyName("Price")
     private BigDecimal price;
@@ -31,7 +31,6 @@ public class Product {
     @DateTime()
     @PrettyName("Expiration Date")
     private Date date;
-
 
     @Text(TextType.TEXTAREA)
     @Searchable
@@ -46,6 +45,16 @@ public class Product {
     @TrueFalse(trueValue = "This product is awesome", falseValue = "This product is meh")
     private boolean productIsAwesome;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> tags;
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 
     public boolean isProductIsAwesome() {
         return productIsAwesome;

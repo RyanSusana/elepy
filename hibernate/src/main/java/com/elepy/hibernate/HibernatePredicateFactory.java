@@ -25,7 +25,11 @@ public class HibernatePredicateFactory {
             case NOT_EQUALS:
                 return cb.notEqual(root.get(fieldName), value);
             case CONTAINS:
-                return cb.like(root.get(fieldName), "%" + value + "%");
+                if (fieldType.equals(FieldType.ARRAY)) {
+                    throw new ElepyException("The 'contains' filter can't be applied to arrays (yet)");
+                } else {
+                    return cb.like(root.get(fieldName), "%" + value + "%");
+                }
             case GREATER_THAN:
                 if (fieldType.equals(FieldType.DATE)) {
                     return cb.greaterThan(root.get(fieldName).as(Date.class), (Date) value);
@@ -51,6 +55,12 @@ public class HibernatePredicateFactory {
                 } else {
                     return cb.le(root.get(fieldName), (Number) value);
                 }
+            case IS_NULL:
+                return cb.isNull(root.get(fieldName));
+            case NOT_NULL:
+                return cb.isNotNull(root.get(fieldName));
+            case STARTS_WITH:
+                return cb.like(root.get(fieldName), value + "%");
         }
         throw new ElepyException("Hibernate does not support the filter: " + filter.getFilterType().getName());
     }
