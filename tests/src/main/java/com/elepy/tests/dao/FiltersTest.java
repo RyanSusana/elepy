@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 
 import static com.elepy.dao.FilterType.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -265,8 +266,12 @@ public abstract class FiltersTest implements ElepyConfigHelper {
     }
 
 
-    protected void seedWithProducts(Product... product) {
-        elepy.getCrudFor(Product.class).create(product);
+    protected void seedWithProducts(Product... products) {
+        final var random = new Random();
+        for (Product product : products) {
+            product.setId(random.nextInt(1_000_000));
+        }
+        elepy.getCrudFor(Product.class).create(products);
     }
 
     private static class FilterOption {
