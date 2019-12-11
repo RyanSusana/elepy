@@ -13,22 +13,6 @@
 
     <name>Elepy Vert.x</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
-                <configuration>
-                    <excludes>
-                        <exclude>${exclude.tests}</exclude>
-                    </excludes>
-                    <printSummary>true</printSummary>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
