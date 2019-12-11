@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 @RestModel(name = "Products", slug = "/products")
 @Create(requiredPermissions = {})
@@ -23,7 +22,7 @@ public class Product {
     @PrettyName("Product ID")
     @Identifier(generated = false)
     @Id
-    private Integer id = new Random().nextInt(1_000_000);
+    private Integer id;
 
     @PrettyName("Price")
     private BigDecimal price;

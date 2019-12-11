@@ -36,22 +36,6 @@ public abstract class FiltersTest implements ElepyConfigHelper {
         Unirest.setHttpClient(HttpClients.custom().disableCookieManagement().build());
     }
 
-//    EQUALS("Equals", "equals",FieldType.values()),
-//    NOT_NULL("Has Value", "notNull", FieldType.values()),
-//    IS_NULL("Doesn't have value", "isNull", FieldType.values()),
-//    NOT_EQUALS("Not Equals", "notEquals", FieldType.values()),
-//    CONTAINS("Contains", "contains", FieldType.TEXT, FieldType.ARRAY),
-//
-//    //Numbers & Dates
-//    GREATER_THAN("Greater than", "gt", FieldType.NUMBER, FieldType.DATE),
-//    LESSER_THAN("Lesser than", "lt", FieldType.NUMBER, FieldType.DATE),
-//    GREATER_THAN_OR_EQUALS("Greater than or equal to", "gte", FieldType.NUMBER, FieldType.DATE),
-//    LESSER_THAN_OR_EQUALS("Lesser than or equal to", "lte", FieldType.NUMBER, FieldType.DATE),
-//
-//    //Strings
-//    STARTS_WITH("Starts with", "startsWith", FieldType.TEXT, FieldType.ARRAY);
-
-
     @Test
     public void canFilter_EQUALS_onString() {
         var product = new Product();
