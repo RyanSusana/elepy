@@ -20,6 +20,7 @@
         <unirest.version>1.4.9</unirest.version>
         <jackson.version>2.10.0</jackson.version>
         <tika.version>1.22</tika.version>
+        <guava.version>28.0-jre</guava.version>
         <assertj.version>3.14.0</assertj.version>
         <headlessMode>false</headlessMode>
         <revision>2.5.2</revision>
