@@ -209,6 +209,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.4.10</version>
+                <configuration>
+                    <excludedGroups>
+                        <params>e2e</params>
+                        <params>slow</params>
+                    </excludedGroups>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>0.10</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
 
     </build>
