@@ -16,6 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -169,6 +173,62 @@ public abstract class FiltersTest implements ElepyConfigHelper {
                 .hasSize(0);
     }
 
+    @Test
+    void canFilter_BETWEEN_Date_Exclusive() {
+        var product = new Product();
+
+        product.setDate(date(2019, 12, 13));
+        seedWithProducts(product);
+
+
+        assertThat(executeFilter("date", GREATER_THAN, date(2019, 12, 12)))
+                .hasSize(1);
+        assertThat(executeFilter("date", LESSER_THAN, date(2019, 12, 14)))
+                .hasSize(1);
+
+        assertThat(executeFilters(
+                filter("date", GREATER_THAN, date(2019, 12, 12)),
+                filter("date", LESSER_THAN, date(2019, 12, 14))
+                )
+        ).hasSize(1);
+
+        assertThat(executeFilters(
+                filter("date", GREATER_THAN, date(2019, 12, 13)),
+                filter("date", LESSER_THAN, date(2019, 12, 13))
+                )
+        ).hasSize(0);
+    }
+
+    @Test
+    void canFilter_BETWEEN_Date_Inclusive() {
+        var product = new Product();
+
+        product.setDate(date(2019, 12, 13));
+        seedWithProducts(product);
+
+
+        assertThat(executeFilter("date", GREATER_THAN_OR_EQUALS, date(2019, 12, 13)))
+                .hasSize(1);
+        assertThat(executeFilter("date", LESSER_THAN_OR_EQUALS, date(2019, 12, 13)))
+                .hasSize(1);
+
+        assertThat(executeFilters(
+                filter("date", GREATER_THAN_OR_EQUALS, date(2019, 12, 13)),
+                filter("date", LESSER_THAN_OR_EQUALS, date(2019, 12, 13))
+                )
+        ).hasSize(1);
+
+        assertThat(executeFilters(
+                filter("date", GREATER_THAN, date(2019, 12, 15)),
+                filter("date", LESSER_THAN, date(2019, 12, 11))
+                )
+        ).hasSize(0);
+    }
+
+    private Date date(int year, int month, int day) {
+        return Date.from(LocalDate.of(year, month, day).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
 
     @Test
     void canFilter_GREATER_THAN_onNumber() {
@@ -282,7 +342,11 @@ public abstract class FiltersTest implements ElepyConfigHelper {
         FilterOption(String fieldName, FilterType filterType, Object value) {
             this.fieldName = fieldName;
             this.filterType = filterType;
-            this.value = value;
+
+            if (value instanceof Date)
+                this.value = new SimpleDateFormat("yyyy-MM-dd").format(value);
+            else
+                this.value = value;
         }
     }
 } 
