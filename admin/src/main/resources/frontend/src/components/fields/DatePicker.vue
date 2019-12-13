@@ -40,7 +40,7 @@
         components: {VueCtkDateTimePicker},
         data() {
             return {
-                content: this.value == null ? "" + Date.now() : "" + this.value
+                content: this.value == null ? null : "" + this.value
             };
         },
         computed: {

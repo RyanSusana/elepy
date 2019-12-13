@@ -43,7 +43,11 @@
         },
         methods: {
             toDate: function (milli) {
-                var date = moment(milli);
+
+                if (milli == null) {
+                    return '';
+                }
+                let date = moment(milli);
 
                 if (moment().diff(date, "minutes") > 10) {
                     return date.calendar();
