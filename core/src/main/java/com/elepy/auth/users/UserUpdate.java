@@ -24,7 +24,7 @@ public class UserUpdate extends DefaultUpdate<User> {
         Crud<User> crud = modelContext.getCrud();
         User loggedInUser = context.loggedInUserOrThrow();
 
-        User userToUpdateBefore = crud.getById(context.modelId()).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
+        User userToUpdateBefore = crud.getById(context.recordId()).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
 
         User userToUpdateAfter = updatedObjectFromRequest(userToUpdateBefore, context.request(), objectMapper, modelContext.getModel());
 

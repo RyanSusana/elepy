@@ -11,7 +11,7 @@ public class ResourceExtraAction implements ActionHandler {
     public void handleAction(HttpContext context, Crud dao, ModelContext modelContext, ObjectMapper objectMapper) throws Exception {
 
         context.type("application/json");
-        context.result(objectMapper.writeValueAsString(context.modelIds()));
+        context.result(objectMapper.writeValueAsString(context.recordIds()));
 
     }
 }

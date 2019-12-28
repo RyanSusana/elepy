@@ -14,7 +14,7 @@ public class DefaultDelete<T> implements DeleteHandler<T> {
 
     @Override
     public void handleDelete(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        Set<Serializable> paramIds = context.modelIds();
+        Set<Serializable> paramIds = context.recordIds();
 
         delete(paramIds, dao, context, modelContext);
     }

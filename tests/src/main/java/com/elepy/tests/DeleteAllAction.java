@@ -9,6 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DeleteAllAction implements ActionHandler<Product> {
     @Override
     public void handleAction(HttpContext context, Crud<Product> dao, ModelContext<Product> modelContext, ObjectMapper objectMapper) throws Exception {
-        dao.delete(context.modelIds());
+        dao.delete(context.recordIds());
     }
 }

@@ -47,7 +47,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
             throw new ElepyException("No changes detected.");
         }
 
-        T before = modelContext.getCrud().getById(context.modelId()).orElseThrow(() -> new ElepyException("No object found with this ID", 404));
+        T before = modelContext.getCrud().getById(context.recordId()).orElseThrow(() -> new ElepyException("No object found with this ID", 404));
         final T updated = updatedObjectFromRequest(before, context.request(), objectMapper, modelContext.getModel());
 
         evaluateAndUpdate(context, updated, modelContext);

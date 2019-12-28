@@ -53,7 +53,7 @@ public class FindOnGoogle implements ActionHandler<Article> {
     
     @Override
     public void handleAction(HttpContext context, Crud<Article> articles, ModelContext<Article> modelContext, ObjectMapper objectMapper) {
-        var article = articles.getById(context.modelId())
+        var article = articles.getById(context.recordId())
                 .orElseThrow(() -> new ElepyException("Article not found", 404));
 
         // Elepy's CMS handles Message.redirect(String) as an actual redirection

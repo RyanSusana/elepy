@@ -23,15 +23,15 @@ public interface HttpContext {
     /**
      * @return The ID of the model a.k.a request.params("id)
      */
-    default Serializable modelId() {
-        return request().modelId();
+    default Serializable recordId() {
+        return request().recordId();
     }
 
     /**
      * @return The ID of the model a.k.a request.params("id)
      */
-    default Set<Serializable> modelIds() {
-        return request().modelIds();
+    default Set<Serializable> recordIds() {
+        return request().recordIds();
     }
 
     default HttpContext injectModelClassInHttpContext(Class<?> cls) {

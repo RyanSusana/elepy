@@ -81,7 +81,7 @@ public interface Request {
     /**
      * @return The ID of the model a.k.a request.params("id")
      */
-    default Serializable modelId() {
+    default Serializable recordId() {
 
         final String id = queryParams("id");
 
@@ -97,17 +97,17 @@ public interface Request {
             return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
         }
 
-        return modelId(attribute("modelClass"));
+        return recordId(attribute("modelClass"));
     }
 
-    default Set<Serializable> modelIds() {
+    default Set<Serializable> recordIds() {
         final String ids = queryParams("ids");
 
         if (ids != null) {
             final String[] split = ids.split(",");
             return Arrays.stream(split).map(s -> ReflectionUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
         }
-        return new HashSet<>(Collections.singletonList(modelId()));
+        return new HashSet<>(Collections.singletonList(recordId()));
     }
 
     default UserAuthenticationExtension userAuthenticationCenter() {
@@ -186,7 +186,7 @@ public interface Request {
     /**
      * @return The ID of the model a.k.a request.params("id)
      */
-    default Serializable modelId(Class cls) {
+    default Serializable recordId(Class cls) {
 
         String id = params("id");
         if (cls == null) {

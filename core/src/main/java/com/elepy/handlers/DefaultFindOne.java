@@ -22,7 +22,7 @@ public class DefaultFindOne<T> implements FindOneHandler<T> {
     public T findOne(Request request, Response response, Crud<T> dao, ModelContext<T> modelContext) {
         response.type("application/json");
 
-        Serializable paramId = request.modelId();
+        Serializable paramId = request.recordId();
 
         final Optional<T> id = dao.getById(paramId);
         if (id.isPresent()) {

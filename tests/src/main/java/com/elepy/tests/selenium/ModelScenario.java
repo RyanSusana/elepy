@@ -34,10 +34,10 @@ public class ModelScenario<T> extends LoggedInScenario {
         return new FormInputScenario<>(driver, model);
     }
 
-    public FormInputScenario<T> startEditing(String modelId) {
+    public FormInputScenario<T> startEditing(String recordId) {
         driver.findElement(ADD_BUTTON).click();
 
-        clickSingleAction(modelId, "edit");
+        clickSingleAction(recordId, "edit");
 
         driver.waitTillCanSee(FormInputScenario.SAVE_BUTTON);
         return new FormInputScenario<>(driver, model);

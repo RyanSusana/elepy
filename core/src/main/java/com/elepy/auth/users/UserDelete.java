@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class UserDelete implements DeleteHandler<User> {
     @Override
     public void handleDelete(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
-        final var id = context.modelId();
+        final var id = context.recordId();
         final User toDelete = crud.getById(id).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
         final User loggedInUser = context.request().loggedInUserOrThrow();
 

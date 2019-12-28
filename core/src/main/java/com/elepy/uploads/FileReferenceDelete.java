@@ -18,7 +18,7 @@ public class FileReferenceDelete implements DeleteHandler<FileReference> {
 
     @Override
     public void handleDelete(HttpContext context, Crud<FileReference> dao, ModelContext<FileReference> modelContext, ObjectMapper objectMapper) throws Exception {
-        Set<Serializable> paramIds = context.modelIds();
+        Set<Serializable> paramIds = context.recordIds();
 
         dao.getByIds(paramIds).forEach(fileReference -> {
             fileService.deleteFile(fileReference.getUploadName());

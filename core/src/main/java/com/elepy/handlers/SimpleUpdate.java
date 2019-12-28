@@ -24,7 +24,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
     @Override
     public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
 
-        final Serializable id = context.modelId();
+        final Serializable id = context.recordId();
 
         final T before = dao.getById(id).orElseThrow(() -> new ElepyException("This item doesn't exist and therefor can't be updated"));
 

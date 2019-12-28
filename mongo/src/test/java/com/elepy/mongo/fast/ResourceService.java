@@ -18,7 +18,7 @@ public class ResourceService extends DefaultService<Resource> {
     @Route(path = "/resources/:id/extra", requiredPermissions = {}, method = HttpMethod.GET)
     public void extraRoute(Request request, Response response) {
 
-        Optional<Resource> id = crud.getById(request.modelId());
+        Optional<Resource> id = crud.getById(request.recordId());
 
         if (id.isPresent()) {
             response.status(200);
