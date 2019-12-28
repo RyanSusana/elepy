@@ -32,6 +32,9 @@ public class UserAuthenticationExtension implements ElepyExtension {
             ctx.result(Message.of("Your are logged in", 200));
         });
 
+        http.get("/elepy-logged-in-user", ctx ->
+                ctx.response().json(userCrud.getById(ctx.loggedInUserOrThrow().getId()).orElseThrow()));
+
         http.post("/elepy-token-login", (request, response) -> {
 
             boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
@@ -68,7 +71,7 @@ public class UserAuthenticationExtension implements ElepyExtension {
                 .orElseThrow(() -> new ElepyException("Credentials invalid", 401));
     }
 
-    private Optional<User> authenticateUser(Request request) {
+    private Optional<? extends User> authenticateUser(Request request) {
         for (AuthenticationMethod authenticationMethod : authenticationMethods) {
             final var user = authenticationMethod.authenticateUser(request);
 

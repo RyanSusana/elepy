@@ -3,8 +3,11 @@ package com.elepy.tests.auth;
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.exceptions.Message;
+import com.elepy.tests.CustomUser;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.http.impl.client.HttpClients;
@@ -24,6 +27,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         elepy = ElepySystemUnderTest.create();
 
         this.configureElepy(elepy);
+        elepy.addModel(CustomUser.class);
 
         elepy.start();
 
@@ -109,5 +113,30 @@ public abstract class SecurityTest implements ElepyConfigHelper {
 
         assertThat(authenticationResponse.getStatus())
                 .isEqualTo(401);
+    }
+
+    @Test
+    void can_AccessSelf() throws JsonProcessingException, UnirestException {
+
+        final var user1 = new CustomUser();
+
+        user1.setId("user");
+        user1.setUsername("user");
+        user1.setEmail("ryansemail@live.com");
+        user1.setPassword("userPassword");
+
+        Unirest
+                .post(elepy + "/users")
+                .basicAuth("user", "user")
+                .body(new ObjectMapper().writeValueAsString(user1))
+                .asString();
+
+
+        final var self = Unirest.get(elepy + "/elepy-logged-in-user").basicAuth("user", "userPassword").asJson().getBody().getObject();
+
+        assertThat(self.getString("email"))
+                .isEqualTo("ryansemail@live.com");
+
+
     }
 }
