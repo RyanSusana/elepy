@@ -23,7 +23,7 @@ public class ModelContextExtraction {
         var objectEvaluators = extractEvaluators(model, elepy);
         var idProvider = extractIdProvider(model, elepy);
 
-        elepy.registerDependency(Crud.class, model.getSlug(), crud);
+        elepy.registerDependency(Crud.class, model.getPath(), crud);
         return new ModelContext<>(model, crud, idProvider, objectEvaluators);
     }
 

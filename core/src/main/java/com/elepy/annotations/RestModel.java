@@ -24,7 +24,7 @@ public @interface RestModel {
     /**
      * @return What is the URI of this model? e.g '/products'
      */
-    String slug();
+    String path ();
 
     /**
      * @return A brief description of this model

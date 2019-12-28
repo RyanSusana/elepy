@@ -28,11 +28,11 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * @return The config slug.
-     * @see Elepy#withConfigSlug(String)
+     * @return The config path .
+     * @see Elepy#withConfigPath(String)
      */
-    public String getConfigSlug() {
-        return elepy.getConfigSlug();
+    public String getConfigPath() {
+        return elepy.getConfigPath();
     }
 
     /**

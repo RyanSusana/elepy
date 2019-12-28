@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This {@link IdentityProvider} creates an SEO-friendly link Slug for an ID.
+ * This {@link IdentityProvider} creates an SEO-friendly link Path for an ID.
  *
  * @param <T> The model type
  */
@@ -37,22 +37,22 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public void provideId(T item, Crud<T> dao) {
-        final String slug = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property. This must be a String."));
-        String generatedSlug = generateSlug(slug, 0, dao);
+        final String path = getPath(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available path property. This must be a String."));
+        String generatedPath = generatePath(path, 0, dao);
 
         Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
 
         field.setAccessible(true);
 
         try {
-            field.set(item, generatedSlug);
+            field.set(item, generatedPath);
         } catch (IllegalAccessException e) {
             throw new ElepyException("Failed to reflectively access: " + field.getName(), 500);
         }
 
     }
 
-    private Optional<String> getSlug(T obj, List<String> slugFieldNames) {
+    private Optional<String> getPath(T obj, List<String> slugFieldNames) {
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             final Object value;
@@ -77,7 +77,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         return s.substring(0, maxLen);
     }
 
-    private String generateSlug(String slug, int iteration, Crud crud) {
+    private String generatePath(String slug, int iteration, Crud crud) {
         String generatedId = slug;
 
         if (iteration > 0) {
@@ -85,7 +85,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
         }
 
         if (crud.getById(generatedId).isPresent()) {
-            return generateSlug(slug, iteration + 1, crud);
+            return generatePath(slug, iteration + 1, crud);
         }
 
         return generatedId;

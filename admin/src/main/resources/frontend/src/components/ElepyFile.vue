@@ -77,7 +77,7 @@
                 var ref = this;
                 let searchUrl =
                     Utils.url +
-                    ref.model.slug +
+                    ref.model.path +
                     "?" +
                     this.pagination +
                     "&" +

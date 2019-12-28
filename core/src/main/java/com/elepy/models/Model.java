@@ -9,7 +9,7 @@ import java.util.List;
 public class Model<T> {
 
     private String name;
-    private String slug;
+    private String path ;
     private Class<T> javaClass;
     private boolean viewableOnCMS;
     private String idProperty;
@@ -58,12 +58,12 @@ public class Model<T> {
         this.name = name;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getPath() {
+        return path ;
     }
 
-    public void setSlug(String slug) {
-        this.slug = slug;
+    public void setPath(String path ) {
+        this.path = path ;
     }
 
     public Class<T> getJavaClass() {

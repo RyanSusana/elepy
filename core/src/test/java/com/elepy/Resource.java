@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@RestModel(name = "Test Resource", slug = "/resources")
+@RestModel(name = "Test Resource", path = "/resources")
 @Delete(requiredPermissions = {})
 @Create(requiredPermissions = {})
 @Update(requiredPermissions = {})

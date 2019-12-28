@@ -1,5 +1,5 @@
 <div id="app">
-    <p id="slug" style="display:none;">{{ model.slug }}</p>
+    <p id="path " style="display:none;">{{ model.path }}</p>
     <{{ theView }} v-if="selectedModel!=null" :model="selectedModel"/>
 </div>
 
@@ -16,7 +16,7 @@
             getModel() {
                 axios.get("/config").then(response => {
                     this.selectedModel = response.data.filter(function (model) {
-                        return model.slug === document.getElementById('slug').innerText
+                        return model.path === document.getElementById('path ').innerText
                     })[0];
                 });
             }

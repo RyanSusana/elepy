@@ -33,7 +33,7 @@ public class PluginHandler {
         http.before("/plugins/*/*", ctx -> ctx.request().loggedInUserOrThrow());
         for (ElepyAdminPanelPlugin plugin : this.plugins) {
             plugin.setup(http, elepyPostConfiguration);
-            http.get("/plugins/" + plugin.getSlug(), (request, response) -> {
+            http.get("/plugins/" + plugin.getPath(), (request, response) -> {
                 Map<String, Object> model = new HashMap<>();
                 String content = plugin.renderContent(model);
                 model.put("content", content);

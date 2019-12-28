@@ -10,15 +10,15 @@ import java.util.Objects;
 public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPanelPlugin> {
 
     private final String name;
-    private final String slug;
+    private final String path ;
 
 
     private ElepyAdminPanel adminPanel;
 
 
-    public ElepyAdminPanelPlugin(String name, String slug) {
+    public ElepyAdminPanelPlugin(String name, String path ) {
         this.name = name;
-        this.slug = slug;
+        this.path = path ;
     }
 
 
@@ -31,8 +31,8 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
         return name;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getPath() {
+        return path ;
     }
 
     public ElepyAdminPanel getAdminPanel() {
@@ -54,11 +54,11 @@ public abstract class ElepyAdminPanelPlugin implements Comparable<ElepyAdminPane
         if (o == null || getClass() != o.getClass()) return false;
         ElepyAdminPanelPlugin that = (ElepyAdminPanelPlugin) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(slug, that.slug);
+                Objects.equals(path , that.path );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, slug);
+        return Objects.hash(name, path );
     }
 }

@@ -57,7 +57,7 @@ public class Elepy implements ElepyContext {
     private final List<Class<?>> models = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
     private HttpServiceConfiguration http = new HttpServiceConfiguration();
-    private String configSlug = "/config";
+    private String configPath = "/config";
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private List<Route> routes = new ArrayList<>();
     private boolean initialized = false;
@@ -157,11 +157,11 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return The config slug.
-     * @see #withConfigSlug(String)
+     * @return The config path .
+     * @see #withConfigPath(String)
      */
-    public String getConfigSlug() {
-        return this.configSlug;
+    public String getConfigPath() {
+        return this.configPath;
     }
 
     /**
@@ -450,12 +450,12 @@ public class Elepy implements ElepyContext {
      * Changes the URI for the configuration of the Elepy instance.
      * This is where Elepy describes it's models
      *
-     * @param configSlug the URI for the configuration description
+     * @param configPath the URI for the configuration description
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy withConfigSlug(String configSlug) {
+    public Elepy withConfigPath(String configPath) {
         checkConfig();
-        this.configSlug = configSlug;
+        this.configPath = configPath;
         return this;
     }
 

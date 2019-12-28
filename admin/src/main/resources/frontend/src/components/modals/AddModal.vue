@@ -72,7 +72,7 @@
                 axios({
                     method: "POST",
                     data: this.item,
-                    url: Utils.url + this.model.slug
+                    url: Utils.url + this.model.path
                 })
                     .then(response => {
                         Utils.displayResponse(response);

@@ -133,7 +133,7 @@
                                 data: this.item,
                                 url:
                                     Utils.url +
-                                    this.model.slug +
+                                    this.model.path +
                                     (this.isCreating ? "" : "/" + this.item[this.model.idProperty])
                             })
                                 .then(response => {
@@ -152,7 +152,7 @@
 
             getFirstRecord() {
                 axios
-                    .get(Utils.url + this.model.slug + "?pageSize=1&pageNumber=1")
+                    .get(Utils.url + this.model.path + "?pageSize=1&pageNumber=1")
                     .then(response => {
                         this.item = response.data.values[0] || {};
                         this.itemCopy = JSON.parse(JSON.stringify(this.item));

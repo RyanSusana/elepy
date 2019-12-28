@@ -18,9 +18,9 @@ public class MongoCrudFactory implements CrudFactory {
     @Override
     public <T> Crud<T> crudFor(Model<T> model) {
 
-        final String slug = model.getSlug();
+        final String path = model.getPath();
 
-        final String[] split = slug.split("/");
+        final String[] split = path.split("/");
 
         return new DefaultMongoDao<>(database, split[split.length - 1], model, objectMapper);
     }

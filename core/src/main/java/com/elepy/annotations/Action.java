@@ -20,7 +20,7 @@ public @interface Action {
 
     HttpMethod method() default HttpMethod.GET;
 
-    String slug() default "";
+    String path () default "";
 
     ActionType actionType() default ActionType.MULTIPLE;
 

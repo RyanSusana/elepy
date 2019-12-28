@@ -6,7 +6,7 @@ import com.elepy.annotations.RestModel;
 
 import java.util.List;
 
-@RestModel(name = "Nav Menu", slug = "/nav")
+@RestModel(name = "Nav Menu", path = "/nav")
 public class NavigationMenu {
 
     private String id;

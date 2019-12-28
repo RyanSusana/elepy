@@ -37,7 +37,7 @@ Let's say you want to query for your article on Google, it's as simple as:
         //These are optional
         requiredPermissions = Permissions.AUTHENTICATED,
         method = HttpMethod.GET,
-        slug = "/find-on-google")
+        path = "/find-on-google")
 @RestModel(...)
 class Article{
     private String id;
@@ -87,10 +87,10 @@ By default, the `DefaultIdentityProvider` is used.
 Typical IdentityProviders:
 - `HexIdentityProvider` - Provides a random hex string as ID. __only works on String ID's__
 - `NumberIdentityProvider` - Provides a random number as ID.
-- `SlugIdentityProvider` - Provides a URI-friendly ID. __only works on String ID's__
+- `PathIdentityProvider` - Provides a URI-friendly ID. __only works on String ID's__
 
 ```java
-@IdProvider(SlugIdentityProvider.clss)
+@IdProvider(PathIdentityProvider.clss)
 @RestModel(...)
 class Article{
     private String id;

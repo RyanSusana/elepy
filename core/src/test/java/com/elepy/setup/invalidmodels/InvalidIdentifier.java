@@ -6,7 +6,7 @@ import com.elepy.annotations.RestModel;
 import java.util.Date;
 
 
-@RestModel(name = "", slug = "/-")
+@RestModel(name = "", path = "/-")
 public class InvalidIdentifier {
 
     @Identifier

@@ -53,9 +53,9 @@ public class Test {
     private static Paths createPathsFromModel(Model<?> model) {
 //        final var paths = new Paths();
 //        final var defaultActions = model.getDefaultActions().stream()
-//                .collect(Collectors.groupingBy(HttpAction::getSlug));
+//                .collect(Collectors.groupingBy(HttpAction::getPath));
 //
-//        defaultActions.forEach((slug, actions) -> paths.put(apiSlug(slug), actionsToPath(actions)));
+//        defaultActions.forEach((slug, actions) -> paths.put(apiPath(slug), actionsToPath(actions)));
 //
 //        paths.values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> operation.addTagsItem(model.getName())));
         return null;
@@ -83,7 +83,7 @@ public class Test {
     }
 
     private static List<Parameter> getParamsFromAction(HttpAction httpAction) {
-        return getPathParamsFromString(httpAction.getSlug()).stream()
+        return getPathParamsFromString(httpAction.getPath()).stream()
                 .map(param -> new Parameter().in("path").schema(new Schema().type("string")).name(param))
                 .collect(Collectors.toList());
 
@@ -101,7 +101,7 @@ public class Test {
         return tagValues;
     }
 
-    private static String apiSlug(String input) {
+    private static String apiPath(String input) {
         final var split = input.split("/");
 
         return Stream.of(split).map(s -> {

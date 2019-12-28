@@ -73,7 +73,7 @@
                 axios({
                     method: "PUT",
                     data: this.item,
-                    url: Utils.url + this.model.slug + "/" + this.item[this.model.idProperty]
+                    url: Utils.url + this.model.path + "/" + this.item[this.model.idProperty]
                 })
                     .then(response => {
                         Utils.displayResponse(response);

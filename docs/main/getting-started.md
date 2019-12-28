@@ -38,9 +38,9 @@ The latest version of Elepy is:
 ```
 
 # Step Two: Create and annotate your POJO's
-Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and `/slug` of your model. 
+Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and `/path ` of your model. 
 ``` java
-@RestModel(name = "Products", slug = "/products")
+@RestModel(name = "Products", path = "/products")
 public class Product {
 
     @Identifier

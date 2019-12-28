@@ -31,7 +31,7 @@ You can use the `@Evaluators` to point to a PersonEvaluator(and maybe more, like
 
 _Example_
 ```java
-@RestModel(name = "Persons", slug = "/persons")
+@RestModel(name = "Persons", path = "/persons")
 @Evaluators(PersonEvaluator.class)
 public class Person {
     private String id, firstName, lastName, email;

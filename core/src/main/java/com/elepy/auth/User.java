@@ -13,7 +13,7 @@ import java.util.Objects;
 
 
 @RestModel(
-        slug = "/users",
+        path = "/users",
         name = "Users",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING

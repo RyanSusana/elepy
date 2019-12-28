@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RestModel(name = "Files", slug = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
+@RestModel(name = "Files", path = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
 @Update(handler = DisabledHandler.class)
 @Delete(handler = FileReferenceDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_FILES)
 @Entity(name = "elepy_files")

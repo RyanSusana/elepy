@@ -7,8 +7,8 @@
         <ul class="link-list uk-list">
         {% for models in models %}
 
-            <li class="{{ model == null ? "" : (model.slug equals models.slug ? "uk-active": "") }}">
-                <a href="/admin{{models.slug}}"><i class="fas fa-{{ models.icon }}"></i>{{models.name}}</a>
+            <li class="{{ model == null ? "" : (model.path equals models.path ? "uk-active": "") }}">
+                <a href="/admin{{models.path }}"><i class="fas fa-{{ models.icon }}"></i>{{models.name}}</a>
             </li>
 
         {% endfor %}
@@ -21,7 +21,7 @@
             <ul class="link-list uk-list">
             {% for plugin in plugins %}
 
-                <li><a href="/plugins{{plugin.slug}}">{{plugin.name}}</a></li>
+                <li><a href="/plugins{{plugin.path }}">{{plugin.name}}</a></li>
 
             {% endfor %}
             </ul>

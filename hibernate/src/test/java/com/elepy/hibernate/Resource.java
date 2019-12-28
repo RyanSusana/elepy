@@ -13,7 +13,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "RESOURCES")
-@RestModel(name = "Test Resource", slug = "/resources")
+@RestModel(name = "Test Resource", path = "/resources")
 @Delete(requiredPermissions = {})
 @Create(requiredPermissions = {})
 @Update(requiredPermissions = {})

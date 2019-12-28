@@ -29,7 +29,7 @@ public class FirestoreCrud<T> implements Crud<T> {
     public FirestoreCrud(Firestore db, Model<T> model) {
         this.db = db;
         this.objectMapper = new ObjectMapper();
-        this.collection = model.getSlug();
+        this.collection = model.getPath();
         this.model = model;
     }
 

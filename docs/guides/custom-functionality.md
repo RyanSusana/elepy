@@ -9,7 +9,7 @@ Below, I have a basic everyday API model, Product.
 ```java
 import com.elepy.annotations.*;
 
-@RestModel(name = "Products", slug = "/products")//The only necessary annotation for Elepy
+@RestModel(name = "Products", path = "/products")//The only necessary annotation for Elepy
 @Update(handler = ProductUpdate.class, accessLevel = AccessLevel.ADMIN) //Override Elepy's Update :D
 public class Product {
 

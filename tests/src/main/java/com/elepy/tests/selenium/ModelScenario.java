@@ -167,7 +167,7 @@ public class ModelScenario<T> extends LoggedInScenario {
 
 
     public ModelScenario<T> navigateTo() {
-        driver.navToUrl("/admin" + model.getSlug());
+        driver.navToUrl("/admin" + model.getPath());
         return this;
     }
 

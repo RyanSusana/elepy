@@ -59,8 +59,8 @@ public class ModelContext<T> {
         return model.getName();
     }
 
-    public String getSlug() {
-        return model.getSlug();
+    public String getPath() {
+        return model.getPath();
     }
 
     public Class<T> getModelType() {

@@ -66,7 +66,7 @@ public class ContextKey<T> {
         final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
         final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
 
-        return new ContextKey<>(Crud.class, declaredAnnotation == null ? null : declaredAnnotation.slug());
+        return new ContextKey<>(Crud.class, declaredAnnotation == null ? null : declaredAnnotation.path ());
     }
 
     @Override

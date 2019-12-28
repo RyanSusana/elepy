@@ -56,7 +56,7 @@
                     method: selectedAction.method,
                     url:
                         Utils.url +
-                        selectedAction.slug +
+                        selectedAction.path +
                         "?ids=" + this.ids.join(',')
                 })
                     .then(response => {

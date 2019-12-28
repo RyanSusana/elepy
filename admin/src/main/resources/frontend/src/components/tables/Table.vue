@@ -171,7 +171,7 @@
                     method: selectedAction.method,
                     url:
                         Utils.url +
-                        selectedAction.slug +
+                        selectedAction.path +
                         "?ids=" +
                         this.selectedRows.join(",")
                 })
@@ -203,7 +203,7 @@
                                 method: "delete",
                                 url:
                                     Utils.url +
-                                    this.model.slug +
+                                    this.model.path +
                                     "?ids=" +
                                     this.selectedRows.join(",")
                             })

@@ -98,7 +98,7 @@ public class ModelUtils {
             ));
         }
         model.setViewableOnCMS(!classType.isAnnotationPresent(Hidden.class));
-        model.setSlug(restModel.slug());
+        model.setPath(restModel.path ());
         model.setName(restModel.name());
         model.setJavaClass(classType);
         model.setDefaultSortDirection(restModel.defaultSortDirection());
@@ -120,13 +120,13 @@ public class ModelUtils {
     private static <T> void setupActions(Model<T> model) {
         model.setActions(Stream.of(model.getJavaClass().getAnnotationsByType(Action.class))
                 .map(actionAnnotation ->
-                        actionToHttpAction(model.getSlug(), actionAnnotation))
+                        actionToHttpAction(model.getPath(), actionAnnotation))
                 .collect(Collectors.toList()));
     }
 
-    public static HttpAction actionToHttpAction(String modelSlug, Action actionAnnotation) {
-        final String multiSlug = modelSlug + "/actions" + (actionAnnotation.slug().isEmpty() ? "/" + StringUtils.slugify(actionAnnotation.name()) : actionAnnotation.slug());
-        return HttpAction.of(actionAnnotation.name(), multiSlug, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
+    public static HttpAction actionToHttpAction(String modelPath, Action actionAnnotation) {
+        final String multiPath = modelPath + "/actions" + (actionAnnotation.path ().isEmpty() ? "/" + StringUtils.slugify(actionAnnotation.name()) : actionAnnotation.path ());
+        return HttpAction.of(actionAnnotation.name(), multiPath, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
     }
 
     private static void setupImportantFields(Model<?> model) {
@@ -205,11 +205,11 @@ public class ModelUtils {
                 .orElse(Permissions.NONE);
 
 
-        model.setFindOneAction(HttpAction.of("Find One", model.getSlug() + "/:id", findPermissions, HttpMethod.GET, ActionType.SINGLE));
-        model.setFindManyAction(HttpAction.of("Find Many", model.getSlug(), findPermissions, HttpMethod.GET, ActionType.MULTIPLE));
-        model.setUpdateAction(HttpAction.of("Update", model.getSlug() + "/:id", updatePermissions, HttpMethod.PUT, ActionType.SINGLE));
-        model.setDeleteAction(HttpAction.of("Delete", model.getSlug() + "/:id", deletePermissions, HttpMethod.DELETE, ActionType.SINGLE));
-        model.setCreateAction(HttpAction.of("Create", model.getSlug(), createPermissions, HttpMethod.POST, ActionType.MULTIPLE));
+        model.setFindOneAction(HttpAction.of("Find One", model.getPath() + "/:id", findPermissions, HttpMethod.GET, ActionType.SINGLE));
+        model.setFindManyAction(HttpAction.of("Find Many", model.getPath(), findPermissions, HttpMethod.GET, ActionType.MULTIPLE));
+        model.setUpdateAction(HttpAction.of("Update", model.getPath() + "/:id", updatePermissions, HttpMethod.PUT, ActionType.SINGLE));
+        model.setDeleteAction(HttpAction.of("Delete", model.getPath() + "/:id", deletePermissions, HttpMethod.DELETE, ActionType.SINGLE));
+        model.setCreateAction(HttpAction.of("Create", model.getPath(), createPermissions, HttpMethod.POST, ActionType.MULTIPLE));
 
     }
 

@@ -39,12 +39,12 @@ public class ViewHandler {
 
         models.forEach((elepyModel, modelView) -> {
 
-            http.get("/admin/config" + elepyModel.getSlug(), (request, response) -> {
+            http.get("/admin/config" + elepyModel.getPath(), (request, response) -> {
                 response.type("application/json");
                 response.json(elepyModel);
             });
 
-            http.get("/admin" + elepyModel.getSlug(), (request, response) -> {
+            http.get("/admin" + elepyModel.getPath(), (request, response) -> {
 
                 Map<String, Object> renderModel = new HashMap<>();
 

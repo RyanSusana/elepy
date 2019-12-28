@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-@RestModel(name = "Test Resource", slug = "/resources")
+@RestModel(name = "Test Resource", path = "/resources")
 @ExtraRoutes({ResourceExtraRoutes.class})
 @Service(value = ResourceService.class)
 @Delete(requiredPermissions = {})

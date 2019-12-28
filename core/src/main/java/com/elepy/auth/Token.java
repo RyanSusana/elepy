@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Entity(name = "elepy_token")
 @Table(name = "elepy_tokens")
-@RestModel(name = "Tokens", slug = "/tokens")
+@RestModel(name = "Tokens", path = "/tokens")
 @Hidden
 @Service(DisabledHandler.class)
 public class Token implements Comparable<Token> {

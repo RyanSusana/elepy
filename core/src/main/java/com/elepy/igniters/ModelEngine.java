@@ -31,7 +31,7 @@ public class ModelEngine {
         this.elepy = elepy;
         this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
-        setupDescriptors(elepy.getConfigSlug(), elepy.http());
+        setupDescriptors(elepy.getConfigPath(), elepy.http());
     }
 
     public List<Model<?>> getModels() {
@@ -59,10 +59,10 @@ public class ModelEngine {
                 .changeModel(modelChange));
     }
 
-    public void setupDescriptors(String configSlug, HttpService http) {
+    public void setupDescriptors(String configPath, HttpService http) {
 
         final Route build = anElepyRoute()
-                .path(configSlug)
+                .path(configPath)
                 .addPermissions(Permissions.AUTHENTICATED)
                 .method(HttpMethod.GET)
 

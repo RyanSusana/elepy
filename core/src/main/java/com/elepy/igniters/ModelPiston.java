@@ -58,7 +58,7 @@ public class ModelPiston<T> {
         List<Route> toReturn = new ArrayList<>();
         //POST
         toReturn.add(anElepyRoute()
-                .path(model.getSlug())
+                .path(model.getPath())
                 .addPermissions(model.getCreateAction().getRequiredPermissions())
                 .method(HttpMethod.POST)
                 .route(ctx -> serviceExtraction.handleCreate(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
@@ -67,7 +67,7 @@ public class ModelPiston<T> {
 
         // PUT
         toReturn.add(anElepyRoute()
-                .path(model.getSlug() + "/:id")
+                .path(model.getPath() + "/:id")
                 .addPermissions(model.getUpdateAction().getRequiredPermissions())
                 .method(HttpMethod.PUT)
                 .route(ctx -> serviceExtraction.handleUpdatePut(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
@@ -76,7 +76,7 @@ public class ModelPiston<T> {
 
         //PATCH
         toReturn.add(anElepyRoute()
-                .path(model.getSlug() + "/:id")
+                .path(model.getPath() + "/:id")
                 .method(HttpMethod.PATCH)
                 .addPermissions(model.getUpdateAction().getRequiredPermissions())
                 .route(ctx -> {
@@ -88,14 +88,14 @@ public class ModelPiston<T> {
 
         // DELETE
         toReturn.add(anElepyRoute()
-                .path(model.getSlug() + "/:id")
+                .path(model.getPath() + "/:id")
                 .method(HttpMethod.DELETE)
                 .addPermissions(model.getDeleteAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleDelete(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
         );
         toReturn.add(anElepyRoute()
-                .path(model.getSlug())
+                .path(model.getPath())
                 .method(HttpMethod.DELETE)
                 .addPermissions(model.getDeleteAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleDelete(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
@@ -104,7 +104,7 @@ public class ModelPiston<T> {
 
         //GET PAGE
         toReturn.add(anElepyRoute()
-                .path(model.getSlug())
+                .path(model.getPath())
                 .method(HttpMethod.GET)
                 .addPermissions(model.getFindManyAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleFindMany(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
@@ -113,7 +113,7 @@ public class ModelPiston<T> {
 
         //GET ONE
         toReturn.add(anElepyRoute()
-                .path(model.getSlug() + "/:id")
+                .path(model.getPath() + "/:id")
                 .method(HttpMethod.GET)
                 .addPermissions(model.getFindOneAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleFindOne(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
@@ -143,19 +143,19 @@ public class ModelPiston<T> {
     private List<Route> getActionRoutes(Elepy elepy) {
 
         var modelType = modelContext.getModel().getJavaClass();
-        var slug = modelContext.getModel().getSlug();
+        var path = modelContext.getModel().getPath();
         var crud = modelContext.getCrud();
         final Action[] actionAnnotations = modelType.getAnnotationsByType(Action.class);
         final List<Route> actions = new ArrayList<>();
 
         for (Action actionAnnotation : actionAnnotations) {
 
-            final HttpAction action = ModelUtils.actionToHttpAction(slug, actionAnnotation);
+            final HttpAction action = ModelUtils.actionToHttpAction(path , actionAnnotation);
             final ActionHandler<T> actionHandler = elepy.initialize(actionAnnotation.handler());
 
             final RouteBuilder route = anElepyRoute()
                     .addPermissions(actionAnnotation.requiredPermissions())
-                    .path(action.getSlug() + "/:id")
+                    .path(action.getPath() + "/:id")
                     .method(actionAnnotation.method())
                     .route(ctx -> {
                         ctx.attribute("action", action);
@@ -165,7 +165,7 @@ public class ModelPiston<T> {
 
             //add two routes for multi select and single select.
             actions.add(route.build());
-            actions.add(route.path(action.getSlug()).build());
+            actions.add(route.path(action.getPath()).build());
         }
         return actions;
     }

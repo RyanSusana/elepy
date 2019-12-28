@@ -95,7 +95,7 @@
                                 method: "delete",
                                 url:
                                     Utils.url +
-                                    this.model.slug +
+                                    this.model.path +
                                     "/" +
                                     this.data[this.model.idProperty]
                             })
