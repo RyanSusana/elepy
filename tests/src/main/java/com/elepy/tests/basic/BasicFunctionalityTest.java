@@ -147,7 +147,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final var token = getTokenResponse.getBody().replaceAll("\"", "");
 
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("ELEPY_TOKEN", token).asString();
+        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization","Bearer "+ token).asString();
 
         assertEquals(200, authenticationResponse.getStatus());
     }

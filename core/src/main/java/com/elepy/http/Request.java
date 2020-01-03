@@ -71,7 +71,12 @@ public interface Request {
     }
 
     default String token() {
-        return Optional.ofNullable(cookie("ELEPY_TOKEN")).orElse(headers("ELEPY_TOKEN"));
+        final var authorization = headers("Authorization");
+
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            return authorization.split(" ")[1];
+        }
+        return cookie("ELEPY_TOKEN");
     }
 
     void attribute(String attribute, Object value);

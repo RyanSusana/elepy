@@ -55,7 +55,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
 
         final var token = getTokenResponse.getBody().replaceAll("\"", "");
 
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("ELEPY_TOKEN", token).asString();
+        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization","Bearer "+ token).asString();
 
         assertThat(authenticationResponse.getStatus())
                 .isEqualTo(200);
@@ -91,7 +91,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         });
 
         final var authenticationResponse = Unirest.get(elepy + "/random-secured-route")
-                .header("ELEPY_TOKEN", "a_wrong_token").asString();
+                .header("Authorization","Bearer a_wrong_token").asString();
 
         assertThat(authenticationResponse.getStatus())
                 .isEqualTo(401);
