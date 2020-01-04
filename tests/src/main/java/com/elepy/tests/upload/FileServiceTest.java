@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -139,11 +139,20 @@ public abstract class FileServiceTest {
 
 
         assertThat(references.searchInField("uploadName", uploadedFileName)
-                .stream().map(FileReference::getUploadName).anyMatch(uploadedFileName::equals)).as(String.format("Can't find '%s' in file references ", uploadedFileName)).isTrue();
-        assertThat(inputStream(originalFileName).readAllBytes().length).as("File  size of uploaded file not equal to the actual file").isEqualTo(fileUpload.getSize());
+                .stream().map(FileReference::getUploadName).anyMatch(uploadedFileName::equals))
+                .as(String.format("Can't find '%s' in file references ", uploadedFileName))
+                .isTrue();
 
-        assertThat(countFiles()).as("File upload did not increase the count of Files").isEqualTo(fileCountBeforeUpload + 1);
-        assertThat(fileUpload.contentTypeMatches(contentType)).as(String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, fileUpload.getContentType())).isTrue();
+        assertThat(inputStream(originalFileName).readAllBytes().length)
+                .as("File  size of uploaded file not equal to the actual file")
+                .isEqualTo(fileUpload.getSize());
+
+        assertThat(countFiles()).as("File upload did not increase the count of Files")
+                .isEqualTo(fileCountBeforeUpload + 1);
+
+        assertThat(fileUpload.contentTypeMatches(contentType))
+                .as(String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, fileUpload.getContentType()))
+                .isTrue();
 
 
         assertThat(IOUtils.contentEquals(inputStream(originalFileName), fileUpload.getContent())).as(String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName)).isTrue();
