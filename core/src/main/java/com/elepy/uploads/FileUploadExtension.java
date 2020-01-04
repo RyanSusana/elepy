@@ -12,13 +12,16 @@ import com.elepy.http.Request;
 import com.elepy.http.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.imgscalr.Scalr;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileUploadExtension implements ElepyExtension {
@@ -40,14 +43,79 @@ public class FileUploadExtension implements ElepyExtension {
 
         fileCrud.delete(request.params("fileName"));
 
-        response.result(Message.of("File removed",200));
+        response.result(Message.of("File removed", 200));
     }
 
     private void handleFileGet(Request request, Response response) throws IOException {
         final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("File not found", 404));
 
         response.type(file.getContentType());
-        response.result(IOUtils.toByteArray(file.getContent()));
+
+        if (file.getContentType().startsWith("image") && shouldScale(request)) {
+
+            handleFileGetImage(request, response, file);
+
+        } else {
+            response.result(IOUtils.toByteArray(file.getContent()));
+        }
+
+    }
+
+    private void handleFileGetImage(Request request, Response response, FileUpload file) throws IOException {
+        final var original = ImageIO.read(file.getContent());
+
+
+        final var targetSize = dimensionFromRequest(request, original.getHeight(), original.getWidth());
+
+        final Scalr.Mode mode = modeFromRequest(request);
+        final var resized = Scalr.resize(original, Scalr.Method.AUTOMATIC, mode, targetSize.width, targetSize.height);
+
+        response.result(toImage(resized, file.getContentType()));
+    }
+
+    private static byte[] toImage(BufferedImage originalImage, String contentType) {
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            ImageIO.write(originalImage, contentType.split("/")[1], outputStream);
+            outputStream.flush();
+            return outputStream.toByteArray();
+
+        } catch (IOException e) {
+            throw new ElepyException("Failed to resize image", 500, e);
+        }
+    }
+
+    private static Scalr.Mode modeFromRequest(Request request) {
+        final var fit = request.queryParamOrDefault("fit", "auto").toLowerCase();
+
+        if (fit.equals("height")) {
+            return Scalr.Mode.FIT_TO_HEIGHT;
+        } else if (fit.equals("width")) {
+            return Scalr.Mode.FIT_TO_WIDTH;
+        } else {
+            return Scalr.Mode.AUTOMATIC;
+        }
+    }
+
+    private static boolean shouldScale(Request request) {
+        return request.queryParams().stream()
+                .anyMatch(queryParam -> Set.of("width", "height", "size").contains(queryParam.toLowerCase()));
+    }
+
+    private static Dimension dimensionFromRequest(Request request, int currentHeight, int currentWidth) {
+        final var targetSize = request.queryParams("size");
+
+        final var targetHeight = request.queryParamOrDefault("height", "" + currentHeight);
+
+        final var targetWidth = request.queryParamOrDefault("width", "" + currentWidth);
+
+        if (targetSize == null) {
+            return new Dimension(Integer.parseInt(targetWidth), Integer.parseInt(targetHeight));
+        } else {
+            final var size = Integer.parseInt(targetSize);
+            return new Dimension(size, size);
+        }
     }
 
 
