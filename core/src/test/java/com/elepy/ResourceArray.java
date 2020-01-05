@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-@RestModel(name = "Resources", path = "/resources")
+@Model(name = "Resources", path = "/resources")
 public class ResourceArray {
 
     private int id;

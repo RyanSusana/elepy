@@ -1,6 +1,6 @@
 package com.elepy;
 
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.Token;
 import com.elepy.auth.User;
@@ -174,7 +174,7 @@ public class Elepy implements ElepyContext {
     /**
      * The default {@link ObjectEvaluator} to your own implementation
      * This is used to determine an object's validity. It can also be changed per
-     * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
+     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
      *
      * @return the base object evaluator
      */
@@ -253,9 +253,9 @@ public class Elepy implements ElepyContext {
      * Adds a model to the Elepy instance
      *
      * @param clazz The class of the model you want to add. The class must also be annotated with
-     *              {@link com.elepy.annotations.RestModel}
+     *              {@link Model}
      * @return The {@link com.elepy.Elepy} instance
-     * @see RestModel
+     * @see Model
      */
     public Elepy addModel(Class<?> clazz) {
         return addModels(clazz);
@@ -265,9 +265,9 @@ public class Elepy implements ElepyContext {
      * Adds an array of models to the Elepy instance
      *
      * @param classes An array of model classes. All classes must be annotated with
-     *                {@link com.elepy.annotations.RestModel}
+     *                {@link Model}
      * @return The {@link com.elepy.Elepy} instance
-     * @see RestModel
+     * @see Model
      */
     public Elepy addModels(Class<?>... classes) {
         checkConfig();
@@ -373,9 +373,9 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Adds a package of models annotated with {@link RestModel} in a package.
+     * Adds a package of models annotated with {@link Model} in a package.
      * <p>
-     * Elepy then uses reflection to scan this package for {@link RestModel}s.
+     * Elepy then uses reflection to scan this package for {@link Model}s.
      *
      * @param packageName the package to scan.
      * @return The {@link com.elepy.Elepy} instance
@@ -433,7 +433,7 @@ public class Elepy implements ElepyContext {
     /**
      * Changes the default {@link ObjectEvaluator} to your own implementation
      * This is used to determine an object's validity. It can also be changed per
-     * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
+     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
      *
      * @param baseObjectEvaluator the base evaluator
      * @return The {@link com.elepy.Elepy} instance
@@ -551,7 +551,7 @@ public class Elepy implements ElepyContext {
      * @return All ModelContext
      */
     public List<Schema<?>> models() {
-        return modelEngine.getModels();
+        return modelEngine.getSchemas();
     }
 
 
@@ -618,10 +618,10 @@ public class Elepy implements ElepyContext {
 
     private void addDefaultModel(Class<?> model) {
         if (models.stream()
-                .noneMatch(cls -> model.isAssignableFrom(cls))) {
+                .noneMatch(model::isAssignableFrom)) {
             addModel(model);
         } else {
-            logger.info(String.format("Default %s model overridden", model.getAnnotation(RestModel.class).name()));
+            logger.info(String.format("Default %s model overridden", model.getAnnotation(Model.class).name()));
         }
     }
 
@@ -667,7 +667,7 @@ public class Elepy implements ElepyContext {
             // Adds packages and Default models to classpath scanning
             final var reflections = new Reflections(packages, Defaults.MODELS);
 
-            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(RestModel.class, false);
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Model.class, false);
 
             // Removes defaults from the scanned classes
             // This is done so that you can extend and override Elepy's defaults models.

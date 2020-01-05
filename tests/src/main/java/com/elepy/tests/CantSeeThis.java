@@ -1,9 +1,9 @@
 package com.elepy.tests;
 
 import com.elepy.annotations.Hidden;
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 
-@RestModel(path = "/no-way-josay", name = "Should not be able to see this message")
+@Model(path = "/no-way-josay", name = "Should not be able to see this message")
 @Hidden
 public class CantSeeThis {
     private String id;

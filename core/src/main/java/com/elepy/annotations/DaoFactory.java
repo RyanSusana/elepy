@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * A link to the {@link CrudFactory} to be used to singleCreate Crud implementations for this
- * {@link RestModel}. The default is whatever is configured with {@link com.elepy.Elepy#withDefaultCrudFactory(Class)}
+ * {@link Model}. The default is whatever is configured with {@link com.elepy.Elepy#withDefaultCrudFactory(Class)}
  *
  * @see CrudFactory
  * @see com.elepy.Elepy#withDefaultCrudFactory(Class)

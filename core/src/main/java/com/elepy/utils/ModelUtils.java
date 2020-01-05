@@ -89,7 +89,7 @@ public class ModelUtils {
 
     public static <T> Schema<T> createModelFromClass(Class<T> classType) {
         var model = new Schema<T>();
-        final RestModel restModel = classType.getAnnotation(RestModel.class);
+        final Model restModel = classType.getAnnotation(Model.class);
 
 
         if (restModel == null) {

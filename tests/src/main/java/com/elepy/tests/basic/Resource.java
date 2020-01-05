@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 
-@RestModel(name = "Test Resource", path = "/resources")
+@Model(name = "Test Resource", path = "/resources")
 @ExtraRoutes({ResourceExtraRoutes.class})
 @Service(value = ResourceService.class)
 @Delete(requiredPermissions = {})

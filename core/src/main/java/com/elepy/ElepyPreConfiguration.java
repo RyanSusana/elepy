@@ -1,6 +1,6 @@
 package com.elepy;
 
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.CrudFactory;
@@ -38,7 +38,7 @@ public class ElepyPreConfiguration {
     /**
      * The default {@link ObjectEvaluator} to your own implementation
      * This is used to determine an object's validity. It can also be changed per
-     * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
+     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
      *
      * @return the base object evaluator
      */
@@ -65,8 +65,8 @@ public class ElepyPreConfiguration {
      * Adds a model to the void instance
      *
      * @param clazz The class of the model you want to add. The class must also be annotated with
-     *              {@link RestModel}
-     * @see RestModel
+     *              {@link Model}
+     * @see Model
      */
     public void addModel(Class<?> clazz) {
         elepy.addModel(clazz);
@@ -76,8 +76,8 @@ public class ElepyPreConfiguration {
      * Adds an array of models to the void instance
      *
      * @param classes An array of model classes. All classes must be annotated with
-     *                {@link RestModel}
-     * @see RestModel
+     *                {@link Model}
+     * @see Model
      */
     public void addModels(Class<?>... classes) {
         elepy.addModels(classes);
@@ -146,9 +146,9 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * Adds a package of models annotated with {@link RestModel} in a package.
+     * Adds a package of models annotated with {@link Model} in a package.
      * <p>
-     * void then uses reflection to scan this package for {@link RestModel}s.
+     * void then uses reflection to scan this package for {@link Model}s.
      *
      * @param packageName the package to scan.
      * @see #addModels(Class[])

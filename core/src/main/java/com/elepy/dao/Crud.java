@@ -1,6 +1,6 @@
 package com.elepy.dao;
 
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.Schema;
@@ -183,7 +183,7 @@ public interface Crud<T> {
     }
 
     /**
-     * @return The type of the {@link RestModel}. For use in reflection
+     * @return The type of the {@link Model}. For use in reflection
      */
     default Class<T> getType() {
         return getSchema().getJavaClass();

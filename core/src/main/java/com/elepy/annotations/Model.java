@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 
 @Inherited
-public @interface RestModel {
+public @interface Model {
 
     /**
      * @return What do you call this model? e.g 'Products'

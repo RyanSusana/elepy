@@ -1,6 +1,6 @@
 package com.elepy.di;
 
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 import com.elepy.dao.Crud;
 import com.elepy.utils.ReflectionUtils;
 import com.googlecode.gentyref.GenericTypeReflector;
@@ -64,7 +64,7 @@ public class ContextKey<T> {
 
     private static ContextKey<?> getTypeArgument(ParameterizedType exactSuperType) {
         final var model = (Class<?>) exactSuperType.getActualTypeArguments()[0];
-        final RestModel declaredAnnotation = model.getAnnotation(RestModel.class);
+        final Model declaredAnnotation = model.getAnnotation(Model.class);
 
         return new ContextKey<>(Crud.class, declaredAnnotation == null ? null : declaredAnnotation.path ());
     }

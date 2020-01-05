@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@RestModel(
+@Model(
         path = "/users",
         name = "Users",
         defaultSortField = "username",

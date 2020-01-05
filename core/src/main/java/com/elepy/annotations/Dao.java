@@ -5,7 +5,7 @@ import com.elepy.dao.Crud;
 import java.lang.annotation.*;
 
 /**
- * This annotation signifies that this {@link RestModel} uses a custom {@link Crud}
+ * This annotation signifies that this {@link Model} uses a custom {@link Crud}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

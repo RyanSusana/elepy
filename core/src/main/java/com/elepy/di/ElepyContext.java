@@ -1,6 +1,6 @@
 package com.elepy.di;
 
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +39,7 @@ public interface ElepyContext {
      * @return the Crud
      */
     default <T> Crud<T> getCrudFor(Class<T> cls) {
-        final RestModel annotation = cls.getAnnotation(RestModel.class);
+        final Model annotation = cls.getAnnotation(Model.class);
 
         if (annotation == null) {
             throw new ElepyConfigException("Resources must have the @RestModel Annotation");

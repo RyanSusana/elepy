@@ -34,7 +34,7 @@ public class ModelEngine {
         setupDescriptors(elepy.getConfigPath(), elepy.http());
     }
 
-    public List<Schema<?>> getModels() {
+    public List<Schema<?>> getSchemas() {
         return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
     }
 

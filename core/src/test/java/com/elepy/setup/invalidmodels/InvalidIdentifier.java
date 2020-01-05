@@ -1,12 +1,12 @@
 package com.elepy.setup.invalidmodels;
 
 import com.elepy.annotations.Identifier;
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 
 import java.util.Date;
 
 
-@RestModel(name = "", path = "/-")
+@Model(name = "", path = "/-")
 public class InvalidIdentifier {
 
     @Identifier

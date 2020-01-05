@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@RestModel(name = "Products", path = "/products")
+@Model(name = "Products", path = "/products")
 @Create(requiredPermissions = {})
 @Delete(requiredPermissions = {})
 @Update(requiredPermissions = {})

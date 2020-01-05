@@ -2,11 +2,11 @@ package com.elepy.describers;
 
 import com.elepy.annotations.FileReference;
 import com.elepy.annotations.InnerObject;
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 
 import java.util.List;
 
-@RestModel(name = "Nav Menu", path = "/nav")
+@Model(name = "Nav Menu", path = "/nav")
 public class NavigationMenu {
 
     private String id;

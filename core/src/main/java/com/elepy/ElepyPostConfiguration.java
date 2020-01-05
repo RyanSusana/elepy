@@ -1,6 +1,6 @@
 package com.elepy;
 
-import com.elepy.annotations.RestModel;
+import com.elepy.annotations.Model;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -30,7 +30,7 @@ public class ElepyPostConfiguration {
     /**
      * The default {@link ObjectEvaluator} to your own implementation
      * This is used to determine an object's validity. It can also be changed per
-     * {@link RestModel} with the {@link com.elepy.annotations.Evaluators} annotation.
+     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
      *
      * @return the base object evaluator
      */
