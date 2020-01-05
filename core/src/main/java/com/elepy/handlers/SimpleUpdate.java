@@ -31,7 +31,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
         T updatedObjectFromRequest = updatedObjectFromRequest(before,
                 context.request(),
                 objectMapper,
-                modelContext.getModel());
+                modelContext.getSchema());
 
         beforeUpdate(before, updatedObjectFromRequest, context.request(), dao);
 

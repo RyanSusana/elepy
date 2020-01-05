@@ -3,7 +3,7 @@ package com.elepy.dao;
 import com.elepy.annotations.RestModel;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -186,10 +186,10 @@ public interface Crud<T> {
      * @return The type of the {@link RestModel}. For use in reflection
      */
     default Class<T> getType() {
-        return getModel().getJavaClass();
+        return getSchema().getJavaClass();
     }
 
-    Model<T> getModel();
+    Schema<T> getSchema();
 
 
     ObjectMapper getObjectMapper();

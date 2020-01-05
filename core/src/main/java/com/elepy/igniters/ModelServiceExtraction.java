@@ -3,7 +3,7 @@ package com.elepy.igniters;
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
 import com.elepy.handlers.*;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.utils.ReflectionUtils;
 
 import java.util.Optional;
@@ -13,9 +13,9 @@ import java.util.Optional;
  */
 public class ModelServiceExtraction<T> {
 
-    public static <T> ServiceHandler<T> extractService(Model<T> model, Elepy elepy) {
+    public static <T> ServiceHandler<T> extractService(Schema<T> schema, Elepy elepy) {
 
-        var classType = model.getJavaClass();
+        var classType = schema.getJavaClass();
         ServiceBuilder<T> serviceBuilder = extractInitialService(classType.getAnnotation(Service.class), elepy);
 
         Optional.ofNullable(classType.getAnnotation(Delete.class))

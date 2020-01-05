@@ -7,7 +7,7 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
 import com.elepy.utils.ModelUtils;
 
@@ -34,13 +34,13 @@ public class ModelEngine {
         setupDescriptors(elepy.getConfigPath(), elepy.http());
     }
 
-    public List<Model<?>> getModels() {
-        return pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList());
+    public List<Schema<?>> getModels() {
+        return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
     }
 
     public void addModel(Class<?> modelType) {
-        final Model<?> modelFromClass = ModelUtils.createModelFromClass(modelType);
-        pistons.add(new ModelPiston<>(modelFromClass, elepy));
+        final Schema<?> schemaFromClass = ModelUtils.createModelFromClass(modelType);
+        pistons.add(new ModelPiston<>(schemaFromClass, elepy));
 
 
     }
@@ -52,7 +52,7 @@ public class ModelEngine {
     public void executeChanges() {
         this.changesToImplement.forEach((cls, modelChange) -> pistons
                 .stream()
-                .filter(modelContext -> modelContext.getModel().getJavaClass().equals(cls))
+                .filter(modelContext -> modelContext.getSchema().getJavaClass().equals(cls))
                 .findFirst()
                 .orElseThrow(() -> new ElepyConfigException(String.format("No model found with the class: %s", cls.getName())))
                 .getModelContext()
@@ -71,7 +71,7 @@ public class ModelEngine {
 
                     ctx.requirePermissions(Permissions.AUTHENTICATED);
 
-                    ctx.response().json(pistons.stream().map(ModelPiston::getModel).collect(Collectors.toList()));
+                    ctx.response().json(pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList()));
 
                 })
                 .build();
@@ -80,10 +80,10 @@ public class ModelEngine {
 
     }
 
-    public <T> Model<T> getModelForClass(Class<T> clazz) {
-        return (Model<T>)
+    public <T> Schema<T> getModelForClass(Class<T> clazz) {
+        return (Schema<T>)
                 pistons.stream()
-                        .map(ModelPiston::getModel)
+                        .map(ModelPiston::getSchema)
                         .filter(model -> model.getJavaClass().equals(clazz))
                         .findFirst()
                         .orElseThrow(() -> new ElepyException(String.format("Can not find model: %s", clazz.getName())));

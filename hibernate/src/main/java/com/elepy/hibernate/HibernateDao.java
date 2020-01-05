@@ -5,7 +5,7 @@ import com.elepy.annotations.Unique;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 public class HibernateDao<T> implements Crud<T> {
     private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
     private final SessionFactory sessionFactory;
-    private final Model<T> model;
+    private final Schema<T> schema;
     private final ObjectMapper objectMapper;
 
-    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Model<T> model) {
+    public HibernateDao(SessionFactory sessionFactory, ObjectMapper objectMapper, Schema<T> schema) {
         this.sessionFactory = sessionFactory;
-        this.model = model;
+        this.schema = schema;
         this.objectMapper = objectMapper;
     }
 
@@ -206,8 +206,8 @@ public class HibernateDao<T> implements Crud<T> {
 
 
     @Override
-    public Model<T> getModel() {
-        return model;
+    public Schema<T> getSchema() {
+        return schema;
     }
 
     @Override

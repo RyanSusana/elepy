@@ -8,14 +8,13 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelContext;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,19 +22,19 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
 
 
     @SuppressWarnings("unchecked")
-    protected T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Model<T> model) throws IOException {
+    protected T updatedObjectFromRequest(T before, Request request, ObjectMapper objectMapper, Schema<T> schema) throws IOException {
 
         final String body = request.body();
         if (request.method().equals("PUT")) {
-            return objectMapper.readValue(body, model.getJavaClass());
+            return objectMapper.readValue(body, schema.getJavaClass());
         } else {
             if (body.startsWith("{")) {
                 final Map<String, Object> beforeMap = objectMapper.convertValue(before, Map.class);
                 final Map<String, Object> changesMap = objectMapper.readValue(request.body(), Map.class);
                 ReflectionUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
-                return MapperUtils.objectFromMaps(objectMapper, beforeMap, changesMap, model.getJavaClass());
+                return MapperUtils.objectFromMaps(objectMapper, beforeMap, changesMap, schema.getJavaClass());
             } else {
-                return setParamsOnObject(request, objectMapper, before, model.getJavaClass());
+                return setParamsOnObject(request, objectMapper, before, schema.getJavaClass());
             }
         }
     }
@@ -48,7 +47,7 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         }
 
         T before = modelContext.getCrud().getById(context.recordId()).orElseThrow(() -> new ElepyException("No object found with this ID", 404));
-        final T updated = updatedObjectFromRequest(before, context.request(), objectMapper, modelContext.getModel());
+        final T updated = updatedObjectFromRequest(before, context.request(), objectMapper, modelContext.getSchema());
 
         evaluateAndUpdate(context, updated, modelContext);
 

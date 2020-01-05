@@ -7,7 +7,7 @@ import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Route;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
 import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -241,7 +241,7 @@ public class ElepyPreConfiguration {
     /**
      * @return the list of Elepy RestModels
      */
-    public List<Model<?>> models() {
+    public List<Schema<?>> models() {
         return elepy.models();
     }
 

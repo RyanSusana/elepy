@@ -1,7 +1,7 @@
 package com.elepy.mongo;
 
 
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 import org.jongo.Jongo;
@@ -9,20 +9,20 @@ import org.jongo.Jongo;
 public class DefaultMongoDao<T> extends MongoDao<T> {
 
     private final DB db;
-    private final Model<T> model;
+    private final Schema<T> schema;
     private final String collectionName;
     private final ObjectMapper objectMapper;
     private final Jongo jongo;
 
 
-    public DefaultMongoDao(final DB db, final String collectionName, final Model<T> model) {
-        this(db, collectionName, model, new ObjectMapper());
+    public DefaultMongoDao(final DB db, final String collectionName, final Schema<T> schema) {
+        this(db, collectionName, schema, new ObjectMapper());
     }
 
 
-    public DefaultMongoDao(final DB db, final String collectionName, final Model<T> model, ObjectMapper objectMapper) {
+    public DefaultMongoDao(final DB db, final String collectionName, final Schema<T> schema, ObjectMapper objectMapper) {
         this.db = db;
-        this.model = model;
+        this.schema = schema;
         this.collectionName = collectionName.replaceAll("/", "");
         this.objectMapper = objectMapper;
 
@@ -43,8 +43,8 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
     }
 
     @Override
-    public Model<T> getModel() {
-        return model;
+    public Schema<T> getSchema() {
+        return schema;
     }
 
     @Override

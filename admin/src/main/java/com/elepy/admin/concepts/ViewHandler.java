@@ -6,7 +6,7 @@ import com.elepy.admin.views.DefaultView;
 import com.elepy.admin.views.FileView;
 import com.elepy.annotations.View;
 import com.elepy.http.HttpService;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelView;
 import com.elepy.uploads.FileReference;
 import org.jsoup.Jsoup;
@@ -22,15 +22,15 @@ import java.util.stream.Collectors;
 public class ViewHandler {
 
 
-    private final List<Model<?>> models;
+    private final List<Schema<?>> schemas;
     private final HttpService http;
     private ElepyAdminPanel adminPanel;
 
 
-    public ViewHandler(List<Model<?>> models, ElepyAdminPanel adminPanel, HttpService http) {
+    public ViewHandler(List<Schema<?>> schemas, ElepyAdminPanel adminPanel, HttpService http) {
         this.adminPanel = adminPanel;
         this.http = http;
-        this.models = models;
+        this.schemas = schemas;
     }
 
 
@@ -77,19 +77,19 @@ public class ViewHandler {
         });
     }
 
-    private Map<Model<?>, ModelView> getModelsFromElepy(ElepyPostConfiguration elepyPostConfiguration) {
-        Map<Model<?>, ModelView> modelsToReturn = new HashMap<>();
+    private Map<Schema<?>, ModelView> getModelsFromElepy(ElepyPostConfiguration elepyPostConfiguration) {
+        Map<Schema<?>, ModelView> modelsToReturn = new HashMap<>();
 
-        models.forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
+        schemas.forEach(model -> modelsToReturn.put(model, getViewFromModel(model, elepyPostConfiguration)));
 
         return modelsToReturn;
     }
 
-    private ModelView getViewFromModel(Model<?> model, ElepyPostConfiguration elepyPostConfiguration) {
-        if (model.getJavaClass().equals(FileReference.class)) {
+    private ModelView getViewFromModel(Schema<?> schema, ElepyPostConfiguration elepyPostConfiguration) {
+        if (schema.getJavaClass().equals(FileReference.class)) {
             return elepyPostConfiguration.initializeElepyObject(FileView.class);
-        } else if (model.getJavaClass().isAnnotationPresent(View.class)) {
-            final View annotation = model.getJavaClass().getAnnotation(View.class);
+        } else if (schema.getJavaClass().isAnnotationPresent(View.class)) {
+            final View annotation = schema.getJavaClass().getAnnotation(View.class);
             return elepyPostConfiguration.initializeElepyObject(annotation.value());
         } else {
             return elepyPostConfiguration.initializeElepyObject(DefaultView.class);

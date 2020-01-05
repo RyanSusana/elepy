@@ -4,7 +4,7 @@ import com.elepy.Resource;
 import com.elepy.ResourceArray;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.Property;
 import com.elepy.models.TextType;
 import com.elepy.models.options.*;
@@ -23,34 +23,34 @@ import static com.elepy.models.FieldType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ModelUtilsTest {
+public class SchemaUtilsTest {
 
     @Test
     void testHiddenField() {
 
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         assertThatExceptionOfType(ElepyConfigException.class)
-                .isThrownBy(() -> modelFromClass.getProperty("hidden"))
+                .isThrownBy(() -> schemaFromClass.getProperty("hidden"))
                 .withMessageContaining("hidden");
     }
 
     @Test
     void testCorrectOrderingAndPropertySizeOfModel() {
 
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         //Keep in mind that there is one hidden field
-        assertThat(modelFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length );
-        assertThat(modelFromClass.getProperties().get(0).getName()).isEqualTo("id");
-        assertThat(modelFromClass.getProperties().get(modelFromClass.getProperties().size() - 1).getName()).isEqualTo("generated");
+        assertThat(schemaFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length );
+        assertThat(schemaFromClass.getProperties().get(0).getName()).isEqualTo("id");
+        assertThat(schemaFromClass.getProperties().get(schemaFromClass.getProperties().size() - 1).getName()).isEqualTo("generated");
     }
 
 
     @Test
     void testCorrectDate() throws ParseException {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
-        final Property property = modelFromClass.getProperty("date");
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Property property = schemaFromClass.getProperty("date");
         final DateOptions of = property.getOptions();
 
         assertThat(of.getMinimumDate()).isEqualTo(new Date(0));
@@ -61,9 +61,9 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectText() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        final Property property = modelFromClass.getProperty("minLen10MaxLen50");
+        final Property property = schemaFromClass.getProperty("minLen10MaxLen50");
         final TextOptions of = property.getOptions();
         assertThat(of.getTextType()).isEqualTo(TextType.TEXTAREA);
         assertThat(of.getMinimumLength()).isEqualTo(10);
@@ -74,9 +74,9 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectEnum() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        final Property property = modelFromClass.getProperty("textType");
+        final Property property = schemaFromClass.getProperty("textType");
         final EnumOptions of = property.getOptions();
 
         assertThat(of.getAvailableValues().stream().map(map -> map.get("enumValue")).collect(Collectors.toList()).contains("HTML")).isTrue();
@@ -86,9 +86,9 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectObject() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        final Property property = modelFromClass.getProperty("resourceCustomObject");
+        final Property property = schemaFromClass.getProperty("resourceCustomObject");
         final ObjectOptions of = property.getOptions();
 
         assertThat(property.getType())
@@ -104,9 +104,9 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectNumber() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        final Property property = modelFromClass.getProperty("numberMin10Max50");
+        final Property property = schemaFromClass.getProperty("numberMin10Max50");
         final NumberOptions of = property.getOptions();
 
         assertThat(of.getMinimum()).isEqualTo(10);
@@ -117,17 +117,17 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectUnique() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertThat(modelFromClass.getProperty("unique").isUnique()).isTrue();
+        assertThat(schemaFromClass.getProperty("unique").isUnique()).isTrue();
 
     }
 
     @Test
     void testCorrectFileReference() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        final Property property = modelFromClass.getProperty("fileReference");
+        final Property property = schemaFromClass.getProperty("fileReference");
         final FileReferenceOptions reference = property.getOptions();
 
         assertThat(reference.getAllowedMimeType())
@@ -143,64 +143,64 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectRequired() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertThat(modelFromClass.getProperty("required").isRequired()).isTrue();
+        assertThat(schemaFromClass.getProperty("required").isRequired()).isTrue();
     }
 
     @Test
     void testCorrectUneditable() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertThat(modelFromClass.getProperty("nonEditable").isEditable()).isFalse();
+        assertThat(schemaFromClass.getProperty("nonEditable").isEditable()).isFalse();
     }
 
     @Test
     void testCorrectIdProperty() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertThat(modelFromClass.getIdProperty()).isEqualTo("id");
+        assertThat(schemaFromClass.getIdProperty()).isEqualTo("id");
     }
 
     @Test
     void testCorrectFeaturedProperty() {
-        final Model<Resource> modelFromClass = ModelUtils.createModelFromClass(Resource.class);
+        final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
-        assertThat(modelFromClass.getFeaturedProperty()).isEqualTo("featuredProperty");
+        assertThat(schemaFromClass.getFeaturedProperty()).isEqualTo("featuredProperty");
     }
 
     @Test
     void testCorrectArray() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final Property arrayEnum = model.getProperty("arrayEnum");
+        final Property arrayEnum = schema.getProperty("arrayEnum");
 
         assertThat(arrayEnum.getType()).isEqualTo(ARRAY);
     }
 
     @Test
     void testCorrectArray_ENUM() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayEnum = model.getProperty("arrayEnum").getOptions();
+        final ArrayOptions arrayEnum = schema.getProperty("arrayEnum").getOptions();
 
         assertThat(arrayEnum.getArrayType()).isEqualTo(FieldType.ENUM);
     }
 
     @Test
     void testCorrectArray_TEXT() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayString = model.getProperty("arrayString").getOptions();
+        final ArrayOptions arrayString = schema.getProperty("arrayString").getOptions();
 
         assertThat(arrayString.getArrayType()).isEqualTo(FieldType.TEXT);
     }
 
     @Test
     void testCorrectArray_FILE_REFERENCE() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayString = model.getProperty("arrayFileReference").getOptions();
+        final ArrayOptions arrayString = schema.getProperty("arrayFileReference").getOptions();
 
         assertThat(arrayString.getArrayType())
                 .isEqualTo(FILE_REFERENCE);
@@ -209,27 +209,27 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectArray_NUMBER() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayNumber = model.getProperty("arrayNumber").getOptions();
+        final ArrayOptions arrayNumber = schema.getProperty("arrayNumber").getOptions();
 
         assertThat(arrayNumber.getArrayType()).isEqualTo(FieldType.NUMBER);
     }
 
     @Test
     void testCorrectArray_DATE() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayDate = model.getProperty("arrayDate").getOptions();
+        final ArrayOptions arrayDate = schema.getProperty("arrayDate").getOptions();
 
         assertThat(arrayDate.getArrayType()).isEqualTo(FieldType.DATE);
     }
 
     @Test
     void testCorrectArray_OBJECT() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayObject = model.getProperty("arrayObject").getOptions();
+        final ArrayOptions arrayObject = schema.getProperty("arrayObject").getOptions();
 
         assertThat(arrayObject.getArrayType()).isEqualTo(FieldType.OBJECT);
 
@@ -237,9 +237,9 @@ public class ModelUtilsTest {
 
     @Test
     void testCorrectArray_BOOLEAN() {
-        final Model<ResourceArray> model = ModelUtils.createModelFromClass(ResourceArray.class);
+        final Schema<ResourceArray> schema = ModelUtils.createModelFromClass(ResourceArray.class);
 
-        final ArrayOptions arrayBoolean = model.getProperty("arrayBoolean").getOptions();
+        final ArrayOptions arrayBoolean = schema.getProperty("arrayBoolean").getOptions();
 
         assertThat(arrayBoolean.getArrayType()).isEqualTo(FieldType.BOOLEAN);
 

@@ -1,7 +1,7 @@
 package com.elepy.admin.views;
 
 import com.elepy.http.Request;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelView;
 import com.mitchellbosecke.pebble.PebbleEngine;
 
@@ -23,10 +23,10 @@ abstract class OfficialView implements ModelView<Object> {
     }
 
     @Override
-    public String renderView(Request request, Model elepyModel) {
+    public String renderView(Request request, Schema elepySchema) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("model", elepyModel);
+        model.put("model", elepySchema);
         model.put("theView", vueTemplate);
 
         model.put("jsLocation", location.getJsLocation());

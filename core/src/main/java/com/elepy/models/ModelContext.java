@@ -7,17 +7,17 @@ import com.elepy.id.IdentityProvider;
 import java.util.List;
 
 public class ModelContext<T> {
-    private final Model<T> model;
+    private final Schema<T> schema;
 
     private Crud<T> crud;
     private IdentityProvider<T> identityProvider;
     private List<ObjectEvaluator<T>> objectEvaluators;
 
-    public ModelContext(Model<T> model,
+    public ModelContext(Schema<T> schema,
                         Crud<T> crud,
                         IdentityProvider<T> identityProvider,
                         List<ObjectEvaluator<T>> objectEvaluators) {
-        this.model = model;
+        this.schema = schema;
         this.crud = crud;
         this.identityProvider = identityProvider;
         this.objectEvaluators = objectEvaluators;
@@ -35,8 +35,8 @@ public class ModelContext<T> {
         modelChange.change(this);
     }
 
-    public Model<T> getModel() {
-        return model;
+    public Schema<T> getSchema() {
+        return schema;
     }
 
     public IdentityProvider<T> getIdentityProvider() {
@@ -56,18 +56,18 @@ public class ModelContext<T> {
     }
 
     public String getName() {
-        return model.getName();
+        return schema.getName();
     }
 
     public String getPath() {
-        return model.getPath();
+        return schema.getPath();
     }
 
     public Class<T> getModelType() {
-        return model.getJavaClass();
+        return schema.getJavaClass();
     }
 
     public String getIdField() {
-        return model.getIdProperty();
+        return schema.getIdProperty();
     }
 }

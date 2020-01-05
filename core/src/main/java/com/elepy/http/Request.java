@@ -7,7 +7,7 @@ import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.uploads.FileUpload;
 import com.elepy.utils.ReflectionUtils;
 
@@ -210,14 +210,14 @@ public interface Request {
     }
 
 
-    default List<PropertySort> sortingForModel(Model<?> model) {
+    default List<PropertySort> sortingForModel(Schema<?> schema) {
         String[] sorts = queryParamValues("sort");
 
         List<PropertySort> propertySorts = new ArrayList<>();
 
 
         if (sorts == null || sorts.length == 0) {
-            final PropertySort propertySort = new PropertySort(model.getDefaultSortField(), model.getDefaultSortDirection());
+            final PropertySort propertySort = new PropertySort(schema.getDefaultSortField(), schema.getDefaultSortDirection());
             propertySorts.add(propertySort);
         } else {
             for (String sort : sorts) {

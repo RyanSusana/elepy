@@ -1,6 +1,6 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import org.openqa.selenium.By;
 
 public abstract class LoggedInScenario extends GenericScenario {
@@ -9,8 +9,8 @@ public abstract class LoggedInScenario extends GenericScenario {
         super(driver);
     }
 
-    public <T> ModelScenario<T> navigateToModel(Model<T> model) {
-        final var tModelScenario = new ModelScenario<>(model, driver).navigateTo();
+    public <T> ModelScenario<T> navigateToModel(Schema<T> schema) {
+        final var tModelScenario = new ModelScenario<>(schema, driver).navigateTo();
 
         driver.waitTillCanSee(By.cssSelector(".nav"));
         return tModelScenario;

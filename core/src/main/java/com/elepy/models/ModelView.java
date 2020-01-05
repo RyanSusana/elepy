@@ -4,6 +4,6 @@ import com.elepy.http.Request;
 
 public interface ModelView<T> {
 
-    String renderView(Request request, Model<T> model);
+    String renderView(Request request, Schema<T> schema);
 
 }

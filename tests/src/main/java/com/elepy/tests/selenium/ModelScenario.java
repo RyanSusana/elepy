@@ -1,6 +1,6 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -18,12 +18,12 @@ public class ModelScenario<T> extends LoggedInScenario {
     private static final By ADD_BUTTON = By.xpath("//*[@id=\"add-button\"]");
     private static final By YES_BUTTON = By.cssSelector(".uk-modal.uk-open .uk-modal-footer .uk-button-primary");
 
-    private final Model<T> model;
+    private final Schema<T> schema;
     private final ElepyDriver driver;
 
-    public ModelScenario(Model<T> model, ElepyDriver driver) {
+    public ModelScenario(Schema<T> schema, ElepyDriver driver) {
         super(driver);
-        this.model = model;
+        this.schema = schema;
         this.driver = driver;
     }
 
@@ -31,7 +31,7 @@ public class ModelScenario<T> extends LoggedInScenario {
         driver.waitTillCanSee(ADD_BUTTON);
         driver.findElement(ADD_BUTTON).click();
         driver.waitTillCanSee(FormInputScenario.SAVE_BUTTON);
-        return new FormInputScenario<>(driver, model);
+        return new FormInputScenario<>(driver, schema);
     }
 
     public FormInputScenario<T> startEditing(String recordId) {
@@ -40,7 +40,7 @@ public class ModelScenario<T> extends LoggedInScenario {
         clickSingleAction(recordId, "edit");
 
         driver.waitTillCanSee(FormInputScenario.SAVE_BUTTON);
-        return new FormInputScenario<>(driver, model);
+        return new FormInputScenario<>(driver, schema);
     }
 
     public ModelScenario<T> delete(Serializable id) {
@@ -167,7 +167,7 @@ public class ModelScenario<T> extends LoggedInScenario {
 
 
     public ModelScenario<T> navigateTo() {
-        driver.navToUrl("/admin" + model.getPath());
+        driver.navToUrl("/admin" + schema.getPath());
         return this;
     }
 

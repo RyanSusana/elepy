@@ -13,7 +13,7 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContextHandler;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.mitchellbosecke.pebble.PebbleEngine;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class ElepyAdminPanel implements ElepyExtension {
     private boolean initiated = false;
     @Inject
     private Crud<User> userCrud;
-    private List<Model<?>> models;
+    private List<Schema<?>> schemas;
 
 
     private NoUserFoundHandler noUserFoundHandler;
@@ -46,9 +46,9 @@ public class ElepyAdminPanel implements ElepyExtension {
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
 
 
-        this.models = elepy.models().stream().filter(Model::isViewableOnCMS).collect(Collectors.toList());
+        this.schemas = elepy.models().stream().filter(Schema::isViewableOnCMS).collect(Collectors.toList());
         this.pluginHandler = new PluginHandler(this, http);
-        this.viewHandler = new ViewHandler(models, this, http);
+        this.viewHandler = new ViewHandler(schemas, this, http);
         this.noUserFoundHandler = (ctx) -> {
             ctx.response().redirect("/elepy-initial-user");
             halt();
@@ -116,7 +116,7 @@ public class ElepyAdminPanel implements ElepyExtension {
 
 
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
-        model.put("models", models);
+        model.put("models", schemas);
         model.put("cssLocation", request.elepy().getDependency(ResourceLocation.class).getCssLocation());
         model.put("properties", request.elepy().getDependency(Properties.class));
         model.put("plugins", pluginHandler.getPlugins());

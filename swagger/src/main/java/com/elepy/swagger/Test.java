@@ -2,7 +2,7 @@ package com.elepy.swagger;
 
 import com.elepy.auth.User;
 import com.elepy.http.HttpAction;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,14 +13,12 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.info.Info;
-import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -50,7 +48,7 @@ public class Test {
 
     }
 
-    private static Paths createPathsFromModel(Model<?> model) {
+    private static Paths createPathsFromModel(Schema<?> schema) {
 //        final var paths = new Paths();
 //        final var defaultActions = model.getDefaultActions().stream()
 //                .collect(Collectors.groupingBy(HttpAction::getPath));
@@ -84,7 +82,7 @@ public class Test {
 
     private static List<Parameter> getParamsFromAction(HttpAction httpAction) {
         return getPathParamsFromString(httpAction.getPath()).stream()
-                .map(param -> new Parameter().in("path").schema(new Schema().type("string")).name(param))
+                .map(param -> new Parameter().in("path").schema(new io.swagger.oas.models.media.Schema().type("string")).name(param))
                 .collect(Collectors.toList());
 
 

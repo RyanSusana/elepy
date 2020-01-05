@@ -21,7 +21,7 @@ import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
 import com.elepy.igniters.ModelEngine;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
@@ -543,14 +543,14 @@ public class Elepy implements ElepyContext {
      * @return a model description representing everything you need to know about a RestModel
      */
     @SuppressWarnings("unchecked")
-    public <T> Model<T> modelFor(Class<T> clazz) {
+    public <T> Schema<T> modelFor(Class<T> clazz) {
         return modelEngine.getModelForClass(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Model<?>> models() {
+    public List<Schema<?>> models() {
         return modelEngine.getModels();
     }
 

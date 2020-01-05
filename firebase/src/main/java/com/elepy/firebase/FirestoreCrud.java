@@ -2,7 +2,7 @@ package com.elepy.firebase;
 
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.utils.ReflectionUtils;
 import com.elepy.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,13 +24,13 @@ public class FirestoreCrud<T> implements Crud<T> {
     private final ObjectMapper objectMapper;
     private final String collection;
 
-    private final Model<T> model;
+    private final Schema<T> schema;
 
-    public FirestoreCrud(Firestore db, Model<T> model) {
+    public FirestoreCrud(Firestore db, Schema<T> schema) {
         this.db = db;
         this.objectMapper = new ObjectMapper();
-        this.collection = model.getPath();
-        this.model = model;
+        this.collection = schema.getPath();
+        this.schema = schema;
     }
 
     @Override
@@ -153,8 +153,8 @@ public class FirestoreCrud<T> implements Crud<T> {
 
 
     @Override
-    public Model<T> getModel() {
-        return model;
+    public Schema<T> getSchema() {
+        return schema;
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.ServiceHandler;
 import com.elepy.http.*;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelContext;
 import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
@@ -23,25 +23,25 @@ import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class ModelPiston<T> {
 
-    private final Model<T> model;
+    private final Schema<T> schema;
     private final ModelContext<T> modelContext;
     private final ServiceHandler<T> serviceExtraction;
     private final ObjectMapper objectMapper;
 
 
-    public ModelPiston(Model<T> model, Elepy elepy) {
-        this.model = model;
+    public ModelPiston(Schema<T> schema, Elepy elepy) {
+        this.schema = schema;
         this.objectMapper = elepy.objectMapper();
-        this.modelContext = ModelContextExtraction.extractContext(model, elepy);
+        this.modelContext = ModelContextExtraction.extractContext(schema, elepy);
 
-        this.serviceExtraction = ModelServiceExtraction.extractService(model, elepy);
+        this.serviceExtraction = ModelServiceExtraction.extractService(schema, elepy);
         elepy.addRouting(getAllRoutes(elepy));
 
-        model.getJavaClass().getAnnotation(ExtraRoutes.class);
+        schema.getJavaClass().getAnnotation(ExtraRoutes.class);
     }
 
-    public Model<T> getModel() {
-        return model;
+    public Schema<T> getSchema() {
+        return schema;
     }
 
     public ModelContext<T> getModelContext() {
@@ -58,8 +58,8 @@ public class ModelPiston<T> {
         List<Route> toReturn = new ArrayList<>();
         //POST
         toReturn.add(anElepyRoute()
-                .path(model.getPath())
-                .addPermissions(model.getCreateAction().getRequiredPermissions())
+                .path(schema.getPath())
+                .addPermissions(schema.getCreateAction().getRequiredPermissions())
                 .method(HttpMethod.POST)
                 .route(ctx -> serviceExtraction.handleCreate(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
@@ -67,8 +67,8 @@ public class ModelPiston<T> {
 
         // PUT
         toReturn.add(anElepyRoute()
-                .path(model.getPath() + "/:id")
-                .addPermissions(model.getUpdateAction().getRequiredPermissions())
+                .path(schema.getPath() + "/:id")
+                .addPermissions(schema.getUpdateAction().getRequiredPermissions())
                 .method(HttpMethod.PUT)
                 .route(ctx -> serviceExtraction.handleUpdatePut(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
@@ -76,11 +76,11 @@ public class ModelPiston<T> {
 
         //PATCH
         toReturn.add(anElepyRoute()
-                .path(model.getPath() + "/:id")
+                .path(schema.getPath() + "/:id")
                 .method(HttpMethod.PATCH)
-                .addPermissions(model.getUpdateAction().getRequiredPermissions())
+                .addPermissions(schema.getUpdateAction().getRequiredPermissions())
                 .route(ctx -> {
-                    ctx.request().attribute("modelClass", model.getJavaClass());
+                    ctx.request().attribute("modelClass", schema.getJavaClass());
                     serviceExtraction.handleUpdatePatch(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper);
                 })
                 .build()
@@ -88,34 +88,34 @@ public class ModelPiston<T> {
 
         // DELETE
         toReturn.add(anElepyRoute()
-                .path(model.getPath() + "/:id")
+                .path(schema.getPath() + "/:id")
                 .method(HttpMethod.DELETE)
-                .addPermissions(model.getDeleteAction().getRequiredPermissions())
+                .addPermissions(schema.getDeleteAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleDelete(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
         );
         toReturn.add(anElepyRoute()
-                .path(model.getPath())
+                .path(schema.getPath())
                 .method(HttpMethod.DELETE)
-                .addPermissions(model.getDeleteAction().getRequiredPermissions())
+                .addPermissions(schema.getDeleteAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleDelete(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
         );
 
         //GET PAGE
         toReturn.add(anElepyRoute()
-                .path(model.getPath())
+                .path(schema.getPath())
                 .method(HttpMethod.GET)
-                .addPermissions(model.getFindManyAction().getRequiredPermissions())
+                .addPermissions(schema.getFindManyAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleFindMany(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
         );
 
         //GET ONE
         toReturn.add(anElepyRoute()
-                .path(model.getPath() + "/:id")
+                .path(schema.getPath() + "/:id")
                 .method(HttpMethod.GET)
-                .addPermissions(model.getFindOneAction().getRequiredPermissions())
+                .addPermissions(schema.getFindOneAction().getRequiredPermissions())
                 .route(ctx -> serviceExtraction.handleFindOne(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
                 .build()
         );
@@ -127,7 +127,7 @@ public class ModelPiston<T> {
     }
 
     private List<Route> getExtraRoutes(Elepy elepy) {
-        final ExtraRoutes extraRoutesAnnotation = model.getJavaClass().getAnnotation(ExtraRoutes.class);
+        final ExtraRoutes extraRoutesAnnotation = schema.getJavaClass().getAnnotation(ExtraRoutes.class);
 
         if (extraRoutesAnnotation == null) {
             return new ArrayList<>();
@@ -142,8 +142,8 @@ public class ModelPiston<T> {
 
     private List<Route> getActionRoutes(Elepy elepy) {
 
-        var modelType = modelContext.getModel().getJavaClass();
-        var path = modelContext.getModel().getPath();
+        var modelType = modelContext.getSchema().getJavaClass();
+        var path = modelContext.getSchema().getPath();
         var crud = modelContext.getCrud();
         final Action[] actionAnnotations = modelType.getAnnotationsByType(Action.class);
         final List<Route> actions = new ArrayList<>();
@@ -172,6 +172,6 @@ public class ModelPiston<T> {
 
 
     private HttpContext injectModelClassInHttpContext(HttpContext ctx) {
-        return ctx.injectModelClassInHttpContext(model.getJavaClass());
+        return ctx.injectModelClassInHttpContext(schema.getJavaClass());
     }
 }

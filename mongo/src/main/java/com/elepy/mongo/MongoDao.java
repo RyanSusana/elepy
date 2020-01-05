@@ -60,7 +60,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private Find addDefaultSort(Find find) {
-        final String sort = String.format("{%s: %d}", getModel().getDefaultSortField(), getModel().getDefaultSortDirection().getVal());
+        final String sort = String.format("{%s: %d}", getSchema().getDefaultSortField(), getSchema().getDefaultSortDirection().getVal());
         find.sort(sort);
         return find;
     }

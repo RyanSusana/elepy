@@ -2,7 +2,7 @@ package com.elepy.tests.selenium;
 
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import org.mindrot.jbcrypt.BCrypt;
 import org.openqa.selenium.By;
 
@@ -25,8 +25,8 @@ public class Scenarios {
         return fromUserLogin("admin", "admin").navigateToModel(model);
     }
 
-    public <T> ModelScenario<T> fromModel(Model<T> model) {
-        return fromUserLogin("admin", "admin").navigateToModel(model);
+    public <T> ModelScenario<T> fromModel(Schema<T> schema) {
+        return fromUserLogin("admin", "admin").navigateToModel(schema);
     }
 
     public HomepageScenario fromUserLogin(String user, String pass) {

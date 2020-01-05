@@ -6,7 +6,7 @@ import com.elepy.http.HttpAction;
 
 import java.util.List;
 
-public class Model<T> {
+public class Schema<T> {
 
     private String name;
     private String path ;

@@ -4,7 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.PageSettings;
 import com.elepy.dao.Query;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
@@ -49,7 +49,7 @@ public class MockCrudGeneric<T> implements Crud<T> {
     }
 
     @Override
-    public Model<T> getModel() {
+    public Schema<T> getSchema() {
         return null;
     }
 

@@ -5,7 +5,7 @@ import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Route;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -180,14 +180,14 @@ public class ElepyPostConfiguration {
      * @param <T>   The RestModel's type
      * @return a model description representing everything you need to know about a RestModel
      */
-    public <T> Model<T> modelFor(Class<T> clazz) {
+    public <T> Schema<T> modelFor(Class<T> clazz) {
         return elepy.modelFor(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Model<?>> models() {
+    public List<Schema<?>> models() {
         return elepy.models();
     }
 

@@ -10,7 +10,7 @@ import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.ModelContext;
 
 import java.util.ArrayList;
@@ -18,17 +18,17 @@ import java.util.List;
 
 public class ModelContextExtraction {
 
-    public static <T> ModelContext<T> extractContext(Model<T> model, Elepy elepy) {
-        var crud = extractCrud(model, elepy);
-        var objectEvaluators = extractEvaluators(model, elepy);
-        var idProvider = extractIdProvider(model, elepy);
+    public static <T> ModelContext<T> extractContext(Schema<T> schema, Elepy elepy) {
+        var crud = extractCrud(schema, elepy);
+        var objectEvaluators = extractEvaluators(schema, elepy);
+        var idProvider = extractIdProvider(schema, elepy);
 
-        elepy.registerDependency(Crud.class, model.getPath(), crud);
-        return new ModelContext<>(model, crud, idProvider, objectEvaluators);
+        elepy.registerDependency(Crud.class, schema.getPath(), crud);
+        return new ModelContext<>(schema, crud, idProvider, objectEvaluators);
     }
 
-    private static <T> IdentityProvider<T> extractIdProvider(Model<T> model, Elepy elepy) {
-        var classType = model.getJavaClass();
+    private static <T> IdentityProvider<T> extractIdProvider(Schema<T> schema, Elepy elepy) {
+        var classType = schema.getJavaClass();
         if (classType.isAnnotationPresent(IdProvider.class)) {
             return elepy.initialize(classType.getAnnotation(IdProvider.class).value());
         } else {
@@ -36,11 +36,11 @@ public class ModelContextExtraction {
         }
     }
 
-    private static <T> List<ObjectEvaluator<T>> extractEvaluators(Model<T> model, Elepy elepy) {
+    private static <T> List<ObjectEvaluator<T>> extractEvaluators(Schema<T> schema, Elepy elepy) {
 
         List<ObjectEvaluator<T>> objectEvaluators = new ArrayList<>();
 
-        final Evaluators annotation = model.getJavaClass().getAnnotation(Evaluators.class);
+        final Evaluators annotation = schema.getJavaClass().getAnnotation(Evaluators.class);
         objectEvaluators.add(new DefaultObjectEvaluator<>());
 
         if (annotation != null) {
@@ -58,8 +58,8 @@ public class ModelContextExtraction {
     /**
      * Extracts the Crud and returns it
      */
-    private static <T> Crud<T> extractCrud(Model<T> model, Elepy elepy) {
-        var modelType = model.getJavaClass();
+    private static <T> Crud<T> extractCrud(Schema<T> schema, Elepy elepy) {
+        var modelType = schema.getJavaClass();
         var annotation = modelType.getAnnotation(DaoFactory.class);
 
         var crudProvider = annotation == null ?
@@ -70,7 +70,7 @@ public class ModelContextExtraction {
         if (daoAnnotation != null) {
             return elepy.initialize(daoAnnotation.value());
         } else {
-            return crudProvider.crudFor(model);
+            return crudProvider.crudFor(schema);
         }
     }
 } 

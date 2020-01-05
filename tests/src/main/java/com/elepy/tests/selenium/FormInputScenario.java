@@ -1,6 +1,6 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.Property;
 import com.elepy.tests.selenium.actions.FillIn;
 import com.elepy.tests.selenium.actions.FillInBoolean;
@@ -14,16 +14,16 @@ import java.util.function.Consumer;
 public class FormInputScenario<T> extends LoggedInScenario {
 
     public static final By SAVE_BUTTON = By.className("save-button");
-    private final Model<T> model;
+    private final Schema<T> schema;
 
-    public FormInputScenario(ElepyDriver driver, Model<T> model) {
+    public FormInputScenario(ElepyDriver driver, Schema<T> schema) {
         super(driver);
-        this.model = model;
+        this.schema = schema;
     }
 
     @SuppressWarnings("unchecked")
     public FormInputScenario<T> fillInField(String propertyName, Object value) {
-        final var property = model.getProperty(propertyName);
+        final var property = schema.getProperty(propertyName);
 
         if (value != null)
             getActionFor(property).fillIn(value);
@@ -40,7 +40,7 @@ public class FormInputScenario<T> extends LoggedInScenario {
         driver.findElement(SAVE_BUTTON).click();
 
         driver.closeNotifications();
-        return new ModelScenario<>(model, driver);
+        return new ModelScenario<>(schema, driver);
     }
 
     private FillIn getActionFor(Property property) {

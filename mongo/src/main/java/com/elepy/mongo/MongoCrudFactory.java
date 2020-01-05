@@ -3,7 +3,7 @@ package com.elepy.mongo;
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
 
@@ -16,12 +16,12 @@ public class MongoCrudFactory implements CrudFactory {
     private ObjectMapper objectMapper;
 
     @Override
-    public <T> Crud<T> crudFor(Model<T> model) {
+    public <T> Crud<T> crudFor(Schema<T> schema) {
 
-        final String path = model.getPath();
+        final String path = schema.getPath();
 
         final String[] split = path.split("/");
 
-        return new DefaultMongoDao<>(database, split[split.length - 1], model, objectMapper);
+        return new DefaultMongoDao<>(database, split[split.length - 1], schema, objectMapper);
     }
 }

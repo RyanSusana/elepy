@@ -8,7 +8,7 @@ import com.elepy.http.ActionType;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.FieldType;
-import com.elepy.models.Model;
+import com.elepy.models.Schema;
 import com.elepy.models.Property;
 import com.elepy.models.options.*;
 
@@ -87,8 +87,8 @@ public class ModelUtils {
         property.setAvailableFilters(availableFilters);
     }
 
-    public static <T> Model<T> createModelFromClass(Class<T> classType) {
-        var model = new Model<T>();
+    public static <T> Schema<T> createModelFromClass(Class<T> classType) {
+        var model = new Schema<T>();
         final RestModel restModel = classType.getAnnotation(RestModel.class);
 
 
@@ -117,10 +117,10 @@ public class ModelUtils {
     }
 
 
-    private static <T> void setupActions(Model<T> model) {
-        model.setActions(Stream.of(model.getJavaClass().getAnnotationsByType(Action.class))
+    private static <T> void setupActions(Schema<T> schema) {
+        schema.setActions(Stream.of(schema.getJavaClass().getAnnotationsByType(Action.class))
                 .map(actionAnnotation ->
-                        actionToHttpAction(model.getPath(), actionAnnotation))
+                        actionToHttpAction(schema.getPath(), actionAnnotation))
                 .collect(Collectors.toList()));
     }
 
@@ -129,9 +129,9 @@ public class ModelUtils {
         return HttpAction.of(actionAnnotation.name(), multiPath, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
     }
 
-    private static void setupImportantFields(Model<?> model) {
+    private static void setupImportantFields(Schema<?> schema) {
 
-        var cls = model.getJavaClass();
+        var cls = schema.getJavaClass();
 
         Field field = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
 
@@ -139,11 +139,11 @@ public class ModelUtils {
             throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
         }
 
-        model.setIdProperty(ReflectionUtils.getPropertyName(field));
+        schema.setIdProperty(ReflectionUtils.getPropertyName(field));
 
-        model.setFeaturedProperty(ReflectionUtils.searchForFieldWithAnnotation(cls, Featured.class)
+        schema.setFeaturedProperty(ReflectionUtils.searchForFieldWithAnnotation(cls, Featured.class)
                 .map(ReflectionUtils::getPropertyName)
-                .orElse(model.getIdProperty()));
+                .orElse(schema.getIdProperty()));
 
     }
 
@@ -182,34 +182,34 @@ public class ModelUtils {
         }
     }
 
-    private static void setupDefaultActions(Model<?> model) {
+    private static void setupDefaultActions(Schema<?> schema) {
 
         var createPermissions = Optional
-                .ofNullable(model.getJavaClass().getAnnotation(Create.class))
+                .ofNullable(schema.getJavaClass().getAnnotation(Create.class))
                 .map(Create::requiredPermissions)
                 .orElse(Permissions.DEFAULT);
 
         var updatePermissions = Optional
-                .ofNullable(model.getJavaClass().getAnnotation(Update.class))
+                .ofNullable(schema.getJavaClass().getAnnotation(Update.class))
                 .map(Update::requiredPermissions)
                 .orElse(Permissions.DEFAULT);
 
         var deletePermissions = Optional
-                .ofNullable(model.getJavaClass().getAnnotation(Delete.class))
+                .ofNullable(schema.getJavaClass().getAnnotation(Delete.class))
                 .map(Delete::requiredPermissions)
                 .orElse(Permissions.DEFAULT);
 
         var findPermissions = Optional
-                .ofNullable(model.getJavaClass().getAnnotation(Find.class))
+                .ofNullable(schema.getJavaClass().getAnnotation(Find.class))
                 .map(Find::requiredPermissions)
                 .orElse(Permissions.NONE);
 
 
-        model.setFindOneAction(HttpAction.of("Find One", model.getPath() + "/:id", findPermissions, HttpMethod.GET, ActionType.SINGLE));
-        model.setFindManyAction(HttpAction.of("Find Many", model.getPath(), findPermissions, HttpMethod.GET, ActionType.MULTIPLE));
-        model.setUpdateAction(HttpAction.of("Update", model.getPath() + "/:id", updatePermissions, HttpMethod.PUT, ActionType.SINGLE));
-        model.setDeleteAction(HttpAction.of("Delete", model.getPath() + "/:id", deletePermissions, HttpMethod.DELETE, ActionType.SINGLE));
-        model.setCreateAction(HttpAction.of("Create", model.getPath(), createPermissions, HttpMethod.POST, ActionType.MULTIPLE));
+        schema.setFindOneAction(HttpAction.of("Find One", schema.getPath() + "/:id", findPermissions, HttpMethod.GET, ActionType.SINGLE));
+        schema.setFindManyAction(HttpAction.of("Find Many", schema.getPath(), findPermissions, HttpMethod.GET, ActionType.MULTIPLE));
+        schema.setUpdateAction(HttpAction.of("Update", schema.getPath() + "/:id", updatePermissions, HttpMethod.PUT, ActionType.SINGLE));
+        schema.setDeleteAction(HttpAction.of("Delete", schema.getPath() + "/:id", deletePermissions, HttpMethod.DELETE, ActionType.SINGLE));
+        schema.setCreateAction(HttpAction.of("Create", schema.getPath(), createPermissions, HttpMethod.POST, ActionType.MULTIPLE));
 
     }
 
