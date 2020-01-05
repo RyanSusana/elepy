@@ -1,3 +1,4 @@
+
 <template>
     <div class="uk-flex uk-height-1-1">
         <div class="uk-width-1-1 uk-height-1-1">
@@ -14,6 +15,7 @@
 </style>
 
 <script>
+    /* eslint-disable */
     import axios from "axios/index";
     import Elepy from "./components/ElepyDefault";
     import ElepySingle from "./components/ElepySingle";

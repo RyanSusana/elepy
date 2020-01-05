@@ -164,7 +164,7 @@
         },
         mounted() {
             this.getFirstRecord();
-            EventBus.$on("updateData", _ => {
+            EventBus.$on("updateData", () => {
                 console.log("update");
                 this.getFirstRecord();
             });

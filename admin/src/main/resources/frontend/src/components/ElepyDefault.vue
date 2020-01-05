@@ -92,7 +92,7 @@
         mounted() {
             this.getModelData();
 
-            EventBus.$on("updateData", _ => {
+            EventBus.$on("updateData", () => {
                 this.getModelData();
             });
             EventBus.$on("startLoading", () => {

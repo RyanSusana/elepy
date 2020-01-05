@@ -57,8 +57,7 @@
                 axios({
                     url: Utils.url + image,
                     method: "DELETE",
-                }).then(result => {
-                    console.log("File deleted")
+                }).then(() => {
                 })
                     .catch(err => {
                         Utils.displayError(err);
