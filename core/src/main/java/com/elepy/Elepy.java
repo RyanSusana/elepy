@@ -21,8 +21,8 @@ import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
 import com.elepy.igniters.ModelEngine;
-import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
+import com.elepy.models.Schema;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
@@ -149,39 +149,11 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * @return The elepyContext containing all the elepy objects
-     * @see ElepyContext
-     */
-    public DefaultElepyContext context() {
-        return context;
-    }
-
-    /**
-     * @return The config path .
-     * @see #withConfigPath(String)
-     */
-    public String getConfigPath() {
-        return this.configPath;
-    }
-
-    /**
      * @return The  related with this Elepy instance.
      */
     public HttpService http() {
         return http;
     }
-
-    /**
-     * The default {@link ObjectEvaluator} to your own implementation
-     * This is used to determine an object's validity. It can also be changed per
-     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
-     *
-     * @return the base object evaluator
-     */
-    public ObjectEvaluator<Object> baseEvaluator() {
-        return this.baseObjectEvaluator;
-    }
-
 
     public UserAuthenticationExtension authenticationService() {
         return userAuthenticationExtension;
@@ -388,23 +360,6 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Enables strict dependency mode.
-     * By default (false) Elepy resolves
-     * all dependencies at the end of the {@link #start()} call.
-     * <p>
-     * By enabling strict mode, Elepy will check for unsatisfied/circular
-     * dependencies every time you call  )}
-     *
-     * @param strict enable/disable strict mode
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy withStrictDependencyMode(boolean strict) {
-        checkConfig();
-        this.context.strictMode(strict);
-        return this;
-    }
-
-    /**
      * Notifies Elepy that you will need a dependency in the lazy(by default) future.
      * All dependencies must be satisfied before {@link #start()} ends.
      *
@@ -424,25 +379,9 @@ public class Elepy implements ElepyContext {
      * @param port the port Elepy listens on
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy onPort(int port) {
+    public Elepy withPort(int port) {
         checkConfig();
         http.port(port);
-        return this;
-    }
-
-    /**
-     * Changes the default {@link ObjectEvaluator} to your own implementation
-     * This is used to determine an object's validity. It can also be changed per
-     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
-     *
-     * @param baseObjectEvaluator the base evaluator
-     * @return The {@link com.elepy.Elepy} instance
-     * @see ObjectEvaluator
-     * @see com.elepy.annotations.Evaluators
-     */
-    public Elepy withBaseEvaluator(ObjectEvaluator<Object> baseObjectEvaluator) {
-        checkConfig();
-        this.baseObjectEvaluator = baseObjectEvaluator;
         return this;
     }
 
@@ -543,15 +482,15 @@ public class Elepy implements ElepyContext {
      * @return a model description representing everything you need to know about a RestModel
      */
     @SuppressWarnings("unchecked")
-    public <T> Schema<T> modelFor(Class<T> clazz) {
+    public <T> Schema<T> modelSchemaFor(Class<T> clazz) {
         return modelEngine.getModelForClass(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Schema<?>> models() {
-        return modelEngine.getSchemas();
+    public List<Schema<?>> modelSchemas() {
+        return modelEngine.modelSchemas();
     }
 
 
@@ -577,14 +516,6 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    /**
-     * @param evt what to do when elepy stops gracefully
-     * @return the elepy instance
-     */
-    public Elepy onStop(EventHandler evt) {
-        stopEventHandlers.add(evt);
-        return this;
-    }
 
     /**
      * @param tClass      the class of the model
@@ -765,5 +696,18 @@ public class Elepy implements ElepyContext {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling start()");
         }
+    }
+
+
+    //TODO REMOVE THIS in 3.0
+
+    @Deprecated(forRemoval = true)
+    public void onStop(EventHandler handler) {
+        stopEventHandlers.add(handler);
+    }
+
+    @Deprecated(forRemoval = true)
+    public String getConfigPath() {
+        return configPath;
     }
 }

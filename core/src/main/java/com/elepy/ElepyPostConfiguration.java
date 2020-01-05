@@ -1,12 +1,10 @@
 package com.elepy;
 
-import com.elepy.annotations.Model;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.http.Route;
-import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
+import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -17,25 +15,6 @@ public class ElepyPostConfiguration {
 
     ElepyPostConfiguration(Elepy elepy) {
         this.elepy = elepy;
-    }
-
-    /**
-     * @return The config path .
-     * @see Elepy#withConfigPath(String)
-     */
-    public String getConfigPath() {
-        return elepy.getConfigPath();
-    }
-
-    /**
-     * The default {@link ObjectEvaluator} to your own implementation
-     * This is used to determine an object's validity. It can also be changed per
-     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
-     *
-     * @return the base object evaluator
-     */
-    public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return elepy.baseEvaluator();
     }
 
     public ObjectMapper getObjectMapper() {
@@ -180,15 +159,15 @@ public class ElepyPostConfiguration {
      * @param <T>   The RestModel's type
      * @return a model description representing everything you need to know about a RestModel
      */
-    public <T> Schema<T> modelFor(Class<T> clazz) {
-        return elepy.modelFor(clazz);
+    public <T> Schema<T> modelSchemaFor(Class<T> clazz) {
+        return elepy.modelSchemaFor(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Schema<?>> models() {
-        return elepy.models();
+    public List<Schema<?>> modelSchemas() {
+        return elepy.modelSchemas();
     }
 
     /**

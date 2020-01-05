@@ -22,7 +22,7 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
 
     private ElepySystemUnderTest(int port) {
         super();
-        this.onPort(port);
+        this.withPort(port);
         this.port = port;
         url = String.format("http://localhost:%d", port);
     }

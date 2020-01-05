@@ -59,7 +59,7 @@ public abstract class FileServiceTest {
                 .addModel(Resource.class)
                 .addConfiguration(databaseConfiguration())
                 .withFileService(this.fileService)
-                .onPort(port);
+                .withPort(port);
 
         List.of(configurations).forEach(elepy::addConfiguration);
 

@@ -34,15 +34,13 @@ public class ModelEngine {
         setupDescriptors(elepy.getConfigPath(), elepy.http());
     }
 
-    public List<Schema<?>> getSchemas() {
+    public List<Schema<?>> modelSchemas() {
         return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
     }
 
     public void addModel(Class<?> modelType) {
         final Schema<?> schemaFromClass = ModelUtils.createModelFromClass(modelType);
         pistons.add(new ModelPiston<>(schemaFromClass, elepy));
-
-
     }
 
     public <T> void alterModel(Class<T> cls, ModelChange modelChange) {

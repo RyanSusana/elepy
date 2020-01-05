@@ -27,25 +27,6 @@ public class ElepyPreConfiguration {
         this.elepy = elepy;
     }
 
-    /**
-     * @return The config path .
-     * @see Elepy#withConfigPath(String)
-     */
-    public String getConfigPath() {
-        return elepy.getConfigPath();
-    }
-
-    /**
-     * The default {@link ObjectEvaluator} to your own implementation
-     * This is used to determine an object's validity. It can also be changed per
-     * {@link Model} with the {@link com.elepy.annotations.Evaluators} annotation.
-     *
-     * @return the base object evaluator
-     */
-    public ObjectEvaluator<Object> getBaseObjectEvaluator() {
-        return elepy.baseEvaluator();
-    }
-
     public ObjectMapper getObjectMapper() {
         return elepy.objectMapper();
     }
@@ -241,8 +222,8 @@ public class ElepyPreConfiguration {
     /**
      * @return the list of Elepy RestModels
      */
-    public List<Schema<?>> models() {
-        return elepy.models();
+    public List<Schema<?>> modelSchemas() {
+        return elepy.modelSchemas();
     }
 
     public List<Class<?>> modelClasses() {
@@ -253,12 +234,6 @@ public class ElepyPreConfiguration {
         return elepy.authenticationService();
     }
 
-    /**
-     * @param handler What to do when elepy stops gracefully
-     */
-    public void onStop(EventHandler handler) {
-        elepy.onStop(handler);
-    }
 
     /**
      * @param tClass      the class of the model

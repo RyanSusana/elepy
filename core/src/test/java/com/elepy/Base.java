@@ -77,7 +77,7 @@ public class Base {
 
     protected Elepy createElepy() {
 
-        return new Elepy().onPort(portCounter++)
+        return new Elepy().withPort(portCounter++)
                 .withHttpService(mock(HttpService.class))
                 .withDefaultCrudFactory(new MockCrudFactory());
 

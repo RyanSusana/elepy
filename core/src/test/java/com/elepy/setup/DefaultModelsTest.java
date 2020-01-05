@@ -32,7 +32,7 @@ public class DefaultModelsTest {
 
         sut.start();
 
-        assertThat(sut.modelFor(UserExtended.class))
+        assertThat(sut.modelSchemaFor(UserExtended.class))
                 .isNotNull()
                 .extracting(input -> input.getProperty("extendedUserProperty"))
                 .isNotNull()
@@ -41,7 +41,7 @@ public class DefaultModelsTest {
 
 
         assertThatExceptionOfType(ElepyException.class)
-                .isThrownBy(() -> sut.modelFor(User.class));
+                .isThrownBy(() -> sut.modelSchemaFor(User.class));
 
     }
 }

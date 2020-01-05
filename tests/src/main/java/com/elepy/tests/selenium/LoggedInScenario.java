@@ -17,6 +17,6 @@ public abstract class LoggedInScenario extends GenericScenario {
     }
 
     public <T> ModelScenario<T> navigateToModel(Class<T> model) {
-        return navigateToModel(driver.elepy().modelFor(model));
+        return navigateToModel(driver.elepy().modelSchemaFor(model));
     }
 } 
