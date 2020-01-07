@@ -69,8 +69,10 @@ public class DefaultCreate<T> implements CreateHandler<T> {
 
     private void create(HttpContext context, Crud<T> dao, Iterable<T> items) {
         dao.create(items);
+
+
         context.status(200);
-        context.result(Message.of("Successfully created item(s)", 201));
+        context.result(Message.of("Successfully created item(s)", 201).withProperty("createdRecords", items));
     }
 
 }

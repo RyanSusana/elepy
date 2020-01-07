@@ -9,6 +9,8 @@ import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 /**
  * A helper class for developers to easily handle the creation of objects.
  *
@@ -34,7 +36,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             afterCreate(item, dao);
             context.response().status(200);
-            context.response().result(Message.of("Successfully created item", 200));
+            context.response().result(Message.of("Successfully created item", 200).withProperty("createdRecords", List.of(item)));
 
         } catch (JsonMappingException e) {
             throw new ElepyException("Error mapping SimpleCreate: " + e.getMessage());

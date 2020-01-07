@@ -25,6 +25,11 @@ public class Message {
         return of(message, 200);
     }
 
+    public Message withProperty(String key, Object value) {
+        getProperties().put(key, value);
+        return this;
+    }
+
     public static Message of(String message, int status) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", status >= 300 ? MessageType.ERROR : MessageType.MESSAGE);
