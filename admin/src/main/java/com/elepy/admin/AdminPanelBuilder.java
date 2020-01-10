@@ -1,21 +1,23 @@
 package com.elepy.admin;
 
 import com.elepy.admin.views.CdnResourceLocation;
+import com.elepy.admin.views.LocalResourceLocation;
 import com.elepy.admin.views.ResourceLocation;
 import com.elepy.exceptions.ElepyConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
 public class AdminPanelBuilder {
-    private ElepyAdminPanel elepyAdminPanel;
 
 
     private ResourceLocation resourceLocation;
 
+    private List<String> requiredPermissions;
 
     private static final Logger logger = LoggerFactory.getLogger(AdminPanel.class);
 
@@ -24,14 +26,27 @@ public class AdminPanelBuilder {
         return this;
     }
 
+    public AdminPanelBuilder withLocal() {
+        return withResourceLocation(new LocalResourceLocation());
+    }
+
+    public AdminPanelBuilder withLatestCDN() {
+        return withResourceLocation(null);
+    }
+
     public AdminPanelBuilder withCDNVersion(String version) {
         return withResourceLocation(CdnResourceLocation.version(version));
     }
 
-    public AdminPanelBuilder withExtension(ElepyAdminPanel elepyAdminPanel) {
-        this.elepyAdminPanel = elepyAdminPanel;
+    public AdminPanelBuilder withRequiredPermissions(String... requiredPermissions) {
+        return withRequiredPermissions(List.of(requiredPermissions));
+    }
+
+    public AdminPanelBuilder withRequiredPermissions(List<String> requiredPermissions) {
+        this.requiredPermissions = requiredPermissions;
         return this;
     }
+
 
     public AdminPanel build() {
         if (resourceLocation == null) {
@@ -48,9 +63,9 @@ public class AdminPanelBuilder {
             resourceLocation = CdnResourceLocation.version(properties.getProperty("elepyVersion"));
         }
 
-        if (elepyAdminPanel == null) {
-            elepyAdminPanel = new ElepyAdminPanel();
-        }
-        return new AdminPanel(elepyAdminPanel, resourceLocation);
+
+        return new AdminPanel(new ElepyAdminPanel(requiredPermissions), resourceLocation);
     }
-} 
+
+
+}

@@ -35,12 +35,18 @@ public class ElepyAdminPanel implements ElepyExtension {
     private PluginHandler pluginHandler;
     private ViewHandler viewHandler;
     private boolean initiated = false;
+
     @Inject
     private Crud<User> userCrud;
     private List<Schema<?>> schemas;
 
+    private final List<String> requiredPermissions;
 
     private NoUserFoundHandler noUserFoundHandler;
+
+    ElepyAdminPanel(List<String> requiredPermissions) {
+        this.requiredPermissions = requiredPermissions;
+    }
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
@@ -67,6 +73,9 @@ public class ElepyAdminPanel implements ElepyExtension {
 
             try {
                 ctx.loggedInUserOrThrow();
+
+                if (requiredPermissions != null)
+                    ctx.requirePermissions(requiredPermissions);
             } catch (ElepyException e) {
                 ctx.redirect("/elepy-login");
             }

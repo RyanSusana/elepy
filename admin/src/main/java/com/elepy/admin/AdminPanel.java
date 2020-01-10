@@ -36,7 +36,7 @@ public class AdminPanel implements Configuration {
 
     public static AdminPanel local() {
         logger.warn("Using the local version of ElepyVue. This might cause unnecessary egress traffic. ");
-        return newBuilder().withResourceLocation(new LocalResourceLocation()).build();
+        return newBuilder().withLocal().build();
     }
 
     public static AdminPanelBuilder newBuilder() {
