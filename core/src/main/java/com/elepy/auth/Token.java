@@ -1,9 +1,7 @@
 package com.elepy.auth;
 
 
-import com.elepy.annotations.Hidden;
-import com.elepy.annotations.Model;
-import com.elepy.annotations.Service;
+import com.elepy.annotations.*;
 import com.elepy.handlers.DisabledHandler;
 
 import javax.persistence.Column;
@@ -16,7 +14,11 @@ import java.util.Objects;
 @Table(name = "elepy_tokens")
 @Model(name = "Tokens", path = "/tokens")
 @Hidden
-@Service(DisabledHandler.class)
+
+@Create(handler = DisabledHandler.class)
+@Update(handler = DisabledHandler.class)
+@Delete(handler = DisabledHandler.class)
+@Find(findManyHandler = DisabledHandler.class, findOneHandler = DisabledHandler.class)
 public class Token implements Comparable<Token> {
     @Id
     private String id;

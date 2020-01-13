@@ -2,7 +2,7 @@ package com.elepy.annotations;
 
 import com.elepy.auth.Permissions;
 import com.elepy.handlers.DefaultDelete;
-import com.elepy.handlers.DeleteHandler;
+import com.elepy.handlers.ActionHandler;
 
 import java.lang.annotation.*;
 
@@ -21,7 +21,7 @@ public @interface Delete {
      * @see DefaultDelete
      * @see com.elepy.handlers.DeleteHandler
      */
-    Class<? extends DeleteHandler> handler() default DefaultDelete.class;
+    Class<? extends ActionHandler> handler() default DefaultDelete.class;
 
 
     /**

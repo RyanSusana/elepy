@@ -281,20 +281,6 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     }
 
     @Test
-    void can_AccessExtraRoutes_when_RoutesAreDefinedInAService() throws UnirestException {
-
-        final String shouldReturn = "I am here";
-        Resource resource1 = validObject();
-        resource1.setId(77);
-        resource1.setTextField(shouldReturn);
-        resourceCrud.create(resource1);
-        final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources/" + resource1.getId() + "/extra").asString();
-
-        assertEquals(200, getRequest.getStatus());
-        assertEquals(shouldReturn, getRequest.getBody());
-    }
-
-    @Test
     void can_AccessExtraRoutes_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources-extra").asString();
 

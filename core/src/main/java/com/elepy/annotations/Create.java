@@ -2,8 +2,8 @@ package com.elepy.annotations;
 
 
 import com.elepy.auth.Permissions;
-import com.elepy.handlers.CreateHandler;
 import com.elepy.handlers.DefaultCreate;
+import com.elepy.handlers.ActionHandler;
 
 import java.lang.annotation.*;
 
@@ -22,7 +22,7 @@ public @interface Create {
      * @see DefaultCreate
      * @see com.elepy.handlers.CreateHandler
      */
-    Class<? extends CreateHandler> handler() default DefaultCreate.class;
+    Class<? extends ActionHandler> handler() default DefaultCreate.class;
 
     /**
      * A list of required permissions to execute this A

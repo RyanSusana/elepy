@@ -5,7 +5,6 @@ import com.elepy.dao.Page;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -18,14 +17,14 @@ import java.util.List;
 public abstract class MappedFindMany<T, R> extends DefaultFindMany<T> {
 
     @Override
-    public void handleFindMany(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        Page<T> page = find(context.request(), context.response(), crud, modelContext);
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+        Page<T> page = find(context.request(), context.response(), modelContext.getCrud(), modelContext);
 
-        List<R> filteredValues = mapValues(page.getValues(), context.request(), crud);
+        List<R> filteredValues = mapValues(page.getValues(), context.request(), modelContext.getCrud());
 
         Page<R> filteredPage = new Page<>(page.getCurrentPageNumber(), page.getLastPageNumber(), filteredValues);
 
-        context.response().result(objectMapper.writeValueAsString(filteredPage));
+        context.response().json(filteredPage);
     }
 
     public abstract List<R> mapValues(List<T> objectsToMap, Request request, Crud<T> crud);

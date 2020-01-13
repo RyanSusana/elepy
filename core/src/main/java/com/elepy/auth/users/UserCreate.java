@@ -8,21 +8,22 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.handlers.CreateHandler;
+import com.elepy.handlers.ActionHandler;
 import com.elepy.http.HttpContext;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mindrot.jbcrypt.BCrypt;
 
 
-public class UserCreate implements CreateHandler<User> {
+public class UserCreate implements ActionHandler<User> {
 
     @Override
-    public synchronized void handleCreate(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
+    public synchronized void handle(HttpContext context, ModelContext<User> modelContext) throws Exception {
 
         String body = context.request().body();
-        User user = objectMapper.readValue(body, crud.getType());
+
+        final var crud = modelContext.getCrud();
+        User user = context.elepy().objectMapper().readValue(body, crud.getType());
         if (user.getUsername().trim().isEmpty()) {
             throw new ElepyException("Usernames can't be empty!", 400);
         }

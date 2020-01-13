@@ -5,19 +5,12 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public class DefaultDelete<T> implements DeleteHandler<T> {
+public class DefaultDelete<T> implements ActionHandler<T> {
 
-    @Override
-    public void handleDelete(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        Set<Serializable> paramIds = context.recordIds();
-
-        delete(paramIds, dao, context, modelContext);
-    }
 
     protected void delete(Set<Serializable> paramIds, Crud<T> dao, HttpContext context, ModelContext<T> modelContext) {
         if (paramIds.size() == 1) {
@@ -30,5 +23,12 @@ public class DefaultDelete<T> implements DeleteHandler<T> {
             dao.delete(paramIds);
             context.result(Message.of("Successfully deleted items", 200));
         }
+    }
+
+    @Override
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+        Set<Serializable> paramIds = context.recordIds();
+
+        delete(paramIds, modelContext.getCrud(), context, modelContext);
     }
 }

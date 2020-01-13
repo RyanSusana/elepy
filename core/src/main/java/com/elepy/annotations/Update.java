@@ -3,7 +3,7 @@ package com.elepy.annotations;
 
 import com.elepy.auth.Permissions;
 import com.elepy.handlers.DefaultUpdate;
-import com.elepy.handlers.UpdateHandler;
+import com.elepy.handlers.ActionHandler;
 
 import java.lang.annotation.*;
 
@@ -24,7 +24,7 @@ public @interface Update {
      * @see DefaultUpdate
      * @see com.elepy.handlers.UpdateHandler
      */
-    Class<? extends UpdateHandler> handler() default DefaultUpdate.class;
+    Class<? extends ActionHandler> handler() default DefaultUpdate.class;
 
     /**
      * A list of required permissions to execute this A

@@ -8,16 +8,9 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DefaultFindMany<T> implements FindManyHandler<T> {
+public class DefaultFindMany<T> implements ActionHandler<T> {
 
-    @Override
-    public void handleFindMany(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        Page<T> page = find(context.request(), context.response(), crud, modelContext);
-
-        context.response().result(objectMapper.writeValueAsString(page));
-    }
 
     public Page<T> find(Request request, Response response, Crud<T> dao, ModelContext<T> modelContext) {
 
@@ -36,4 +29,10 @@ public class DefaultFindMany<T> implements FindManyHandler<T> {
     }
 
 
+    @Override
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+        Page<T> page = find(context.request(), context.response(), modelContext.getCrud(), modelContext);
+
+        context.response().json(page);
+    }
 }

@@ -40,7 +40,6 @@ public class HttpAction {
         return requiredPermissions;
     }
 
-
     public HttpMethod getMethod() {
         return method;
     }
@@ -48,6 +47,8 @@ public class HttpAction {
     public ActionType getActionType() {
         return actionType;
     }
+
+
 
     public String getName() {
         return name;

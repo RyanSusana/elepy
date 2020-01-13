@@ -4,7 +4,6 @@ import com.elepy.dao.Crud;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Use this class to map the result of a RestModel to another type.
@@ -15,12 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class MappedFindOne<T, R> extends DefaultFindOne<T> {
 
     @Override
-    public void handleFindOne(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        T object = findOne(context.request(), context.response(), crud, modelContext);
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+        T object = findOne(context.request(), context.response(), modelContext.getCrud(), modelContext);
 
-        R mapped = map(object, context.request(), crud);
+        R mapped = map(object, context.request(), modelContext.getCrud());
 
-        context.response().result(objectMapper.writeValueAsString(mapped));
+        context.response().json(mapped);
     }
 
     public abstract R map(T objectToMap, Request request, Crud<T> crud);

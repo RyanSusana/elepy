@@ -11,19 +11,21 @@ import com.elepy.models.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultCreate<T> implements CreateHandler<T> {
+public class DefaultCreate<T> implements ActionHandler<T> {
 
 
     @Override
-    public void handleCreate(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
         String body = context.request().body();
+
+        final var objectMapper = context.elepy().objectMapper();
+        final var dao = modelContext.getCrud();
 
         try {
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
@@ -35,7 +37,6 @@ public class DefaultCreate<T> implements CreateHandler<T> {
             T item = objectMapper.readValue(body, dao.getType());
             singleCreate(context, item, dao, modelContext);
         }
-
     }
 
     protected void singleCreate(HttpContext context, T item, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
@@ -74,5 +75,6 @@ public class DefaultCreate<T> implements CreateHandler<T> {
         context.status(200);
         context.result(Message.of("Successfully created item(s)", 201).withProperty("createdRecords", items));
     }
+
 
 }

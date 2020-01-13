@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 
 @Model(name = "Test Resource", path = "/resources")
 @ExtraRoutes({ResourceExtraRoutes.class})
-@Service(value = ResourceService.class)
 @Delete(requiredPermissions = {})
 @Create(requiredPermissions = {})
 @Update(requiredPermissions = {})

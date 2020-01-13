@@ -6,7 +6,6 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 
@@ -16,24 +15,25 @@ import java.io.Serializable;
  * @param <T> the model you're updating
  * @see com.elepy.annotations.Update
  * @see DefaultUpdate
- * @see UpdateHandler
  */
 public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
 
     @Override
-    public void handleUpdatePut(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
 
         final Serializable id = context.recordId();
 
-        final T before = dao.getById(id).orElseThrow(() -> new ElepyException("This item doesn't exist and therefor can't be updated"));
+        final var crud = modelContext.getCrud();
+
+        final T before = crud.getById(id).orElseThrow(() -> new ElepyException("This item doesn't exist and therefor can't be updated"));
 
         T updatedObjectFromRequest = updatedObjectFromRequest(before,
                 context.request(),
-                objectMapper,
+                context.elepy().objectMapper(),
                 modelContext.getSchema());
 
-        beforeUpdate(before, updatedObjectFromRequest, context.request(), dao);
+        beforeUpdate(before, updatedObjectFromRequest, context.request(), crud);
 
 
         final T updated =
@@ -41,16 +41,12 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
                         updatedObjectFromRequest,
                         modelContext
                 );
-        afterUpdate(before, updated, dao);
+        afterUpdate(before, updated, crud);
 
         context.response().status(200);
         context.response().result(Message.of("Successfully updated item", 200));
     }
 
-    @Override
-    public void handleUpdatePatch(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        super.handleUpdatePut(context, crud, modelContext, objectMapper);
-    }
 
     /**
      * What happens before you update a model. Throw an exception to cancel the update.

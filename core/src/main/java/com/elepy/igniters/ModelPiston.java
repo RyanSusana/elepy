@@ -1,41 +1,40 @@
 package com.elepy.igniters;
 
 import com.elepy.Elepy;
-import com.elepy.annotations.Action;
 import com.elepy.annotations.ExtraRoutes;
-import com.elepy.dao.Crud;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.ServiceHandler;
-import com.elepy.http.*;
-import com.elepy.models.Schema;
+import com.elepy.http.HttpAction;
+import com.elepy.http.HttpContext;
+import com.elepy.http.Route;
+import com.elepy.http.RouteBuilder;
 import com.elepy.models.ModelContext;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.Schema;
 import com.elepy.utils.ReflectionUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class ModelPiston<T> {
 
+    private final Elepy elepy;
     private final Schema<T> schema;
     private final ModelContext<T> modelContext;
-    private final ServiceHandler<T> serviceExtraction;
-    private final ObjectMapper objectMapper;
+    private final ModelHandlers<T> serviceExtraction;
 
 
     public ModelPiston(Schema<T> schema, Elepy elepy) {
+        this.elepy = elepy;
         this.schema = schema;
-        this.objectMapper = elepy.objectMapper();
         this.modelContext = ModelContextExtraction.extractContext(schema, elepy);
 
-        this.serviceExtraction = ModelServiceExtraction.extractService(schema, elepy);
-        elepy.addRouting(getAllRoutes(elepy));
+        this.serviceExtraction = ModelHandlers.createForModel(elepy, schema);
+        elepy.addRouting(getAllRoutes());
 
         schema.getJavaClass().getAnnotation(ExtraRoutes.class);
     }
@@ -48,126 +47,58 @@ public class ModelPiston<T> {
         return modelContext;
     }
 
-    public ServiceHandler<T> getServiceExtraction() {
-        return serviceExtraction;
+    private List<Route> getAllRoutes() {
+        return Stream.of(routesFromDefaultActions(), routesFromCustomActions(), routesFromAnnotation())
+                .flatMap(s -> s)
+                .collect(Collectors.toList());
     }
 
-    private List<Route> getAllRoutes(Elepy elepy) {
-        Crud<T> dao = modelContext.getCrud();
-
-        List<Route> toReturn = new ArrayList<>();
-        //POST
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath())
-                .addPermissions(schema.getCreateAction().getRequiredPermissions())
-                .method(HttpMethod.POST)
-                .route(ctx -> serviceExtraction.handleCreate(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
-                .build()
-        );
-
-        // PUT
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath() + "/:id")
-                .addPermissions(schema.getUpdateAction().getRequiredPermissions())
-                .method(HttpMethod.PUT)
-                .route(ctx -> serviceExtraction.handleUpdatePut(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
-                .build()
-        );
-
-        //PATCH
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath() + "/:id")
-                .method(HttpMethod.PATCH)
-                .addPermissions(schema.getUpdateAction().getRequiredPermissions())
-                .route(ctx -> {
-                    ctx.request().attribute("modelClass", schema.getJavaClass());
-                    serviceExtraction.handleUpdatePatch(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper);
-                })
-                .build()
-        );
-
-        // DELETE
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath() + "/:id")
-                .method(HttpMethod.DELETE)
-                .addPermissions(schema.getDeleteAction().getRequiredPermissions())
-                .route(ctx -> serviceExtraction.handleDelete(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
-                .build()
-        );
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath())
-                .method(HttpMethod.DELETE)
-                .addPermissions(schema.getDeleteAction().getRequiredPermissions())
-                .route(ctx -> serviceExtraction.handleDelete(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
-                .build()
-        );
-
-        //GET PAGE
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath())
-                .method(HttpMethod.GET)
-                .addPermissions(schema.getFindManyAction().getRequiredPermissions())
-                .route(ctx -> serviceExtraction.handleFindMany(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
-                .build()
-        );
-
-        //GET ONE
-        toReturn.add(anElepyRoute()
-                .path(schema.getPath() + "/:id")
-                .method(HttpMethod.GET)
-                .addPermissions(schema.getFindOneAction().getRequiredPermissions())
-                .route(ctx -> serviceExtraction.handleFindOne(injectModelClassInHttpContext(ctx), dao, modelContext, objectMapper))
-                .build()
-        );
-
-        //Extra Routes
-        toReturn.addAll(getActionRoutes(elepy));
-        toReturn.addAll(getExtraRoutes(elepy));
-        return toReturn;
+    private Stream<Route> routesFromDefaultActions() {
+        return serviceExtraction.getDefaultActions().values().stream().map(modelAction -> anElepyRoute()
+                .path(modelAction.getAction().getPath())
+                .addPermissions(modelAction.getAction().getRequiredPermissions())
+                .method(modelAction.getAction().getMethod())
+                .route(ctx -> modelAction.getActionHandler().handle(injectModelClassInHttpContext(ctx), modelContext))
+                .build());
     }
 
-    private List<Route> getExtraRoutes(Elepy elepy) {
+    private Stream<Route> routesFromAnnotation() {
         final ExtraRoutes extraRoutesAnnotation = schema.getJavaClass().getAnnotation(ExtraRoutes.class);
 
         if (extraRoutesAnnotation == null) {
-            return new ArrayList<>();
+            return Stream.empty();
         } else {
             return Arrays.stream(extraRoutesAnnotation.value())
                     .map(aClass -> ReflectionUtils.scanForRoutes(elepy.initialize(aClass)))
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
+                    .flatMap(List::stream);
         }
 
     }
 
-    private List<Route> getActionRoutes(Elepy elepy) {
-
-        var modelType = modelContext.getSchema().getJavaClass();
-        var path = modelContext.getSchema().getPath();
-        var crud = modelContext.getCrud();
-        final Action[] actionAnnotations = modelType.getAnnotationsByType(Action.class);
+    private Stream<Route> routesFromCustomActions() {
         final List<Route> actions = new ArrayList<>();
 
-        for (Action actionAnnotation : actionAnnotations) {
 
-            final HttpAction action = ModelUtils.actionToHttpAction(path , actionAnnotation);
-            final ActionHandler<T> actionHandler = elepy.initialize(actionAnnotation.handler());
+        for (ModelAction<T> extraAction : serviceExtraction.getExtraActions()) {
+
+            final HttpAction action = extraAction.getAction();
+            final ActionHandler<T> actionHandler = extraAction.getActionHandler();
 
             final RouteBuilder route = anElepyRoute()
-                    .addPermissions(actionAnnotation.requiredPermissions())
+                    .addPermissions(action.getRequiredPermissions())
                     .path(action.getPath() + "/:id")
-                    .method(actionAnnotation.method())
+                    .method(action.getMethod())
                     .route(ctx -> {
                         ctx.attribute("action", action);
                         ctx.result(Message.of("Executed action", 200));
-                        actionHandler.handleAction(ctx.injectModelClassInHttpContext(modelType), crud, modelContext, elepy.objectMapper());
+                        actionHandler.handle(ctx.injectModelClassInHttpContext(schema.getJavaClass()), modelContext);
                     });
 
             //add two routes for multi select and single select.
             actions.add(route.build());
             actions.add(route.path(action.getPath()).build());
         }
-        return actions;
+        return actions.stream();
     }
 
 

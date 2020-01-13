@@ -1,6 +1,5 @@
 package com.elepy.handlers;
 
-import com.elepy.dao.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
@@ -8,8 +7,8 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.Schema;
 import com.elepy.models.ModelContext;
+import com.elepy.models.Schema;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultUpdate<T> implements UpdateHandler<T> {
+public class DefaultUpdate<T> implements ActionHandler<T> {
 
 
     @SuppressWarnings("unchecked")
@@ -70,16 +69,6 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         return update;
     }
 
-    @Override
-    public void handleUpdatePut(HttpContext httpContext, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        this.handleUpdate(httpContext, modelContext, objectMapper);
-    }
-
-    @Override
-    public void handleUpdatePatch(HttpContext httpContext, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        this.handleUpdate(httpContext, modelContext, objectMapper);
-    }
-
 
     @SuppressWarnings("unchecked")
     private T setParamsOnObject(Request request, ObjectMapper objectMapper, T object, Class<T> modelClass) {
@@ -89,5 +78,10 @@ public class DefaultUpdate<T> implements UpdateHandler<T> {
         request.queryParams().forEach(queryParam -> params.put(queryParam, request.queryParams(queryParam)));
 
         return MapperUtils.objectFromMaps(objectMapper, map, params, modelClass);
+    }
+
+    @Override
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+        this.handleUpdate(context, modelContext, context.elepy().objectMapper());
     }
 }

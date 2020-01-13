@@ -4,7 +4,6 @@ import com.elepy.dao.Crud;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,15 +19,15 @@ import java.util.stream.Collectors;
  * @param <T> The RestModel type
  * @param <R> The type you want to map to.
  */
-public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements FindManyHandler<T> {
+public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements ActionHandler<T> {
 
     private MappedFindMany<T, R> mappedFindMany = new DefaultMappedFindMany();
 
     public abstract R map(T object, Request request, Crud<T> crud);
 
     @Override
-    public void handleFindMany(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        mappedFindMany.handleFindMany(context, crud, modelContext, objectMapper);
+    public void handle(HttpContext context,  ModelContext<T> modelContext) throws Exception {
+        mappedFindMany.handle(context, modelContext);
     }
 
 

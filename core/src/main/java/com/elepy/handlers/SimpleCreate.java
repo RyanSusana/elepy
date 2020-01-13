@@ -17,24 +17,24 @@ import java.util.List;
  * @param <T> the model you're updating
  * @see com.elepy.annotations.Create
  * @see DefaultCreate
- * @see CreateHandler
  */
 public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
     @Override
-    public void handleCreate(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
 
         try {
 
+            var objectMapper = context.elepy().objectMapper();
             String body = context.request().body();
 
-            T item = objectMapper.readValue(body, dao.getType());
+            T item = objectMapper.readValue(body, modelContext.getModelType());
 
-            beforeCreate(item, context.request(), dao);
+            beforeCreate(item, context.request(), modelContext.getCrud());
 
-            super.singleCreate(context, item, dao, modelContext);
+            super.singleCreate(context, item, modelContext.getCrud(), modelContext);
 
-            afterCreate(item, dao);
+            afterCreate(item, modelContext.getCrud());
             context.response().status(200);
             context.response().result(Message.of("Successfully created item", 200).withProperty("createdRecords", List.of(item)));
 

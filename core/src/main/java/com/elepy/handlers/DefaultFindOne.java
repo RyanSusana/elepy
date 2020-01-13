@@ -6,18 +6,12 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.Optional;
 
-public class DefaultFindOne<T> implements FindOneHandler<T> {
+public class DefaultFindOne<T> implements ActionHandler<T> {
 
-    @Override
-    public void handleFindOne(HttpContext context, Crud<T> crud, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
-        T object = findOne(context.request(), context.response(), crud, modelContext);
-        context.response().result(objectMapper.writeValueAsString(object));
-    }
 
     public T findOne(Request request, Response response, Crud<T> dao, ModelContext<T> modelContext) {
         response.type("application/json");
@@ -32,5 +26,11 @@ public class DefaultFindOne<T> implements FindOneHandler<T> {
         } else {
             throw new ElepyException(String.format("No %s found", modelContext.getName()), 404);
         }
+    }
+
+    @Override
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+        T object = findOne(context.request(), context.response(), modelContext.getCrud(), modelContext);
+        context.response().json(object);
     }
 }

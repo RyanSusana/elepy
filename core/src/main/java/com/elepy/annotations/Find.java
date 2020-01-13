@@ -1,10 +1,7 @@
 package com.elepy.annotations;
 
 
-import com.elepy.handlers.DefaultFindMany;
-import com.elepy.handlers.DefaultFindOne;
-import com.elepy.handlers.FindManyHandler;
-import com.elepy.handlers.FindOneHandler;
+import com.elepy.handlers.*;
 
 import java.lang.annotation.*;
 
@@ -24,7 +21,7 @@ public @interface Find {
      * @see DefaultFindMany
      * @see FindManyHandler
      */
-    Class<? extends FindManyHandler> findManyHandler() default DefaultFindMany.class;
+    Class<? extends ActionHandler> findManyHandler() default DefaultFindMany.class;
 
     /**
      * The class that handles the functionality of finds on this Resource.
@@ -33,7 +30,7 @@ public @interface Find {
      * @see DefaultFindMany
      * @see FindManyHandler
      */
-    Class<? extends FindOneHandler> findOneHandler() default DefaultFindOne.class;
+    Class<? extends ActionHandler> findOneHandler() default DefaultFindOne.class;
 
     /**
      * A list of required permissions to execute this A

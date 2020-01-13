@@ -5,25 +5,25 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 
-public abstract class SimpleDelete<T> implements DeleteHandler<T> {
+public abstract class SimpleDelete<T> implements ActionHandler<T> {
     @Override
-    public void handleDelete(HttpContext context, Crud<T> dao, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
 
         if (context.recordIds().size() > 1) {
             throw new ElepyException(String.format("SimpleDelete<%s> does not support multiple id deletions", modelContext.getModelType().getSimpleName()), 400);
         }
 
+        var crud = modelContext.getCrud();
         Serializable paramId = context.recordId();
 
-        T itemToDelete = dao.getById(paramId).orElseThrow(() -> new ElepyException(String.format("No %s found", modelContext.getName()), 404));
+        T itemToDelete = crud.getById(paramId).orElseThrow(() -> new ElepyException(String.format("No %s found", modelContext.getName()), 404));
 
-        beforeDelete(itemToDelete, dao);
-        dao.deleteById(paramId);
-        afterDelete(itemToDelete, dao);
+        beforeDelete(itemToDelete, crud);
+        crud.deleteById(paramId);
+        afterDelete(itemToDelete, crud);
 
         context.response().status(200);
         context.response().result(Message.of("Successfully deleted item", 200));
