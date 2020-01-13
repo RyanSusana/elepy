@@ -19,7 +19,6 @@ public @interface Find {
      *
      * @return the route findManyHandler
      * @see DefaultFindMany
-     * @see FindManyHandler
      */
     Class<? extends ActionHandler> findManyHandler() default DefaultFindMany.class;
 
@@ -28,7 +27,6 @@ public @interface Find {
      *
      * @return the route findOneHandler
      * @see DefaultFindMany
-     * @see FindManyHandler
      */
     Class<? extends ActionHandler> findOneHandler() default DefaultFindOne.class;
 

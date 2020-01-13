@@ -22,7 +22,6 @@ public @interface Update {
      * @return the route updateHandler
      * @see com.elepy.handlers.SimpleUpdate
      * @see DefaultUpdate
-     * @see com.elepy.handlers.UpdateHandler
      */
     Class<? extends ActionHandler> handler() default DefaultUpdate.class;
 

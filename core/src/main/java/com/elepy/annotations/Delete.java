@@ -19,7 +19,6 @@ public @interface Delete {
      *
      * @return the route deleteHandler
      * @see DefaultDelete
-     * @see com.elepy.handlers.DeleteHandler
      */
     Class<? extends ActionHandler> handler() default DefaultDelete.class;
 

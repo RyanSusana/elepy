@@ -20,7 +20,6 @@ public @interface Create {
      *
      * @return the route createHandler
      * @see DefaultCreate
-     * @see com.elepy.handlers.CreateHandler
      */
     Class<? extends ActionHandler> handler() default DefaultCreate.class;
 
