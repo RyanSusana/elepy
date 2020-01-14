@@ -118,7 +118,7 @@ public class ModelHandlers<T> {
             final var annotation = Optional
                     .ofNullable(schema.getJavaClass().getAnnotation(Find.class));
 
-            final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findManyHandler())).orElse(new DefaultFindOne<>());
+            final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findManyHandler())).orElse(new DefaultFindMany<>());
 
             return new ModelAction<>(HttpAction.of("Find Many", schema.getPath(),
                     getFindPermissions(schema), HttpMethod.GET, ActionType.MULTIPLE), handler);
