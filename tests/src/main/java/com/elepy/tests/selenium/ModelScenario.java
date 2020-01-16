@@ -35,8 +35,6 @@ public class ModelScenario<T> extends LoggedInScenario {
     }
 
     public FormInputScenario<T> startEditing(String recordId) {
-        driver.findElement(ADD_BUTTON).click();
-
         clickSingleAction(recordId, "edit");
 
         driver.waitTillCanSee(FormInputScenario.SAVE_BUTTON);
