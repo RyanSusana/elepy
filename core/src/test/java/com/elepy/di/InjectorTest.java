@@ -48,7 +48,7 @@ public class InjectorTest {
         assertThat(props.getSmtpServer())
                 .isEqualTo("ryan");
 
-        assertThat(props.isHi())
+        assertThat(props.isTestBoolean())
                 .isTrue();
     }
 }

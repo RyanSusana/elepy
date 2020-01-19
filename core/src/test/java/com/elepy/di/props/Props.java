@@ -8,13 +8,13 @@ public class Props {
     private String smtpServer;
 
     @Property("${test}")
-    private boolean hi;
+    private boolean testBoolean;
 
     public String getSmtpServer() {
         return smtpServer;
     }
 
-    public boolean isHi() {
-        return hi;
+    public boolean isTestBoolean() {
+        return testBoolean;
     }
 }
