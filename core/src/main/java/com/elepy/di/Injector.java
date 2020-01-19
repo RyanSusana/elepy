@@ -12,6 +12,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 class Injector {
 
@@ -47,37 +50,23 @@ class Injector {
      * @param object the object to inject
      */
     void injectFields(Object object) {
-        ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class)
+        ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class, Property.class)
                 .forEach(field -> {
                     try {
-                        if (field.get(object) == null) {
-                            field.set(object, getDependencyForAnnotatedElement(field));
-                        }
+
+                        field.set(object, getDependencyForAnnotatedElement(field));
+
                     } catch (IllegalAccessException e) {
                         throw new ElepyConfigException("Failed to inject dependencies on field: " + field.getName(), e);
                     }
                 });
-
-        ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Property.class)
-                .forEach(field -> {
-                    try {
-
-                        final Class<?> wrapper = ReflectionUtils.returnTypeOf(field);
-
-                        if (!ClassUtils.isPrimitiveWrapper(wrapper) || field.get(object) == null) {
-                            final Object value = elepyContext.getDependency(Configuration.class)
-                                    .getInterpolator()
-                                    .interpolate(field.getAnnotation(Property.class).value());
-                            field.set(object, cast(wrapper, value));
-                        }
-                    } catch (IllegalAccessException e) {
-                        throw new ElepyConfigException("Failed to inject dependencies on field: " + field.getName(), e);
-                    }
-                });
-
     }
 
+
     private Object cast(Class<?> wrapper, Object value) {
+        if (value == null) {
+            return null;
+        }
         final Class<?> aClass = ClassUtils.primitiveToWrapper(wrapper);
 
         final var stringValue = value.toString();
@@ -94,10 +83,29 @@ class Injector {
         return value;
     }
 
-    private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {
-        final var contextKey = ContextKey.forAnnotatedElement(annotatedType);
+    private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedElement) {
+        final Class<?> wrapper = ReflectionUtils.returnTypeOf(annotatedElement);
 
-        return elepyContext.getDependency(contextKey.getType(), contextKey.getTag());
+        if (annotatedElement.isAnnotationPresent(Property.class)) {
+            final var property = annotatedElement.getAnnotation(Property.class);
+            Object value = Optional.ofNullable(elepyContext.getDependency(Configuration.class)
+                    .getInterpolator()
+                    .interpolate(property.key()))
+                    .orElse(property.defaultValue());
+
+            if (isEmpty(value)) {
+                value = null;
+            }
+
+            if (property.required() && isEmpty(value)) {
+                throw new ElepyConfigException("Failed to resolve property: " + property.key());
+            }
+            return cast(wrapper, value);
+        } else {
+            final var contextKey = ContextKey.forAnnotatedElement(annotatedElement);
+
+            return elepyContext.getDependency(contextKey.getType(), contextKey.getTag());
+        }
     }
 
     private <T> T initializeObjectViaConstructor(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {

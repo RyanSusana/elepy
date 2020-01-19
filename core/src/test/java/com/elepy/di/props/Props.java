@@ -4,10 +4,10 @@ import com.elepy.annotations.Property;
 
 public class Props {
 
-    @Property("${smtp.server}")
+    @Property(key = "${smtp.server}")
     private String smtpServer;
 
-    @Property("${test}")
+    @Property(key = "${test}")
     private boolean testBoolean;
 
     public String getSmtpServer() {

@@ -4,6 +4,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.elepy.Configuration;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
+import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;
 
 import java.util.Optional;
@@ -11,6 +13,13 @@ import java.util.Optional;
 public class JWTConfiguration implements Configuration {
 
     private final Algorithm algorithm;
+
+    @ElepyConstructor
+    public JWTConfiguration(
+            @Property(key = "${jwt.secret}") String secret
+    ) {
+        this(Algorithm.HMAC256(secret));
+    }
 
     private JWTConfiguration(Algorithm algorithm) {
         this.algorithm = algorithm;
@@ -33,8 +42,8 @@ public class JWTConfiguration implements Configuration {
         if (algorithm != null) {
             elepy.addAuthenticationMethod(new JWTAuthenticationMethod(algorithm));
         } else {
-            final var secret = Optional.ofNullable(elepy.getPropertyConfig().getString("jwt_secret"))
-                    .orElseThrow(() -> new ElepyConfigException("No jwt_secret found in Elepy properties or environmental variables"));
+            final var secret = Optional.ofNullable(elepy.getPropertyConfig().getString("jwt.secret"))
+                    .orElseThrow(() -> new ElepyConfigException("No jwt.secret found in Elepy properties or environmental variables"));
 
             elepy.addAuthenticationMethod(new JWTAuthenticationMethod(Algorithm.HMAC256(secret)));
         }

@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.ConfigurationConverter;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.hibernate.validator.HibernateValidator;
 import org.reflections.Reflections;
@@ -81,6 +82,8 @@ public class Elepy implements ElepyContext {
     private void init() {
         this.http.port(1337);
 
+        this.propertyConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+
         registerDependencySupplier(Validator.class,
                 () -> Validation
                         .byProvider(HibernateValidator.class)
@@ -113,6 +116,7 @@ public class Elepy implements ElepyContext {
 
         setupDefaults();
 
+        StackConfiguration.configureStack(this);
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
         if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
@@ -538,7 +542,11 @@ public class Elepy implements ElepyContext {
 
     public Elepy withProperties(URL url) {
         try {
-            propertyConfiguration.addConfiguration(new Configurations().properties(url));
+            final var propertyConfig = new Configurations().properties(url);
+            propertyConfig.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+            propertyConfiguration.addConfiguration(
+                    propertyConfig
+            );
         } catch (ConfigurationException e) {
             throw new ElepyConfigException("Failed to load properties", e);
         }

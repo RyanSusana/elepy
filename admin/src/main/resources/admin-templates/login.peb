@@ -33,7 +33,7 @@
 
 
             <div class="uk-background-primary">
-                <img src="{{ properties.logo }}"
+                <img src="{{ properties["cms.logo"] }}"
                      alt="logo">
             </div>
 

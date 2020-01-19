@@ -45,7 +45,7 @@ public interface ElepyContext {
             throw new ElepyConfigException("Resources must have the @RestModel Annotation");
         }
 
-        return (Crud<T>) getDependency(Crud.class, annotation.path ());
+        return (Crud<T>) getDependency(Crud.class, annotation.path());
     }
 
     default ObjectMapper objectMapper() {

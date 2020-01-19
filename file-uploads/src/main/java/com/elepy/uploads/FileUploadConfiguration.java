@@ -3,11 +3,16 @@ package com.elepy.uploads;
 import com.elepy.Configuration;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
+import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Property;
 
 public class FileUploadConfiguration implements Configuration {
     private final DirectoryFileService directoryFileService;
 
-    public FileUploadConfiguration(String rootFolderLocation) {
+    @ElepyConstructor
+    public FileUploadConfiguration(
+
+            @Property(key = "${uploads.location}") String rootFolderLocation) {
         directoryFileService = new DirectoryFileService(rootFolderLocation);
     }
 
