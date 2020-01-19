@@ -1,13 +1,17 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
+import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
+import java.math.BigDecimal;
 
 class Injector {
 
@@ -54,6 +58,40 @@ class Injector {
                     }
                 });
 
+        ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Property.class)
+                .forEach(field -> {
+                    try {
+
+                        final Class<?> wrapper = ReflectionUtils.returnTypeOf(field);
+
+                        if (!ClassUtils.isPrimitiveWrapper(wrapper) || field.get(object) == null) {
+                            final Object value = elepyContext.getDependency(Configuration.class)
+                                    .getInterpolator()
+                                    .interpolate(field.getAnnotation(Property.class).value());
+                            field.set(object, cast(wrapper, value));
+                        }
+                    } catch (IllegalAccessException e) {
+                        throw new ElepyConfigException("Failed to inject dependencies on field: " + field.getName(), e);
+                    }
+                });
+
+    }
+
+    private Object cast(Class<?> wrapper, Object value) {
+        final Class<?> aClass = ClassUtils.primitiveToWrapper(wrapper);
+
+        final var stringValue = value.toString();
+        if (aClass.equals(Boolean.class)) {
+            return Boolean.parseBoolean(stringValue);
+        } else if (aClass.equals(Integer.class)) {
+            return Integer.parseInt(stringValue);
+        } else if (aClass.equals(Long.class)) {
+            return Long.parseLong(stringValue);
+        } else if (aClass.isAssignableFrom(BigDecimal.class)) {
+            return new BigDecimal(stringValue);
+        }
+
+        return value;
     }
 
     private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedType) {

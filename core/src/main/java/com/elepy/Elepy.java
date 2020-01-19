@@ -31,6 +31,10 @@ import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.ConfigurationConverter;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.hibernate.validator.HibernateValidator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -38,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
@@ -66,7 +69,7 @@ public class Elepy implements ElepyContext {
     private List<Class<?>> routingClasses = new ArrayList<>();
     private ModelEngine modelEngine = new ModelEngine(this);
     private UserAuthenticationExtension userAuthenticationExtension = new UserAuthenticationExtension();
-    private Properties properties = new Properties();
+    private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
 
@@ -87,8 +90,9 @@ public class Elepy implements ElepyContext {
                         .buildValidatorFactory().getValidator());
 
 
-        registerDependencySupplier(Properties.class, () -> properties);
+        registerDependencySupplier(org.apache.commons.configuration2.Configuration.class, () -> propertyConfiguration);
 
+        registerDependencySupplier(Properties.class, () -> ConfigurationConverter.getProperties(propertyConfiguration));
         withFileService(new DefaultFileService());
 
 
@@ -534,17 +538,11 @@ public class Elepy implements ElepyContext {
 
     public Elepy withProperties(URL url) {
         try {
-            logger.warn("Properties file not found");
-
-            properties.load(url.openStream());
-        } catch (IOException e) {
+            propertyConfiguration.addConfiguration(new Configurations().properties(url));
+        } catch (ConfigurationException e) {
             throw new ElepyConfigException("Failed to load properties", e);
         }
         return this;
-    }
-
-    public Properties properties() {
-        return properties;
     }
 
     private void addDefaultModel(Class<?> model) {
@@ -709,5 +707,9 @@ public class Elepy implements ElepyContext {
     @Deprecated(forRemoval = true)
     public String getConfigPath() {
         return configPath;
+    }
+
+    public org.apache.commons.configuration2.Configuration getPropertyConfig() {
+        return propertyConfiguration;
     }
 }

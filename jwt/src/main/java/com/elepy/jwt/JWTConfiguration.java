@@ -33,7 +33,7 @@ public class JWTConfiguration implements Configuration {
         if (algorithm != null) {
             elepy.addAuthenticationMethod(new JWTAuthenticationMethod(algorithm));
         } else {
-            final var secret = Optional.ofNullable(elepy.properties().getProperty("jwt_secret"))
+            final var secret = Optional.ofNullable(elepy.getPropertyConfig().getString("jwt_secret"))
                     .orElseThrow(() -> new ElepyConfigException("No jwt_secret found in Elepy properties or environmental variables"));
 
             elepy.addAuthenticationMethod(new JWTAuthenticationMethod(Algorithm.HMAC256(secret)));
