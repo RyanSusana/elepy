@@ -38,11 +38,9 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
     }
 
     private Optional<User> getUser(Crud<User> userCrud, String usernameOrEmail) {
-        if (!usernameOrEmail.contains("@")) {
-            final List<? extends User> users = userCrud.searchInField("username", usernameOrEmail);
-            if (users.size() > 0) {
-                return Optional.of(users.get(0));
-            }
+        final List<? extends User> users = userCrud.searchInField("username", usernameOrEmail);
+        if (users.size() > 0) {
+            return Optional.of(users.get(0));
         }
 
         return Optional.empty();

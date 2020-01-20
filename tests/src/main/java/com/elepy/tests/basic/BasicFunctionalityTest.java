@@ -71,7 +71,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     @Test
     void can_CreateInitialUser_and_BlockExtraCreationsWithoutAuthentication() throws UnirestException, JsonProcessingException, InterruptedException {
 
-        User user = new User("admin", "admin", "admin", Collections.emptyList());
+        User user = new User("admin@admin.com", "admin@admin.com", "admin@admin.com", Collections.emptyList());
 
         final HttpResponse<String> response = Unirest
                 .post(elepy + "/users")
@@ -99,7 +99,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .get(elepy + "/users").asString();
         final HttpResponse<String> authorizedFind = Unirest
                 .get(elepy + "/users")
-                .basicAuth("admin", "admin")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .asString();
 
         assertEquals(200, authorizedFind.getStatus());
@@ -120,7 +120,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> authorizedDelete = Unirest
                 .delete(elepy + "/users/user")
-                .basicAuth("admin", "admin")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .asString();
 
 
@@ -165,7 +165,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> authorizedFind = Unirest
                 .put(elepy + "/users" + "/user")
-                .basicAuth("admin", "admin")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .body(json(userToUpdate))
                 .asString();
 
@@ -189,7 +189,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> authorizedFind = Unirest
                 .put(elepy + "/users" + "/user")
-                .basicAuth("admin", "admin")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .body(json(userToUpdate))
                 .asString();
 
@@ -208,7 +208,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> authorizedFind = Unirest
                 .post(elepy + "/users")
-                .basicAuth("admin", "admin")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .body(json(userToUpdate))
                 .asString();
 
@@ -224,8 +224,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         createInitialUsersViaHttp();
 
         final HttpResponse<String> authorizedFind = Unirest
-                .delete(elepy + "/users" + "/admin")
-                .basicAuth("admin", "admin")
+                .delete(elepy + "/users" + "/admin@admin.com")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .asString();
 
         final User user = userCrud.getById("user").orElseThrow();
@@ -269,12 +269,12 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         createInitialUsersViaHttp();
 
         final HttpResponse<String> authorizedFind = Unirest
-                .patch(elepy + "/users" + "/admin")
+                .patch(elepy + "/users" + "/admin@admin.com")
                 .queryString("password", "newPassword")
-                .basicAuth("admin", "admin")
+                .basicAuth("admin@admin.com", "admin@admin.com")
                 .asString();
 
-        final var admin = userCrud.getById("admin").orElseThrow();
+        final var admin = userCrud.getById("admin@admin.com").orElseThrow();
         assertEquals(200, authorizedFind.getStatus());
         assertThat(BCrypt.checkpw("newPassword", admin.getPassword()))
                 .isTrue();
@@ -564,7 +564,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     }
 
     private void createInitialUsersViaHttp() throws JsonProcessingException, UnirestException {
-        User user = new User("admin", "admin", "admin", Collections.emptyList());
+        User user = new User("admin@admin.com", "admin@admin.com", "admin@admin.com", Collections.emptyList());
 
         final HttpResponse<String> response = Unirest
                 .post(elepy + "/users")
@@ -575,7 +575,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> response2 =
                 Unirest.post(elepy + "/users")
-                        .basicAuth("admin", "admin")
+                        .basicAuth("admin@admin.com", "admin@admin.com")
                         .body(json(user2))
                         .asString();
 
