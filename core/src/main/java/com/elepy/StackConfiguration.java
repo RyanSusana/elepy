@@ -17,6 +17,7 @@ public class StackConfiguration {
     public static void configureStack(Elepy elepy) {
         final var stack = elepy.getPropertyConfig().getStringArray("stack");
 
+
         if (stack != null) {
             Stream.of(stack).map(s -> toConfiguration(elepy, s)).forEach(elepy::addConfiguration);
         }

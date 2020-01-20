@@ -4,6 +4,7 @@ import com.elepy.annotations.Inject;
 import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
+import org.apache.commons.beanutils.converters.StringConverter;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -11,8 +12,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
-import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
@@ -53,8 +52,11 @@ class Injector {
         ReflectionUtils.searchForFieldsWithAnnotation(object.getClass(), Inject.class, Property.class)
                 .forEach(field -> {
                     try {
+                        final var dependencyForAnnotatedElement = getDependencyForAnnotatedElement(field);
 
-                        field.set(object, getDependencyForAnnotatedElement(field));
+                        if (dependencyForAnnotatedElement != null) {
+                            field.set(object, dependencyForAnnotatedElement);
+                        }
 
                     } catch (IllegalAccessException e) {
                         throw new ElepyConfigException("Failed to inject dependencies on field: " + field.getName(), e);
@@ -63,49 +65,42 @@ class Injector {
     }
 
 
-    private Object cast(Class<?> wrapper, Object value) {
-        if (value == null) {
-            return null;
-        }
-        final Class<?> aClass = ClassUtils.primitiveToWrapper(wrapper);
-
-        final var stringValue = value.toString();
-        if (aClass.equals(Boolean.class)) {
-            return Boolean.parseBoolean(stringValue);
-        } else if (aClass.equals(Integer.class)) {
-            return Integer.parseInt(stringValue);
-        } else if (aClass.equals(Long.class)) {
-            return Long.parseLong(stringValue);
-        } else if (aClass.isAssignableFrom(BigDecimal.class)) {
-            return new BigDecimal(stringValue);
-        }
-
-        return value;
-    }
-
     private Object getDependencyForAnnotatedElement(AnnotatedElement annotatedElement) {
         final Class<?> wrapper = ReflectionUtils.returnTypeOf(annotatedElement);
 
         if (annotatedElement.isAnnotationPresent(Property.class)) {
+
+
             final var property = annotatedElement.getAnnotation(Property.class);
-            Object value = Optional.ofNullable(elepyContext.getDependency(Configuration.class)
-                    .getInterpolator()
-                    .interpolate(property.key()))
-                    .orElse(property.defaultValue());
+            return getProp(wrapper, property);
 
-            if (isEmpty(value)) {
-                value = null;
-            }
 
-            if (property.required() && isEmpty(value)) {
-                throw new ElepyConfigException("Failed to resolve property: " + property.key());
-            }
-            return cast(wrapper, value);
         } else {
             final var contextKey = ContextKey.forAnnotatedElement(annotatedElement);
 
             return elepyContext.getDependency(contextKey.getType(), contextKey.getTag());
         }
+    }
+
+    private Object getProp(Class<?> returnType, Property annotation) {
+
+        final Class<?> primitiveWrapper = ClassUtils.primitiveToWrapper(returnType);
+        StringConverter stringConverter = new StringConverter();
+
+        final var configuration = elepyContext.getDependency(Configuration.class);
+
+        final Object o = configuration.get(primitiveWrapper, annotation.key());
+
+        if (o != null) {
+            return o;
+        }
+
+        if (isEmpty(annotation.defaultValue())) {
+            return null;
+        }
+
+        return stringConverter.convert(primitiveWrapper, annotation.defaultValue());
+
     }
 
     private <T> T initializeObjectViaConstructor(Class<? extends T> cls) throws IllegalAccessException, InvocationTargetException, InstantiationException {

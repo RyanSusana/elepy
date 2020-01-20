@@ -16,7 +16,7 @@ public class JWTConfiguration implements Configuration {
 
     @ElepyConstructor
     public JWTConfiguration(
-            @Property(key = "${jwt.secret}") String secret
+            @Property(key = "jwt.secret") String secret
     ) {
         this(Algorithm.HMAC256(secret));
     }

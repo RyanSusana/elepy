@@ -50,5 +50,7 @@ public class InjectorTest {
 
         assertThat(props.isTestBoolean())
                 .isTrue();
+        assertThat(props.getWithDefault())
+                .isEqualTo("isAvailable");
     }
 }

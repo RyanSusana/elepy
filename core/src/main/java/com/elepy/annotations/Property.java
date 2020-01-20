@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface Property {
     String key();
 
-    boolean required() default true;
+    boolean required() default false;
 
     String defaultValue() default "";
 }

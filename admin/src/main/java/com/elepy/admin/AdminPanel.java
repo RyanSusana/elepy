@@ -27,8 +27,8 @@ public class AdminPanel implements Configuration {
 
     @ElepyConstructor
     public AdminPanel(
-            @Property(key = "${cms.version}", defaultValue = "latest") String version,
-            @Property(key = "${cms.requiredPermissions}") String requiredPermissions
+            @Property(key = "cms.version", defaultValue = "latest") String version,
+            @Property(key = "cms.requiredPermissions") String requiredPermissions
     ) {
 
         if ("local" .equals(version)) {

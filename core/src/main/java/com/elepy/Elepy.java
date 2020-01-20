@@ -33,7 +33,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.ConfigurationConverter;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.hibernate.validator.HibernateValidator;
@@ -117,6 +119,7 @@ public class Elepy implements ElepyContext {
         setupDefaults();
 
         StackConfiguration.configureStack(this);
+        configurations.forEach(this::injectFields);
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
         if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
@@ -525,6 +528,9 @@ public class Elepy implements ElepyContext {
     }
 
 
+    public Elepy addConfiguration(Class<? extends Configuration> conf){
+        return addConfiguration(initialize(conf));
+    }
     /**
      * @param tClass      the class of the model
      * @param modelChange the change to execute to the model
@@ -542,8 +548,15 @@ public class Elepy implements ElepyContext {
 
     public Elepy withProperties(URL url) {
         try {
-            final var propertyConfig = new Configurations().properties(url);
-            propertyConfig.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+
+            Parameters params = new Parameters();
+            FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                    new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                            .configure(params.properties()
+                                    .setURL(url)
+                                    .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+            var propertyConfig = builder.getConfiguration();
+
             propertyConfiguration.addConfiguration(
                     propertyConfig
             );

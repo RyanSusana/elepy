@@ -19,12 +19,12 @@ public class MongoConfiguration implements Configuration {
 
     @ElepyConstructor
     public MongoConfiguration(
-            @Property(key = "${mongo.username}") String username,
-            @Property(key = "${mongo.password}") String password,
-            @Property(key = "${mongo.host}") String server,
-            @Property(key = "${mongo.databaseName}") String databaseName,
-            @Property(key = "${mongo.bucket}") String bucket,
-            @Property(key = "${mongo.memory}") boolean inMemory
+            @Property(key = "mongo.username") String username,
+            @Property(key = "mongo.password") String password,
+            @Property(key = "mongo.host") String server,
+            @Property(key = "mongo.databaseName") String databaseName,
+            @Property(key = "mongo.bucket") String bucket,
+            @Property(key = "mongo.memory") boolean inMemory
     ) {
 
         if (inMemory) {
