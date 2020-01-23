@@ -4,9 +4,12 @@ import com.elepy.annotations.Inject;
 import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
+import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.converters.StringConverter;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -19,6 +22,9 @@ class Injector {
 
 
     private final ElepyContext elepyContext;
+
+    private static final Logger logger = LoggerFactory.getLogger(Injector.class);
+
 
     Injector(ElepyContext elepyContext) {
         this.elepyContext = elepyContext;
@@ -89,17 +95,22 @@ class Injector {
 
         final var configuration = elepyContext.getDependency(Configuration.class);
 
-        final Object o = configuration.get(primitiveWrapper, annotation.key());
+        try {
+            final Object o = configuration.get(primitiveWrapper, annotation.key());
 
-        if (o != null) {
-            return o;
-        }
+            if (o != null) {
+                return o;
+            }
 
-        if (isEmpty(annotation.defaultValue())) {
+            if (isEmpty(annotation.defaultValue())) {
+                return null;
+            }
+
+            return stringConverter.convert(primitiveWrapper, annotation.defaultValue());
+        } catch (ConversionException e) {
+            logger.error(e.getMessage(), e);
             return null;
         }
-
-        return stringConverter.convert(primitiveWrapper, annotation.defaultValue());
 
     }
 
