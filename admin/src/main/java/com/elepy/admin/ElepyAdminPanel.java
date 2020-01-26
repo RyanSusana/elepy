@@ -78,6 +78,8 @@ public class ElepyAdminPanel implements ElepyExtension {
                 if (requiredPermissions != null)
                     ctx.requirePermissions(requiredPermissions);
             } catch (ElepyException e) {
+
+                ctx.response().removeCookie("ELEPY_TOKEN");
                 ctx.redirect("/elepy-login");
             }
         };
