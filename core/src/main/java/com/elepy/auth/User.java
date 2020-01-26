@@ -108,7 +108,8 @@ public class User {
     }
 
     public User withEmptyPassword() {
-        return new User(id, username, "", permissions);
+        this.setPassword("");
+        return this;
     }
 
     @Override
