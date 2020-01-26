@@ -15,6 +15,7 @@ import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.models.Schema;
 import com.mitchellbosecke.pebble.PebbleEngine;
+import org.apache.commons.configuration2.Configuration;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -127,6 +128,7 @@ public class ElepyAdminPanel implements ElepyExtension {
     public String renderWithDefaults(Request request, Map<String, Object> model, String templatePath) throws IOException {
         model.put("models", schemas);
         model.put("cssLocation", request.elepy().getDependency(ResourceLocation.class).getCssLocation());
+        model.put("cmsLogo", request.elepy().getDependency(Configuration.class).getString("cms.logo", "https://cdn.jsdelivr.net/npm/elepy-style@1.1/images/logo.png"));
         model.put("properties", request.elepy().getDependency(Properties.class));
         model.put("plugins", pluginHandler.getPlugins());
         return render(model, templatePath);
