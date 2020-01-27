@@ -20,10 +20,10 @@ public class ModelContextExtraction {
 
     public static <T> ModelContext<T> extractContext(Schema<T> schema, Elepy elepy) {
         var crud = extractCrud(schema, elepy);
+        elepy.registerDependency(Crud.class, schema.getPath(), crud);
         var objectEvaluators = extractEvaluators(schema, elepy);
         var idProvider = extractIdProvider(schema, elepy);
 
-        elepy.registerDependency(Crud.class, schema.getPath(), crud);
         return new ModelContext<>(schema, crud, idProvider, objectEvaluators);
     }
 

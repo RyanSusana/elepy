@@ -7,8 +7,8 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
-import com.elepy.models.Schema;
 import com.elepy.models.ModelChange;
+import com.elepy.models.Schema;
 import com.elepy.utils.ModelUtils;
 
 import java.util.ArrayList;
@@ -34,13 +34,21 @@ public class ModelEngine {
         setupDescriptors(elepy.getConfigPath(), elepy.http());
     }
 
+    public void start() {
+        pistons.stream()
+                .peek(ModelPiston::setupDependencies)
+                .collect(Collectors.toSet())
+                .forEach(ModelPiston::setupRouting);
+    }
+
     public List<Schema<?>> modelSchemas() {
         return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
     }
 
     public void addModel(Class<?> modelType) {
         final Schema<?> schemaFromClass = ModelUtils.createModelFromClass(modelType);
-        pistons.add(new ModelPiston<>(schemaFromClass, elepy));
+        final ModelPiston<?> piston = new ModelPiston<>(schemaFromClass, elepy);
+        pistons.add(piston);
     }
 
     public <T> void alterModel(Class<T> cls, ModelChange modelChange) {
@@ -85,5 +93,9 @@ public class ModelEngine {
                         .filter(model -> model.getJavaClass().equals(clazz))
                         .findFirst()
                         .orElseThrow(() -> new ElepyException(String.format("Can not find model: %s", clazz.getName())));
+    }
+
+    public List<Schema<?>> getSchemas() {
+        return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
     }
 }

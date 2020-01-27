@@ -225,8 +225,8 @@ public class ElepyPreConfiguration {
         return elepy.modelSchemas();
     }
 
-    public List<Class<?>> modelClasses() {
-        return elepy.modelClasses();
+    public List<Schema<?>> schemas() {
+        return elepy.schemas();
     }
 
     public UserAuthenticationExtension authenticationService() {

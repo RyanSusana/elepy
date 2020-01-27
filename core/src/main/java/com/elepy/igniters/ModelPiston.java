@@ -24,19 +24,22 @@ public class ModelPiston<T> {
 
     private final Elepy elepy;
     private final Schema<T> schema;
-    private final ModelContext<T> modelContext;
-    private final ModelHandlers<T> serviceExtraction;
+    private ModelContext<T> modelContext;
+    private ModelHandlers<T> serviceExtraction;
 
 
     public ModelPiston(Schema<T> schema, Elepy elepy) {
         this.elepy = elepy;
         this.schema = schema;
-        this.modelContext = ModelContextExtraction.extractContext(schema, elepy);
+    }
 
+    void setupDependencies() {
+        this.modelContext = ModelContextExtraction.extractContext(schema, elepy);
+    }
+
+    void setupRouting() {
         this.serviceExtraction = ModelHandlers.createForModel(elepy, schema);
         elepy.addRouting(getAllRoutes());
-
-        schema.getJavaClass().getAnnotation(ExtraRoutes.class);
     }
 
     public Schema<T> getSchema() {

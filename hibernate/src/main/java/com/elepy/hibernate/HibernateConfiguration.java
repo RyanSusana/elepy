@@ -58,7 +58,7 @@ public class HibernateConfiguration implements com.elepy.Configuration {
 
     @Override
     public void afterPreConfig(ElepyPreConfiguration elepy) {
-        elepy.modelClasses().forEach(hibernateConfiguration::addAnnotatedClass);
+        elepy.schemas().forEach(schema -> hibernateConfiguration.addAnnotatedClass(schema.getJavaClass()));
 
         SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 

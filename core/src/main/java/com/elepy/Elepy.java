@@ -60,7 +60,6 @@ public class Elepy implements ElepyContext {
 
     private final List<ElepyExtension> modules = new ArrayList<>();
     private final List<String> packages = new ArrayList<>();
-    private final List<Class<?>> models = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
     private HttpServiceConfiguration http = new HttpServiceConfiguration();
     private String configPath = "/config";
@@ -128,7 +127,7 @@ public class Elepy implements ElepyContext {
 
         configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
-        models.forEach(modelEngine::addModel);
+        modelEngine.start();
 
         setupAuth();
         context.resolveDependencies();
@@ -254,7 +253,9 @@ public class Elepy implements ElepyContext {
      */
     public Elepy addModels(Class<?>... classes) {
         checkConfig();
-        models.addAll(Arrays.asList(classes));
+        for (Class<?> aClass : classes) {
+            modelEngine.addModel(aClass);
+        }
         return this;
     }
 
@@ -528,9 +529,10 @@ public class Elepy implements ElepyContext {
     }
 
 
-    public Elepy addConfiguration(Class<? extends Configuration> conf){
+    public Elepy addConfiguration(Class<? extends Configuration> conf) {
         return addConfiguration(initialize(conf));
     }
+
     /**
      * @param tClass      the class of the model
      * @param modelChange the change to execute to the model
@@ -567,7 +569,8 @@ public class Elepy implements ElepyContext {
     }
 
     private void addDefaultModel(Class<?> model) {
-        if (models.stream()
+        if (modelEngine.getSchemas().stream()
+                .map(Schema::getJavaClass)
                 .noneMatch(model::isAssignableFrom)) {
             addModel(model);
         } else {
@@ -617,18 +620,18 @@ public class Elepy implements ElepyContext {
             // Adds packages and Default models to classpath scanning
             final var reflections = new Reflections(packages, Defaults.MODELS);
 
-            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Model.class, false);
+            Set<Class<?>> annotatedModels = reflections.getTypesAnnotatedWith(Model.class, false);
 
             // Removes defaults from the scanned classes
             // This is done so that you can extend and override Elepy's defaults models.
             // The Reflections library depends on this behaviour.
-            annotated.removeAll(Defaults.MODELS);
+            annotatedModels.removeAll(Defaults.MODELS);
 
-            if (annotated.isEmpty()) {
+            if (annotatedModels.isEmpty()) {
                 logger.warn("No @RestModel(s) were found in the added package(s)! Check the package names for misspelling.");
             }
 
-            annotated.forEach(this::addModel);
+            annotatedModels.forEach(this::addModel);
         }
     }
 
@@ -707,8 +710,8 @@ public class Elepy implements ElepyContext {
         });
     }
 
-    List<Class<?>> modelClasses() {
-        return models;
+    List<Schema<?>> schemas() {
+        return modelEngine.getSchemas();
     }
 
     private void checkConfig() {
