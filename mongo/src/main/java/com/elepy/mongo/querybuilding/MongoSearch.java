@@ -4,6 +4,7 @@ import com.elepy.annotations.Searchable;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
+import com.google.common.base.Strings;
 import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public class MongoSearch {
     public String compile() {
         if (compiled == null) {
             String searchRegex = searchableFields.stream()
-                    .map(field -> String.format("{%s: {$regex: #, $options: 'i'}}",  ReflectionUtils.getPropertyName(field)))
+                    .map(field -> String.format("{%s: {$regex: #, $options: 'i'}}", ReflectionUtils.getPropertyName(field)))
                     .collect(Collectors.joining(","));
 
             compiled = String.format("{$or: [%s]}", searchRegex);
@@ -51,6 +52,10 @@ public class MongoSearch {
     }
 
     public Serializable[] getParameters() {
+
+        if (Strings.isNullOrEmpty(qry)) {
+            return new Serializable[0];
+        }
         return searchableFields.stream()
                 .map(field -> Pattern.compile(".*" + qry + ".*", Pattern.CASE_INSENSITIVE).toString())
                 .toArray(Serializable[]::new);
