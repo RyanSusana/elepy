@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.HttpRequest;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.elepy.dao.FilterType.*;
@@ -39,6 +41,28 @@ public abstract class FiltersTest implements ElepyConfigHelper {
         elepy.start();
 
         Unirest.setHttpClient(HttpClients.custom().disableCookieManagement().build());
+    }
+
+    @Test
+    void canSearch() {
+
+        seedWithProducts(
+                Product.withDescription("Ryan's ball"),
+                Product.withDescription("Pablo's ball"));
+
+        assertThat(executeQuery(Map.of("q", "ryan")))
+                .hasSize(1);
+    }
+
+    @Test
+    void canSearch_withSingleQuote() {
+
+        seedWithProducts(
+                Product.withDescription("Ryan's phone"),
+                Product.withDescription("Pablo's phone"));
+
+        assertThat(executeQuery(Map.of("q", "ryan's")))
+                .hasSize(1);
     }
 
     @Test
@@ -199,6 +223,7 @@ public abstract class FiltersTest implements ElepyConfigHelper {
         ).hasSize(0);
     }
 
+
     @Test
     void canFilter_BETWEEN_Date_Inclusive() {
         var product = new Product();
@@ -307,12 +332,20 @@ public abstract class FiltersTest implements ElepyConfigHelper {
         return executeFilters(List.of(options));
     }
 
+
     protected List<Product> executeFilters(Iterable<FilterOption> options) {
+        final var request = Unirest.get(elepy.url() + "/products");
+        options.forEach(option -> request.queryString(String.format("%s_%s", option.fieldName, option.filterType.getName()), option.value));
+        return executeRequest(request);
+
+    }
+
+    protected List<Product> executeQuery(Map<String, Object> map) {
+        return executeRequest(Unirest.get(elepy.url() + "/products").queryString(map));
+    }
+
+    protected List<Product> executeRequest(HttpRequest request) {
         try {
-            final var request = Unirest.get(elepy.url() + "/products");
-
-            options.forEach(option -> request.queryString(String.format("%s_%s", option.fieldName, option.filterType.getName()), option.value));
-
             var response = request.asJson();
             if (response.getStatus() >= 400) {
                 throw new ElepyException(response.getBody().getObject().getString("message"), response.getStatus());

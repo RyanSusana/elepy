@@ -1,6 +1,8 @@
 package com.elepy.mongo.querybuilding;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class MongoQuery {
 
@@ -32,6 +34,9 @@ public class MongoQuery {
     }
 
     public Serializable[] getParameters() {
-        return mongoFilters.getParameters();
+        return Stream.concat(
+                Arrays.stream(mongoSearch.getParameters()),
+                Arrays.stream(mongoFilters.getParameters())
+        ).toArray(Serializable[]::new);
     }
 }

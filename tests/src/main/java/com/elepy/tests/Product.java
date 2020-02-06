@@ -111,4 +111,10 @@ public class Product {
     public void setMarkdown(String markdown) {
         this.markdown = markdown;
     }
+
+    public static Product withDescription(String s) {
+        final var product = new Product();
+        product.setShortDescription(s);
+        return product;
+    }
 }

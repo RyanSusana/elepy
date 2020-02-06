@@ -6,6 +6,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
 import org.jongo.marshall.jackson.oid.MongoId;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -18,9 +19,13 @@ public class MongoSearch {
 
     private String compiled;
 
+    private List<Field> searchableFields;
+
     public MongoSearch(String qry, Class<?> cls) {
         this.qry = qry;
         this.cls = cls;
+
+        this.searchableFields = getSearchableFields();
     }
 
     public String getQuery() {
@@ -36,22 +41,19 @@ public class MongoSearch {
 
     public String compile() {
         if (compiled == null) {
-            final Pattern pattern = Pattern.compile(".*" + qry + ".*", Pattern.CASE_INSENSITIVE);
-
-            String patternCompiled = pattern.toString();
-            String searchRegex = getSearchableFields().stream().map(field -> {
-
-                String propertyName = ReflectionUtils.getPropertyName(field);
-
-
-                return String.format("{%s: {$regex: '%s', $options: 'i'}}", propertyName, patternCompiled);
-
-            }).collect(Collectors.joining(","));
-
+            String searchRegex = searchableFields.stream()
+                    .map(field -> String.format("{%s: {$regex: #, $options: 'i'}}",  ReflectionUtils.getPropertyName(field)))
+                    .collect(Collectors.joining(","));
 
             compiled = String.format("{$or: [%s]}", searchRegex);
         }
         return compiled;
     }
 
-} 
+    public Serializable[] getParameters() {
+        return searchableFields.stream()
+                .map(field -> Pattern.compile(".*" + qry + ".*", Pattern.CASE_INSENSITIVE).toString())
+                .toArray(Serializable[]::new);
+
+    }
+}
