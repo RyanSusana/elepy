@@ -30,10 +30,13 @@ public class UserAuthenticationExtension implements ElepyExtension {
         http.get("/elepy-login-check", ctx -> {
             ctx.loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));
+            ctx.response().header("Vary", "*");
         });
 
-        http.get("/elepy-logged-in-user", ctx ->
-                ctx.response().json(userCrud.getById(ctx.loggedInUserOrThrow().getId()).orElseThrow().withEmptyPassword()));
+        http.get("/elepy-logged-in-user", ctx -> {
+            ctx.response().json(userCrud.getById(ctx.loggedInUserOrThrow().getId()).orElseThrow().withEmptyPassword());
+            ctx.response().header("Vary", "*");
+        });
 
         http.post("/elepy-token-login", (request, response) -> {
 
