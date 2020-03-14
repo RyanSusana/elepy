@@ -4,6 +4,17 @@
 # It assumes you have Maven and Node installed
 # To change the Elepy model go to 'basic/src/test/java/'
 
+
+shutdown() {
+
+  # Kill child processes in a new new process group
+  pkill -P $$
+  exit 0
+}
+
+trap "shutdown" SIGINT SIGTERM
+
+
 pushd basic
 mvn clean compile package exec:java -Dexec.mainClass="com.elepy.test.Main" -Dexec.classpathScope=test &
 popd
@@ -13,3 +24,4 @@ npm install
 npm run serve &
 popd
 
+wait

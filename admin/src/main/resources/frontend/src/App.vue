@@ -30,7 +30,10 @@
         methods: {
             getModel() {
                 axios.get(Utils.url + "/config").then(response => {
+
                     this.selectedModel = response.data.filter(model => model.path.includes('product'))[0];
+
+                    console.log(this.selectedModel);
                     this.selectedModel.url = this.url;
                 });
             }
