@@ -26,8 +26,14 @@ public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements Ac
     public abstract R map(T object, Request request, Crud<T> crud);
 
     @Override
-    public void handle(HttpContext context,  ModelContext<T> modelContext) throws Exception {
-        mappedFindMany.handle(context, modelContext);
+    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+
+        //No recordId's specified
+        if (context.recordIds().isEmpty()) {
+            mappedFindMany.handle(context, modelContext);
+        } else {
+            super.handle(context, modelContext);
+        }
     }
 
 
