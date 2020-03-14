@@ -165,7 +165,6 @@
         mounted() {
             this.getFirstRecord();
             EventBus.$on("updateData", () => {
-                console.log("update");
                 this.getFirstRecord();
             });
             document.addEventListener("keydown", e => {
