@@ -3,11 +3,11 @@ This chapter is dedicated to explaining the various annotations that help you de
 By default, you don't need any of them, but they're __EXTREMELY__ useful to know.
 # @Text
 
-This annotation signifies that the value of a field is a String value. It comes with three optional properties, minimumLength, maximumLength and value(TextType). The minimumLength and maximumLength properties get asserted by the `ObjectEvaluator`. The value(or TextType) changes the way the field is presented in the CMS.
+This annotation signifies that the value of a field is a String value. It comes with three optional properties, min, max and value(TextType). The min and max properties get asserted by the `ObjectEvaluator`. The value(or TextType) changes the way the field is presented in the CMS.
 
 _Example_
 ```java
-@Text(minimumLength = 50, maximumLength = 350, value = TextType.MARKDOWN)
+@Size(min = 50, max = 350, value = TextType.MARKDOWN)
 private String productDescription;
 ```
 
@@ -79,7 +79,7 @@ class CustomObject{
     @Featured
     private String name;
     
-    @Text(TextType.HTML)
+    
     private String html;
 }
 ```
@@ -91,7 +91,7 @@ Elepy supports one  type of recursion, _as of now_. Direct recursion
 Collections are supported in the form of Sets and Lists. The general grouping of collections is called `@Array`.
 Arrays support every type of field (including Objects) __EXCEPT__ other arrays.
 
-Arrays also inherit the details of it's generic type. If you want an array of `@Text(TextType.TEXTAREA)`s, just add that annotation above your `@Array`!
+Arrays also inherit the details of it's generic type. If you want an array of `@TextArea`s, just add that annotation above your `@Array`!
 
 _Example_
 ```java
@@ -109,7 +109,7 @@ class Translation {
     @PrettyName("Language Name")
     private String languageName;
     
-    @Text(TextType.HTML)
+    
     private String content;
 }
 ```

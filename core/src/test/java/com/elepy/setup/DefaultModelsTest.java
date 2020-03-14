@@ -5,8 +5,8 @@ import com.elepy.MockCrudFactory;
 import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
-import com.elepy.models.TextType;
-import com.elepy.models.options.TextOptions;
+import com.elepy.models.FieldType;
+import com.elepy.models.Property;
 import com.elepy.setup.validmodels.UserExtended;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,8 +36,8 @@ public class DefaultModelsTest {
                 .isNotNull()
                 .extracting(input -> input.getProperty("extendedUserProperty"))
                 .isNotNull()
-                .extracting(property -> ((TextOptions) property.getOptions()).getTextType())
-                .isEqualTo(TextType.TEXTAREA);
+                .extracting(Property::getType)
+                .isEqualTo(FieldType.TEXTAREA);
 
 
         assertThatExceptionOfType(ElepyException.class)

@@ -134,7 +134,7 @@
             isNumberOrTextfield() {
                 return (
                     this.field.arrayType === "NUMBER" ||
-                    (this.field.arrayType === "TEXT" && this.field.textType === "TEXTFIELD")
+                    (this.field.arrayType === "INPUT")
                 );
             },
             isBigField() {

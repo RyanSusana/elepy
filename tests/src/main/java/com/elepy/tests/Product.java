@@ -1,7 +1,9 @@
 package com.elepy.tests;
 
 import com.elepy.annotations.*;
-import com.elepy.models.TextType;
+import com.elepy.annotations.HTML;
+import com.elepy.annotations.Markdown;
+import com.elepy.annotations.TextArea;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -31,14 +33,14 @@ public class Product {
     @PrettyName("Expiration Date")
     private Date date;
 
-    @Text(TextType.TEXTAREA)
+    @TextArea
     @Searchable
     private String shortDescription;
 
-    @Text(TextType.HTML)
+    @HTML
     private String htmlDescription;
 
-    @Text(TextType.MARKDOWN)
+    @Markdown
     private String markdown;
 
     @TrueFalse(trueValue = "This product is awesome", falseValue = "This product is meh")

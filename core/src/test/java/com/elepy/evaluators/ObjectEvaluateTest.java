@@ -5,6 +5,7 @@ import com.elepy.Resource;
 import com.elepy.ResourceArray;
 import com.elepy.exceptions.ElepyException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -55,6 +56,7 @@ public class ObjectEvaluateTest extends Base {
 
 
     @Test
+    @Disabled("This tests Bean Validation Logic")
     void array_WithInvalidLength_ShouldThrow() {
 
         final var evaluator = new DefaultObjectEvaluator<>();
@@ -70,6 +72,7 @@ public class ObjectEvaluateTest extends Base {
     }
 
     @Test
+    @Disabled("This tests Bean Validation Logic")
     void arrayString_WithValidLength_and_InvalidString_ShouldThrow() {
 
         final var evaluator = new DefaultObjectEvaluator<>();
@@ -90,9 +93,7 @@ public class ObjectEvaluateTest extends Base {
         final ResourceArray resourceArray = validResourceWithArrays();
 
         resourceArray.setArrayStringMax2Min1TextWithMinimumLengthOf10(
-
                 List.of("hihihihihihihi", "hihihihihihihi")
-
         );
 
         assertDoesNotThrow(() -> evaluator.evaluate(resourceArray));

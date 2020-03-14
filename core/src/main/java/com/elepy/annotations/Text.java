@@ -20,11 +20,11 @@ public @interface Text {
      * @deprecated use Java Bean Validation instead
      */
     @Deprecated(forRemoval = true)
-    int minimumLength() default 0;
+    int min() default 0;
 
     /**
      * @deprecated use Java Bean Validation instead
      */
     @Deprecated(forRemoval = true)
-    int maximumLength() default Integer.MAX_VALUE;
+    int max() default Integer.MAX_VALUE;
 }

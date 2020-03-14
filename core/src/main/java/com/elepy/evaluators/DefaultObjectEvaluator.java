@@ -6,28 +6,19 @@ import com.elepy.models.Property;
 import com.elepy.models.options.ArrayOptions;
 import com.elepy.models.options.DateOptions;
 import com.elepy.models.options.NumberOptions;
-import com.elepy.models.options.TextOptions;
 import com.elepy.utils.ModelUtils;
 
-import javax.validation.ConstraintViolation;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
     @Override
     public void evaluate(Object o) throws Exception {
-
-
         Class c = o.getClass();
-
         evaluateObject(o, c);
-
-
 
     }
 
@@ -57,9 +48,6 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
         if (property.getType().equals(FieldType.NUMBER)) {
 
             checkNumberConfig(obj, property.getOptions(), property.getPrettyName());
-        }
-        if (property.getType().equals(FieldType.TEXT)) {
-            checkTextConfig(obj, property.getOptions(), property.getPrettyName());
         }
         if (property.getType().equals(FieldType.DATE)) {
             checkDateConfig(obj, property.getOptions(), property.getPrettyName());
@@ -93,9 +81,6 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
                 case NUMBER:
                     checkNumberConfig(arrayObject, (NumberOptions) options.getGenericOptions(), property.getPrettyName());
                     break;
-                case TEXT:
-                    checkTextConfig(arrayObject, (TextOptions) options.getGenericOptions(), property.getPrettyName());
-                    break;
                 case OBJECT:
                     evaluateObject(arrayObject, arrayObject.getClass());
                     break;
@@ -116,15 +101,6 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
         if (number.floatValue() > numberAnnotation.getMaximum() || number.floatValue() < numberAnnotation.getMinimum()) {
             throw new ElepyException(String.format("%s must be between %d and %d, was %d", prettyName, (int) numberAnnotation.getMinimum(), (int) numberAnnotation.getMaximum(), number.intValue()));
-        }
-    }
-
-    private void checkTextConfig(Object obj, TextOptions textAnnotation, String prettyName) {
-
-        String text = (obj == null ? "" : obj).toString();
-
-        if (text.length() > textAnnotation.getMaximumLength() || text.length() < textAnnotation.getMinimumLength()) {
-            throw new ElepyException(String.format("%s must be between %d and %d characters long", prettyName, textAnnotation.getMinimumLength(), textAnnotation.getMaximumLength()));
         }
     }
 

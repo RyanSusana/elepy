@@ -20,11 +20,10 @@ public class Product {
 
 
     @PrettyName("Short Description")
-    @Text(value = TextType.TEXTAREA, maximumLength = 100) //Textarea with a maximum of 100 characters
     private String shortDescription;
 
     @PrettyName("Long Description")
-    @Text(TextType.HTML)//WYSIWYG editor
+    
     @Importance(-10)
     private String htmlDescription;
 

@@ -4,7 +4,7 @@
 
         <a :href="valueAsUpload" target="_blank" v-else>Download Link</a>
     </td>
-    <td v-else-if="field.type === 'TEXT'  && field.textType === 'HTML'">
+    <td v-else-if="field.type === 'HTML'">
         <div v-html="value"></div>
     </td>
     <td v-else>{{toRegularTableData}}</td>

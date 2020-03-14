@@ -8,8 +8,8 @@ import com.elepy.http.ActionType;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.FieldType;
-import com.elepy.models.Schema;
 import com.elepy.models.Property;
+import com.elepy.models.Schema;
 import com.elepy.models.options.*;
 
 import javax.persistence.Column;
@@ -98,7 +98,7 @@ public class ModelUtils {
             ));
         }
         model.setViewableOnCMS(!classType.isAnnotationPresent(Hidden.class));
-        model.setPath(restModel.path ());
+        model.setPath(restModel.path());
         model.setName(restModel.name());
         model.setJavaClass(classType);
         model.setDefaultSortDirection(restModel.defaultSortDirection());
@@ -125,7 +125,7 @@ public class ModelUtils {
     }
 
     public static HttpAction actionToHttpAction(String modelPath, Action actionAnnotation) {
-        final String multiPath = modelPath + "/actions" + (actionAnnotation.path ().isEmpty() ? "/" + StringUtils.slugify(actionAnnotation.name()) : actionAnnotation.path ());
+        final String multiPath = modelPath + "/actions" + (actionAnnotation.path().isEmpty() ? "/" + StringUtils.slugify(actionAnnotation.name()) : actionAnnotation.path());
         return HttpAction.of(actionAnnotation.name(), multiPath, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
     }
 
@@ -160,8 +160,8 @@ public class ModelUtils {
 
     public static Options getOptions(AnnotatedElement field, FieldType fieldType) {
         switch (fieldType) {
-            case TEXT:
-                return TextOptions.of(field);
+            case INPUT:
+                return InputOptions.of(field);
             case DATE:
                 return DateOptions.of(field);
             case NUMBER:
@@ -177,7 +177,7 @@ public class ModelUtils {
             case FILE_REFERENCE:
                 return FileReferenceOptions.of(field);
             default:
-                throw new ElepyConfigException(String.format("%s fields are not supported", fieldType.name()));
+                return null;
 
         }
     }

@@ -19,17 +19,14 @@
                 :field="field"
                 :value="value"
                 @input="handleInput"
-                v-if="trueFieldType === 'TEXT' && field.textType === 'TEXTFIELD'"
+                v-if="trueFieldType === 'INPUT'"
         />
 
-        <PasswordField
+        <EnumPicker
                 :field="field"
                 :value="value"
                 @input="handleInput"
-                v-if="trueFieldType === 'TEXT' && field.textType === 'PASSWORD'"
-        />
-
-        <EnumPicker :field="field" :value="value" @input="handleInput" v-if="trueFieldType === 'ENUM'"/>
+                v-if="trueFieldType === 'ENUM'"/>
 
         <BooleanPicker
                 :field="field"
@@ -42,21 +39,21 @@
                 :field="field"
                 :value="value"
                 @input="handleInput"
-                v-if="trueFieldType === 'TEXT' && field.textType === 'TEXTAREA'"
+                v-if="trueFieldType === 'TEXTAREA'"
         />
 
         <MarkdownEditor
                 :field="field"
                 :value="value"
                 @input="handleInput"
-                v-if="trueFieldType === 'TEXT' && field.textType === 'MARKDOWN'"
+                v-if="trueFieldType === 'MARKDOWN'"
         />
 
         <HtmlEditor
                 :field="field"
                 :value="value"
                 @input="handleInput"
-                v-if="trueFieldType === 'TEXT' && field.textType === 'HTML'"
+                v-if="trueFieldType === 'HTML'"
         />
 
         <ArrayField
@@ -116,7 +113,6 @@
     import DatePicker from "./DatePicker";
     import NumberField from "./NumberField";
     import TextField from "./TextField";
-    import PasswordField from "./PasswordField";
     import TextArea from "./TextArea";
     import MarkdownEditor from "./MarkdownEditor.vue";
     import HtmlEditor from "./HtmlEditor.vue";
@@ -138,7 +134,6 @@
             EnumPicker,
             BooleanPicker,
             ArrayField,
-            PasswordField,
             FileField,
             ObjectField: () => import("./ObjectField.vue")
         },

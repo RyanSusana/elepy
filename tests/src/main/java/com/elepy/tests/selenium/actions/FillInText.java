@@ -1,8 +1,7 @@
 package com.elepy.tests.selenium.actions;
 
+import com.elepy.models.FieldType;
 import com.elepy.models.Property;
-import com.elepy.models.TextType;
-import com.elepy.models.options.TextOptions;
 import com.elepy.tests.selenium.ElepyDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -21,9 +20,8 @@ public class FillInText implements FillIn<String> {
 
 
     private WebElement targetInputElement() {
-        final TextOptions options = property.getOptions();
 
-        switch (options.getTextType()) {
+        switch (property.getType()) {
             case TEXTAREA:
                 return propertyBox().findElement(By.tagName("textarea"));
             case HTML:
@@ -46,9 +44,8 @@ public class FillInText implements FillIn<String> {
     }
 
     private void doPreSetup() {
-        final TextOptions options = property.getOptions();
 
-        if (options.getTextType() == TextType.MARKDOWN) {//click the markdown box
+        if (property.getType() == FieldType.MARKDOWN) {//click the markdown box
             final var compiledMarkdown = propertyBox().findElement(By.cssSelector(".compiled-markdown"));
             compiledMarkdown.click();
 

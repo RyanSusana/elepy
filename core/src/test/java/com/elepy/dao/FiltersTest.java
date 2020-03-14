@@ -46,7 +46,7 @@ public class FiltersTest {
                         FilterType.IS_NULL,
                         FilterType.NOT_EQUALS);
 
-        assertThat(FilterType.getForFieldType(FieldType.TEXT))
+        assertThat(FilterType.getForFieldType(FieldType.INPUT))
                 .containsExactlyInAnyOrder(
                         FilterType.CONTAINS,
                         FilterType.EQUALS,

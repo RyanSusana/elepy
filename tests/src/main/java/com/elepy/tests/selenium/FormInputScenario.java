@@ -1,7 +1,7 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Schema;
 import com.elepy.models.Property;
+import com.elepy.models.Schema;
 import com.elepy.tests.selenium.actions.FillIn;
 import com.elepy.tests.selenium.actions.FillInBoolean;
 import com.elepy.tests.selenium.actions.FillInNumber;
@@ -45,7 +45,10 @@ public class FormInputScenario<T> extends LoggedInScenario {
 
     private FillIn getActionFor(Property property) {
         switch (property.getType()) {
-            case TEXT:
+            case INPUT:
+            case HTML:
+            case MARKDOWN:
+            case TEXTAREA:
                 return new FillInText(driver, property);
             case BOOLEAN:
                 return new FillInBoolean(driver, property);

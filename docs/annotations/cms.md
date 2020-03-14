@@ -65,7 +65,7 @@ class SEOSettings{
     private String author;
     private String siteTitle;
     
-    @Text(TextType.TEXTAREA)
+    @TextArea
     private String description;
     private String keywords
 }

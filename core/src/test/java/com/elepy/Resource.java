@@ -6,6 +6,7 @@ import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -24,13 +25,13 @@ public class Resource {
     @DateTime(minimumDate = "0", maximumDate = "2019-22-12")
     private Date date;
 
-    @Text(TextType.TEXTFIELD)
+    @Input
     private String textField;
 
-    @Text(TextType.TEXTAREA)
+    @TextArea
     private String textArea;
 
-    @Text(TextType.MARKDOWN)
+    @Markdown
     private String MARKDOWN;
 
     private TextType textType;
@@ -42,13 +43,14 @@ public class Resource {
     @Required
     private String required;
 
-    @Text(minimumLength = 20)
+    @Size(min = 20)
     private String minLen20;
 
-    @Text(maximumLength = 40)
+    @Size(max = 40)
     private String maxLen40;
 
-    @Text(minimumLength = 10, maximumLength = 50, value = TextType.TEXTAREA)
+    @Size(min = 10, max = 50)
+    @TextArea
     private String minLen10MaxLen50;
 
     @Number(minimum = 20)

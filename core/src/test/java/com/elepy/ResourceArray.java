@@ -1,9 +1,13 @@
 package com.elepy;
 
+import com.elepy.annotations.Array;
+import com.elepy.annotations.FileReference;
+import com.elepy.annotations.Model;
 import com.elepy.annotations.Number;
-import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -24,8 +28,8 @@ public class ResourceArray {
     private List<Resource> arrayObjects;
 
 
-    @Array(maximumArrayLength = 2, minimumArrayLength = 1)
-    private List<@Text(minimumLength = 10) String> arrayStringMax2Min1TextWithMinimumLengthOf10;
+    @Size(max = 2, min = 1)
+    private List<@Size(min = 10) String> arrayStringMax2Min1TextWithMinimumLengthOf10;
 
     private List<@Number(minimum = 10) Integer> arrayNumberMax2Min1NumberWithMinimumOf10;
 

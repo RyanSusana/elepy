@@ -3,14 +3,15 @@ package com.elepy.tests.basic;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
+import com.elepy.annotations.Input;
 import com.elepy.http.HttpMethod;
-import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Model(name = "Test Resource", path = "/resources")
@@ -28,13 +29,13 @@ public class Resource {
     @Id
     private int id;
 
-    @Text(TextType.TEXTFIELD)
+    @Input
     private String textField;
 
-    @Text(TextType.TEXTAREA)
+    @TextArea
     private String textArea;
 
-    @Text(TextType.MARKDOWN)
+    @Markdown
     private String MARKDOWN;
 
     @Unique
@@ -44,13 +45,13 @@ public class Resource {
     @Required
     private String requiredField;
 
-    @Text(minimumLength = 20)
+    @Size(min = 20)
     private String minLen20;
 
-    @Text(maximumLength = 40)
+    @Size(max = 40)
     private String maxLen40;
 
-    @Text(minimumLength = 10, maximumLength = 50)
+    @Size(min = 10, max = 50)
     private String minLen10MaxLen50;
 
     @Number(minimum = 20)

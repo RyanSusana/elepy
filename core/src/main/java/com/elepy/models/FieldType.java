@@ -2,31 +2,50 @@ package com.elepy.models;
 
 
 import com.elepy.annotations.Number;
-import com.elepy.annotations.Text;
+import com.elepy.annotations.*;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.uploads.FileReference;
 import com.google.common.primitives.Primitives;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 public enum FieldType {
     ENUM(Enum.class),
     BOOLEAN(Boolean.class),
     DATE(Date.class),
-    TEXT(String.class),
+    INPUT(String.class),
     NUMBER(java.lang.Number.class),
-    OBJECT(Object.class),
     ARRAY(Collection.class),
-    FILE_REFERENCE(FileReference.class);
+    OBJECT(Object.class),
 
+
+    //Text Based
+    FILE_REFERENCE,
+    TEXTAREA,
+    MARKDOWN,
+    HTML;
 
     private final Class<?> baseClass;
+
+    private static final Map<Class<? extends Annotation>, FieldType> annotationMap = Map
+            .of(
+                    Input.class, INPUT,
+                    TextArea.class, TEXTAREA,
+                    Markdown.class, MARKDOWN,
+                    com.elepy.annotations.HTML.class, HTML,
+                    com.elepy.annotations.FileReference.class, FILE_REFERENCE
+            );
+
+    FieldType() {
+        this(null);
+    }
 
     FieldType(Class<?> baseClass) {
         this.baseClass = baseClass;
@@ -34,6 +53,15 @@ public enum FieldType {
 
 
     public static FieldType guessFieldType(AnnotatedElement property) {
+        final var typeFromAnnotation = annotationMap.keySet().stream()
+                .filter(property::isAnnotationPresent)
+                .findFirst()
+                .map(annotationMap::get);
+
+        if (typeFromAnnotation.isPresent()) {
+            return typeFromAnnotation.get();
+        }
+
         if (property instanceof Field) {
             return guessByField((Field) property);
         } else if (property instanceof Method) {
@@ -89,7 +117,7 @@ public enum FieldType {
             return Optional.of(FILE_REFERENCE);
         }
         if (accessibleObject.isAnnotationPresent(Text.class)) {
-            return Optional.of(TEXT);
+            return Optional.of(INPUT);
         }
         if (accessibleObject.isAnnotationPresent(Number.class)) {
             return Optional.of(NUMBER);
@@ -117,7 +145,7 @@ public enum FieldType {
 
     public boolean isPrimitive() {
 
-        FieldType[] primitiveConsideredTypes = {BOOLEAN, DATE, TEXT, NUMBER, ENUM, FILE_REFERENCE};
+        FieldType[] primitiveConsideredTypes = {BOOLEAN, DATE, INPUT, NUMBER, ENUM, FILE_REFERENCE};
 
         for (FieldType primitiveConsideredType : primitiveConsideredTypes) {
             if (this.equals(primitiveConsideredType)) {

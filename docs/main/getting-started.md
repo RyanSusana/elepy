@@ -46,10 +46,10 @@ public class Product {
     @Identifier
     private String productId;
     
-    @Text(value = TextType.TEXTAREA, maximumLength = 100)
+    
     private String shortDescription;
     
-    @Text(TextType.HTML)//WYSIWYG editor
+    
     private String htmlDescription;
 
     @PrettyName("Product Name")

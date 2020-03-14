@@ -6,22 +6,37 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.elepy.models.FieldType.*;
+
 public enum FilterType {
 
     EQUALS("Equals", "equals", FieldType.values()),
     NOT_NULL("Has Value", "notNull", FieldType.values()),
     IS_NULL("Doesn't have value", "isNull", FieldType.values()),
     NOT_EQUALS("Not Equals", "notEquals", FieldType.values()),
-    CONTAINS("Contains", "contains", FieldType.TEXT, FieldType.ARRAY),
+    CONTAINS("Contains", "contains",
+            INPUT,
+            FILE_REFERENCE,
+            TEXTAREA,
+            MARKDOWN,
+            HTML,
+            ARRAY),
 
     //Numbers & Dates
-    GREATER_THAN("Greater than", "gt", FieldType.NUMBER, FieldType.DATE),
-    LESSER_THAN("Lesser than", "lt", FieldType.NUMBER, FieldType.DATE),
-    GREATER_THAN_OR_EQUALS("Greater than or equal to", "gte", FieldType.NUMBER, FieldType.DATE),
-    LESSER_THAN_OR_EQUALS("Lesser than or equal to", "lte", FieldType.NUMBER, FieldType.DATE),
+    GREATER_THAN("Greater than", "gt", NUMBER, DATE),
+    LESSER_THAN("Lesser than", "lt", NUMBER, DATE),
+    GREATER_THAN_OR_EQUALS("Greater than or equal to", "gte", NUMBER, DATE),
+    LESSER_THAN_OR_EQUALS("Lesser than or equal to", "lte", NUMBER, DATE),
 
     //Strings
-    STARTS_WITH("Starts with", "startsWith", FieldType.TEXT, FieldType.ARRAY);
+    STARTS_WITH("Starts with", "startsWith",
+            INPUT,
+            FILE_REFERENCE,
+            TEXTAREA,
+            MARKDOWN,
+            HTML,
+            ARRAY);
+
 
     private final String prettyName;
     private final String name;

@@ -4,9 +4,8 @@ import com.elepy.Resource;
 import com.elepy.ResourceArray;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.FieldType;
-import com.elepy.models.Schema;
 import com.elepy.models.Property;
-import com.elepy.models.TextType;
+import com.elepy.models.Schema;
 import com.elepy.models.options.*;
 import com.elepy.uploads.FileUploadEvaluator;
 import com.elepy.utils.ModelUtils;
@@ -41,7 +40,7 @@ public class SchemaUtilsTest {
         final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         //Keep in mind that there is one hidden field
-        assertThat(schemaFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length );
+        assertThat(schemaFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length);
         assertThat(schemaFromClass.getProperties().get(0).getName()).isEqualTo("id");
         assertThat(schemaFromClass.getProperties().get(schemaFromClass.getProperties().size() - 1).getName()).isEqualTo("generated");
     }
@@ -64,12 +63,8 @@ public class SchemaUtilsTest {
         final Schema<Resource> schemaFromClass = ModelUtils.createModelFromClass(Resource.class);
 
         final Property property = schemaFromClass.getProperty("minLen10MaxLen50");
-        final TextOptions of = property.getOptions();
-        assertThat(of.getTextType()).isEqualTo(TextType.TEXTAREA);
-        assertThat(of.getMinimumLength()).isEqualTo(10);
-        assertThat(of.getMaximumLength()).isEqualTo(50);
         assertThat(property.getType())
-                .isEqualTo(TEXT);
+                .isEqualTo(TEXTAREA);
     }
 
     @Test
@@ -193,7 +188,7 @@ public class SchemaUtilsTest {
 
         final ArrayOptions arrayString = schema.getProperty("arrayString").getOptions();
 
-        assertThat(arrayString.getArrayType()).isEqualTo(FieldType.TEXT);
+        assertThat(arrayString.getArrayType()).isEqualTo(FieldType.INPUT);
     }
 
     @Test

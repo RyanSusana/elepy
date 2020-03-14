@@ -7,6 +7,7 @@ import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +47,7 @@ public class User {
     @JsonProperty("username")
     @PrettyName("Username")
     @Importance(1)
-    @Text(maximumLength = 30)
+    @Size(max = 30)
     private String username;
 
 
@@ -61,7 +62,7 @@ public class User {
     @PrettyName("Password")
     @JsonProperty("password")
     @Importance(-1)
-    @Text(TextType.PASSWORD)
+    @Input(type = "password")
     private String password;
 
 
