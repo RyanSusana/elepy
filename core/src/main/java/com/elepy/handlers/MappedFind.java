@@ -6,6 +6,7 @@ import com.elepy.http.Request;
 import com.elepy.models.ModelContext;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +30,9 @@ public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements Ac
     public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
 
         //No recordId's specified
-        if (context.recordIds().isEmpty()) {
+        final var ids = context.recordIds();
+        ids.removeIf(Objects::isNull);
+        if (ids.isEmpty()) {
             mappedFindMany.handle(context, modelContext);
         } else {
             super.handle(context, modelContext);
