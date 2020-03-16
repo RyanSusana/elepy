@@ -2,7 +2,7 @@
     <td v-if="field.type === 'FILE_REFERENCE'">
         <ImageLightBox :height="100" :src="valueAsUpload" :width="100" v-if="isImageUrl"/>
 
-        <a :href="valueAsUpload" target="_blank" v-else-if="!value.isEmpty()">Download Link</a>
+        <a :href="valueAsUpload" target="_blank" v-else-if="value!=null &&!value.isEmpty()">Download Link</a>
         <span class="uk-text-muted" v-else>Nothing uploaded</span>
     </td>
     <td v-else-if="field.type === 'HTML'">

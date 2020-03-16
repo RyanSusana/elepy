@@ -82,9 +82,6 @@
                 </tbody>
             </table>
         </div>
-        <EditModal :model="model"/>
-
-        <AddModal :model="model"/>
     </div>
 </template>
 <style lang="scss">
@@ -117,8 +114,6 @@
 <script>
     import TableRow from "./TableRow.vue";
     import Utils from "../../utils";
-    import EditModal from "../modals/EditModal.vue";
-    import AddModal from "../modals/AddModal.vue";
     import UIkit from "uikit";
 
     import EventBus from "../../event-bus";
@@ -132,7 +127,7 @@
                 selectedRows: []
             };
         },
-        components: {TableRow, EditModal, AddModal},
+        components: {TableRow},
         computed: {
             singleActions() {
                 return this.model.actions;

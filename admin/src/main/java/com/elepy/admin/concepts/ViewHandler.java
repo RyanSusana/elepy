@@ -4,10 +4,9 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.admin.ElepyAdminPanel;
 import com.elepy.admin.views.DefaultView;
 import com.elepy.admin.views.FileView;
-import com.elepy.annotations.View;
 import com.elepy.http.HttpService;
-import com.elepy.models.Schema;
 import com.elepy.models.ModelView;
+import com.elepy.models.Schema;
 import com.elepy.uploads.FileReference;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -72,7 +71,7 @@ public class ViewHandler {
                 renderModel.put("model", elepyModel);
                 renderModel.put("models", models.keySet());
                 renderModel.put("properties", request.elepy().getDependency(Properties.class));
-                response.result(adminPanel.renderWithDefaults(request,renderModel, "admin-templates/model.peb"));
+                response.result(adminPanel.renderWithDefaults(request, renderModel, "admin-templates/model.peb"));
             });
         });
     }
@@ -88,9 +87,6 @@ public class ViewHandler {
     private ModelView getViewFromModel(Schema<?> schema, ElepyPostConfiguration elepyPostConfiguration) {
         if (schema.getJavaClass().equals(FileReference.class)) {
             return elepyPostConfiguration.initializeElepyObject(FileView.class);
-        } else if (schema.getJavaClass().isAnnotationPresent(View.class)) {
-            final View annotation = schema.getJavaClass().getAnnotation(View.class);
-            return elepyPostConfiguration.initializeElepyObject(annotation.value());
         } else {
             return elepyPostConfiguration.initializeElepyObject(DefaultView.class);
         }

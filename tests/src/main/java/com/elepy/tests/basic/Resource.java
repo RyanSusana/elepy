@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 @Update(requiredPermissions = {})
 @Find(requiredPermissions = {})
 @Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
-@Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
+@Action(name = "extra-action2", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
 @Entity
 @Table(name = "resourceTable")
 public class Resource {

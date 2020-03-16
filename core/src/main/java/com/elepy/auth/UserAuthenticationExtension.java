@@ -27,6 +27,15 @@ public class UserAuthenticationExtension implements ElepyExtension {
 
         authenticationMethods.forEach(elepy::injectFields);
 
+        http.get("/elepy-has-users", ctx -> {
+            final var count = userCrud.count();
+
+            if (count > 0) {
+                ctx.result(Message.of("Users exist", 200));
+            } else {
+                ctx.result(Message.of("No users exist", 404));
+            }
+        });
         http.get("/elepy-login-check", ctx -> {
             ctx.loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));

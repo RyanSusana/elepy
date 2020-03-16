@@ -13,13 +13,13 @@
         />
         <td class="data-column">
             <div class="uk-flex uk-flex-none">
-                <a
-                        @click="editData()"
+                <router-link
+                        :to="this.model.path+'/edit/'+this.data[this.model.idProperty]"
                         action="edit"
                         class="uk-icon-button uk-margin-small-right"
                         uk-icon="pencil"
                         v-if="updateEnabled"
-                ></a>
+                ></router-link>
                 <ActionsButton :actions="this.actions" v-if="this.actions.length >0" :ids="[id]"></ActionsButton>
 
                 <a
@@ -77,9 +77,6 @@
             selectChange() {
                 this.$emit("tableRowSelected", this.data[this.model.idProperty]);
             },
-            editData() {
-                EventBus.$emit("editData", this.data);
-            },
             deleteData() {
                 UIkit.modal
                     .confirm("Are you sure that you want to delete this item?", {
@@ -91,23 +88,25 @@
                     })
                     .then(
                         () => {
+                            console.log("Deleting data")
                             axios({
                                 method: "delete",
                                 url:
                                     Utils.url +
                                     this.model.path +
                                     "/" +
-                                    this.data[this.model.idProperty]
+                                    this.id
+                            }).then(response => {
+                                EventBus.$emit("updateData");
+                                Utils.displayResponse(response);
                             })
-                                .then(response => {
-                                    EventBus.$emit("updateData");
-                                    Utils.displayResponse(response);
-                                })
                                 .catch(function (error) {
                                     Utils.displayError(error);
                                 });
                         },
+
                         function () {
+
                         }
                     );
             }

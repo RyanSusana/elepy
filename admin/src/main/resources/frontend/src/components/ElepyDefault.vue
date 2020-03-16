@@ -2,24 +2,33 @@
     <BaseLayout>
         <!-- Navigation -->
         <template #navigation>
-            <div class="uk-flex search-filter-box">
-                <Pagination
-                        :lastPageNumber="currentPage.lastPageNumber"
-                        @change="getModelData()"
-                        v-model="pagination"
-                />
-                <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
+            <div class="default-bar">
+                <div class="button-box ">
+                    <router-link v-if="model!=null"
+                                 :to="model.path+'/add'"
+                                 class="uk-button uk-button-primary add-button uk-position-absolute"
+                                 id="add-button"
+                    >
+                        <i uk-icon="icon: plus"></i> Add
+                    </router-link>
+                </div>
+                <div class="uk-flex search-filter-box uk-flex-1 uk-flex-center">
+                    <Pagination
+                            :lastPageNumber="currentPage.lastPageNumber"
+                            @change="getModelData()"
+                            v-model="pagination"
+                    />
+                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
+                </div>
             </div>
 
-            <div class="button-box uk-margin-right uk-margin-left">
-                <AddButton @click="addData"/>
-            </div>
         </template>
 
         <!-- TableView -->
         <template #main>
             <slot name="pageDetails">
                 <Table
+                        v-if="!isLoading"
                         :currentPage="currentPage"
                         :isLoading="isLoading"
                         :model="model"
@@ -31,6 +40,16 @@
         </template>
     </BaseLayout>
 </template>
+
+<style lang="scss">
+
+    .default-bar{
+        display: flex;
+
+        justify-content: space-between;
+        grid-template-columns: 1fr 5fr;
+    }
+</style>
 <script>
     import QueryFilter from "./settings/QueryFilter.vue";
 
@@ -38,13 +57,18 @@
     import Table from "./tables/Table.vue";
     import Utils from "../utils";
     import Pagination from "./settings/Pagination.vue";
-    import AddButton from "./base/AddButton.vue";
     import BaseLayout from "./base/BaseLayout.vue";
 
     const axios = require("axios/index");
 
     export default {
         name: "Elepy",
+        watch: {
+            $route: {
+                handler: 'getModelData',
+                immediate: true
+            }
+        },
         data() {
             return {
                 queryFilter: "",
@@ -60,7 +84,7 @@
         },
 
         props: ["model"],
-        components: {QueryFilter, Pagination, Table, AddButton, BaseLayout},
+        components: {QueryFilter, Pagination, Table, BaseLayout},
         methods: {
             addData() {
                 EventBus.$emit("addData", {});
@@ -69,7 +93,6 @@
             getModelData() {
                 var ref = this;
                 let searchUrl =
-                    Utils.url +
                     ref.model.path +
                     "?" +
                     this.pagination +
@@ -90,8 +113,6 @@
             }
         },
         mounted() {
-            this.getModelData();
-
             EventBus.$on("updateData", () => {
                 this.getModelData();
             });

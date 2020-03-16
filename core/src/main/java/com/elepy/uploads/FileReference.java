@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 @Delete(handler = FileReferenceDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_FILES)
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
+@View(View.Defaults.FILE)
 public class FileReference {
 
     @Id

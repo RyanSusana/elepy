@@ -17,7 +17,7 @@ public class LoginScenario extends GenericScenario {
 
     public HomepageScenario login(String username, String password) {
 
-        driver.navToUrl("/elepy-login");
+        driver.navToUrl("/elepy-admin/login");
 
         driver.findElement(By.name("username")).sendKeys(username);
         driver.findElement(By.name("password")).sendKeys(password);
@@ -26,15 +26,17 @@ public class LoginScenario extends GenericScenario {
         driver.findElement(By.id("login-button")).click();
 
         await().atMost(20, TimeUnit.SECONDS).until(() -> {
-
             try {
                 return driver.findElement(By.cssSelector(".uk-notification")) != null;
             } catch (NoSuchElementException e) {
-                return driver.getCurrentUrl().contains("admin");
+                return !driver.getCurrentUrl().contains("login");
             }
         });
 
-        if (driver.getCurrentUrl().contains("admin")) {
+
+        if (!driver.getCurrentUrl().contains("login")) {
+
+
             return new HomepageScenario(driver);
         } else {
             throw new ElepyException(String.format("Failed to login with '%s:%s'", username, password), 401);

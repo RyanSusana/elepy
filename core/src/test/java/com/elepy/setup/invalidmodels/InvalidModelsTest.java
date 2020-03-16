@@ -42,7 +42,7 @@ public class InvalidModelsTest extends Base {
     void testNoRestModelAnnotation() {
         assertThatExceptionOfType(ElepyConfigException.class)
                 .isThrownBy(() -> elepy.addModel(NoRestModelAnnotation.class).start())
-                .withMessageContaining("@RestModel");
+                .withMessageContaining("@Model");
 
     }
 }

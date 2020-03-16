@@ -52,7 +52,7 @@ public class ElepyDriver implements WebDriver {
 
         await().until(() -> findElements(by).size() >= amount);
     }
-    public void waitForNotifications() {
+    public void waitForANotification() {
         waitForNotifications(1);
     }
 
@@ -61,14 +61,6 @@ public class ElepyDriver implements WebDriver {
 
         waitTillCanSee(by);
         findElements(by).forEach(WebElement::click);
-        waitTillCantSee(by);
-    }
-
-    public void waitTillCantSee(By by) {
-        await().atMost(40, TimeUnit.SECONDS).until(() -> {
-            final WebElement element = findElement(by);
-            return (element == null || element.getCssValue("display").equals("none"));
-        });
     }
 
     public String path(String path) {

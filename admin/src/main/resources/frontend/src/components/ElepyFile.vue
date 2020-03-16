@@ -2,17 +2,18 @@
     <BaseLayout>
         <!-- Navigation -->
         <template #navigation>
-            <div class="uk-flex search-filter-box">
-                <Pagination
-                        :lastPageNumber="currentPage.lastPageNumber"
-                        @change="getModelData()"
-                        v-model="pagination"
-                />
-                <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
-            </div>
+            <div class="default-bar">
+                <div class="button-box ">
 
-            <div class="button-box uk-margin-right uk-margin-left">
-                <!-- <AddButton @click="addData"/> -->
+                </div>
+                <div class="uk-flex search-filter-box uk-flex-1 uk-flex-center">
+                    <Pagination
+                            :lastPageNumber="currentPage.lastPageNumber"
+                            @change="getModelData()"
+                            v-model="pagination"
+                    />
+                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
+                </div>
             </div>
         </template>
 
@@ -30,6 +31,14 @@
         </template>
     </BaseLayout>
 </template>
+<style>
+    .default-bar{
+        display: flex;
+
+        justify-content: space-between;
+        grid-template-columns: 1fr 5fr;
+    }
+</style>
 <script>
     import QueryFilter from "./settings/QueryFilter.vue";
 

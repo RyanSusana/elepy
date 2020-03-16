@@ -165,7 +165,7 @@ public class ModelScenario<T> extends LoggedInScenario {
 
 
     public ModelScenario<T> navigateTo() {
-        driver.navToUrl("/admin" + schema.getPath());
+        driver.navToUrl("/elepy-admin" + schema.getPath());
         return this;
     }
 
@@ -183,7 +183,7 @@ public class ModelScenario<T> extends LoggedInScenario {
         Map<String, Object> map = new ObjectMapper().convertValue(item, Map.class);
 
         this.startCreating().fillInFields(map).save();
-        return this;
+        return this.navigateTo();
     }
 
 

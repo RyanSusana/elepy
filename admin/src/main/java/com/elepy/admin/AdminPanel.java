@@ -81,13 +81,13 @@ public class AdminPanel implements Configuration {
 
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
-        elepy.registerDependency(ResourceLocation.class, resourceLocation);
+//        elepy.registerDependency(ResourceLocation.class, resourceLocation);
+//
+//        if (resourceLocation instanceof LocalResourceLocation) {
+//            elepy.addExtension((ElepyExtension) resourceLocation);
+//        }
 
-        if (resourceLocation instanceof LocalResourceLocation) {
-            elepy.addExtension((ElepyExtension) resourceLocation);
-        }
-
-        elepy.addExtension(elepyAdminPanel);
+        elepy.addExtension(new FrontendLoader());
     }
 
     @Override

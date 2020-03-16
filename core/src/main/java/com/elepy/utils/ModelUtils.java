@@ -94,15 +94,17 @@ public class ModelUtils {
 
         if (restModel == null) {
             throw new ElepyConfigException(String.format(
-                    "%s is not annotated with @RestModel", classType.getName()
+                    "%s is not annotated with @Model", classType.getName()
             ));
         }
+
         model.setViewableOnCMS(!classType.isAnnotationPresent(Hidden.class));
         model.setPath(restModel.path());
         model.setName(restModel.name());
         model.setJavaClass(classType);
         model.setDefaultSortDirection(restModel.defaultSortDirection());
         model.setProperties(ModelUtils.describeClass(classType));
+        model.setView(Optional.ofNullable(classType.getAnnotation(View.class)).map(View::value).orElse(View.Defaults.DEFAULT));
 
 
         setupDefaultActions(model);

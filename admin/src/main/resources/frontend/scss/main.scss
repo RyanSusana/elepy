@@ -98,6 +98,10 @@ serif;
   font-weight: bold;
 }
 
+@mixin hook-button() {
+  text-transform: none;
+}
+
 @mixin hook-button-primary() {
   background-color: var(--primary-color);
 }

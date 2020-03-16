@@ -244,7 +244,9 @@ public abstract class SystemTest implements ElepyConfigHelper {
                 .fillInField("shortDescription", shortDescription)
                 .fillInField("htmlDescription", "This is a long description")
                 .fillInField("markdown", "This is markdown")
-                .save();
+                .save()
+
+                .navigateToModel(Product.class);
     }
 
     private List<Product> seedWithProducts(int amount) {

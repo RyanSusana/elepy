@@ -1,10 +1,17 @@
 <template>
-    <router-view/>
+
+    <div class="page">
+        <SideBar class="sidebar"/>
+
+        <div class="main-view">
+            <router-view/>
+        </div>
+    </div>
 </template>
 
 <style lang="scss">
 
-    @import "../scss/main.scss";
+    @import "../../scss/main.scss";
 
     html,
     body {
@@ -13,11 +20,10 @@
 
     .page{
         display: grid;
-        grid-template-columns: 1fr 3fr;
+        grid-template-columns: 20% 80%;
     }
 
     .sidebar{
-
         flex: 1;
     }
 
@@ -28,7 +34,7 @@
 
 <script>
 
-    import SideBar from "./components/SideBar";
+    import SideBar from "../components/SideBar";
 
     export default {
         components: {SideBar},

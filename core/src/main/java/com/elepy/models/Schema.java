@@ -3,19 +3,24 @@ package com.elepy.models;
 import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpAction;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Schema<T> {
 
     private String name;
-    private String path ;
+    private String path;
     private Class<T> javaClass;
     private boolean viewableOnCMS;
     private String idProperty;
     private String featuredProperty;
     private List<HttpAction> actions;
     private List<Property> properties;
+
+    private String view;
 
     private String defaultSortField;
     private SortOption defaultSortDirection;
@@ -25,6 +30,8 @@ public class Schema<T> {
     private HttpAction deleteAction;
     private HttpAction updateAction;
     private HttpAction createAction;
+
+
 
     public String getDefaultSortField() {
         return defaultSortField;
@@ -59,11 +66,11 @@ public class Schema<T> {
     }
 
     public String getPath() {
-        return path ;
+        return path;
     }
 
-    public void setPath(String path ) {
-        this.path = path ;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public Class<T> getJavaClass() {
@@ -152,5 +159,13 @@ public class Schema<T> {
 
     public void setViewableOnCMS(boolean viewableOnCMS) {
         this.viewableOnCMS = viewableOnCMS;
+    }
+
+    public String getView() {
+        return view;
+    }
+
+    public void setView(String view) {
+        this.view = view;
     }
 }

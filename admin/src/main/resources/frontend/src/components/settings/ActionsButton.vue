@@ -61,6 +61,7 @@
                 })
                     .then(response => {
                         EventBus.$emit("updateData");
+
                         Utils.displayResponse(response);
                     })
                     .catch(function (error) {
@@ -79,7 +80,6 @@
 
     .action-button {
         min-width: 150px;
-        font-size: 0.85em !important;
         text-transform: none !important;
     }
 
