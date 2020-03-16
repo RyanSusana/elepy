@@ -5,7 +5,8 @@ import com.elepy.http.Route;
 import com.elepy.http.RouteBuilder;
 
 public class Resource {
-    private final String path, contentType;
+    private final String path;
+    private final String contentType;
     private final byte[] raw;
 
 

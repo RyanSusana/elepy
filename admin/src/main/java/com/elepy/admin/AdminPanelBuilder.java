@@ -41,7 +41,7 @@ public class AdminPanelBuilder {
 
 
     public AdminPanel build() {
-        return new AdminPanel(version, requiredPermissions == null ? "" : String.join(",", requiredPermissions));
+        return new AdminPanel();
     }
 
 
