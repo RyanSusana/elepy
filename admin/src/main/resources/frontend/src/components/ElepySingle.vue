@@ -82,7 +82,7 @@
 
     import ActionsButton from "./settings/ActionsButton";
 
-    import {isEqual} from "lodash"
+    import isEqual from "lodash/isEqual"
 
     const UIkit = require("uikit");
     const axios = require("axios/index");

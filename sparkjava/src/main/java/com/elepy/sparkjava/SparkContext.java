@@ -14,7 +14,7 @@ public class SparkContext implements HttpContext {
     }
 
     public SparkContext(spark.Request request, spark.Response response) {
-        this(new SparkRequest(request), new SparkResponse(response));
+        this(new SparkRequest(request), new SparkResponse(request, response));
     }
 
 

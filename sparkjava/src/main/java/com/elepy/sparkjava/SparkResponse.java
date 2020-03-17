@@ -1,14 +1,19 @@
 package com.elepy.sparkjava;
 
 import com.elepy.http.Response;
+import spark.Request;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class SparkResponse implements Response {
+    private final Request request;
     private final spark.Response response;
 
-    public SparkResponse(spark.Response response) {
+    public SparkResponse(Request request, spark.Response response) {
+        this.request = request;
         this.response = response;
     }
 
@@ -42,9 +47,14 @@ public class SparkResponse implements Response {
         HttpServletResponse raw = response.raw();
 
         try {
-            raw.getOutputStream().write(bytes);
-            raw.getOutputStream().flush();
-            raw.getOutputStream().close();
+            OutputStream outputStream = raw.getOutputStream();
+
+            if (request.headers("Accept-Encoding").contains("gzip") && raw.getHeader("Content-Encoding").contains("gzip")) {
+                outputStream = new GZIPOutputStream(outputStream, true);
+            }
+            outputStream.write(bytes);
+            outputStream.flush();
+            outputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
