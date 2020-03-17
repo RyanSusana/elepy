@@ -30,7 +30,6 @@ public class Main {
                     });
                 })
                 .addExtension(new FrontendLoader())
-                .addModel(Settings.class)
                 .start();
     }
 } 

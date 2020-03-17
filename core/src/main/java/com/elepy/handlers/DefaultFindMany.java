@@ -15,17 +15,24 @@ public class DefaultFindMany<T> implements ActionHandler<T> {
     public Page<T> find(Request request, Response response, Crud<T> dao, ModelContext<T> modelContext) {
 
         response.type("application/json");
-        String q = request.queryParams("q");
 
-        String ps = request.queryParams("pageSize");
-        String pn = request.queryParams("pageNumber");
+        if (request.queryParams("ids") != null) {
+            return new Page<>(1, 1, dao.getByIds(request.recordIds()));
+        } else {
+            String q = request.queryParams("q");
 
-        int pageSize = ps == null ? Integer.MAX_VALUE : Integer.parseInt(ps);
-        int pageNumber = pn == null ? 1 : Integer.parseInt(pn);
+            String ps = request.queryParams("pageSize");
+            String pn = request.queryParams("pageNumber");
 
-        response.status(200);
+            int pageSize = ps == null ? Integer.MAX_VALUE : Integer.parseInt(ps);
+            int pageNumber = pn == null ? 1 : Integer.parseInt(pn);
 
-        return dao.search(new Query(q, request.filtersForModel(modelContext.getModelType())), new PageSettings(pageNumber, pageSize, request.sortingForModel(modelContext.getSchema())));
+            response.status(200);
+
+            return dao.search(new Query(q, request.filtersForModel(modelContext.getModelType())), new PageSettings(pageNumber, pageSize, request.sortingForModel(modelContext.getSchema())));
+
+        }
+
     }
 
 

@@ -21,6 +21,3 @@ new Vue({
 
 Utils.url = "";
 store.dispatch('init');
-
-require('uikit/dist/js/uikit');
-require('uikit/dist/js/uikit-icons');

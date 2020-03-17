@@ -1,5 +1,15 @@
 <template>
-    <div class="uk-background-muted">
+
+    <ReferenceField
+            v-if="field.arrayType === 'REFERENCE'"
+            :field="field"
+            :value="value"
+            @input="handleInput"
+            :multiple="true"
+    >
+
+    </ReferenceField>
+    <div v-else class="uk-background-muted">
         <div class="uk-margin-small-bottom">
             <a @click="addField()" class="uk-inline uk-padding-small uk-width-1-1">
                 <a
@@ -110,6 +120,7 @@
 
 <script>
     import draggable from "vuedraggable";
+    import ReferenceField from "./ReferenceField";
 
     export default {
         props: ["field", "value"],
@@ -126,6 +137,7 @@
             }
         },
         components: {
+            ReferenceField,
             GenericField: () => import("./GenericField.vue"),
             draggable
         },
@@ -145,9 +157,15 @@
             }
         },
         methods: {
-            handleInput() {
-                this.$emit("input", this.values);
-                this.$forceUpdate();
+            handleInput(e) {
+                if (e == null) {
+                    this.$emit("input", this.values);
+                    this.$forceUpdate();
+                } else {
+
+                    this.$emit("input", e);
+                    this.$forceUpdate();
+                }
             },
 
             removeIndex(index) {

@@ -6,7 +6,7 @@
                 <div class="button-box ">
 
                 </div>
-                <div class="uk-flex search-filter-box uk-flex-1 uk-flex-center">
+                <div class="uk-flex search-filter-box">
                     <Pagination
                             :lastPageNumber="currentPage.lastPageNumber"
                             @change="getModelData()"
@@ -32,12 +32,6 @@
     </BaseLayout>
 </template>
 <style>
-    .default-bar{
-        display: flex;
-
-        justify-content: space-between;
-        grid-template-columns: 1fr 5fr;
-    }
 </style>
 <script>
     import QueryFilter from "./settings/QueryFilter.vue";

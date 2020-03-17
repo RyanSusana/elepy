@@ -6,13 +6,13 @@
                 <div class="button-box ">
                     <router-link v-if="model!=null"
                                  :to="model.path+'/add'"
-                                 class="uk-button uk-button-primary add-button uk-position-absolute"
+                                 class="uk-button uk-button-primary add-button"
                                  id="add-button"
                     >
                         <i uk-icon="icon: plus"></i> Add
                     </router-link>
                 </div>
-                <div class="uk-flex search-filter-box uk-flex-1 uk-flex-center">
+                <div class="uk-flex search-filter-box uk-margin-large-left">
                     <Pagination
                             :lastPageNumber="currentPage.lastPageNumber"
                             @change="getModelData()"
@@ -46,8 +46,7 @@
     .default-bar{
         display: flex;
 
-        justify-content: space-between;
-        grid-template-columns: 1fr 5fr;
+        justify-content: start;
     }
 </style>
 <script>

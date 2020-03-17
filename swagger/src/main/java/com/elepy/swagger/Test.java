@@ -36,7 +36,7 @@ public class Test {
                         .version("3.0")
                 )
                 .paths(new Paths())
-                .paths(createPathsFromModel(ModelUtils.createModelFromClass(User.class)))
+                .paths(createPathsFromModel(ModelUtils.createSchemaFromClass(User.class)))
                 ;
 
         read.forEach(elepy_model::schema);

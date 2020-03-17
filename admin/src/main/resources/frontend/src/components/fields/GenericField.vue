@@ -8,6 +8,12 @@
                 v-if="trueFieldType === 'DATE'"
         />
 
+        <ReferenceField
+                :field="field"
+                :value="value"
+                @input="handleInput"
+                v-if="trueFieldType === 'REFERENCE' "
+        />
         <NumberField
                 :field="field"
                 :value="value"
@@ -120,11 +126,13 @@
     import BooleanPicker from "./BooleanPicker.vue";
     import ArrayField from "./ArrayField.vue";
     import FileField from "./FileField.vue";
+    import ReferenceField from "./ReferenceField";
 
     export default {
         props: ["value", "fieldType", "field"],
         name: "GenericField",
         components: {
+            ReferenceField,
             NumberField,
             TextField,
             TextArea,

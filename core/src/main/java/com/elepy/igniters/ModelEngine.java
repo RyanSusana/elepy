@@ -46,7 +46,7 @@ public class ModelEngine {
     }
 
     public void addModel(Class<?> modelType) {
-        final Schema<?> schemaFromClass = ModelUtils.createModelFromClass(modelType);
+        final Schema<?> schemaFromClass = ModelUtils.createSchemaFromClass(modelType);
         final ModelPiston<?> piston = new ModelPiston<>(schemaFromClass, elepy);
         pistons.add(piston);
     }

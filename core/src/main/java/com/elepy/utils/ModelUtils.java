@@ -87,7 +87,7 @@ public class ModelUtils {
         property.setAvailableFilters(availableFilters);
     }
 
-    public static <T> Schema<T> createModelFromClass(Class<T> classType) {
+    public static <T> Schema<T> createBasicSchema(Class<T> classType){
         var model = new Schema<T>();
         final Model restModel = classType.getAnnotation(Model.class);
 
@@ -103,7 +103,7 @@ public class ModelUtils {
         model.setName(restModel.name());
         model.setJavaClass(classType);
         model.setDefaultSortDirection(restModel.defaultSortDirection());
-        model.setProperties(ModelUtils.describeClass(classType));
+
         model.setView(Optional.ofNullable(classType.getAnnotation(View.class)).map(View::value).orElse(View.Defaults.DEFAULT));
 
 
@@ -116,6 +116,15 @@ public class ModelUtils {
         model.setDefaultSortField(StringUtils.getOrDefault(toGet, idProperty));
 
         return model;
+
+    }
+    public static <T> Schema<T> createSchemaFromClass(Class<T> classType) {
+
+        final var basicSchema = createBasicSchema(classType);
+
+        basicSchema.setProperties(ModelUtils.describeClass(classType));
+
+        return basicSchema;
     }
 
 
@@ -178,6 +187,8 @@ public class ModelUtils {
                 return ArrayOptions.of(field);
             case FILE_REFERENCE:
                 return FileReferenceOptions.of(field);
+            case REFERENCE:
+                return ReferenceOptions.of(field);
             default:
                 return null;
 

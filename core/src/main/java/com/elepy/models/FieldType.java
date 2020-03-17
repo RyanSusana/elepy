@@ -25,12 +25,11 @@ public enum FieldType {
     ARRAY(Collection.class),
     OBJECT(Object.class),
 
-
-    //Text Based
     FILE_REFERENCE,
     TEXTAREA,
     MARKDOWN,
-    HTML;
+    HTML,
+    REFERENCE;
 
     private final Class<?> baseClass;
 
@@ -40,7 +39,9 @@ public enum FieldType {
                     TextArea.class, TEXTAREA,
                     Markdown.class, MARKDOWN,
                     com.elepy.annotations.HTML.class, HTML,
-                    com.elepy.annotations.FileReference.class, FILE_REFERENCE
+                    com.elepy.annotations.FileReference.class, FILE_REFERENCE,
+                    Number.class, NUMBER,
+                    Reference.class, REFERENCE
             );
 
     FieldType() {
@@ -53,14 +54,7 @@ public enum FieldType {
 
 
     public static FieldType guessFieldType(AnnotatedElement property) {
-        final var typeFromAnnotation = annotationMap.keySet().stream()
-                .filter(property::isAnnotationPresent)
-                .findFirst()
-                .map(annotationMap::get);
 
-        if (typeFromAnnotation.isPresent()) {
-            return typeFromAnnotation.get();
-        }
 
         if (property instanceof Field) {
             return guessByField((Field) property);
@@ -112,17 +106,14 @@ public enum FieldType {
         return false;
     }
 
-    private static Optional<FieldType> getByAnnotation(AnnotatedElement accessibleObject) {
-        if (accessibleObject.isAnnotationPresent(com.elepy.annotations.FileReference.class)) {
-            return Optional.of(FILE_REFERENCE);
-        }
-        if (accessibleObject.isAnnotationPresent(Text.class)) {
-            return Optional.of(INPUT);
-        }
-        if (accessibleObject.isAnnotationPresent(Number.class)) {
-            return Optional.of(NUMBER);
-        }
-        return Optional.empty();
+    private static Optional<FieldType> getByAnnotation(AnnotatedElement property) {
+
+        final var typeFromAnnotation = annotationMap.keySet().stream()
+                .filter(property::isAnnotationPresent)
+                .findFirst()
+                .map(annotationMap::get);
+
+        return typeFromAnnotation;
     }
 
     public static FieldType getUnannotatedFieldType(Class<?> type) {
