@@ -115,7 +115,10 @@ public class ModelScenario<T> extends LoggedInScenario {
     }
 
     public ModelScenario<T> search(String query, boolean expectChanges) {
-        driver.findElement(By.id("search-input")).sendKeys(query);
+
+        final var searchInput = By.id("search-input");
+        driver.waitTillCanSee(searchInput);
+        driver.findElement(searchInput).sendKeys(query);
 
         if (expectChanges) {
             waitUntilChange();
