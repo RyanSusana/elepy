@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public abstract class HttpServiceTest {
 
@@ -70,6 +70,17 @@ public abstract class HttpServiceTest {
     }
 
     @Test
+    void can_serveRawBytes() throws IOException {
+        service.get("/cv", ctx -> {
+            ctx.response().result(IOUtils.toByteArray(inputStream("cv.pdf")));
+        });
+
+        service.ignite();
+
+        assertResponseReturns("get", "/cv", IOUtils.toByteArray(inputStream("cv.pdf")), HttpResponse.BodyHandlers.ofByteArray());
+    }
+
+    @Test
     void can_handleStaticFiles() throws IOException, InterruptedException {
         service.staticFiles("static");
 
@@ -78,7 +89,7 @@ public abstract class HttpServiceTest {
         service.ignite();
 
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("http://localhost:3030/doggo.jpg")))
+                .uri(URI.create("http://localhost:3030/doggo.jpg"))
                 .build();
 
         final HttpResponse<InputStream> send = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
@@ -602,14 +613,18 @@ public abstract class HttpServiceTest {
 
     }
 
-    private void assertResponseReturns(String method, String path, Object expectedResult) {
+    private void assertResponseReturns(String method, String path, String expected) {
+        assertResponseReturns(method, path, expected, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private <T> void assertResponseReturns(String method, String path, T expectedResult, HttpResponse.BodyHandler<T> bodyHandler) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format("http://localhost:3030%s", path)))
                 .method(method.toUpperCase(), HttpRequest.BodyPublishers.noBody())
                 .build();
 
         try {
-            final HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            final HttpResponse<T> send = httpClient.send(request, bodyHandler);
             assertThat(send.body()).isEqualTo(expectedResult);
             assertThat(send.statusCode()).isEqualTo(200);
         } catch (IOException e) {

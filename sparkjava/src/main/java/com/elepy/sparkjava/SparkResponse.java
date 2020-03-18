@@ -6,6 +6,7 @@ import spark.Request;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
 
 public class SparkResponse implements Response {
@@ -49,7 +50,9 @@ public class SparkResponse implements Response {
         try {
             OutputStream outputStream = raw.getOutputStream();
 
-            if (request.headers("Accept-Encoding").contains("gzip") && raw.getHeader("Content-Encoding").contains("gzip")) {
+
+            if (Optional.ofNullable(request.headers("Accept-Encoding")).orElse("").contains("gzip") &&
+                    Optional.ofNullable(raw.getHeader("Content-Encoding")).orElse("").contains("gzip")) {
                 outputStream = new GZIPOutputStream(outputStream, true);
             }
             outputStream.write(bytes);
