@@ -3,7 +3,11 @@ package com.elepy.javalin;
 import com.elepy.http.Response;
 import io.javalin.http.Context;
 
-import java.io.ByteArrayInputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Optional;
+import java.util.zip.GZIPOutputStream;
 
 public class JavalinResponse implements Response {
 
@@ -30,7 +34,22 @@ public class JavalinResponse implements Response {
 
     @Override
     public void result(byte[] bytes) {
-        context.result(new ByteArrayInputStream(bytes));
+        HttpServletResponse raw = context.res;
+
+        try {
+            OutputStream outputStream = raw.getOutputStream();
+
+
+            if (Optional.ofNullable(context.req.getHeader("Accept-Encoding")).orElse("").contains("gzip") &&
+                    Optional.ofNullable(raw.getHeader("Content-Encoding")).orElse("").contains("gzip")) {
+                outputStream = new GZIPOutputStream(outputStream, true);
+            }
+            outputStream.write(bytes);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

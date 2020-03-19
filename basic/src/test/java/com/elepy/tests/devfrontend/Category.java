@@ -1,4 +1,4 @@
-package com.elepy.tests;
+package com.elepy.tests.devfrontend;
 
 import com.elepy.annotations.Featured;
 import com.elepy.annotations.Model;

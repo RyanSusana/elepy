@@ -113,7 +113,7 @@ public class Elepy implements ElepyContext {
      *
      * @see #stop()
      */
-    public final void start() {
+    public void start() {
 
         setupDefaults();
 
@@ -153,7 +153,7 @@ public class Elepy implements ElepyContext {
      *
      * @see #start()
      */
-    public final void stop() {
+    public void stop() {
         http.stop();
         stopEventHandlers.forEach(EventHandler::handle);
     }
@@ -202,7 +202,7 @@ public class Elepy implements ElepyContext {
 
 
     /**
-     * Switches the HttpService of Elepy. This can be used to swap to Vertx, Sparkjava, Javalin, etc.
+     * Switches the HttpService of Elepy. This can be used to swap to Sparkjava, Javalin, etc.
      *
      * @param httpService The httpService you want to swap to
      * @return The {@link com.elepy.Elepy} instance

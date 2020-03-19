@@ -20,7 +20,7 @@ public class Resource {
         return RouteBuilder.anElepyRoute().acceptType(contentType).method(HttpMethod.GET).path(path)
                 .route(context -> {
                     context.type(contentType);
-                    context.response().header("Content-Encoding", "gzip");
+                   // context.response().header("Content-Encoding", "gzip");
                     context.response().result(raw);
                 }).build();
     }

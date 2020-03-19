@@ -9,7 +9,10 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,6 +20,7 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
     private final String url;
     private final int port;
 
+    private List<ElepyConfigHelper> elepyConfigHelpers = new ArrayList<>();
 
     private static int counter = 3117;
 
@@ -32,10 +36,28 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
         return new ElepySystemUnderTest(++counter);
     }
 
+    public ElepySystemUnderTest addToStack(Collection<ElepyConfigHelper> stackItem){
+        this.elepyConfigHelpers.addAll(stackItem);
+        return this;
+    }
+
+    @Override
+    public void start(){
+        elepyConfigHelpers.forEach(elepyConfigHelper -> elepyConfigHelper.configureElepy(this));
+        super.start();
+    }
+
+    @Override
+    public void stop() {
+        elepyConfigHelpers.forEach(ElepyConfigHelper::teardown);
+        super.stop();
+    }
+
 
     public String url() {
         return url;
     }
+
 
     @Override
     public void port(int port) {

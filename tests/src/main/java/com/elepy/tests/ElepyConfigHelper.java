@@ -5,4 +5,6 @@ import com.elepy.Elepy;
 public interface ElepyConfigHelper {
 
     void configureElepy(Elepy elepy);
+
+    default void teardown(){}
 } 

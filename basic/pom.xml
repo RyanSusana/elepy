@@ -37,21 +37,91 @@
 
         <dependency>
             <groupId>com.elepy</groupId>
+            <artifactId>elepy-tests</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!--For integration testing-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.4.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>4.1.46.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.46.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.46.Final</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--Routing-->
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-javalin</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server-core</artifactId>
+            <version>1.25.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!--Data-Access-->
+        <dependency>
+            <groupId>com.elepy</groupId>
             <artifactId>elepy-mongo</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.elepy</groupId>
-            <artifactId>elepy-tests</artifactId>
+            <artifactId>elepy-hibernate</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
-            <version>1.16.0</version>
+            <version>1.25.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--File Upload-->
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-uploads</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
+
     </dependencies>
 </project>

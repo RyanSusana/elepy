@@ -1,4 +1,4 @@
-package com.elepy.tests;
+package com.elepy.tests.devfrontend;
 
 import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
