@@ -30,7 +30,7 @@
 
         <!-- TableView -->
         <template #main>
-            <div class="uk-container uk-margin-top" v-if="itemIsLoaded">
+            <div class="uk-container uk-margin-top uk-margin-large-bottom" v-if="itemIsLoaded">
                 <h1>{{model.name}}</h1>
                 <ObjectField :model="model" v-model="item"/>
             </div>
