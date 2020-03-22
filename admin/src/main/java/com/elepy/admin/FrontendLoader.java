@@ -23,7 +23,7 @@ public class FrontendLoader implements ElepyExtension {
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
-
+        this.logo = Optional.ofNullable(elepy.getPropertyConfig().getString("admin.logo")).orElse("banner.jpg");
 
         http.get("/elepy/admin", ctx -> ctx.redirect("/elepy/admin/"));
         try {

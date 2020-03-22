@@ -6,6 +6,7 @@ import com.elepy.http.Route;
 import com.elepy.models.ModelChange;
 import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.configuration2.Configuration;
 
 import java.util.List;
 
@@ -188,5 +189,9 @@ public class ElepyPostConfiguration {
 
     public void injectFields(Object o) {
         elepy.injectFields(o);
+    }
+
+    public Configuration getPropertyConfig() {
+        return elepy.getPropertyConfig();
     }
 }
