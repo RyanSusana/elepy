@@ -44,16 +44,6 @@
                         <phase>generate-sources</phase>
                     </execution>
                     <execution>
-                        <id>npm version</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>version ${project.version} --allow-same-version</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>npm install</id>
                         <goals>
                             <goal>npm</goal>
