@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DirectoryFileServiceTest extends FileServiceTest {
 
-    private static final String UPLOAD_DIR = "src/test/resources/uploads";
+    private static final String UPLOAD_DIR = "src/test/resources/elepy/uploads";
 
     public static Configuration H2 = createHibernateConfig(
             "org.h2.Driver",

@@ -124,7 +124,7 @@ public abstract class FileServiceTest {
 
         final Crud<FileReference> references = elepy.getCrudFor(FileReference.class);
 
-        final HttpResponse<JsonNode> response = Unirest.post(url + "/uploads")
+        final HttpResponse<JsonNode> response = Unirest.post(url + "/elepy/uploads")
                 .field("files", inputStream(originalFileName), ContentType.create(tika.detect(inputStream(originalFileName), originalFileName)), originalFileName)
                 .asJson();
 

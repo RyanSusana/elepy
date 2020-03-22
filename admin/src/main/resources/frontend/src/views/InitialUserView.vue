@@ -84,7 +84,7 @@
         methods: {
             register() {
                 if (this.confirmPassword === this.user.password) {
-                    axios.post("/users", this.user)
+                    return axios.post("/users", this.user)
                         .then(() => this.$store.dispatch('init'))
                         .catch((error) => Utils.displayError(error));
                 } else {

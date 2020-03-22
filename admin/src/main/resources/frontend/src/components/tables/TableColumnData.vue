@@ -36,10 +36,10 @@
             },
             valueAsUpload() {
 
-                if (this.value.includes('/uploads/')) {
+                if (this.value.includes('/elepy/uploads/')) {
                     return Utils.url + this.value;
                 }
-                return Utils.url + "/uploads/" + this.value;
+                return Utils.url + "/elepy/uploads/" + this.value;
             }
         },
         methods: {

@@ -38,13 +38,13 @@
                 formData.append("files", file);
 
                 axios({
-                    url: Utils.url + "/uploads",
+                    url: Utils.url + "/elepy/uploads",
                     method: "POST",
                     data: formData
                 })
                     .then(result => {
                         let file = result.data.files[0];
-                        let url = Utils.url + "/uploads/" + file.uploadName;
+                        let url = Utils.url + "/elepy/uploads/" + file.uploadName;
                         Editor.insertEmbed(cursorLocation, "image", url);
                         resetUploader();
                     })

@@ -31,9 +31,13 @@ public class FileUploadExtension implements ElepyExtension {
 
     @Override
     public void setup(HttpService httpService, ElepyPostConfiguration elepy) {
-        httpService.post("/uploads", this::handleUpload);
+        httpService.post("/elepy/uploads", this::handleUpload);
+        httpService.get("/elepy/uploads/:fileName", this::handleFileGet);
+        httpService.delete("/elepy/uploads/:fileName", this::handleFileDelete);
+
+
+        // backwards compatibility
         httpService.get("/uploads/:fileName", this::handleFileGet);
-        httpService.delete("/uploads/:fileName", this::handleFileDelete);
     }
 
     private void handleFileDelete(Request request, Response response) {

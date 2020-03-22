@@ -550,12 +550,12 @@ public abstract class HttpServiceTest {
 
         AtomicReference<List<FileUpload>> atomicReference = new AtomicReference<>();
 
-        service.post("/uploads", (request, response) -> atomicReference.set(request.uploadedFiles("files")));
+        service.post("/elepy/uploads", (request, response) -> atomicReference.set(request.uploadedFiles("files")));
 
         service.ignite();
         final InputStream file1 = inputStream("cv.pdf");
 
-        Unirest.post("http://localhost:3030/uploads")
+        Unirest.post("http://localhost:3030/elepy/uploads")
                 .field("files", file1, "cv.pdf")
                 .asString();
 

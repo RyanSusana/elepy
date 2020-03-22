@@ -117,7 +117,7 @@
             UIkit.upload(upload, {
                 url:
                     Utils.url +
-                    "/uploads" +
+                    "/elepy/uploads" +
                     "?maximumFileSize=" +
                     vm.field.maximumFileSize +
                     "&allowedMimeType=" +
@@ -167,7 +167,7 @@
                 completeAll: function () {
                     let file = JSON.parse(arguments[0].response).files[0];
 
-                    let fileLocation = "/uploads/" + file.uploadName;
+                    let fileLocation = "/elepy/uploads/" + file.uploadName;
                     vm.handleInput(fileLocation);
                 }
             });
