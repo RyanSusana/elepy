@@ -48,7 +48,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         });
 
 
-        final var getTokenResponse = Unirest.post(elepy + "/elepy-token-login")
+        final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
                 .basicAuth("michelle", "bowers")
                 .asString();
 
@@ -70,7 +70,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         elepy.createInitialUserViaHttp("michelle", "bowers");
 
 
-        final var getTokenResponse = Unirest.post(elepy + "/elepy-token-login")
+        final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
                 .basicAuth("michelle", "bows")
                 .asString();
 
@@ -132,7 +132,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
                 .asString();
 
 
-        final var self = Unirest.get(elepy + "/elepy-logged-in-user").basicAuth("user", "userPassword").asJson().getBody().getObject();
+        final var self = Unirest.get(elepy + "/elepy/logged-in-user").basicAuth("user", "userPassword").asJson().getBody().getObject();
 
         assertThat(self.getString("email"))
                 .isEqualTo("ryansemail@live.com");

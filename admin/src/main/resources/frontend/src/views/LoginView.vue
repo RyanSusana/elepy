@@ -9,7 +9,7 @@
 
 
                 <div class="uk-background-primary">
-                    <img src="https://docs.elepy.com/images/banner.jpg"
+                    <img :src="$store.getters.logo"
                          alt="logo">
                 </div>
 

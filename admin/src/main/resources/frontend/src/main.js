@@ -4,6 +4,7 @@ import store from "./store";
 import Utils from "./utils"
 import router from './router'
 import axios from "axios"
+import * as Vibrant from 'node-vibrant'
 
 Vue.config.productionTip = false;
 
@@ -47,3 +48,16 @@ axios.interceptors.response.use(function (response) {
     Utils.displayError(error);
     return Promise.reject(error);
 });
+
+
+function adjust(color, amount) {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+}
+
+Vibrant.from(axios.defaults.baseURL + '/elepy/logo').getPalette()
+    .then((palette) => {
+        document.documentElement.style
+            .setProperty('--primary-color', palette.Vibrant.hex)
+        document.documentElement.style
+            .setProperty('--primary-hover-color', adjust(palette.Vibrant.hex, -10))
+    });

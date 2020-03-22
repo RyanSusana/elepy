@@ -140,7 +140,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
             context.requirePermissions(Permissions.AUTHENTICATED);
             context.result(Message.of("Perfect!", 200));
         });
-        final var getTokenResponse = Unirest.post(elepy + "/elepy-token-login")
+        final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
                 .basicAuth("ryan", "susana")
                 .asString();
 

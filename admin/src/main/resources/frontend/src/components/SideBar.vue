@@ -1,7 +1,7 @@
 <template>
     <div id="sidebar" class="">
         <a href="/admin" class="sidebar-header uk-flex uk-flex-center">
-            <img class="banner-image" src="https://docs.elepy.com/images/banner.jpg" alt="logo">
+            <img class="banner-image" :src="$store.getters.logo" alt="logo">
         </a>
         <div class="uk-padding">
             <div class="models uk-light">

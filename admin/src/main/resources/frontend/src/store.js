@@ -48,14 +48,14 @@ export default new Vuex.Store({
     },
     actions: {
         async getModels({commit}) {
-            return axios.get("/config")
+            return axios.get("/elepy/config")
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
         },
 
         async init({dispatch, commit}) {
             let token = window.localStorage.getItem('token');
 
-            await axios.get("/elepy-has-users")
+            await axios.get("/elepy/has-users")
                 .then(() =>
                     commit('SET_HAS_USERS', true))
                 .catch(() =>
@@ -70,7 +70,7 @@ export default new Vuex.Store({
         },
         async logInWithToken({commit, dispatch}, loginResponseToken) {
             let userResponse = (await axios({
-                url: "/elepy-logged-in-user",
+                url: "/elepy/logged-in-user",
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + loginResponseToken}
             })).data;
@@ -87,7 +87,7 @@ export default new Vuex.Store({
         async logIn({dispatch}, loginAttempt) {
             delete axios.defaults.headers["authorization"];
             let loginResponseToken = (await axios({
-                url: "/elepy-token-login",
+                url: "/elepy/token-login",
                 method: 'post',
                 auth: {
                     username: loginAttempt.username,
@@ -119,7 +119,9 @@ export default new Vuex.Store({
         },
 
         ready: state => state.ready === true,
-        isLoading: (state) => state.loadingItems.length > 0
+        isLoading: (state) => state.loadingItems.length > 0,
+
+        logo: () => axios.defaults.baseURL + "/elepy/logo"
 
     }
 });

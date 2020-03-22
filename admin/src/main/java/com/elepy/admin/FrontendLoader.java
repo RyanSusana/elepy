@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -17,14 +19,21 @@ import java.util.stream.Stream;
 
 public class FrontendLoader implements ElepyExtension {
 
+    private String logo = "banner.jpg";
+
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
-        http.get("/elepy-admin", ctx -> ctx.redirect("/elepy-admin/"));
+
+
+        http.get("/elepy/admin", ctx -> ctx.redirect("/elepy/admin/"));
         try {
+
+            setupLogo(http);
+
             Stream.of(
                     getResources(
                             "frontend/dist/",
-                            "/elepy-admin/*",
+                            "/elepy/admin/*",
                             "text/html",
                             "index.html"
                     ),
@@ -46,6 +55,20 @@ public class FrontendLoader implements ElepyExtension {
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void setupLogo(HttpService http) throws IOException {
+        final var logoContentType = Files.probeContentType(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(logo)).getPath()));
+        final var input = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(logo));
+        final var logoBytes = IOUtils.toByteArray(input);
+        http.get("/elepy/logo", ctx -> {
+            if (logo.startsWith("http://") || logo.startsWith("https://")) {
+                ctx.redirect(logo);
+            } else {
+                ctx.type(logoContentType);
+                ctx.response().result(logoBytes);
+            }
+        });
     }
 
     private Stream<Resource> getResources(String dir, String pathOnServer, String contentType, String extension) throws IOException, URISyntaxException {

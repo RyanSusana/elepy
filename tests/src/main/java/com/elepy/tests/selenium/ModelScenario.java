@@ -168,7 +168,7 @@ public class ModelScenario<T> extends LoggedInScenario {
 
 
     public ModelScenario<T> navigateTo() {
-        driver.navToUrl("/elepy-admin" + schema.getPath());
+        driver.navToUrl("/elepy/admin" + schema.getPath());
         return this;
     }
 

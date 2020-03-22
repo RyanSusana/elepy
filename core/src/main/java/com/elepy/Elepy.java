@@ -62,7 +62,7 @@ public class Elepy implements ElepyContext {
     private final List<String> packages = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
     private HttpServiceConfiguration http = new HttpServiceConfiguration();
-    private String configPath = "/config";
+    private String configPath = "/elepy/config";
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private List<Route> routes = new ArrayList<>();
     private boolean initialized = false;

@@ -113,7 +113,7 @@ const routes = [
 
 const router = new VueRouter({
     mode: 'history',
-    base: '/elepy-admin',
+    base: '/elepy/admin',
     routes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {

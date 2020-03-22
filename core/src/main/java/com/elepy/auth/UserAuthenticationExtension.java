@@ -27,7 +27,7 @@ public class UserAuthenticationExtension implements ElepyExtension {
 
         authenticationMethods.forEach(elepy::injectFields);
 
-        http.get("/elepy-has-users", ctx -> {
+        http.get("/elepy/has-users", ctx -> {
             final var count = userCrud.count();
 
             if (count > 0) {
@@ -36,18 +36,18 @@ public class UserAuthenticationExtension implements ElepyExtension {
                 ctx.result(Message.of("No users exist", 404));
             }
         });
-        http.get("/elepy-login-check", ctx -> {
+        http.get("/elepy/login-check", ctx -> {
             ctx.loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));
             ctx.response().header("Vary", "*");
         });
 
-        http.get("/elepy-logged-in-user", ctx -> {
+        http.get("/elepy/logged-in-user", ctx -> {
             ctx.response().json(userCrud.getById(ctx.loggedInUserOrThrow().getId()).orElseThrow().withEmptyPassword());
             ctx.response().header("Vary", "*");
         });
 
-        http.post("/elepy-token-login", (request, response) -> {
+        http.post("/elepy/token-login", (request, response) -> {
 
             boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
 
