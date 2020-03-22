@@ -177,7 +177,7 @@
                                     }
                                 })
                                 .catch(error => {
-                                    Utils.displayError(error);
+
                                 });
                         },
                         () => {
@@ -198,7 +198,7 @@
                         })
                         .catch(error => {
                             this.$router.push(this.model.path);
-                            Utils.displayError(error);
+
                         });
                 } else {
                     return axios
@@ -208,7 +208,7 @@
                             this.itemCopy = JSON.parse(JSON.stringify(this.item));
                         })
                         .catch(error => {
-                            Utils.displayError(error);
+
                         });
                 }
 

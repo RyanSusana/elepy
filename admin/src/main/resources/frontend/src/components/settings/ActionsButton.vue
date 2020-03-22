@@ -65,7 +65,7 @@
                         Utils.displayResponse(response);
                     })
                     .catch(function (error) {
-                        Utils.displayError(error);
+
                     });
             },
         }

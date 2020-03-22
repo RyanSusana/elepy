@@ -49,7 +49,7 @@
                         resetUploader();
                     })
                     .catch(err => {
-                        Utils.displayError(err);
+
                     });
             },
 
@@ -59,8 +59,8 @@
                     method: "DELETE",
                 }).then(() => {
                 })
-                    .catch(err => {
-                        Utils.displayError(err);
+                    .catch(error => {
+
                     });
             }
         }

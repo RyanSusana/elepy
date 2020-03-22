@@ -101,7 +101,7 @@
                                     if (error.response.status === 404) {
                                         vm.handleInput(null);
                                     } else {
-                                        Utils.displayError(error);
+
                                     }
                                 });
                         }

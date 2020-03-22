@@ -12,7 +12,8 @@ export default new Vuex.Store({
         token: null,
         inviteLink: null,
         hasUsers: null,
-        settings: null
+        settings: null,
+        loadingItems: []
     },
     mutations: {
         SET_MODELS(state, models) {
@@ -29,11 +30,23 @@ export default new Vuex.Store({
         },
         READY(state) {
             state.ready = true;
-        }
+        },
+
+        ADD_LOAD_ITEM(state, loadItem) {
+            if (typeof loadItem == "string") {
+                let uniqueId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+                state.loadingItems.push({id: uniqueId, description: loadItem})
+            } else {
+                state.loadingItems.push(loadItem);
+            }
+        },
+
+        REMOVE_LOAD_ITEM(state, loadItemId) {
+            state.loadingItems = state.loadingItems.filter(item => item.id !== loadItemId);
+        },
 
     },
     actions: {
-
         async getModels({commit}) {
             return axios.get("/config")
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
@@ -48,11 +61,11 @@ export default new Vuex.Store({
                 .catch(() =>
                     commit('SET_HAS_USERS', false));
             if (token != null) {
-               return dispatch('logInWithToken', token)
+                return dispatch('logInWithToken', token)
                     .catch(() => window.localStorage.removeItem('token'))
                     .finally(() => commit("READY"));
             } else {
-               return commit("READY");
+                return commit("READY");
             }
         },
         async logInWithToken({commit, dispatch}, loginResponseToken) {
@@ -67,7 +80,7 @@ export default new Vuex.Store({
             window.localStorage.setItem("token", loginResponseToken);
 
             axios.defaults.headers.authorization = 'Bearer ' + loginResponseToken;
-            
+
             commit("SET_USER", userResponse);
             commit("SET_TOKEN", loginResponseToken)
         },
@@ -105,7 +118,8 @@ export default new Vuex.Store({
             return state.hasUsers
         },
 
-        ready: state => state.ready === true
+        ready: state => state.ready === true,
+        isLoading: (state) => state.loadingItems.length > 0
 
     }
 });

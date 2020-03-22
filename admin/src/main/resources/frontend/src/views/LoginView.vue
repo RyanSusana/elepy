@@ -83,7 +83,7 @@
                         this.$router.push(this.$route.query.redirect ?? '/')
                     })
                     .catch(error => {
-                        Utils.displayError(error);
+
                     });
             }
         }

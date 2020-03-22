@@ -107,7 +107,7 @@
                     })
                     .catch(function (error) {
                         EventBus.$emit("stopLoading");
-                        Utils.displayError(error);
+
                     });
             }
         },

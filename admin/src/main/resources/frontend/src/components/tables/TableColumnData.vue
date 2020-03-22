@@ -15,7 +15,7 @@
     import ImageLightBox from "../modals/ImageLightBox.vue";
 
     import Utils from "../../utils";
-    import moment from "moment/src/moment";
+    import moment from "moment";
 
     export default {
         props: ["value", "field"],

@@ -4,6 +4,8 @@
             <div class="uk-background-secondary uk-width-1-1 nav uk-padding-small" uk-sticky>
                 <div class="back">
 
+                    <LoadingSpinner v-if="isLoading"/>
+
                     <a v-if="backEnabled" @click="goBack" class="back-button" action="back"><span
                             uk-icon="icon: arrow-left; ratio:2"></span><span>Back</span></a>
 
@@ -20,11 +22,18 @@
 </template>
 
 <script>
+    import LoadingSpinner from "./LoadingSpinner";
+
+    import {mapGetters} from "vuex";
+
     export default {
         name: "BaseLayout",
+        components: {LoadingSpinner},
         props: ["backLocation"],
 
         computed: {
+
+            ...mapGetters(['isLoading']),
 
             backEnabled() {
                 return this.backLocation != null || this.backLocation === false
@@ -76,7 +85,7 @@
     .nav {
 
         display: grid;
-        grid-template-columns: 100px 3fr ;
+        grid-template-columns: 100px 3fr;
     }
 
     .main {
