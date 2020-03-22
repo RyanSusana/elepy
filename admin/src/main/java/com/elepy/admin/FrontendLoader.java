@@ -2,6 +2,7 @@ package com.elepy.admin;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpService;
 import org.apache.commons.io.IOUtils;
 
@@ -58,8 +59,9 @@ public class FrontendLoader implements ElepyExtension {
     }
 
     private void setupLogo(HttpService http) throws IOException {
-        final var logoContentType = Files.probeContentType(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(logo)).getPath()));
-        final var input = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(logo));
+        final var logoURI = Optional.ofNullable(getClass().getResource(logo)).orElseThrow(() -> new ElepyConfigException(logo + " can't be found"));
+        final var logoContentType = Files.probeContentType(Paths.get(logoURI.getPath()));
+        final var input = Objects.requireNonNull(getClass().getResourceAsStream(logo));
         final var logoBytes = IOUtils.toByteArray(input);
         http.get("/elepy/logo", ctx -> {
             if (logo.startsWith("http://") || logo.startsWith("https://")) {
