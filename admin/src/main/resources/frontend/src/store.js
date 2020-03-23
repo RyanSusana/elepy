@@ -121,7 +121,7 @@ export default new Vuex.Store({
         ready: state => state.ready === true,
         isLoading: (state) => state.loadingItems.length > 0,
 
-        logo: () => axios.defaults.baseURL ?? '' + "/elepy/logo"
+        logo: () => (axios.defaults.baseURL ?? '') + "/elepy/logo"
 
     }
 });

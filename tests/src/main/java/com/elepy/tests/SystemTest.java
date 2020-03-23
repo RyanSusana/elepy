@@ -59,6 +59,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         elepySystemUnderTest.addConfiguration(AdminPanel.local())
                 .withPort(counter++)
+                .addModel(Settings.class)
                 .addModel(CantSeeThis.class)
                 .addModel(Product.class);
 
@@ -78,6 +79,25 @@ public abstract class SystemTest implements ElepyConfigHelper {
                 .fromUserLogin("Ryan", "Susana");
     }
 
+    @Test
+    void canCreateRecordInSingleMode() throws InterruptedException {
+        final var crudFor = elepySystemUnderTest.getCrudFor(Settings.class);
+        driver.createScenario()
+                .fromUserLogin("user", "password")
+                .navigateToModelSingle(Settings.class)
+                .fillInField("title", "A title")
+                .save()
+                .custom(scen -> assertThat(crudFor.count()).isEqualTo(1))
+                .fillInField("title", "Another title")
+                .save();
+
+        assertThat(crudFor.count())
+                .isEqualTo(1);
+
+        assertThat(crudFor.getAll().get(0).getTitle())
+                .isEqualTo("Another title");
+
+    }
 
     @Test
     void createInitialUser() {

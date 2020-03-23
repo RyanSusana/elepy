@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="uk-flex uk-flex-center">
-                            <ActionButton type="submit" id="login-button" class="uk-width-small" :action="register">
+                            <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary" :action="register">
                                 Create User
                             </ActionButton>
 

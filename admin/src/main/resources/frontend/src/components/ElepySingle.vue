@@ -4,13 +4,16 @@
     <BaseLayout :back-location="singleMode? null : goBack">
         <!-- Navigation -->
         <template #navigation>
-            <a action="save"
-               @click="save()"
-               @shortkey="save()"
-               class="uk-button uk-button-primary uk-margin-small-right"
-               v-shortkey.once="['ctrl',  'save']"
+            <ActionButton
 
-            ><i uk-icon="icon: file-edit"></i> Save</a>
+                    :action="save"
+                    :actionName="'save'"
+                    @shortkey="save"
+                    class="uk-button uk-button-primary uk-width-small uk-margin-small-right"
+                    v-shortkey.once="['ctrl',  'save']"
+
+            ><i uk-icon="icon: file-edit"></i> Save
+            </ActionButton>
             <ActionsButton class="uk-margin-small-right" :actions="model.actions"
                            :ids="[id]"
                            v-if="!isCreating && model.actions.length >0"></ActionsButton>
@@ -83,6 +86,7 @@
     import ActionsButton from "./settings/ActionsButton";
 
     import isEqual from "lodash/isEqual"
+    import ActionButton from "./base/ActionButton";
 
     const UIkit = require("uikit");
     const axios = require("axios/index");
@@ -100,7 +104,7 @@
         },
 
         props: ["model", "recordId", "adding", "singleMode"],
-        components: {ObjectField, ActionsButton, BaseLayout},
+        components: {ActionButton, ObjectField, ActionsButton, BaseLayout},
 
         computed: {
             //Return if it should be a PUT or POST
@@ -148,7 +152,7 @@
                 this.getRecord();
             },
             save() {
-                UIkit.modal
+                return UIkit.modal
                     .confirm("Are you sure that you want to save this item?", {
                         labels: {
                             ok: "Yes",
@@ -157,7 +161,7 @@
                     })
                     .then(
                         () => {
-                            axios({
+                            return axios({
                                 method: this.isCreating ? "POST" : "PUT",
                                 data: this.item,
                                 url:
@@ -170,13 +174,16 @@
                                     if (this.isCreating) {
                                         let createdRecord = response.data.properties.createdRecords[0];
                                         let createdRecordId = createdRecord[this.model.idProperty];
-                                        if (!this.singleMode)
-                                            this.$router.push(this.model.path + "/edit/" + createdRecordId);
+                                        if (this.singleMode) {
+                                            return this.getRecord();
+                                        } else {
+                                            return this.$router.push(this.model.path + "/edit/" + createdRecordId);
+                                        }
                                     } else {
-                                        this.getRecord();
+                                        return this.getRecord();
                                     }
                                 })
-                                .catch(error => {
+                                .finally(error => {
 
                                 });
                         },
@@ -186,6 +193,15 @@
             },
 
             getRecord() {
+                if (this.singleMode) {
+                    return axios
+                        .get(this.model.path + "?pageSize=1&pageNumber=1")
+                        .then(response => {
+                            this.item = response.data.values[0] || {};
+                            this.itemCopy = JSON.parse(JSON.stringify(this.item));
+                        })
+                }
+
                 if (this.isCreating) {
                     this.item = {};
                     this.itemCopy = {};
@@ -198,16 +214,6 @@
                         })
                         .catch(error => {
                             this.$router.push(this.model.path);
-
-                        });
-                } else {
-                    return axios
-                        .get(this.model.path + "?pageSize=1&pageNumber=1")
-                        .then(response => {
-                            this.item = response.data.values[0] || {};
-                            this.itemCopy = JSON.parse(JSON.stringify(this.item));
-                        })
-                        .catch(error => {
 
                         });
                 }

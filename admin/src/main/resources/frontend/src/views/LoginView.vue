@@ -40,7 +40,7 @@
                         </div>
 
                         <div class="uk-flex uk-flex-center">
-                            <ActionButton type="submit" id="login-button" class="uk-width-small" :action="login">Login</ActionButton>
+                            <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary" :action="login">Login</ActionButton>
                         </div>
                     </div>
                 </form>

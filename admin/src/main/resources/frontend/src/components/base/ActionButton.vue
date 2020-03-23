@@ -1,13 +1,14 @@
 <template>
     <button @click="doAction"
-            class="uk-button uk-button-primary"><span
+            :action="actionName"
+            class="uk-button"><span
             v-if="!busy"><slot></slot></span><span uk-spinner v-else></span></button>
 </template>
 
 <script>
     export default {
         name: "ActionButton",
-        props: ['action'],
+        props: ['action', 'actionName'],
 
         data() {
             return {busy: false}

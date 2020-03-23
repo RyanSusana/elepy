@@ -40,6 +40,9 @@ public class FillInText implements FillIn<String> {
     public void fillIn(String value) {
         doPreSetup();
 
+        if (property.getType().equals(FieldType.INPUT)) {
+            targetInputElement().clear();
+        }
         targetInputElement().sendKeys(value);
     }
 

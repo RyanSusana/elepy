@@ -3,7 +3,7 @@
 
         <Elepy v-if="model.view === 'default'" :model="model"></Elepy>
         <ElepyFile v-else-if="model.view === 'file'" :model="model"></ElepyFile>
-        <ElepySingle v-else-if="model.view === 'single'" single-mode=true :model="model"></ElepySingle>
+        <ElepySingle v-else-if="model.view === 'single'" :singleMode="true" :model="model"></ElepySingle>
         <div v-else class="uk-width-1-1 uk-height-1-1">
             <iframe :src="model.view"></iframe>
         </div>
