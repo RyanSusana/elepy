@@ -34,7 +34,7 @@ public class MongoSearch {
     }
 
     private List<Field> getSearchableFields() {
-        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(cls, Searchable.class, MongoId.class, Unique.class);
+        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(cls, Searchable.class);
 
         fields.add(ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException("No id field")));
         return fields;

@@ -286,7 +286,7 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     private List<Field> getSearchableFields() {
-        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class, Unique.class);
+        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class);
 
         Field idProperty = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idProperty"));
         fields.add(idProperty);
