@@ -3,7 +3,6 @@ package com.elepy.tests.basic;
 
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
-import com.elepy.annotations.Input;
 import com.elepy.http.HttpMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +24,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "resourceTable")
 public class Resource {
+    @Searchable
     @Identifier
     @Id
     private int id;
@@ -39,6 +39,7 @@ public class Resource {
     private String MARKDOWN;
 
     @Unique
+    @Searchable
     @JsonProperty("uniqueField")
     private String uniqueField;
 
