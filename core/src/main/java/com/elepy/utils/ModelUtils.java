@@ -76,7 +76,7 @@ public class ModelUtils {
         property.setRequired(accessibleObject.getAnnotation(Required.class) != null);
         property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
         property.setImportance(importance == null ? 0 : importance.value());
-        property.setUnique(accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
+        property.setUnique(idProperty || accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
         property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && accessibleObject.getAnnotation(Identifier.class).generated()));
     }
 
@@ -87,7 +87,7 @@ public class ModelUtils {
         property.setAvailableFilters(availableFilters);
     }
 
-    public static <T> Schema<T> createBasicSchema(Class<T> classType){
+    public static <T> Schema<T> createBasicSchema(Class<T> classType) {
         var model = new Schema<T>();
         final Model restModel = classType.getAnnotation(Model.class);
 
@@ -118,6 +118,7 @@ public class ModelUtils {
         return model;
 
     }
+
     public static <T> Schema<T> createSchemaFromClass(Class<T> classType) {
 
         final var basicSchema = createBasicSchema(classType);

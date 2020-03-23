@@ -1,11 +1,11 @@
 package com.elepy.mongo.fast;
 
-import com.elepy.dao.Crud;
 import com.elepy.dao.Page;
 import com.elepy.dao.PageSettings;
 import com.elepy.dao.Query;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.mongo.MongoCrudFactory;
+import com.elepy.mongo.MongoDao;
 import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DB;
@@ -15,14 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DefaultMongoDaoTest extends BaseFongo {
 
-    private Crud<Resource> defaultMongoDao;
+    private MongoDao<Resource> defaultMongoDao;
     private Jongo jongo;
 
     @BeforeEach
@@ -32,7 +33,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultElepyContext.registerDependency(DB.class, getDb());
         defaultElepyContext.registerDependency(new ObjectMapper());
 
-        defaultMongoDao = defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(ModelUtils.createSchemaFromClass(Resource.class));
+        defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(ModelUtils.createSchemaFromClass(Resource.class));
 
         jongo = new Jongo(getDb());
     }
@@ -113,8 +114,15 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
     }
 
-    public void testGetById() {
+    @Test
+    public void testIndexCreation() {
 
+        var indexes = StreamSupport.stream(defaultMongoDao.mongoCollection().listIndexes().spliterator(), false)
+                .collect(Collectors.toList());
+
+
+        assertThat(indexes)
+                .hasSize(4);
     }
 
     private long count() {

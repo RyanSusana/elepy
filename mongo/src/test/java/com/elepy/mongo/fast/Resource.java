@@ -3,6 +3,7 @@ package com.elepy.mongo.fast;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.http.HttpMethod;
+import com.elepy.mongo.annotations.MongoIndex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 @Find(requiredPermissions = {})
 @Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
 @Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
+@MongoIndex(text = 3, properties = "textArea:-1")
 public class Resource {
     @Identifier
     private int id;

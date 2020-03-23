@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.jongo.Find;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -48,15 +49,18 @@ public abstract class MongoDao<T> implements Crud<T> {
         return jongo;
     }
 
-    protected MongoCollection collection() {
+    protected MongoCollection jongoCollection() {
         return getJongo().getCollection(mongoCollectionName());
     }
 
 
+    public com.mongodb.client.MongoCollection<Document> mongoCollection() {
+        return getMongoClient().getDatabase(db().getName()).getCollection(mongoCollectionName());
+    }
     @Override
     public List<T> searchInField(Field field, String qry) {
         final String propertyName = ReflectionUtils.getPropertyName(field);
-        return toPage(addDefaultSort(collection().find("{#: #}", propertyName, qry)), new PageSettings(1L, Integer.MAX_VALUE, List.of()), (int) collection().count("{#: #}", propertyName, qry)).getValues();
+        return toPage(addDefaultSort(jongoCollection().find("{#: #}", propertyName, qry)), new PageSettings(1L, Integer.MAX_VALUE, List.of()), (int) jongoCollection().count("{#: #}", propertyName, qry)).getValues();
     }
 
     private Find addDefaultSort(Find find) {
@@ -67,23 +71,23 @@ public abstract class MongoDao<T> implements Crud<T> {
 
     @Override
     public Optional<T> getById(final Serializable id) {
-        return Optional.ofNullable(collection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(getType()));
+        return Optional.ofNullable(jongoCollection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(getType()));
     }
 
     @Override
     public List<T> getAll() {
-        return Lists.newArrayList(collection().find().as(getType()).iterator());
+        return Lists.newArrayList(jongoCollection().find().as(getType()).iterator());
     }
 
     @Override
     public void deleteById(Serializable id) {
-        collection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
+        jongoCollection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
     }
 
     @Override
     public void update(T item) {
         final Object id = getId(item);
-        collection().update(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).with(item);
+        jongoCollection().update(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).with(item);
 
     }
 
@@ -99,7 +103,7 @@ public abstract class MongoDao<T> implements Crud<T> {
     @Override
     public void create(T item) {
         try {
-            collection().save(item);
+            jongoCollection().save(item);
         } catch (Exception e) {
             throw new ElepyException(e.getMessage(), 500, e);
         }
@@ -151,7 +155,7 @@ public abstract class MongoDao<T> implements Crud<T> {
                 .map(propertySort -> String.format("'%s': %d", propertySort.getProperty(), propertySort.getSortOption().getVal()))
                 .collect(Collectors.joining(","));
 
-        final ArrayList<T> values = Lists.newArrayList(collection()
+        final ArrayList<T> values = Lists.newArrayList(jongoCollection()
                 .find(mongoQuery.compile(), (Object[]) mongoQuery.getParameters())
                 .limit(settings.getPageSize())
                 .skip((int) ((settings.getPageNumber() - 1) * settings.getPageSize()))
@@ -169,6 +173,6 @@ public abstract class MongoDao<T> implements Crud<T> {
     }
 
     private long count(MongoQuery query) {
-        return collection().count(query.compile(), (Object[]) query.getParameters());
+        return jongoCollection().count(query.compile(), (Object[]) query.getParameters());
     }
 }

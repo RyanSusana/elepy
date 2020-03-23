@@ -23,7 +23,7 @@
         <guava.version>28.0-jre</guava.version>
         <assertj.version>3.14.0</assertj.version>
         <headlessMode>false</headlessMode>
-        <revision>3.0.0-alpha-10</revision>
+        <revision>3.0.0-alpha-11</revision>
     </properties>
 
     <licenses>
