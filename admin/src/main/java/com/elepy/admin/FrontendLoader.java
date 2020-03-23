@@ -37,13 +37,13 @@ public class FrontendLoader implements ElepyExtension {
                     ),
                     getResources(
                             "frontend/dist/js/",
-                            "/js/:name",
+                            "/elepy/js/:name",
                             "application/javascript",
                             ".js"
                     ),
                     getResources(
                             "frontend/dist/css/",
-                            "/css/:name",
+                            "/elepy/css/:name",
                             "text/css",
                             ".css"
                     )
