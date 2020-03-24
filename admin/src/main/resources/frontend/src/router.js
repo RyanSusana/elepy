@@ -13,8 +13,8 @@ const requireLogin = (to, from, next) => {
 
     store.watch(
         (state, getters) => getters.ready,
-        (value) => {
-            if (value === true) {
+        (ready) => {
+            if (ready === true) {
                 if (!store.getters.loggedIn) {
                     next({
                         path: '/login',
@@ -85,9 +85,6 @@ const routes = [
             {
                 path: '/:modelPath',
                 name: 'generic',
-                // route level code-splitting
-                // this generates a separate chunk (about.[hash].js) for this route
-                // which is lazy-loaded when the route is visited.
                 component: () => import( './views/ModelView.vue'),
                 meta: {
                     title: null,

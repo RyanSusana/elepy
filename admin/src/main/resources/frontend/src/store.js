@@ -1,16 +1,17 @@
 import axios from "axios"
 import Vue from "vue"
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+    plugins: [createPersistedState()],
     state: {
         allModels: [],
         ready: false,
         loggedInUser: null,
         token: null,
-        inviteLink: null,
         hasUsers: null,
         settings: null,
         loadingItems: []
@@ -52,16 +53,15 @@ export default new Vuex.Store({
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
         },
 
-        async init({dispatch, commit}) {
-            let token = window.localStorage.getItem('token');
-
+        async init({dispatch, commit, state}) {
             await axios.get("/elepy/has-users")
                 .then(() =>
                     commit('SET_HAS_USERS', true))
                 .catch(() =>
                     commit('SET_HAS_USERS', false));
-            if (token != null) {
-                return dispatch('logInWithToken', token)
+
+            if (state.token != null) {
+                return dispatch('logInWithToken', state.token)
                     .catch(() => window.localStorage.removeItem('token'))
                     .finally(() => commit("READY"));
             } else {
@@ -76,8 +76,6 @@ export default new Vuex.Store({
             })).data;
 
             await dispatch('getModels');
-
-            window.localStorage.setItem("token", loginResponseToken);
 
             axios.defaults.headers.authorization = 'Bearer ' + loginResponseToken;
 
@@ -102,6 +100,7 @@ export default new Vuex.Store({
             window.localStorage.removeItem('token');
             delete axios.defaults.headers["authorization"];
             commit("SET_USER", null);
+            commit("SET_TOKEN", null)
         }
     },
     getters: {
