@@ -3,7 +3,7 @@
     <ReferenceField
             v-if="field.arrayType === 'REFERENCE'"
             :field="field"
-            :value="value"
+            v-model="values"
             @input="handleInput"
             :multiple="true"
     >
@@ -150,7 +150,7 @@
                 );
             },
             isBigField() {
-                var smallFields = ["DATE", "ENUM", "BOOLEAN"];
+                let smallFields = ["DATE", "ENUM", "BOOLEAN"];
                 return (
                     !this.isNumberOrTextfield && !smallFields.includes(this.field.arrayType)
                 );
@@ -158,14 +158,8 @@
         },
         methods: {
             handleInput(e) {
-                if (e == null) {
-                    this.$emit("input", this.values);
-                    this.$forceUpdate();
-                } else {
-
-                    this.$emit("input", e);
-                    this.$forceUpdate();
-                }
+                this.$emit("input", this.values);
+                this.$forceUpdate();
             },
 
             removeIndex(index) {
