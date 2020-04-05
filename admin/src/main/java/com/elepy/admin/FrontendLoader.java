@@ -74,18 +74,14 @@ public class FrontendLoader implements ElepyExtension {
 
     private Stream<Resource> getResources(String dir, String pathOnServer, String contentType, String extension) throws IOException, URISyntaxException {
         return listResourcesInDir(dir, extension).map(resource -> {
-            try {
-                final var resourceLocation = dir + resource;
-                final var pathOnServ = pathOnServer.replace(":name", resource);
-                return new Resource(
-                        pathOnServ,
-                        contentType,
-                        IOUtils.toByteArray(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(resourceLocation)))
-                );
+            final var resourceLocation = dir + resource;
+            final var pathOnServ = pathOnServer.replace(":name", resource);
+            return new Resource(
+                    pathOnServ,
+                    contentType,
+                    resourceLocation
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            );
         });
     }
 

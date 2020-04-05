@@ -5,6 +5,7 @@ import com.elepy.exceptions.ElepyErrorMessage;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.uploads.FileUpload;
+import com.google.common.net.HttpHeaders;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.io.IOUtils;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.GZIPInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -174,6 +176,7 @@ public abstract class HttpServiceTest {
         assertThat(send.body()).isEqualTo("Exception handled");
         assertThat(send.statusCode()).isEqualTo(400);
     }
+
 
     @Test
     void can_handleException_inBefore() throws IOException, InterruptedException {
@@ -611,6 +614,50 @@ public abstract class HttpServiceTest {
 
         assertThat(response.uri()).isEqualTo(URI.create("http://www.google.com/"));
 
+    }
+
+    @Test
+    void responses_HaveProperInputStream() throws IOException, InterruptedException {
+        service.get("/input-stream", context -> {
+            context.response().result(inputStream("cv.pdf"));
+        });
+
+
+        service.ignite();
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:3030/input-stream"))
+                .GET()
+                .build();
+
+        final var send = httpClient.send(request, HttpResponse
+                .BodyHandlers.ofInputStream());
+
+        assertThat(IOUtils.contentEquals(inputStream("cv.pdf"), send.body()))
+                .isTrue();
+    }
+
+    @Test
+    void responses_HaveProperInputStream_GZIP() throws IOException, InterruptedException {
+        service.get("/input-stream", context -> {
+            context.response().header("Content-Encoding", "gzip");
+            context.response().result(inputStream("logo-dark.svg"));
+        });
+
+
+        service.ignite();
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:3030/input-stream"))
+                .GET()
+                .setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip")
+                .build();
+
+        final var send = httpClient.send(request, HttpResponse
+                .BodyHandlers.ofInputStream());
+
+        assertThat(IOUtils.contentEquals(inputStream("logo-dark.svg"), new GZIPInputStream(send.body())))
+                .isTrue();
     }
 
     private void assertResponseReturns(String method, String path, String expected) {

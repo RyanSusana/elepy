@@ -4,6 +4,10 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public interface Response {
     ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
@@ -15,6 +19,14 @@ public interface Response {
     void result(String body);
 
     void result(byte[] bytes);
+
+    default void result(InputStream stream) {
+        try {
+            result(IOUtils.toByteArray(stream));
+        } catch (IOException e) {
+            throw new ElepyException("Error processing InputStream", 500, e);
+        }
+    }
 
     String result();
 

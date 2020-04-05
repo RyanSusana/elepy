@@ -2,7 +2,6 @@ package com.elepy.javalin;
 
 import com.elepy.http.*;
 import io.javalin.Javalin;
-import io.javalin.core.compression.CompressionStrategy;
 import io.javalin.http.HandlerType;
 import io.javalin.http.staticfiles.Location;
 
@@ -12,12 +11,8 @@ public class JavalinService implements HttpService {
     private Javalin javalin;
 
     public JavalinService() {
-        this.javalin = Javalin.create(javalinConfig -> {
-            javalinConfig.dynamicGzip = false;
-            javalinConfig.inner.compressionStrategy = CompressionStrategy.NONE;
-        });
+        this.javalin = Javalin.create();
         this.port = 1337;
-
     }
 
     @Override

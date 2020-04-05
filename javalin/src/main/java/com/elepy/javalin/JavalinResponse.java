@@ -5,6 +5,7 @@ import io.javalin.http.Context;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
@@ -51,6 +52,7 @@ public class JavalinResponse implements Response {
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     public String result() {
