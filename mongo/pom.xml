@@ -43,6 +43,7 @@
             <artifactId>jongo</artifactId>
             <version>1.4.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>

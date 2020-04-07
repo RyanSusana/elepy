@@ -8,12 +8,13 @@ import com.elepy.mongo.annotations.MongoIndex;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
-import com.mongodb.client.MongoCollection;
+import com.mongodb.MongoSocketException;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jongo.Jongo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
     private final ObjectMapper objectMapper;
     private final Jongo jongo;
 
+    private static final Logger logger = LoggerFactory.getLogger("mongo");
 
     public DefaultMongoDao(final DB db, final String collectionName, final Schema<T> schema) {
         this(db, collectionName, schema, new ObjectMapper());
@@ -47,16 +49,20 @@ public class DefaultMongoDao<T> extends MongoDao<T> {
 
 
     private void createIndexes() {
-        Arrays.stream(schema.getJavaClass().getAnnotationsByType(MongoIndex.class))
-                .forEach(this::createIndex);
+        try {
+            Arrays.stream(schema.getJavaClass().getAnnotationsByType(MongoIndex.class))
+                    .forEach(this::createIndex);
 
-        final var collection = mongoCollection();
+            final var collection = mongoCollection();
 
-        schema.getProperties().stream().filter(Property::isUnique)
-                .forEach(property -> collection.createIndex(new BasicDBObject(property.getName(), 1)));
+
+            schema.getProperties().stream().filter(Property::isUnique)
+                    .forEach(property -> collection.createIndex(new BasicDBObject(property.getName(), 1)));
+        } catch (MongoSocketException e) {
+            logger.error("Failed at creating index", e);
+        }
 
     }
-
 
 
     private void createIndex(MongoIndex annotation) {
