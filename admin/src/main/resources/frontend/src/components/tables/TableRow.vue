@@ -44,7 +44,7 @@
     import UIkit from "uikit";
     import Utils from "../../utils";
     import EventBus from "../../event-bus.js";
-    import ActionsButton from "../settings/ActionsButton"
+    import ActionsButton from "../base/ActionsButton"
 
     const axios = require("axios/index");
     export default {

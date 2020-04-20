@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    import Elepy from "../components/ElepySingle";
+    import ElepySingle from "../components/ElepySingle";
 
     import {mapGetters} from "vuex";
     export default {
@@ -15,7 +15,7 @@
                 return this.getModel(this.$route.params.modelPath);
             }
         },
-        components: {Elepy},
+        components: {Elepy: ElepySingle},
     }
 </script>
 

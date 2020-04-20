@@ -4,7 +4,6 @@ import com.elepy.Elepy;
 import com.elepy.annotations.*;
 import com.elepy.auth.Permissions;
 import com.elepy.handlers.*;
-import com.elepy.http.ActionType;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.Schema;
@@ -27,9 +26,10 @@ public class ModelHandlers<T> {
     @SuppressWarnings("unchecked")
     private ModelHandlers(Elepy elepy, Schema<T> schema) {
 
-        this.defaultActions = Arrays.stream(Default.values()).collect(Collectors.toMap(value -> value,
-                value -> value.schemaToHttpAction.apply(elepy, schema)
-        ));
+        this.defaultActions = Arrays.stream(Default.values())
+                .collect(Collectors.toMap(value -> value,
+                        value -> value.schemaToHttpAction.apply(elepy, schema)
+                ));
 
         this.extraActions = Arrays.stream(schema.getJavaClass().getAnnotationsByType(Action.class))
                 .map(action -> new ModelAction<>(
@@ -82,11 +82,22 @@ public class ModelHandlers<T> {
                     .map(Delete::requiredPermissions)
                     .orElse(Permissions.DEFAULT);
 
-            final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultDelete());
+            final ActionHandler<?> handler = annotation
+                    .map(anno -> (ActionHandler<?>) elepy
+                            .initialize(anno.handler()))
+                    .orElse(new DefaultDelete());
 
 
-            return new ModelAction<>(HttpAction.of("Delete", path,
-                    permissions, HttpMethod.DELETE, ActionType.SINGLE), handler);
+            return new ModelAction<>(new HttpAction(
+                    "Delete",
+                    path,
+                    permissions,
+                    HttpMethod.DELETE,
+                    true,
+                    true,
+                    "Deletes the selected records",
+                    "Are you sure that you want to delete these record(s)",
+                    null), handler);
         }
 
         private static ModelAction updateAction(Elepy elepy, Schema<?> schema, boolean whole) {
@@ -99,8 +110,16 @@ public class ModelHandlers<T> {
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultUpdate<>());
 
-            return new ModelAction<>(HttpAction.of("Update", schema.getPath() + "/:id",
-                    permissions, whole ? HttpMethod.PUT : HttpMethod.PATCH, ActionType.SINGLE), handler);
+            return new ModelAction<>(new HttpAction(
+                    "Update",
+                    schema.getPath() + "/:id",
+                    permissions,
+                    whole ? HttpMethod.PUT : HttpMethod.PATCH,
+                    true,
+                    false,
+                    "",
+                    "",
+                    null), handler);
         }
 
         private static ModelAction findOneAction(Elepy elepy, Schema<?> schema) {
@@ -110,8 +129,16 @@ public class ModelHandlers<T> {
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findOneHandler())).orElse(new DefaultFindOne<>());
 
-            return new ModelAction<>(HttpAction.of("Find One", schema.getPath() + "/:id",
-                    getFindPermissions(schema), HttpMethod.GET, ActionType.SINGLE), handler);
+            return new ModelAction<>(new HttpAction(
+                    "Find One",
+                    schema.getPath() + "/:id",
+                    getFindPermissions(schema),
+                    HttpMethod.GET,
+                    false,
+                    false,
+                    "",
+                    "",
+                    null), handler);
         }
 
         private static ModelAction findManyAction(Elepy elepy, Schema<?> schema) {
@@ -120,8 +147,8 @@ public class ModelHandlers<T> {
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findManyHandler())).orElse(new DefaultFindMany<>());
 
-            return new ModelAction<>(HttpAction.of("Find Many", schema.getPath(),
-                    getFindPermissions(schema), HttpMethod.GET, ActionType.MULTIPLE), handler);
+            return new ModelAction<>(new HttpAction("Find Many", schema.getPath(),
+                    getFindPermissions(schema), HttpMethod.GET, true, true, "", "", null), handler);
         }
 
         private static ModelAction createAction(Elepy elepy, Schema<?> schema) {
@@ -135,8 +162,8 @@ public class ModelHandlers<T> {
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultCreate<>());
 
-            return new ModelAction<>(HttpAction.of("Create", schema.getPath(),
-                    permissions, HttpMethod.POST, ActionType.MULTIPLE),
+            return new ModelAction<>(new HttpAction("Create", schema.getPath(),
+                    permissions, HttpMethod.POST, true, true, "", "", null),
 
                     handler);
         }

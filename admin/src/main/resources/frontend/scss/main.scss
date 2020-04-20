@@ -155,6 +155,7 @@ serif;
 }
 
 
+
 @import "~uikit/src/scss/uikit-theme.scss";
 @import "components/sidebar";
 @import "components/nav";
@@ -163,8 +164,17 @@ serif;
 @import "components/login";
 @import "components/sprites";
 
+
+.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+
+}
+
+
 .uk-button {
   border-radius: $button-line-height*2;
+  transition: all .3s;
 }
 
 .uk-button-large {
@@ -175,6 +185,14 @@ serif;
 .uk-background-primary {
   background-color: $background-primary-background;
   background-color: var(--primary-color);
+  .disabled{
+    background-color: var(--primary-disabled-color);
+  }
+}
+
+.uk-button-danger.disabled{
+  background-color: lighten(desaturate($global-danger-background, 30%), 15%);
+
 }
 
 pre {

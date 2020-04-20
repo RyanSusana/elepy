@@ -1,5 +1,6 @@
 <template>
     <div :class="{'is-loading': isLoading}">
+
         <div class="uk-padding uk-padding-remove-top elepy-table">
             <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" id="table-data">
                 <thead>
@@ -15,42 +16,6 @@
                                     v-on:change="allSelected? deselectAll():selectAll()"
                             >
                             <div class="uk-margin-small-left uk-text-small">{{selectedRows.length}}</div>
-                            <div class>
-                                <div class="uk-inline multi-action">
-                                    <a class="uk-icon-link" uk-icon="icon: more-vertical; ratio: 1"></a>
-                                    <div uk-drop="mode: click; pos:bottom-left">
-                                        <div class="uk-card uk-card-body uk-card-default uk-padding-small">
-                                            <ul class="uk-nav uk-nav-defalt">
-                                                <li class="uk-nav-header">{{selectedRows.length}} {{model.name}}
-                                                    selected
-                                                </li>
-
-                                                <li class="uk-nav-divider"></li>
-                                                <li class="uk-flex uk-flex-middle uk-text-warning">
-                                                    <span uk-icon="icon: close;"></span>
-                                                    <a
-                                                            @click="selectedRows = []"
-                                                            action="clear"
-                                                            class="uk-margin-small-left uk-text-warning"
-                                                    >Clear Selection</a>
-                                                </li>
-                                                <li class="uk-flex uk-flex-middle uk-text-danger">
-                                                    <span uk-icon="icon: trash;"></span>
-                                                    <a
-                                                            @click="deleteData()"
-                                                            action="delete"
-                                                            class="uk-margin-small-left uk-text-danger"
-                                                    >Delete Selected {{model.name}}</a>
-                                                </li>
-                                                <li class="uk-nav-divider" v-if="multiActions.length > 0"></li>
-                                                <li :key="action.name" class="uk-active" v-for="action in multiActions">
-                                                    <a :action="action.name" @click="executeAction(action)">{{action.name}}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </th>
                     <th
@@ -85,10 +50,15 @@
     </div>
 </template>
 <style lang="scss">
+    .table-controls {
+        margin: 0 150px;
+    }
+
     .is-loading {
         opacity: 0.3;
     }
-    .elepy-table{
+
+    .elepy-table {
         min-height: 50vh;
     }
 
@@ -106,36 +76,31 @@
             padding: 0 10px;
         }
     }
-    .options
-    {
+
+    .options {
         min-width: 70px;
     }
 </style>
 <script>
     import TableRow from "./TableRow.vue";
     import Utils from "../../utils";
-    import UIkit from "uikit";
+    import QueryFilter from "../settings/QueryFilter.vue";
+    import Pagination from "../settings/Pagination";
 
+    import {mapState} from "vuex"
     import EventBus from "../../event-bus";
 
-    const axios = require("axios/index");
+    import axios from "axios";
 
     export default {
         props: ["model", "current-page", "isLoading", "updateEnabled"],
-        data() {
-            return {
-                selectedRows: []
-            };
-        },
-        components: {TableRow},
+
+
+        components: {TableRow, QueryFilter, Pagination},
         computed: {
+            ...mapState(["selectedRows"]),
             singleActions() {
-                return this.model.actions;
-            },
-            multiActions() {
-                return this.model.actions.filter(
-                    action => action["actionType"] === "MULTIPLE"
-                );
+                return this.model.actions.filter(action => action.singleRecord);
             },
             tableFields() {
                 return this.model.properties.filter(function (field) {
@@ -178,60 +143,24 @@
 
                     });
             },
-            deleteData() {
-                UIkit.modal
-                    .confirm(
-                        "Are you sure that you want to delete " +
-                        this.selectedRows.length +
-                        " items?",
-                        {
-                            labels: {
-                                ok: "Yes",
-                                cancel: "Cancel"
-                            },
-                            stack: true
-                        }
-                    )
-                    .then(
-                        () => {
-                            axios({
-                                method: "delete",
-                                url:
-                                    Utils.url +
-                                    this.model.path +
-                                    "?ids=" +
-                                    this.selectedRows.join(",")
-                            })
-                                .then(response => {
-                                    this.$emit("updateData");
-                                    this.selectedRows = [];
-                                    Utils.displayResponse(response);
-                                })
-                                .catch(function (error) {
 
-                                });
-                        },
-                        function () {
-                        }
-                    );
-            },
             updateData() {
                 EventBus.$emit("updateData");
             },
             selectAll() {
                 this.deselectAll();
-                this.selectedRows = this.selectedRows.concat(this.currentPageIds);
+                this.$store.commit("SELECT_ROWS", this.currentPageIds);
             },
             deselectAll() {
-                this.selectedRows = this.selectedRows.filter(
+                this.$store.commit("SET_SELECTED_ROWS", this.selectedRows.filter(
                     el => this.currentPageIds.indexOf(el) < 0
-                );
+                ));
             },
             tableRowSelected(id) {
                 if (!this.isSelected(id)) {
-                    this.selectedRows.push(id);
+                    this.$store.commit("SELECT_ROWS", [id])
                 } else {
-                    this.selectedRows = this.selectedRows.filter(i => i !== id);
+                    this.$store.commit("SET_SELECTED_ROWS", this.selectedRows.filter(i => i !== id));
                 }
             },
             isSelected(id) {

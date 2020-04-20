@@ -6,7 +6,9 @@ import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    plugins: [createPersistedState()],
+    plugins: [createPersistedState({
+        paths: ["token"]
+    })],
     state: {
         allModels: [],
         ready: false,
@@ -14,9 +16,16 @@ export default new Vuex.Store({
         token: null,
         hasUsers: null,
         settings: null,
+        selectedRows: [],
         loadingItems: []
     },
     mutations: {
+        SELECT_ROWS(state, rows) {
+            state.selectedRows.push(...rows)
+        },
+        SET_SELECTED_ROWS(state, selectedRows) {
+            state.selectedRows = selectedRows;
+        },
         SET_MODELS(state, models) {
             state.allModels = models;
         },

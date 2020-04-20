@@ -16,7 +16,7 @@
             </ActionButton>
             <ActionsButton class="uk-margin-small-right" :actions="model.actions"
                            :ids="[id]"
-                           v-if="!isCreating && model.actions.length >0"></ActionsButton>
+                           v-if="!isCreating && actions.length >0"></ActionsButton>
             <a action="reset"
                @click="resetToLastSaved"
                class="uk-button uk-button-default uk-margin-small-right"
@@ -83,7 +83,7 @@
     import Vue from "vue";
     import BaseLayout from "./base/BaseLayout.vue";
 
-    import ActionsButton from "./settings/ActionsButton";
+    import ActionsButton from "./base/ActionsButton";
 
     import isEqual from "lodash/isEqual"
     import ActionButton from "./base/ActionButton";
@@ -107,6 +107,13 @@
         components: {ActionButton, ObjectField, ActionsButton, BaseLayout},
 
         computed: {
+            actions(){
+              if(this.singleMode){
+                  return this.model.actions;
+              } else{
+                  return this.model.actions.filter(action => action.singleRecord || action.multipleRecords)
+              }
+            },
             //Return if it should be a PUT or POST
             isCreating() {
                 if (this.recordId != null) {

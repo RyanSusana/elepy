@@ -1,6 +1,6 @@
 <template>
     <div class="uk-flex">
-        <div class="amount-result-box uk-light">
+        <div class="amount-result-box">
             <select
                     @change="emitChange"
                     class="uk-select pagination-select"
@@ -12,7 +12,7 @@
                 <option :value="100">100 Results</option>
             </select>
         </div>
-        <ul class="pagination uk-pagination uk-light uk-flex-center uk-flex-middle">
+        <ul class="pagination uk-pagination uk-flex-center uk-flex-middle">
             <li>
                 <a v-on:click="setPage(pagination.currentPageNumber - 1)">
                     <span uk-pagination-previous></span>
@@ -40,8 +40,6 @@
     .pagination {
         margin: 0 20px;
         padding: 0 10px;
-        border-left: 1px solid #444;
-        border-right: 1px solid #444;
 
         li {
             padding: 0 10px;

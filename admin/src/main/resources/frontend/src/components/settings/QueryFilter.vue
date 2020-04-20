@@ -78,12 +78,12 @@
 <style lang="scss">
     #search-input {
         border-radius: 200px;
-        width: 15em;
+        width: 20em;
         transition: all 0.2s;
 
         &.filter-focused,
         &.focused {
-            width: 20em;
+            width: 30em;
         }
     }
 

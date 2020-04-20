@@ -6,6 +6,7 @@ import router from './router'
 import axios from "axios"
 import * as Vibrant from 'node-vibrant'
 
+
 Vue.config.productionTip = false;
 
 
@@ -25,10 +26,9 @@ store.dispatch('init');
 
 axios.interceptors.request.use(function (config) {
 
-    config.popo = "ok";
     let uniqueId = Math.random().toString(36).substring(2) + Date.now().toString(36);
 
-    let description = config.description ?? "Communicating with Elepy";
+    let description = config.description ?? "Communicating with ElepySingle";
 
     config.requestInfo = {uniqueId, description}
 
@@ -56,8 +56,20 @@ function adjust(color, amount) {
 
 Vibrant.from(store.getters.logo).getPalette()
     .then((palette) => {
+
+        let primary = palette.Vibrant.hex;
+        let primaryHover = adjust(palette.Vibrant.hex, -10);
+        let primaryDisabled = palette.DarkVibrant.hsl;
+
+
+        primaryDisabled = "hsla(" + primaryDisabled[0]*360 + ", 75%, 82%, 1)";
+
+
         document.documentElement.style
-            .setProperty('--primary-color', palette.Vibrant.hex)
+            .setProperty('--primary-color', primary);
         document.documentElement.style
-            .setProperty('--primary-hover-color', adjust(palette.Vibrant.hex, -10))
+            .setProperty('--primary-hover-color', primaryHover);
+
+        document.documentElement.style
+            .setProperty('--primary-disabled-color', primaryDisabled);
     });

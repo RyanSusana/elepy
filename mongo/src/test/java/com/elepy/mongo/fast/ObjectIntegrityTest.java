@@ -18,8 +18,8 @@ public class ObjectIntegrityTest extends BaseFongo {
     @Test
     public void testIntegrityUnique() throws Exception {
         super.setUp();
-        DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", ModelUtils.createSchemaFromClass(Resource.class));
-        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(ModelUtils.createSchemaFromClass(Resource.class), defaultMongoDao, null, null));
+        DefaultMongoDao<Resource> defaultMongoDao = new DefaultMongoDao<>(getDb(), "resources", ModelUtils.createDeepSchema(Resource.class));
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(ModelUtils.createDeepSchema(Resource.class), defaultMongoDao, null, null));
         defaultMongoDao.create(validObject());
 
 

@@ -168,4 +168,5 @@ public class Schema<T> {
     public void setView(String view) {
         this.view = view;
     }
+
 }

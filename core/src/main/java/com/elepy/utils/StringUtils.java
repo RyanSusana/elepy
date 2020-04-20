@@ -13,6 +13,13 @@ public class StringUtils {
 
     }
 
+    public static String emptyToNull(String s) {
+        if (s == null || s.isBlank()) {
+            return null;
+        }
+        return s;
+    }
+
     public static String slugify(String toSlugify) {
         return slugify.slugify(toSlugify);
     }

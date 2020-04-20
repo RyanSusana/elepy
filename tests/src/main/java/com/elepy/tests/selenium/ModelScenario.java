@@ -62,8 +62,8 @@ public class ModelScenario<T> extends LoggedInScenario {
 
     public ModelScenario<T> deleteSelected() {
         final var tableHtml = getTableHtml();
-        clickMultiAction("delete")
-                .confirm();
+        driver.findElement(By.cssSelector(".action-bar *[action=delete]")).click();
+        confirm();
 
         waitUntilChange(tableHtml);
         return this;
@@ -103,10 +103,17 @@ public class ModelScenario<T> extends LoggedInScenario {
     }
 
     public ModelScenario<T> clickMultiAction(String action) {
-        driver.findElement(By.cssSelector(".multi-action > a")).click();
-        final var dropdownSelector = By.cssSelector(".uk-drop");
-        driver.waitTillCanSee(dropdownSelector);
-        driver.findElement(dropdownSelector).findElement(By.cssSelector(String.format("*[action='%s']", action))).click();
+        final var actionElementCss = String.format("#multi-actions *[action='%s']", action);
+        final var element = driver.findElement(By.cssSelector(actionElementCss));
+
+        if (element.isDisplayed()) {
+            element.click();
+        } else {
+            clickMultiAction("select");
+
+            driver.waitTillCanSee(By.cssSelector(actionElementCss));
+            clickMultiAction(action);
+        }
         return this;
     }
 

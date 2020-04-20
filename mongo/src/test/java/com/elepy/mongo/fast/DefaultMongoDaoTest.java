@@ -33,7 +33,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultElepyContext.registerDependency(DB.class, getDb());
         defaultElepyContext.registerDependency(new ObjectMapper());
 
-        defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(ModelUtils.createSchemaFromClass(Resource.class));
+        defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(ModelUtils.createDeepSchema(Resource.class));
 
         jongo = new Jongo(getDb());
     }

@@ -1,13 +1,11 @@
 package com.elepy.utils;
 
 import com.elepy.annotations.*;
-import com.elepy.auth.Permissions;
 import com.elepy.dao.FilterType;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.http.ActionType;
 import com.elepy.http.HttpAction;
-import com.elepy.http.HttpMethod;
 import com.elepy.models.FieldType;
+import com.elepy.models.InputModel;
 import com.elepy.models.Property;
 import com.elepy.models.Schema;
 import com.elepy.models.options.*;
@@ -25,14 +23,66 @@ public class ModelUtils {
     private ModelUtils() {
     }
 
+    /**
+     * Creates the basics of a schema. This method does not revoke any recursive methods
+     */
+    public static <T> Schema<T> createShallowSchema(Class<T> classType) {
+        var model = new Schema<T>();
+        final Model restModel = classType.getAnnotation(Model.class);
+
+
+        if (restModel == null) {
+            throw new ElepyConfigException(String.format(
+                    "%s is not annotated with @Model", classType.getName()
+            ));
+        }
+
+        model.setViewableOnCMS(!classType.isAnnotationPresent(Hidden.class));
+        model.setPath(restModel.path());
+        model.setName(restModel.name());
+        model.setJavaClass(classType);
+        model.setDefaultSortDirection(restModel.defaultSortDirection());
+
+        model.setView(Optional.ofNullable(classType.getAnnotation(View.class)).map(View::value).orElse(View.Defaults.DEFAULT));
+
+
+        setupImportantFields(model);
+
+        final String toGet = restModel.defaultSortField();
+        final String idProperty = model.getIdProperty();
+        model.setDefaultSortField(StringUtils.getOrDefault(toGet, idProperty));
+        return model;
+    }
+
+
+    /**
+     * Creates a full schema.
+     */
+    public static <T> Schema<T> createDeepSchema(Class<T> classType) {
+
+        final var schema = createShallowSchema(classType);
+
+        setupActions(schema);
+
+        schema.setProperties(ModelUtils.describeClass(classType));
+
+        return schema;
+    }
+
+    /**
+     * Gets a list of properties from a class
+     */
     public static List<Property> describeClass(Class cls) {
-        return getDeclaredProperties(cls).stream()
-                .map(ModelUtils::describeFieldOrMethod)
+        return getAccessibleObjects(cls).stream()
+                .map(ModelUtils::describeAccessibleObject)
                 .sorted(Comparator.naturalOrder())
                 .collect(Collectors.toList());
     }
 
-    public static List<AccessibleObject> getDeclaredProperties(Class<?> cls) {
+    /**
+     * Gets all fields that are not marked as hidden and all methods annotated with @Generated
+     */
+    public static List<AccessibleObject> getAccessibleObjects(Class<?> cls) {
         return Stream.concat(
                 ReflectionUtils.getAllFields(cls).stream()
                         .filter(field -> !field.isAnnotationPresent(Hidden.class)),
@@ -41,7 +91,10 @@ public class ModelUtils {
         ).collect(Collectors.toList());
     }
 
-    public static Property describeFieldOrMethod(AccessibleObject accessibleObject) {
+    /**
+     * Transforms an AccessibleObject into a property
+     */
+    public static Property describeAccessibleObject(AccessibleObject accessibleObject) {
 
         final boolean idProperty;
 
@@ -87,47 +140,6 @@ public class ModelUtils {
         property.setAvailableFilters(availableFilters);
     }
 
-    public static <T> Schema<T> createBasicSchema(Class<T> classType) {
-        var model = new Schema<T>();
-        final Model restModel = classType.getAnnotation(Model.class);
-
-
-        if (restModel == null) {
-            throw new ElepyConfigException(String.format(
-                    "%s is not annotated with @Model", classType.getName()
-            ));
-        }
-
-        model.setViewableOnCMS(!classType.isAnnotationPresent(Hidden.class));
-        model.setPath(restModel.path());
-        model.setName(restModel.name());
-        model.setJavaClass(classType);
-        model.setDefaultSortDirection(restModel.defaultSortDirection());
-
-        model.setView(Optional.ofNullable(classType.getAnnotation(View.class)).map(View::value).orElse(View.Defaults.DEFAULT));
-
-
-        setupDefaultActions(model);
-        setupImportantFields(model);
-        setupActions(model);
-
-        final String toGet = restModel.defaultSortField();
-        final String idProperty = model.getIdProperty();
-        model.setDefaultSortField(StringUtils.getOrDefault(toGet, idProperty));
-
-        return model;
-
-    }
-
-    public static <T> Schema<T> createSchemaFromClass(Class<T> classType) {
-
-        final var basicSchema = createBasicSchema(classType);
-
-        basicSchema.setProperties(ModelUtils.describeClass(classType));
-
-        return basicSchema;
-    }
-
 
     private static <T> void setupActions(Schema<T> schema) {
         schema.setActions(Stream.of(schema.getJavaClass().getAnnotationsByType(Action.class))
@@ -138,8 +150,33 @@ public class ModelUtils {
 
     public static HttpAction actionToHttpAction(String modelPath, Action actionAnnotation) {
         final String multiPath = modelPath + "/actions" + (actionAnnotation.path().isEmpty() ? "/" + StringUtils.slugify(actionAnnotation.name()) : actionAnnotation.path());
-        return HttpAction.of(actionAnnotation.name(), multiPath, actionAnnotation.requiredPermissions(), actionAnnotation.method(), actionAnnotation.actionType());
+
+        InputModel inputModel = null;
+
+        final Class<?> inputClass = actionAnnotation.input();
+
+
+        if (!inputClass.equals(Object.class)) {
+            final var properties = describeClass(inputClass);
+            if (!properties.isEmpty()) {
+                inputModel = new InputModel();
+                inputModel.setProperties(properties);
+            }
+        }
+
+        return new HttpAction(
+                actionAnnotation.name(),
+                multiPath,
+                actionAnnotation.requiredPermissions(),
+                actionAnnotation.method(),
+                actionAnnotation.singleRecord(),
+                actionAnnotation.multipleRecords(),
+                StringUtils.emptyToNull(actionAnnotation.description()),
+                StringUtils.emptyToNull(actionAnnotation.warning()),
+                inputModel
+        );
     }
+
 
     private static void setupImportantFields(Schema<?> schema) {
 
@@ -196,35 +233,5 @@ public class ModelUtils {
         }
     }
 
-    private static void setupDefaultActions(Schema<?> schema) {
-
-        var createPermissions = Optional
-                .ofNullable(schema.getJavaClass().getAnnotation(Create.class))
-                .map(Create::requiredPermissions)
-                .orElse(Permissions.DEFAULT);
-
-        var updatePermissions = Optional
-                .ofNullable(schema.getJavaClass().getAnnotation(Update.class))
-                .map(Update::requiredPermissions)
-                .orElse(Permissions.DEFAULT);
-
-        var deletePermissions = Optional
-                .ofNullable(schema.getJavaClass().getAnnotation(Delete.class))
-                .map(Delete::requiredPermissions)
-                .orElse(Permissions.DEFAULT);
-
-        var findPermissions = Optional
-                .ofNullable(schema.getJavaClass().getAnnotation(Find.class))
-                .map(Find::requiredPermissions)
-                .orElse(Permissions.NONE);
-
-
-        schema.setFindOneAction(HttpAction.of("Find One", schema.getPath() + "/:id", findPermissions, HttpMethod.GET, ActionType.SINGLE));
-        schema.setFindManyAction(HttpAction.of("Find Many", schema.getPath(), findPermissions, HttpMethod.GET, ActionType.MULTIPLE));
-        schema.setUpdateAction(HttpAction.of("Update", schema.getPath() + "/:id", updatePermissions, HttpMethod.PUT, ActionType.SINGLE));
-        schema.setDeleteAction(HttpAction.of("Delete", schema.getPath() + "/:id", deletePermissions, HttpMethod.DELETE, ActionType.SINGLE));
-        schema.setCreateAction(HttpAction.of("Create", schema.getPath(), createPermissions, HttpMethod.POST, ActionType.MULTIPLE));
-
-    }
 
 }

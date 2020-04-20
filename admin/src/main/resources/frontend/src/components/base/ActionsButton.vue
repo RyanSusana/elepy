@@ -3,12 +3,15 @@
         <button
                 @click="executeAction(selectedAction)"
                 class="uk-button uk-button-primary action-button"
-                :class="{'multiple': filteredActions.length>0}"
+                :class="{'multiple': filteredActions.length>0, 'disabled':  disabled}"
                 :action="selectedAction.name"
-        >{{selectedAction.name}}
+        ><span v-if="ids.length  > 1" class="uk-badge uk-background-default uk-text-primary uk-margin-small-right">{{ids.length}}</span>{{selectedAction.name}}
         </button>
         <div class="uk-inline">
-            <button v-if="filteredActions.length>0" action="select" class="uk-button uk-button-primary action-select"
+            <button v-if="filteredActions.length>0" action="select"
+                    :class="{'disabled':  disabled}"
+
+                    class="uk-button uk-button-primary action-select"
                     type="button">
                 <span uk-icon="icon:  triangle-down"></span>
             </button>
@@ -25,17 +28,24 @@
                 </div>
             </div>
         </div>
+
+        <div :id="this._uid" uk-modal>
+            <ActionModal :action="selectedAction" :recordIds="ids"/>
+        </div>
     </div>
 </template>
 
 <script>
     import Utils from "../../utils";
     import EventBus from "../../event-bus";
+    import * as UIkit from "uikit";
+    import ActionModal from "../modals/ActionModal";
 
-    const axios = require("axios/index");
+    import axios from "axios";
     export default {
         name: "ActionsButton",
-        props: ["actions", "ids"],
+        components: {ActionModal},
+        props: ["actions", "ids", "disabled"],
         computed: {
             filteredActions() {
                 return this.actions !== 'NONE' && this.actions.filter(action => action.name !== this.selectedAction.name)
@@ -52,28 +62,34 @@
                 this.executeAction(action);
             },
             executeAction(selectedAction) {
-                axios({
-                    method: selectedAction.method,
-                    url:
-                        Utils.url +
-                        selectedAction.path +
-                        "?ids=" + this.ids.join(',')
-                })
-                    .then(response => {
+
+                if (selectedAction.inputModel != null) {
+
+                    return UIkit.modal(document.getElementById(this._uid)).show();
+                } else {
+                    return axios({
+                        method: selectedAction.method,
+                        url:
+                            Utils.url +
+                            selectedAction.path +
+                            "?ids=" + this.ids.join(',')
+                    }).then(response => {
                         EventBus.$emit("updateData");
 
                         Utils.displayResponse(response);
                     })
-                    .catch(function (error) {
+                }
 
-                    });
             },
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    .action-select{
+
+
+
+    .action-select {
         font-size: 1.2rem;
         min-width: 20px;
     }

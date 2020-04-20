@@ -10,12 +10,18 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
 import com.elepy.uploads.FileUpload;
 import com.elepy.utils.ReflectionUtils;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public interface Request {
+
+    ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
     String params(String param);
 
@@ -103,6 +109,33 @@ public interface Request {
         }
 
         return recordId(attribute("modelClass"));
+    }
+
+
+    default <T> T inputAs(Class<T> t) {
+        try {
+
+            if (String.class.equals(t)) {
+                final JsonNode jsonNode = DEFAULT_MAPPER.readTree(body());
+
+                if (jsonNode.isTextual()) {
+                    return (T) jsonNode.asText();
+                } else if (jsonNode.fields().hasNext()) {
+                    return (T) jsonNode.fields().next().getValue().asText();
+                } else {
+                    throw new ElepyException("Can't extract string from " + body(), 500);
+                }
+            }
+            return DEFAULT_MAPPER.readValue(body(), t);
+        } catch (JsonParseException e) {
+            throw new ElepyException("Invalid JSON: " + e.getMessage(), 400, e);
+        } catch (JsonProcessingException e) {
+            throw new ElepyException("Error processing JSON: " + e.getMessage(), 500, e);
+        }
+    }
+
+    default String inputAsString() {
+        return inputAs(String.class);
     }
 
     default Set<Serializable> recordIds() {

@@ -3,23 +3,23 @@
         <!-- Navigation -->
         <template #navigation>
             <div class="default-bar">
-                <div class="button-box ">
 
-                </div>
-                <div class="uk-flex search-filter-box">
-                    <Pagination
-                            :lastPageNumber="currentPage.lastPageNumber"
-                            @change="getModelData()"
-                            v-model="pagination"
-                    />
-                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
-                </div>
             </div>
         </template>
 
         <!-- TableView -->
         <template #main>
             <slot name="pageDetails">
+                <div class="uk-flex uk-flex-between table-controls uk-padding-small">
+
+
+                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
+                    <Pagination
+                            :lastPageNumber="currentPage.lastPageNumber"
+                            @change="getModelData()"
+                            v-model="pagination"
+                    />
+                </div>
                 <Table
                         :currentPage="currentPage"
                         :isLoading="isLoading"

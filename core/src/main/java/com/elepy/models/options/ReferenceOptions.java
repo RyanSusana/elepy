@@ -17,7 +17,7 @@ public class ReferenceOptions implements Options {
 
     public static ReferenceOptions of(AnnotatedElement element) {
         final var reference = element.getAnnotation(Reference.class);
-        return new ReferenceOptions(ModelUtils.createBasicSchema(reference.to()));
+        return new ReferenceOptions(ModelUtils.createShallowSchema(reference.to()));
     }
 
     public Schema<?> getReferenceSchema() {

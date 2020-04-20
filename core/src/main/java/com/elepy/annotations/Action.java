@@ -2,7 +2,6 @@ package com.elepy.annotations;
 
 import com.elepy.auth.Permissions;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.http.ActionType;
 import com.elepy.http.HttpMethod;
 
 import java.lang.annotation.*;
@@ -17,17 +16,25 @@ public @interface Action {
 
     Class<? extends ActionHandler> handler();
 
+    HttpMethod method() default HttpMethod.POST;
 
-    HttpMethod method() default HttpMethod.GET;
+    String path() default "";
 
-    String path () default "";
+    Class<?> input() default Object.class;
 
-    ActionType actionType() default ActionType.MULTIPLE;
+    boolean singleRecord() default true;
+
+    boolean multipleRecords() default true;
+
+    String description() default "";
+
+    String warning() default "";
 
     /**
      * A list of required permissions to execute this Action
      */
     String[] requiredPermissions() default Permissions.AUTHENTICATED;
+
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})

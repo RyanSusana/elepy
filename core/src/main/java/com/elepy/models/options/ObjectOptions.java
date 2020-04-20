@@ -57,12 +57,12 @@ public class ObjectOptions implements Options {
     }
 
     private static List<Property> describeProperties(Class cls, int recursionDepth) {
-        return ModelUtils.getDeclaredProperties(cls).stream()
+        return ModelUtils.getAccessibleObjects(cls).stream()
                 .map(accessibleObject -> {
                     if (isRecursive(cls, accessibleObject)) {
                         return createRecursiveObjectOptionsTree(accessibleObject, recursionDepth, 1);
                     } else {
-                        return ModelUtils.describeFieldOrMethod(accessibleObject);
+                        return ModelUtils.describeAccessibleObject(accessibleObject);
                     }
                 })
                 .filter(Objects::nonNull)
@@ -91,11 +91,11 @@ public class ObjectOptions implements Options {
             setOptions(field, property, options);
 
 
-            options.properties = ModelUtils.getDeclaredProperties(objectType).stream().map(accessibleObject -> {
+            options.properties = ModelUtils.getAccessibleObjects(objectType).stream().map(accessibleObject -> {
                 if (isRecursive(objectType, accessibleObject)) {
                     return createRecursiveObjectOptionsTree(field, maxDepth, currentDepth + 1);
                 } else {
-                    return ModelUtils.describeFieldOrMethod(accessibleObject);
+                    return ModelUtils.describeAccessibleObject(accessibleObject);
                 }
 
             }).filter(Objects::nonNull)

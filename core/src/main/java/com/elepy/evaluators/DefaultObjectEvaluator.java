@@ -25,7 +25,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
     private void evaluateObject(Object o, Class c) throws Exception {
         for (Field field : c.getDeclaredFields()) {
             field.setAccessible(true);
-            var fieldDescriber = ModelUtils.describeFieldOrMethod(field);
+            var fieldDescriber = ModelUtils.describeAccessibleObject(field);
 
             if (fieldDescriber.getType().equals(FieldType.OBJECT)) {
                 if (field.get(o) != null)

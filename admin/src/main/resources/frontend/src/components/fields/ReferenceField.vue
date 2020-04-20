@@ -57,7 +57,8 @@
 
                     <span
                     >{{ selected[schema.featuredProperty]  }}</span>
-                    <span class="option__small uk-margin-small-left uk-text-muted uk-text-small" v-if="hasFeaturedField">({{ selected[schema.idProperty]  }})</span>
+                    <span class="option__small uk-margin-small-left uk-text-muted uk-text-small"
+                          v-if="hasFeaturedField">({{ selected[schema.idProperty]  }})</span>
 
                 </span>
 
@@ -93,6 +94,10 @@
             value: {
                 immediate: true,
                 handler: function (o, n) {
+                    //  In case value has cleared
+                    if (n)
+                        this.selected = o;
+
                     if (typeof o !== 'undefined' && !this.initialLoaded) {
                         this.sync()
                     }
@@ -113,7 +118,7 @@
                 return this.field.referenceSchema
             },
 
-            hasFeaturedField(){
+            hasFeaturedField() {
                 return this.schema.featuredProperty !== this.schema.idProperty
             }
         },

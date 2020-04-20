@@ -2,24 +2,35 @@
     <BaseLayout>
         <!-- Navigation -->
         <template #navigation>
-            <div class="default-bar">
-                <div class="button-box ">
+            <div class="default-bar action-bar">
+                <div class="button-box">
                     <router-link v-if="model!=null"
                                  :to="model.path+'/add'"
-                                 class="uk-button uk-button-primary add-button"
+                                 class="uk-button uk-button-primary add-button uk-margin-small-right"
                                  id="add-button"
                     >
                         <i uk-icon="icon: plus"></i> Add
                     </router-link>
+                    <ActionButton class="uk-button-danger uk-button uk-margin-small-right uk-width-small"
+                                  :class="{'disabled': selectedRows.length === 0 }" :action="deleteData"
+                                  action-name="delete"><i uk-icon="icon: trash"></i>
+                        Delete
+                    </ActionButton>
+                    <ActionsButton id="multi-actions" class="uk-margin-small-right actions"
+                                   :actions="multipleActions"
+                                   :ids="selectedRows"
+                                   v-if="multipleActions.length > 0"/>
+                    <ActionsButton id="single-actions" class="uk-margin-small-right actions"
+                                   :actions="singleOnlyActions"
+                                   :disabled="selectedRows.length !== 1"
+                                   :ids="selectedRows"
+                                   v-if="singleOnlyActions.length > 0"/>
+                    <ActionsButton id="no-record-actions" class="uk-margin-small-right actions"
+                                   :actions="noRecordActions"
+                                   :ids="selectedRows"
+                                   v-if="noRecordActions.length > 0"/>
                 </div>
-                <div class="uk-flex search-filter-box uk-margin-large-left">
-                    <Pagination
-                            :lastPageNumber="currentPage.lastPageNumber"
-                            @change="getModelData()"
-                            v-model="pagination"
-                    />
-                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
-                </div>
+
             </div>
 
         </template>
@@ -27,12 +38,21 @@
         <!-- TableView -->
         <template #main>
             <slot name="pageDetails">
+                <div class="uk-flex uk-flex-between table-controls uk-padding-small">
+
+
+                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
+                    <Pagination
+                            :lastPageNumber="currentPage.lastPageNumber"
+                            @change="getModelData()"
+                            v-model="pagination"
+                    />
+                </div>
                 <Table
                         v-if="!isLoading"
                         :currentPage="currentPage"
                         :isLoading="isLoading"
                         :model="model"
-                        :selected-rows="selectedRows"
                         :updateEnabled="true"
                         v-on:updateData="getModelData()"
                 />
@@ -43,7 +63,7 @@
 
 <style lang="scss">
 
-    .default-bar{
+    .default-bar {
         display: flex;
 
         justify-content: start;
@@ -52,13 +72,16 @@
 <script>
     import QueryFilter from "./settings/QueryFilter.vue";
 
+    import Utils from "../utils"
     import EventBus from "../event-bus";
     import Table from "./tables/Table.vue";
-    import Utils from "../utils";
     import Pagination from "./settings/Pagination.vue";
     import BaseLayout from "./base/BaseLayout.vue";
+    import ActionsButton from "./base/ActionsButton";
+    import {mapState} from "vuex";
+    import ActionButton from "./base/ActionButton";
 
-    const axios = require("axios/index");
+    import axios from "axios";
 
     export default {
         name: "Elepy",
@@ -68,10 +91,24 @@
                 immediate: true
             }
         },
+        computed: {
+            ...mapState(["selectedRows"]),
+
+            multipleActions() {
+                return this.model.actions.filter(action => action.multipleRecords === true)
+            },
+            singleOnlyActions() {
+                return this.model.actions.filter(action => action.multipleRecords === false && action.singleRecord === true)
+            },
+
+            noRecordActions() {
+                return this.model.actions.filter(action => !action.singleRecord && !action.multipleRecords)
+            }
+
+        },
         data() {
             return {
                 queryFilter: "",
-                selectedRows: [],
                 currentPage: {
                     currentPageNumber: 1,
                     lastPageNumber: 1,
@@ -83,12 +120,44 @@
         },
 
         props: ["model"],
-        components: {QueryFilter, Pagination, Table, BaseLayout},
+        components: {ActionButton, ActionsButton, QueryFilter, Pagination, Table, BaseLayout},
         methods: {
-            addData() {
-                EventBus.$emit("addData", {});
-            },
+            deleteData() {
+                return UIkit.modal
+                    .confirm(
+                        "Are you sure that you want to delete " +
+                        this.selectedRows.length +
+                        " items?",
+                        {
+                            labels: {
+                                ok: "Yes",
+                                cancel: "Cancel"
+                            },
+                            stack: true
+                        }
+                    )
+                    .then(
+                        () => {
+                            axios({
+                                method: "delete",
+                                url:
+                                    this.model.path +
+                                    "?ids=" +
+                                    this.selectedRows.join(",")
+                            })
+                                .then(response => {
+                                    this.$store.commit("SET_SELECTED_ROWS", []);
+                                    this.getModelData();
+                                    Utils.displayResponse(response);
+                                })
+                                .catch(function (error) {
 
+                                });
+                        },
+                        function () {
+                        }
+                    );
+            },
             getModelData() {
                 var ref = this;
                 let searchUrl =
