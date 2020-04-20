@@ -3,32 +3,35 @@ package com.elepy.firebase;
 import com.elepy.dao.Filter;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
+import com.elepy.models.Schema;
 import com.google.cloud.firestore.Query;
 
 public class FirestoreQueryFactory {
-    public static Query getQuery(Query query, Filter filter) {
+    public static Query getQuery(Query query, Filter filter, Schema schema) {
 
-        final var name = filter.getFilterableField().getField().getName();
+        final var propertyName = filter.getPropertyName();
+
         final var value = filter.getFilterValue();
+        final var property = schema.getProperty(propertyName);
         switch (filter.getFilterType()) {
             case EQUALS:
-                return query.whereEqualTo(name, value);
+                return query.whereEqualTo(propertyName, value);
             case GREATER_THAN:
-                return query.whereGreaterThan(name, value);
+                return query.whereGreaterThan(propertyName, value);
             case GREATER_THAN_OR_EQUALS:
-                return query.whereGreaterThanOrEqualTo(name, value);
+                return query.whereGreaterThanOrEqualTo(propertyName, value);
             case LESSER_THAN:
-                return query.whereLessThan(name, value);
+                return query.whereLessThan(propertyName, value);
             case LESSER_THAN_OR_EQUALS:
-                return query.whereLessThanOrEqualTo(name, value);
+                return query.whereLessThanOrEqualTo(propertyName, value);
             case CONTAINS:
-                if (filter.getFilterableField().getFieldType().equals(FieldType.ARRAY)) {
-                    return query.whereArrayContains(name, value);
+                if (property.getType().equals(FieldType.ARRAY)) {
+                    return query.whereArrayContains(propertyName, value);
                 } else {
                     throw new ElepyException("Firestore 'CONTAINS' only works on arrays");
                 }
             case IS_NULL:
-                return query.whereEqualTo(name, null);
+                return query.whereEqualTo(propertyName, null);
             default:
                 throw new ElepyException("Firestore does not support the filter: " + filter.getFilterType().getName());
         }

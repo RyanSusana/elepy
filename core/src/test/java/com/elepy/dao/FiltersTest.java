@@ -6,6 +6,7 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.FieldType;
+import com.elepy.utils.ModelUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -26,11 +27,8 @@ public class FiltersTest {
         Map<String, String> map = new HashMap<>();
 
         map.put("hi", "ryan");
-
         Request request = mockedContextWithQueryMap(map).request();
-
         assertThat(request.queryParams("hi")).isEqualTo("ryan");
-
     }
 
     @Test
@@ -71,7 +69,7 @@ public class FiltersTest {
         List<Filter> filterQueries = request.filtersForModel(resourceClass);
 
         assertThat(filterQueries.size()).isEqualTo(1);
-        assertThat(filterQueries.get(0).getFilterableField().getName()).isEqualTo("id");
+        assertThat(filterQueries.get(0).getPropertyName()).isEqualTo("id");
         assertThat(filterQueries.get(0).getFilterValue()).isEqualTo("1234");
         assertThat(filterQueries.get(0).getFilterType()).isEqualTo(FilterType.EQUALS);
 
@@ -126,6 +124,7 @@ public class FiltersTest {
 
     private HttpContext mockedContextWithQueryMap(Map<String, String> map) {
         HttpContext mockedContext = mockedContext();
+        when(mockedContext.request().attribute(any())).thenReturn(List.of(ModelUtils.createDeepSchema(Resource.class)));
         when(mockedContext.request().queryParams()).thenReturn(map.keySet());
 
         when(mockedContext.request().queryParams(anyString())).thenAnswer(invocationOnMock -> map.get(invocationOnMock.getArgument(0)));

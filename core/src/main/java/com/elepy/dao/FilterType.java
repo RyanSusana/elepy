@@ -1,6 +1,7 @@
 package com.elepy.dao;
 
 import com.elepy.models.FieldType;
+import com.elepy.models.Property;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,8 +60,8 @@ public enum FilterType {
                 .collect(Collectors.toSet());
     }
 
-    public boolean canBeUsedBy(FilterableField filterableField) {
-        return allowedFieldTypes.contains(filterableField.getFieldType());
+    public boolean canBeUsedBy(Property filterableField) {
+        return allowedFieldTypes.contains(filterableField.getType());
     }
 
     public Map<String, String> toMap() {

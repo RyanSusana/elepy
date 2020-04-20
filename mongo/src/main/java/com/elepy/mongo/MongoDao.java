@@ -123,7 +123,7 @@ public abstract class MongoDao<T> implements Crud<T> {
         return new MongoFilters(
                 filterQueries
                         .stream()
-                        .map(MongoFilterTemplateFactory::fromFilter)
+                        .map(filter -> MongoFilterTemplateFactory.fromFilter(filter, getSchema()))
                         .collect(Collectors.toList()
                         )
         );

@@ -1,24 +1,22 @@
 package com.elepy.dao;
 
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.Property;
 
 public class Filter {
-    private final FilterableField filterableField;
+    private final String filterableField;
+
     private final FilterType filterType;
     private final String filterValue;
 
-    public Filter(FilterableField filterableField, FilterType filterType, String filterValue) {
+    public Filter(String filterableField, FilterType filterType, String filterValue) {
         this.filterableField = filterableField;
         this.filterType = filterType;
         this.filterValue = filterValue;
-
-        if (!filterType.canBeUsedBy(filterableField)) {
-            throw new ElepyException(String.format("'%s' can't be applied to the field '%s'", filterType.getPrettyName(), filterableField.getName()), 400);
-        }
     }
 
 
-    public FilterableField getFilterableField() {
+    public String getPropertyName() {
         return filterableField;
     }
 

@@ -123,8 +123,10 @@ public class ModelUtils {
         final Column column = accessibleObject.getAnnotation(Column.class);
         final Importance importance = accessibleObject.getAnnotation(Importance.class);
 
+
         property.setHiddenFromCMS(accessibleObject.isAnnotationPresent(Hidden.class));
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
+        property.setJavaName(ReflectionUtils.getJavaName(accessibleObject));
         property.setPrettyName(ReflectionUtils.getPrettyName(accessibleObject));
         property.setRequired(accessibleObject.getAnnotation(Required.class) != null);
         property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));

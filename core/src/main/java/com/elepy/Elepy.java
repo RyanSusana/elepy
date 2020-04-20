@@ -672,6 +672,7 @@ public class Elepy implements ElepyContext {
     private void setupLoggingAndExceptions() {
         http.before((request, response) -> {
             request.attribute("elepyContext", this);
+            request.attribute("schemas", this.schemas());
             request.attribute("start", System.currentTimeMillis());
         });
         http.after((request, response) -> {

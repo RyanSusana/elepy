@@ -11,6 +11,7 @@ import java.util.Set;
 public class Property implements Comparable<Property> {
 
     private String name;
+    private String javaName;
     private String prettyName;
     private boolean editable;
     private boolean required;
@@ -134,5 +135,13 @@ public class Property implements Comparable<Property> {
     @Override
     public int compareTo(Property o) {
         return Integer.compare(o.importance, this.importance);
+    }
+
+    public String getJavaName() {
+        return javaName;
+    }
+
+    public void setJavaName(String javaName) {
+        this.javaName = javaName;
     }
 }

@@ -4,7 +4,9 @@ import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.Filter;
-import com.elepy.dao.*;
+import com.elepy.dao.FilterType;
+import com.elepy.dao.PropertySort;
+import com.elepy.dao.SortOption;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
@@ -268,7 +270,12 @@ public interface Request {
         return propertySorts;
     }
 
+    @SuppressWarnings("unchecked")
     default List<Filter> filtersForModel(Class restModelType) {
+        List<Schema> schemas = Optional.ofNullable((List<Schema>) attribute("schemas")).orElse(List.of());
+
+        Optional<Schema> schema = schemas.stream().filter(s -> s.getJavaClass().equals(restModelType)).findFirst();
+
         final List<Filter> filterQueries = new ArrayList<>();
         for (String queryParam : queryParams()) {
             if (queryParam.contains("_")) {
@@ -280,8 +287,15 @@ public interface Request {
                 String propertyName = String.join("_", propertyNameList);
 
                 FilterType.getByQueryString(propertyNameFilter[propertyNameFilter.length - 1]).ifPresent(filterType1 -> {
-                    FilterableField filterableField = new FilterableField(restModelType, propertyName);
-                    Filter filter = new Filter(filterableField, filterType1, queryParams(queryParam));
+
+                    schema.ifPresent(schema1 -> {
+                        final var property = schema1.getProperty(propertyName);
+                        if (!filterType1.canBeUsedBy(property)) {
+                            throw new ElepyException(String.format("'%s' can't be applied to the field '%s'", filterType1.getPrettyName(), property.getPrettyName()), 400);
+                        }
+                    });
+
+                    Filter filter = new Filter(propertyName, filterType1, queryParams(queryParam));
                     filterQueries.add(filter);
                 });
             }

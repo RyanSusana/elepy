@@ -64,6 +64,14 @@ public class ReflectionUtils {
     }
 
 
+    public static String getJavaName(AccessibleObject object) {
+        if (object instanceof Field) {
+            return ((Field) object).getName();
+        } else {
+            return ((Method) object).getName();
+        }
+    }
+
     @SafeVarargs
     public static List<Field> searchForFieldsWithAnnotation(Class cls, Class<? extends Annotation>... annotations) {
         return findFieldsThatMatch(cls,

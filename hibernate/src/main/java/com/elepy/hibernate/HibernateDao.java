@@ -1,7 +1,6 @@
 package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
-import com.elepy.annotations.Unique;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
@@ -94,7 +93,7 @@ public class HibernateDao<T> implements Crud<T> {
 
         final List<Predicate> filterList = new ArrayList<>();
         for (Filter filter : query.getFilters()) {
-            filterList.add(HibernatePredicateFactory.fromFilter(root, cb, filter));
+            filterList.add(HibernatePredicateFactory.fromFilter(schema, root, cb, filter, schema.getProperty(filter.getPropertyName())));
         }
 
 

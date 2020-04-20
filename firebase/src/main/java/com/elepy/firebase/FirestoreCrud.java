@@ -44,7 +44,7 @@ public class FirestoreCrud<T> implements Crud<T> {
         com.google.cloud.firestore.Query q = db.collection(collection);
 
         for (Filter filter : query.getFilters()) {
-            q = FirestoreQueryFactory.getQuery(q, filter);
+            q = FirestoreQueryFactory.getQuery(q, filter,schema);
         }
 
         long amountOfResultsWithThatQuery = count(q);

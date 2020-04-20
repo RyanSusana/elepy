@@ -1,24 +1,34 @@
 package com.elepy.hibernate;
 
 import com.elepy.dao.Filter;
-import com.elepy.dao.FilterableField;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
+import com.elepy.models.Property;
+import com.elepy.models.Schema;
 import com.elepy.utils.MapperUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Date;
 
 public class HibernatePredicateFactory {
 
-    public static Predicate fromFilter(Root root, CriteriaBuilder cb, Filter filter) {
-        final Serializable value = value(filter.getFilterableField(), filter.getFilterValue());
-        final FieldType fieldType = filter.getFilterableField().getFieldType();
 
-        final String fieldName = filter.getFilterableField().getField().getName();
+    public static <T> Predicate fromFilter(Schema<T> schema, Root<T> root, CriteriaBuilder cb, Filter filter, Property property) {
+
+        final FieldType fieldType = property.getType();
+
+        final Field field;
+        try {
+            field = schema.getJavaClass().getDeclaredField(property.getJavaName());
+        } catch (NoSuchFieldException e) {
+            throw new ElepyException("Can't find field", 500, e);
+        }
+        final Serializable value = value(field, property, filter.getFilterValue());
+        final String fieldName = property.getJavaName();
         switch (filter.getFilterType()) {
             case EQUALS:
                 return cb.equal(root.get(fieldName), value);
@@ -65,7 +75,9 @@ public class HibernatePredicateFactory {
         throw new ElepyException("Hibernate does not support the filter: " + filter.getFilterType().getName());
     }
 
-    private static Serializable value(FilterableField field, String value) {
-        return MapperUtils.toValueFromString(field.getField(), field.getFieldType(), value);
+    private static Serializable value(Field field, Property property, String value) {
+        return MapperUtils.toValueFromString(field, property.getType(), value);
     }
+
+
 }
