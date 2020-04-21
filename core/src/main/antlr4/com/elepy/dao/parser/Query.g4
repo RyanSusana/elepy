@@ -13,15 +13,22 @@ expression
     |   filter
     ;
 
-filter: propertyName filterType filterValue;
-filterType: GREATER_THAN_OR_EQUALS | GREATER_THAN | LESSER_THAN_OR_EQUALS | LESSER_THAN | NOT_EQUALS | EQUALS;
+filter:  baseFilter | textFilter | numberFilter ;
 propertyName: PROPERTY_NAME | TERM;
 searchQuery:  TERM | SENTENCE;
 
 
+textFilter: propertyName textFilterType textValue;
+textFilterType: NOT_EQUALS | EQUALS | CONTAINS | STARTS_WITH;
+textValue: SENTENCE | TERM| NUMERIC;
 
-filterValue: (SENTENCE) | NUMERIC+;
+numberFilter: propertyName numberFilterType numberValue;
+numberFilterType: GREATER_THAN_OR_EQUALS | GREATER_THAN | LESSER_THAN_OR_EQUALS | LESSER_THAN ;
+numberValue: NUMERIC+;
 
+baseFilter: propertyName baseFilterType baseValue;
+baseFilterType: EQUALS | NOT_EQUALS;
+baseValue: SENTENCE | TERM| NUMERIC;
 
 
 GREATER_THAN_OR_EQUALS: '>=';
@@ -33,16 +40,20 @@ LESSER_THAN: '<';
 NOT_EQUALS: '!=';
 EQUALS: '=';
 
-PROPERTY_NAME: (LETTER TERM ('.')+ TERM)+;
+CONTAINS: ':contains';
+STARTS_WITH: ':startsWith';
 
 
-AND: A N D | '&&' ;
+
+
+
+AND: ':' A N D | '&&' ;
 
 OR: ':' O R | '||';
 
-
+PROPERTY_NAME: (LETTER TERM ('.')+ TERM)+;
 NUMERIC: FLOAT | INTEGER;
-SENTENCE: (WORD  ' '+ WORD (' ')* )+;
+SENTENCE: (TERM  ' '+ TERM (' ')* )+;
 
 TERM: (LETTER|DIGIT)+;
 WORD      :
