@@ -15,13 +15,14 @@ expression
 
 booleanOperator: AND | OR;
 filter:  baseFilter | textFilter | numberFilter ;
-propertyName: PROPERTY_NAME | TERM;
-searchQuery:  (TERM|VALID_SEARCH_TERM|NUMERIC)+ | STRING ;
+propertyName: PROPERTY_NAME | ALPHA_NUMERIC_TERM;
+searchQuery:  validSearchTerm+ | STRING;
+validSearchTerm: ALPHA_NUMERIC_TERM | TERM | NUMERIC ;
 
 
 textFilter: propertyName textFilterType textValue;
 textFilterType: NOT_EQUALS | EQUALS | CONTAINS | STARTS_WITH;
-textValue: STRING | TERM | NUMERIC;
+textValue: STRING | ALPHA_NUMERIC_TERM | NUMERIC;
 
 numberFilter: propertyName numberFilterType numberValue;
 numberFilterType: GREATER_THAN_OR_EQUALS | GREATER_THAN | LESSER_THAN_OR_EQUALS | LESSER_THAN ;
@@ -29,7 +30,7 @@ numberValue: NUMERIC;
 
 baseFilter: propertyName baseFilterType baseValue;
 baseFilterType: EQUALS | NOT_EQUALS;
-baseValue: STRING | TERM | NUMERIC;
+baseValue: STRING | ALPHA_NUMERIC_TERM | NUMERIC;
 
 
 GREATER_THAN_OR_EQUALS: '>=' |  G T E;
@@ -49,7 +50,7 @@ AND: A N D| '&&' ;
 
 OR: O R | '||';
 
-PROPERTY_NAME: (LETTER TERM ('.')+ TERM)+;
+PROPERTY_NAME: (LETTER ALPHA_NUMERIC_TERM ('.')+ ALPHA_NUMERIC_TERM)+;
 NUMERIC: FLOAT | INTEGER;
 STRING: DQ_STRING | SQ_STRING {
                                    String s = getText();
@@ -60,7 +61,7 @@ STRING: DQ_STRING | SQ_STRING {
 DQ_STRING: '"'~('"')+?'"';
 SQ_STRING: '\''~('\'')+?'\'';
 
-TERM: (LETTER|DIGIT)+;
+ALPHA_NUMERIC_TERM: (LETTER|DIGIT)+;
 
 FLOAT: DIGIT+ ('.') DIGIT+;
 INTEGER: DIGIT+;
@@ -94,7 +95,7 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 
-VALID_SEARCH_TERM: ~[ \t\r\n]+;
+TERM: ~[ \t\r\n]+;
 //All whitespace is skipped
 
 WS: [ \t\r\n]+ -> skip;
