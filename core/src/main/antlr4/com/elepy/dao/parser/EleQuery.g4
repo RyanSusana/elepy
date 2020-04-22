@@ -16,7 +16,7 @@ expression
 booleanOperator: AND | OR;
 filter:  baseFilter | textFilter | numberFilter ;
 propertyName: PROPERTY_NAME | TERM;
-searchQuery:  (TERM|ANY_CHAR|NUMERIC)+ | STRING ;
+searchQuery:  (TERM|VALID_SEARCH_TERM|NUMERIC)+ | STRING ;
 
 
 textFilter: propertyName textFilterType textValue;
@@ -94,7 +94,7 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 
-ANY_CHAR: ~[ \t\r\n]+;
+VALID_SEARCH_TERM: ~[ \t\r\n]+;
 //All whitespace is skipped
 
 WS: [ \t\r\n]+ -> skip;
