@@ -17,7 +17,7 @@ booleanOperator: AND | OR;
 filter:  baseFilter | textFilter | numberFilter ;
 propertyName: PROPERTY_NAME | ALPHA_NUMERIC_TERM;
 searchQuery:  validSearchTerm+ | STRING;
-validSearchTerm: ALPHA_NUMERIC_TERM | TERM | NUMERIC ;
+validSearchTerm:  (NON_ALPHA_NUMERIC_CHAR|LETTER|DIGIT)+ | ALPHA_NUMERIC_TERM | NUMERIC  ;
 
 
 textFilter: propertyName textFilterType textValue;
@@ -32,7 +32,7 @@ baseFilter: propertyName baseFilterType baseValue;
 baseFilterType: EQUALS | NOT_EQUALS;
 baseValue: STRING | ALPHA_NUMERIC_TERM | NUMERIC;
 
-
+RESERVED_CHAR: '&';
 GREATER_THAN_OR_EQUALS: '>=' |  G T E;
 GREATER_THAN: '>' | G T;
 
@@ -40,7 +40,7 @@ LESSER_THAN_OR_EQUALS: '<=' | L T E;
 LESSER_THAN: '<' |  L T;
 
 NOT_EQUALS: '!=' | '<>' | N E (Q)? ;
-EQUALS: '=' | E Q;
+EQUALS: '=' | E Q (U A L S?)?;
 
 CONTAINS: C O N T A I N S | I N;
 STARTS_WITH: S T A R T S [ ]* W I T H | S W;
@@ -95,9 +95,11 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 
-TERM: ~[ \t\r\n]+;
+
 //All whitespace is skipped
 
 WS: [ \t\r\n]+ -> skip;
+NON_ALPHA_NUMERIC_CHAR: (.)+?;
+
 
 
