@@ -1,41 +1,57 @@
 package com.elepy.mongo.fast;
 
-import com.elepy.dao.Page;
-import com.elepy.dao.PageSettings;
-import com.elepy.dao.Query;
 import com.elepy.di.DefaultElepyContext;
+import com.elepy.mongo.CustomJacksonModule;
+import com.elepy.mongo.ElepyCodecRegistry;
 import com.elepy.mongo.MongoCrudFactory;
 import com.elepy.mongo.MongoDao;
 import com.elepy.utils.ModelUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DB;
-import org.jongo.Jongo;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mongojack.internal.MongoJackModule;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.elepy.dao.Filters.eq;
+import static com.elepy.dao.Filters.search;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DefaultMongoDaoTest extends BaseFongo {
 
     private MongoDao<Resource> defaultMongoDao;
-    private Jongo jongo;
+    private MongoCollection<Resource> collection;
 
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
-        defaultElepyContext.registerDependency(DB.class, getDb());
+        final var db = getDb();
+        defaultElepyContext.registerDependency(MongoDatabase.class, db);
         defaultElepyContext.registerDependency(new ObjectMapper());
 
         defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(ModelUtils.createDeepSchema(Resource.class));
 
-        jongo = new Jongo(getDb());
+        final var objectMapper = new ObjectMapper();
+
+        MongoJackModule.configure(objectMapper);
+        CustomJacksonModule.configure(objectMapper);
+        ElepyCodecRegistry jacksonCodecRegistry = new ElepyCodecRegistry(objectMapper, null);
+        jacksonCodecRegistry.addCodecForClass(Resource.class);
+        this.collection =
+                db.getCollection("resources")
+                        .withDocumentClass(Resource.class)
+                        .withCodecRegistry(jacksonCodecRegistry);
     }
 
     @Test
@@ -46,13 +62,13 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultMongoDao.create(resource1);
         defaultMongoDao.create(resource2);
 
-        final long resources = jongo.getCollection("resources").count();
+        final long resources = collection.count();
 
         assertThat(resources).isEqualTo(2);
 
-        assertThat(jongo.getCollection("resources").findOne("{_id: #}" + resource1.getId(), resource1.getId()).as(Resource.class).getTextField())
+        assertThat(collection.find(Filters.eq("_id", resource1.getId())).first().getTextField())
                 .isEqualTo("create");
-        assertThat(jongo.getCollection("resources").findOne("{id: #}" + resource1.getId(), resource1.getId()).as(Resource.class).getTextField())
+        assertThat(collection.find(Filters.eq("_id", resource1.getId())).first().getTextField())
                 .isEqualTo("create");
     }
 
@@ -72,8 +88,8 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultMongoDao.create(resource);
 
 
-        final Page<Resource> searchable = defaultMongoDao.search(new Query("sear", new ArrayList<>()), new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>()));
-        assertThat(searchable.getValues().size()).isEqualTo(1);
+        final List<Resource> searchable = defaultMongoDao.findLimited(1, search("sear"));
+        assertThat(searchable.size()).isEqualTo(1);
 
     }
 
@@ -106,8 +122,8 @@ public class DefaultMongoDaoTest extends BaseFongo {
         prototype.put("unique", "NEW_UNIQUE_VAL");
         defaultMongoDao.updateWithPrototype(prototype, resource.getId(), resource2.getId());
 
-        final List<Resource> updatedTextFieldResources = defaultMongoDao.searchInField("textField", "NEW_VALUE");
-        final List<Resource> updatedUniqueResources = defaultMongoDao.searchInField("unique", "NEW_UNIQUE_VAL");
+        final List<Resource> updatedTextFieldResources = defaultMongoDao.find(eq("textField", "NEW_VALUE"));
+        final List<Resource> updatedUniqueResources = defaultMongoDao.find(eq("unique", "NEW_UNIQUE_VAL"));
 
         assertThat(updatedTextFieldResources.size()).isEqualTo(2);
         assertThat(updatedUniqueResources.size()).isEqualTo(0);
@@ -117,7 +133,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
     @Test
     public void testIndexCreation() {
 
-        var indexes = StreamSupport.stream(defaultMongoDao.mongoCollection().listIndexes().spliterator(), false)
+        var indexes = StreamSupport.stream(defaultMongoDao.getMongoCollection().listIndexes().spliterator(), false)
                 .collect(Collectors.toList());
 
 
@@ -126,6 +142,6 @@ public class DefaultMongoDaoTest extends BaseFongo {
     }
 
     private long count() {
-        return jongo.getCollection("resources").count();
+        return collection.count();
     }
 }

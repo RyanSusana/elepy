@@ -5,8 +5,8 @@ import com.elepy.auth.Token;
 import com.elepy.auth.TokenAuthenticationMethod;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Filter;
-import com.elepy.dao.FilterType;
+import com.elepy.dao.Filters;
+import com.elepy.dao.Queries;
 import com.elepy.dao.Query;
 import com.elepy.http.Request;
 
@@ -84,12 +84,10 @@ public class PersistedTokenAuthenticationMethod implements TokenAuthenticationMe
 
 
         final Query tokensAboveMaxDate =
-                Query.builder()
-                        .filter(new Filter("maxDate", FilterType.LESSER_THAN_OR_EQUALS, "" + currentTime))
-                        .build();
+                Queries.create(Filters.lte("maxDate", currentTime));
 
-        tokens.delete(tokens.search(tokensAboveMaxDate)
-                .getValues()
+
+        tokens.delete(tokens.find(tokensAboveMaxDate)
                 .stream()
                 .map(Token::getId)
                 .collect(Collectors.toSet()));

@@ -4,9 +4,11 @@ import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.http.HttpMethod;
 import com.elepy.mongo.annotations.MongoIndex;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Id;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
@@ -20,6 +22,7 @@ import java.math.BigDecimal;
 @Action(name = "extra-action", requiredPermissions = {}, method = HttpMethod.GET, handler = ResourceExtraAction.class)
 @MongoIndex(text = 3, properties = "textArea:-1")
 public class Resource {
+
     @Identifier
     private int id;
 

@@ -2,7 +2,8 @@ package com.elepy.tests.basic;
 
 import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
-import com.elepy.dao.*;
+import com.elepy.dao.Crud;
+import com.elepy.dao.SortOption;
 import com.elepy.exceptions.Message;
 import com.elepy.tests.CustomUser;
 import com.elepy.tests.ElepyConfigHelper;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.elepy.dao.Queries.create;
+import static com.elepy.dao.Filters.search;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -147,7 +150,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final var token = getTokenResponse.getBody().replaceAll("\"", "");
 
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization","Bearer "+ token).asString();
+        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization", "Bearer " + token).asString();
 
         assertEquals(200, authenticationResponse.getStatus());
     }
@@ -305,11 +308,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources").asString();
 
 
-        Page resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), Page.class);
+        List results = elepy.objectMapper().readValue(getRequest.getBody(), List.class);
 
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(count + 1, resourcePage.getValues().size());
+        Assertions.assertEquals(count + 1, results.size());
 
     }
 
@@ -325,14 +328,14 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources?id_equals=4&uniqueField_contains=filter&numberMax40_equals=25&q=ilterUni").asString();
 
 
-        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        List<Resource> results = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<List<Resource>>() {
         });
 
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(1, resourcePage.getValues().size());
+        Assertions.assertEquals(1, results.size());
 
-        Assertions.assertEquals("filterUnique", resourcePage.getValues().get(0).getUniqueField());
+        Assertions.assertEquals("filterUnique", results.get(0).getUniqueField());
     }
 
     @Test
@@ -346,11 +349,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources?q=ilterUni").asString();
 
 
-        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        List<Resource> results = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<List<Resource>>() {
         });
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(0, resourcePage.getValues().size());
+        Assertions.assertEquals(0, results.size());
     }
 
     @Test
@@ -363,11 +366,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources?q=testsearchto").asString();
 
 
-        Page<Resource> resourcePage = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<Page<Resource>>() {
+        List<Resource> results = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<List<Resource>>() {
         });
 
         Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(1, resourcePage.getValues().size());
+        Assertions.assertEquals(1, results.size());
     }
 
     @Test
@@ -495,17 +498,15 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         resourceCrud.create(resource1, resource2);
 
-        final Page<Resource> search = resourceCrud.search(new Query("", List.of()),
-                new PageSettings(1, Integer.MAX_VALUE,
-                        List.of(new PropertySort("textField", SortOption.DESCENDING))
-                )
-        );
+        final List<Resource> search = resourceCrud.find(create(search(""))
+                .limit(2)
+                .sort("textField", SortOption.DESCENDING));
 
 
-        assertThat(search.getValues().get(0).getTextField())
+        assertThat(search.get(0).getTextField())
                 .isEqualTo("resource2");
 
-        assertThat(search.getValues().get(1).getTextField())
+        assertThat(search.get(1).getTextField())
                 .isEqualTo("resource1");
 
     }
@@ -522,15 +523,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         resourceCrud.create(resource1, resource2);
 
-        final Page<Resource> search = resourceCrud.search(new Query("", List.of()),
-                new PageSettings(1, Integer.MAX_VALUE,
-                        List.of(new PropertySort("textField", SortOption.ASCENDING))
-                )
-        );
+        final List<Resource> search = resourceCrud.find(create(search("")).limit(2).sort("textField", SortOption.ASCENDING));
 
-        assertThat(search.getValues().get(0).getTextField())
+        assertThat(search.get(0).getTextField())
                 .isEqualTo("resource1");
-        assertThat(search.getValues().get(1).getTextField())
+        assertThat(search.get(1).getTextField())
                 .isEqualTo("resource2");
 
 

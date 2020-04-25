@@ -3,6 +3,7 @@ package com.elepy.auth.methods;
 import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
+import com.elepy.dao.Filters;
 import com.elepy.http.Request;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -38,7 +39,7 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
     }
 
     private Optional<User> getUser(Crud<User> userCrud, String usernameOrEmail) {
-        final List<? extends User> users = userCrud.searchInField("username", usernameOrEmail);
+        final List<? extends User> users = userCrud.findLimited(1, Filters.eq("username", usernameOrEmail));
         if (users.size() > 0) {
             return Optional.of(users.get(0));
         }

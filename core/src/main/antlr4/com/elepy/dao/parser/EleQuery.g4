@@ -3,8 +3,15 @@ grammar EleQuery;
 
 query
     :
-        expression EOF
+        expression (limitSetting | pageNumberSetting | skipSetting)* EOF
     ;
+
+
+limitSetting: LIMIT EQUALS? NUMERIC;
+
+skipSetting: SKIP_ROW EQUALS? NUMERIC;
+
+pageNumberSetting: PAGE_NUMBER EQUALS? NUMERIC;
 expression
     :   '(' expression ')'
     |   expression booleanOperator expression
@@ -16,13 +23,13 @@ expression
 booleanOperator: AND | OR;
 filter:  baseFilter | textFilter | numberFilter ;
 propertyName: PROPERTY_NAME | ALPHA_NUMERIC_TERM;
-searchQuery:  validSearchTerm+ | STRING;
-validSearchTerm:  (NON_ALPHA_NUMERIC_CHAR|LETTER|DIGIT)+ | ALPHA_NUMERIC_TERM | NUMERIC  ;
+searchQuery:  validSearchTerm+ ;
+validSearchTerm: STRING |  (NON_ALPHA_NUMERIC_CHAR|LETTER|DIGIT)+ | ALPHA_NUMERIC_TERM | NUMERIC  ;
 
 
 textFilter: propertyName textFilterType textValue;
 textFilterType: NOT_EQUALS | EQUALS | CONTAINS | STARTS_WITH;
-textValue: STRING | ALPHA_NUMERIC_TERM | NUMERIC;
+textValue: validSearchTerm+;
 
 numberFilter: propertyName numberFilterType numberValue;
 numberFilterType: GREATER_THAN_OR_EQUALS | GREATER_THAN | LESSER_THAN_OR_EQUALS | LESSER_THAN ;
@@ -30,16 +37,20 @@ numberValue: NUMERIC;
 
 baseFilter: propertyName baseFilterType baseValue;
 baseFilterType: EQUALS | NOT_EQUALS;
-baseValue: STRING | ALPHA_NUMERIC_TERM | NUMERIC;
+baseValue: validSearchTerm+ ;
 
-RESERVED_CHAR: '&';
+
+SKIP_ROW: S K I P;
+LIMIT: L I M I T | P A G E [ ]* S I Z E;
+
+PAGE_NUMBER: P A G E [ ]* N U M B E R;
 GREATER_THAN_OR_EQUALS: '>=' |  G T E;
 GREATER_THAN: '>' | G T;
 
 LESSER_THAN_OR_EQUALS: '<=' | L T E;
 LESSER_THAN: '<' |  L T;
 
-NOT_EQUALS: '!=' | '<>' | N E (Q)? ;
+NOT_EQUALS: '!=' | '<>' | N E (Q)? | N O T [ ]* E Q U A L (S)? ([ ]* T O)? ;
 EQUALS: '=' | E Q (U A L S?)?;
 
 CONTAINS: C O N T A I N S | I N;
@@ -63,7 +74,7 @@ SQ_STRING: '\''~('\'')+?'\'';
 
 ALPHA_NUMERIC_TERM: (LETTER|DIGIT)+;
 
-FLOAT: DIGIT+ ('.') DIGIT+;
+FLOAT: DIGIT* ('.') DIGIT+;
 INTEGER: DIGIT+;
 DIGIT: [0-9];
 LETTER: [a-zA-Z];
@@ -98,8 +109,8 @@ fragment Z : [zZ];
 
 //All whitespace is skipped
 
-WS: [ \t\r\n]+ -> skip;
-NON_ALPHA_NUMERIC_CHAR: (.)+?;
+WS:   [ \t\r\n]+ -> skip;
+NON_ALPHA_NUMERIC_CHAR: (.)+? -> skip;
 
 
 

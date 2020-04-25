@@ -1,58 +1,77 @@
 package com.elepy.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Query {
-    private final String searchQuery;
-    private final List<Filter> filters;
 
-    public Query(String searchQuery, List<Filter> filters) {
-        this.searchQuery = searchQuery;
-        this.filters = filters;
+    private Expression expression;
+
+    private int skip = 0;
+    private int limit = Integer.MAX_VALUE;
+
+    private SortingSpecification sortingSpecifications = new SortingSpecification();
+
+    public Query() {
+
     }
 
-    public static QueryBuilder builder() {
-        return QueryBuilder.aQuery();
+    public Query purge() {
+        if (expression.canBeIgnored()) {
+            expression = new SearchQuery("");
+        } else {
+            expression.purge();
+        }
+        return this;
     }
 
-    public String getSearchQuery() {
-        return searchQuery;
+
+    public Query(Expression expression) {
+        this.expression = expression;
     }
 
-    public List<Filter> getFilters() {
-        return filters;
+    public Expression getExpression() {
+        return expression;
     }
 
-    public static final class QueryBuilder {
-        private String searchQuery;
-        private List<Filter> filterQueries;
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
 
-        private QueryBuilder() {
-            this.filters(new ArrayList<>());
-        }
+    public int getSkip() {
+        return skip;
+    }
 
-        public static QueryBuilder aQuery() {
-            return new QueryBuilder();
-        }
+    public Query skip(int skip) {
+        this.skip = skip;
+        return this;
+    }
 
-        public QueryBuilder query(String searchQuery) {
-            this.searchQuery = searchQuery;
-            return this;
-        }
+    public int getLimit() {
+        return limit;
+    }
 
-        public QueryBuilder filters(List<Filter> filterQueries) {
-            this.filterQueries = filterQueries;
-            return this;
-        }
+    public Query limit(int limit) {
+        this.limit = limit;
+        return this;
+    }
 
-        public QueryBuilder filter(Filter filter) {
-            this.filterQueries.add(filter);
-            return this;
-        }
+    public SortingSpecification getSortingSpecification() {
+        return sortingSpecifications;
+    }
 
-        public Query build() {
-            return new Query(searchQuery, filterQueries);
-        }
+    public Query sort(String property, SortOption option) {
+        sortingSpecifications.add(property, option);
+        return this;
+    }
+
+    public Query sort(SortingSpecification sortingSpecification) {
+        this.sortingSpecifications = sortingSpecification;
+        return this;
+    }
+
+    public Query page(int number, int size) {
+        limit(size);
+
+        skip((number - 1) * size);
+
+        return this;
     }
 }

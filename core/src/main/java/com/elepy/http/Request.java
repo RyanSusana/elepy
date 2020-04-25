@@ -5,8 +5,8 @@ import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.Filter;
 import com.elepy.dao.FilterType;
-import com.elepy.dao.PropertySort;
 import com.elepy.dao.SortOption;
+import com.elepy.dao.SortingSpecification;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
@@ -245,29 +245,28 @@ public interface Request {
     }
 
 
-    default List<PropertySort> sortingForModel(Schema<?> schema) {
+    default SortingSpecification sortingForModel(Schema<?> schema) {
         String[] sorts = queryParamValues("sort");
 
-        List<PropertySort> propertySorts = new ArrayList<>();
+        SortingSpecification sortingSpecification = new SortingSpecification();
 
 
         if (sorts == null || sorts.length == 0) {
-            final PropertySort propertySort = new PropertySort(schema.getDefaultSortField(), schema.getDefaultSortDirection());
-            propertySorts.add(propertySort);
+            sortingSpecification.add(schema.getDefaultSortField(), schema.getDefaultSortDirection());
         } else {
             for (String sort : sorts) {
                 String[] split = sort.split(",");
 
                 if (split.length == 1) {
-                    propertySorts.add(new PropertySort(split[0], SortOption.ASCENDING));
+                    sortingSpecification.add(split[0], SortOption.ASCENDING);
                 } else {
-                    propertySorts.add(new PropertySort(split[0], SortOption.get(split[1])));
+                    sortingSpecification.add(split[0], SortOption.get(split[1]));
                 }
             }
         }
 
 
-        return propertySorts;
+        return sortingSpecification;
     }
 
     @SuppressWarnings("unchecked")

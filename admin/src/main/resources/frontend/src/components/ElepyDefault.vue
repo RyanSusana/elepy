@@ -43,9 +43,9 @@
 
                     <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
                     <Pagination
-                            :lastPageNumber="currentPage.lastPageNumber"
                             @change="getModelData()"
                             v-model="pagination"
+                            :model="model"
                     />
                 </div>
                 <Table
@@ -109,11 +109,7 @@
         data() {
             return {
                 queryFilter: "",
-                currentPage: {
-                    currentPageNumber: 1,
-                    lastPageNumber: 1,
-                    values: []
-                },
+                currentPage: [],
                 pagination: "pageSize=25&pageNumber=1",
                 isLoading: false
             };

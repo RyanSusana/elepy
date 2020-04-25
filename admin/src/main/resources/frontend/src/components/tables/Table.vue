@@ -38,7 +38,7 @@
                         :model="model"
                         :selected="isSelected(data[model.idProperty])"
                         :updateEnabled="updateEnabled"
-                        v-for="data in currentPage.values"
+                        v-for="data in currentPage"
                         v-on:click="selectedData = JSON.parse(JSON.stringify(data)); editData()"
                         v-on:editClicked="editData(data)"
                         v-on:tableRowSelected="tableRowSelected"
@@ -119,7 +119,7 @@
             },
 
             currentPageIds() {
-                return this.currentPage.values.rowIds(this.model.idProperty);
+                return this.currentPage.rowIds(this.model.idProperty);
             }
         },
         methods: {

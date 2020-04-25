@@ -3,6 +3,7 @@ package com.elepy.mongo.fast;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.junit.jupiter.api.AfterAll;
@@ -33,7 +34,7 @@ public class BaseFongo extends Base {
         mongoServer.shutdownNow();
     }
 
-    public DB getDb() throws IOException {
-        return client.getDB("test");
+    public MongoDatabase getDb() throws IOException {
+        return client.getDatabase("test");
     }
 }

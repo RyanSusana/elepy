@@ -1,8 +1,8 @@
 package com.elepy.hibernate;
 
 import com.elepy.dao.Crud;
-import com.elepy.dao.Page;
-import com.elepy.dao.PageSettings;
+import com.elepy.dao.Filters;
+import com.elepy.dao.Queries;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static com.elepy.dao.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -81,14 +82,13 @@ public class HibernateTest {
 
         Request request = mockedContextWithQueryMap(map).request();
 
-        Page<Resource> resourcePage = resourceCrud.search(
-                new com.elepy.dao.Query(null, request.filtersForModel(Resource.class)),
-                new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>())
+        List<Resource> resourceResult = resourceCrud.find(
+                new com.elepy.dao.Query(Filters.and(request.filtersForModel(Resource.class)))
         );
 
-        assertThat(resourcePage.getValues().size()).isEqualTo(1);
+        assertThat(resourceResult.size()).isEqualTo(1);
 
-        assertThat(resourcePage.getValues().get(0).getUnique()).isEqualTo("filterUnique");
+        assertThat(resourceResult.get(0).getUnique()).isEqualTo("filterUnique");
     }
 
     @Test
@@ -107,11 +107,9 @@ public class HibernateTest {
         resourceCrud.create(resource);
 
 
-        final Page<Resource> searchable = resourceCrud.search(
-                new com.elepy.dao.Query("searchab", new ArrayList<>()),
-                new PageSettings(1, Integer.MAX_VALUE, new ArrayList<>())
+        final List<Resource> searchable = resourceCrud.find(Queries.create(Filters.search("searcha"))
         );
-        assertThat(searchable.getValues().size()).isEqualTo(1);
+        assertThat(searchable.size()).isEqualTo(1);
 
     }
 
@@ -124,7 +122,7 @@ public class HibernateTest {
 
         Field searchableField = Resource.class.getDeclaredField("searchableField");
         searchableField.setAccessible(true);
-        final List<Resource> searchable = resourceCrud.searchInField("searchableField", "searchable");
+        final List<Resource> searchable = resourceCrud.find(eq("searchableField", "searchable"));
         assertThat(searchable.size()).isEqualTo(1);
 
     }

@@ -1,10 +1,10 @@
 package com.elepy.firebase;
 
-import com.elepy.dao.*;
+import com.elepy.dao.Crud;
+import com.elepy.dao.Query;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
 import com.elepy.utils.ReflectionUtils;
-import com.elepy.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
@@ -12,7 +12,6 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -34,29 +33,33 @@ public class FirestoreCrud<T> implements Crud<T> {
     }
 
     @Override
-    public Page<T> search(Query query, PageSettings settings) {
 
-        if (!StringUtils.isEmpty(query.getSearchQuery())) {
-            throw new ElepyException("Firestore does not support table scans");
-        }
+    // TODO
+    public List<T> find(Query query) {
 
-
-        com.google.cloud.firestore.Query q = db.collection(collection);
-
-        for (Filter filter : query.getFilters()) {
-            q = FirestoreQueryFactory.getQuery(q, filter,schema);
-        }
-
-        long amountOfResultsWithThatQuery = count(q);
-
-        // Add pagination settings
-        q = q.offset(Math.toIntExact(settings.getPageSize() * settings.getPageNumber())).limit(settings.getPageSize());
-
-        final long remainder = amountOfResultsWithThatQuery % settings.getPageSize();
-        long amountOfPages = amountOfResultsWithThatQuery / settings.getPageSize();
-        if (remainder > 0) amountOfPages++;
-
-        return new Page<>(settings.getPageNumber(), amountOfPages, toList(q));
+//        if (!StringUtils.isEmpty(query.)) {
+//            throw new ElepyException("Firestore does not support table scans");
+//        }
+//
+//
+//        com.google.cloud.firestore.Query q = db.collection(collection);
+//
+//        for (Filter filter : query.getFilters()) {
+//            q = FirestoreQueryFactory.getQuery(q, filter, schema);
+//        }
+//
+//        long amountOfResultsWithThatQuery = count(q);
+//
+//        // Add pagination settings
+//        q = q.offset(Math.toIntExact(settings.getPageSize() * settings.getPageNumber())).limit(settings.getPageSize());
+//
+//        final long remainder = amountOfResultsWithThatQuery % settings.getPageSize();
+//        long amountOfPages = amountOfResultsWithThatQuery / settings.getPageSize();
+//        if (remainder > 0) amountOfPages++;
+//
+//        return toList(q);
+        return
+                null;
 
     }
 
@@ -92,11 +95,6 @@ public class FirestoreCrud<T> implements Crud<T> {
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public List<T> searchInField(Field field, String qry) {
-        return toList(db.collection(collection).whereEqualTo(field.getName(), qry));
     }
 
     @Override
@@ -149,6 +147,12 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (ExecutionException e) {
             throw new ElepyException(e.getMessage(), 500, e);
         }
+    }
+
+    @Override
+    //TODO
+    public long count(Query query) {
+        return 0;
     }
 
 

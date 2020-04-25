@@ -2,6 +2,7 @@ package com.elepy.evaluators;
 
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
+import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.ModelContext;
 import com.elepy.utils.ReflectionUtils;
@@ -48,7 +49,7 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
             field.setAccessible(true);
             Object prop = field.get(item);
 
-            final List<T> foundItems = dao.searchInField(field, prop == null ? "" : prop.toString());
+            final List<T> foundItems = dao.findLimited(10, Filters.eq(ReflectionUtils.getPropertyName(field), prop == null ? "" : prop.toString()));
             if (foundItems.size() > 0) {
 
                 if (foundItems.size() > 1) {

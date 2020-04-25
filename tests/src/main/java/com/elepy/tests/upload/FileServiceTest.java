@@ -4,6 +4,7 @@ import com.elepy.Configuration;
 import com.elepy.Elepy;
 import com.elepy.auth.Permissions;
 import com.elepy.dao.Crud;
+import com.elepy.dao.Filters;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
@@ -137,11 +138,15 @@ public abstract class FileServiceTest {
         final FileUpload fileUpload = fileService.readFile(uploadedFileName).orElseThrow(() ->
                 new AssertionFailedError("FileService did not recognize file: " + uploadedFileName));
 
+        final var s = uploadedFileName.split("_");
 
-        assertThat(references.searchInField("uploadName", uploadedFileName)
+        final var byId = references.getById(uploadedFileName);
+        final var foundReferences = references.findLimited(50, Filters.contains("uploadName", uploadedFileName));
+        assertThat(foundReferences
                 .stream().map(FileReference::getUploadName).anyMatch(uploadedFileName::equals))
                 .as(String.format("Can't find '%s' in file references ", uploadedFileName))
                 .isTrue();
+
 
         assertThat(inputStream(originalFileName).readAllBytes().length)
                 .as("File  size of uploaded file not equal to the actual file")
@@ -156,6 +161,7 @@ public abstract class FileServiceTest {
 
 
         assertThat(IOUtils.contentEquals(inputStream(originalFileName), fileUpload.getContent())).as(String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName)).isTrue();
+
 
         return fileUpload;
     }

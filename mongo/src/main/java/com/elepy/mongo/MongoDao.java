@@ -1,178 +1,232 @@
 package com.elepy.mongo;
 
-import com.elepy.dao.*;
+import com.elepy.dao.Crud;
+import com.elepy.dao.Query;
+import com.elepy.dao.SortOption;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.mongo.querybuilding.MongoFilterTemplateFactory;
-import com.elepy.mongo.querybuilding.MongoFilters;
-import com.elepy.mongo.querybuilding.MongoQuery;
-import com.elepy.mongo.querybuilding.MongoSearch;
+import com.elepy.models.Property;
+import com.elepy.models.Schema;
+import com.elepy.mongo.annotations.MongoIndex;
 import com.elepy.utils.ReflectionUtils;
-import com.google.common.collect.Lists;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoSocketException;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
-import org.jongo.Find;
-import org.jongo.Jongo;
-import org.jongo.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.Sorts;
+import org.bson.conversions.Bson;
+import org.mongojack.internal.MongoJackModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public abstract class MongoDao<T> implements Crud<T> {
+public class MongoDao<T> implements Crud<T> {
 
-    private Jongo jongo;
+    private final Schema<T> schema;
+    private final ObjectMapper objectMapper;
+    private final MongoCollection<T> mongoCollection;
+
+    private static final Logger logger = LoggerFactory.getLogger("mongo");
+
+    private final QueryBuilder<T> queryBuilder;
+    private final MongoDatabase database;
 
 
-    public abstract String mongoCollectionName();
+    public MongoDao(MongoDatabase database, final String collectionName, final Schema<T> schema) {
+        this.database = database;
+        this.schema = schema;
+        this.objectMapper = MongoJackModule.configure(CustomJacksonModule.configure(new ObjectMapper()));
 
+        ElepyCodecRegistry jacksonCodecRegistry = new ElepyCodecRegistry(objectMapper, null);
+        jacksonCodecRegistry.addCodecForClass(schema.getJavaClass());
+        this.mongoCollection =
+                database.getCollection(collectionName.replaceAll("/", ""))
+                        .withDocumentClass(schema.getJavaClass())
+                        .withCodecRegistry(jacksonCodecRegistry);
+        this.queryBuilder = new QueryBuilder<>(schema);
+        createIndexes();
 
-    public abstract DB db();
-
-
-    public MongoClient getMongoClient() {
-        return db().getMongoClient();
     }
 
-    public MongoDatabase getDatabase(){
-        return getMongoClient().getDatabase(db().getName());
+
+    public MongoCollection<T> getMongoCollection() {
+        return mongoCollection;
     }
 
-    Jongo getJongo() {
-        if (jongo == null) {
-            this.jongo = new Jongo(db(), JongoMapperFactory.createMapper());
+    private void createIndexes() {
+        try {
+            Arrays.stream(schema.getJavaClass().getAnnotationsByType(MongoIndex.class))
+                    .forEach(this::createIndex);
+
+
+            schema.getProperties().stream().filter(Property::isUnique)
+                    .forEach(property -> mongoCollection.createIndex(new BasicDBObject(property.getName(), 1)));
+        } catch (MongoSocketException e) {
+            logger.error("Failed at creating index", e);
         }
-        return jongo;
-    }
 
-    protected MongoCollection jongoCollection() {
-        return getJongo().getCollection(mongoCollectionName());
-    }
-
-
-    public com.mongodb.client.MongoCollection<Document> mongoCollection() {
-        return getMongoClient().getDatabase(db().getName()).getCollection(mongoCollectionName());
-    }
-    @Override
-    public List<T> searchInField(Field field, String qry) {
-        final String propertyName = ReflectionUtils.getPropertyName(field);
-        return toPage(addDefaultSort(jongoCollection().find("{#: #}", propertyName, qry)), new PageSettings(1L, Integer.MAX_VALUE, List.of()), (int) jongoCollection().count("{#: #}", propertyName, qry)).getValues();
-    }
-
-    private Find addDefaultSort(Find find) {
-        final String sort = String.format("{%s: %d}", getSchema().getDefaultSortField(), getSchema().getDefaultSortDirection().getVal());
-        find.sort(sort);
-        return find;
     }
 
     @Override
-    public Optional<T> getById(final Serializable id) {
-        return Optional.ofNullable(jongoCollection().findOne(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).as(getType()));
+    public List<T> find(Query query) {
+
+        query.purge();
+
+        final List<Bson> sortSpec = query.getSortingSpecification().getMap().entrySet().stream().map(entry -> {
+            if (entry.getValue().equals(SortOption.ASCENDING)) {
+                return Sorts.ascending(entry.getKey());
+            } else {
+                return Sorts.descending(entry.getKey());
+            }
+        }).collect(Collectors.toList());
+        final var expression = new QueryBuilder<>(schema).expression(query.getExpression());
+        return mongoCollection.find(expression).limit(query.getLimit()).skip(query.getSkip()).sort(Sorts.orderBy(sortSpec)).into(new ArrayList<>());
     }
+
+    @Override
+    public Optional<T> getById(Serializable id) {
+        return Optional.ofNullable(mongoCollection.find(Filters.eq("_id", id)).first());
+    }
+
+
+    @Override
+    public void update(T item) {
+        mongoCollection.replaceOne(Filters.eq("_id", getId(item)), item);
+    }
+
+    @Override
+    public void create(T item) {
+
+        idQuery(item);
+        mongoCollection.insertOne(item);
+    }
+
+    @Override
+    public void create(T... items) {
+        for (T item : items) {
+            idQuery(item);
+        }
+        mongoCollection.insertMany(List.of(items));
+    }
+
+    private Bson idQuery(T item) {
+
+        Optional<Serializable> idMaybe = ReflectionUtils.getId(item);
+        if (idMaybe.isEmpty()) {
+
+            try {
+                throw new ElepyException(String.format("No Identifier provided to the object: %s", objectMapper.writeValueAsString(item)), 400);
+            } catch (JsonProcessingException e) {
+                throw new ElepyException("No Identifier provided to the object", 500, e);
+            }
+        }
+
+        var id = idMaybe.get();
+        return idQuery(id);
+    }
+
+    private Bson idQuery(Serializable id) {
+        return Filters.eq("_id", id);
+    }
+
 
     @Override
     public List<T> getAll() {
-        return Lists.newArrayList(jongoCollection().find().as(getType()).iterator());
+        return mongoCollection.find().into(new ArrayList<>());
     }
 
     @Override
     public void deleteById(Serializable id) {
-        jongoCollection().remove(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id);
+        mongoCollection.deleteOne(Filters.eq("_id", id));
     }
 
     @Override
-    public void update(T item) {
-        final Object id = getId(item);
-        jongoCollection().update(String.format("{$or: [{_id: #}, {\"%s\": #}]}", getIdFieldProp()), id, id).with(item);
-
+    public long count(Query query) {
+        query.purge();
+        return mongoCollection.countDocuments(queryBuilder.expression(query.getExpression()));
     }
 
-    private String getIdFieldProp() {
-        Optional<Field> idProperty = ReflectionUtils.getIdField(getType());
-        if (idProperty.isPresent()) {
-            return ReflectionUtils.getPropertyName(idProperty.get());
+    @Override
+    public Schema<T> getSchema() {
+        return schema;
+    }
+
+    @Override
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+
+    private void createIndex(MongoIndex annotation) {
+
+        if (annotation.properties().length == 0) {
+            throw new ElepyConfigException("No properties specified in MongoIndex");
         }
-        return "id";
+
+
+        final var indexOptions = new IndexOptions();
+
+        if (!isDefault(annotation.text())) {
+            indexOptions.textVersion(annotation.text());
+        }
+        if (!isDefault(annotation.expireAfterSeconds())) {
+            indexOptions.expireAfter(annotation.expireAfterSeconds(), TimeUnit.SECONDS);
+        }
+        if (!isDefault(annotation.name())) {
+            indexOptions.name(annotation.name());
+        }
+        if (!isDefault(annotation.unique())) {
+            indexOptions.unique(annotation.unique());
+        }
+        final var compoundIndex = Indexes.compoundIndex(Arrays
+                .stream(annotation.properties())
+                .map(this::createIndexField)
+                .collect(Collectors.toList()));
+
+        mongoCollection.createIndex(compoundIndex, indexOptions);
     }
 
+    private Bson createIndexField(String property) {
+        final var split = property.split(":");
 
-    @Override
-    public void create(T item) {
+        //Ensures property exists
+        schema.getProperty(split[0]);
+
+        if (split.length == 1) {
+            return Indexes.ascending(property);
+        }
+
         try {
-            jongoCollection().save(item);
-        } catch (Exception e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            final var i = Integer.parseInt(split[1]);
+
+            return new BasicDBObject(property, i);
+        } catch (NumberFormatException e) {
+            throw new ElepyConfigException(String.format("%s is not a valid integer", split[1]), e);
         }
     }
 
-
-    @Override
-    public Serializable getId(T item) {
-        Optional<Serializable> id = ReflectionUtils.getId(item);
-        if (!id.isPresent()) {
-            throw new ElepyException("No Identifier provided to the object.");
+    private boolean isDefault(Object o) {
+        if (o instanceof String) {
+            return "".equals(o);
         }
-        return id.get();
-    }
-
-    private MongoFilters fromQueryFilters(List<Filter> filterQueries) {
-        return new MongoFilters(
-                filterQueries
-                        .stream()
-                        .map(filter -> MongoFilterTemplateFactory.fromFilter(filter, getSchema()))
-                        .collect(Collectors.toList()
-                        )
-        );
-    }
-
-    private Page<T> toPage(Find find, PageSettings pageSearch, int amountOfResultsWithThatQuery) {
-
-
-        final List<T> values = Lists.newArrayList(find.limit(pageSearch.getPageSize()).skip(((int) pageSearch.getPageNumber() - 1) * pageSearch.getPageSize()).as(getType()).iterator());
-
-        final long remainder = amountOfResultsWithThatQuery % pageSearch.getPageSize();
-        long amountOfPages = amountOfResultsWithThatQuery / pageSearch.getPageSize();
-        if (remainder > 0) amountOfPages++;
-
-
-        return new Page<>(pageSearch.getPageNumber(), amountOfPages, values);
-    }
-
-    @Override
-    public Page<T> search(Query query, PageSettings settings) {
-        MongoFilters mongoFilters = fromQueryFilters(query.getFilters());
-
-        MongoSearch mongoSearch = new MongoSearch(query.getSearchQuery(), getType());
-
-        MongoQuery mongoQuery = new MongoQuery(mongoSearch, mongoFilters);
-
-        String sort = settings.getPropertySortList()
-                .stream()
-                .map(propertySort -> String.format("'%s': %d", propertySort.getProperty(), propertySort.getSortOption().getVal()))
-                .collect(Collectors.joining(","));
-
-        final ArrayList<T> values = Lists.newArrayList(jongoCollection()
-                .find(mongoQuery.compile(), (Object[]) mongoQuery.getParameters())
-                .limit(settings.getPageSize())
-                .skip((int) ((settings.getPageNumber() - 1) * settings.getPageSize()))
-                .sort(String.format("{%s}", sort))
-                .as(getType())
-                .iterator());
-
-
-        long amountOfResultsWithThatQuery = count(mongoQuery);
-        final long remainder = amountOfResultsWithThatQuery % settings.getPageSize();
-        long amountOfPages = amountOfResultsWithThatQuery / settings.getPageSize();
-        if (remainder > 0) amountOfPages++;
-
-        return new Page<>(settings.getPageNumber(), amountOfPages, values);
-    }
-
-    private long count(MongoQuery query) {
-        return jongoCollection().count(query.compile(), (Object[]) query.getParameters());
+        if (o instanceof Boolean) {
+            return !((Boolean) o);
+        }
+        if (o instanceof Long || o instanceof Integer) {
+            return ((Number) o).longValue() == -1;
+        }
+        return false;
     }
 }

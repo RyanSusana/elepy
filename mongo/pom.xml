@@ -15,6 +15,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.mongojack</groupId>
+            <artifactId>mongojack</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
             <version>${project.version}</version>
@@ -38,17 +49,8 @@
             <version>1.16.0</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.jongo</groupId>
-            <artifactId>jongo</artifactId>
-            <version>1.4.0</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver</artifactId>
-            <version>3.9.1</version>
-        </dependency>
+
 
     </dependencies>
 </project>

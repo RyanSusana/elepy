@@ -5,6 +5,7 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.Permissions;
 import com.elepy.dao.Crud;
+import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
@@ -100,7 +101,8 @@ public class FileUploadExtension implements ElepyExtension {
         var datePrefix = new SimpleDateFormat("yyyy_MM").format(Calendar.getInstance().getTime());
 
         final String generatedName = String.format("%s_%s_%s", datePrefix, random, originalName);
-        if (!fileCrud.searchInField("uploadName", generatedName).isEmpty()) {
+
+        if (!fileCrud.findLimited(1, Filters.eq("uploadName", generatedName)).isEmpty()) {
             return generateUniqueFileName(originalName);
         }
         return generatedName;

@@ -18,7 +18,7 @@
         <junit.version>5.3.1</junit.version>
         <awaitility.version>3.1.2</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
-        <jackson.version>2.10.0</jackson.version>
+        <jackson.version>2.10.3</jackson.version>
         <tika.version>1.22</tika.version>
         <guava.version>28.0-jre</guava.version>
         <assertj.version>3.14.0</assertj.version>
@@ -82,6 +82,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

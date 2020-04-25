@@ -5,9 +5,9 @@ import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Property;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoDatabase;
 
 public class MongoConfiguration implements Configuration {
 
@@ -66,7 +66,7 @@ public class MongoConfiguration implements Configuration {
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
         if (databaseName != null) {
-            elepy.registerDependency(DB.class, mongoClient.getDB(databaseName));
+            elepy.registerDependency(MongoDatabase.class, mongoClient.getDatabase(databaseName));
             elepy.withDefaultCrudFactory(MongoCrudFactory.class);
         }
 

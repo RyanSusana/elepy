@@ -1,11 +1,9 @@
 package com.elepy.hibernate;
 
-import com.elepy.annotations.Searchable;
-import com.elepy.dao.*;
-import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.dao.Crud;
+import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
-import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -15,12 +13,8 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Column;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,31 +29,26 @@ public class HibernateDao<T> implements Crud<T> {
         this.sessionFactory = sessionFactory;
         this.schema = schema;
         this.objectMapper = objectMapper;
+
     }
 
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
-    private Page<T> toPage(Query<T> query, int pageSize, long pageNumber, long amountOfResultsWithThatQuery) {
-        final Query<T> q = query.setMaxResults(pageSize).setFirstResult(((int) pageNumber - 1) * pageSize);
-
-        final List<T> values = q.list();
-
-        if (amountOfResultsWithThatQuery == -1) {
-            amountOfResultsWithThatQuery = values.size();
-        }
-        loadLazyCollections(values);
-
-        final long remainder = amountOfResultsWithThatQuery % pageSize;
-        long amountOfPages = amountOfResultsWithThatQuery / pageSize;
-        if (remainder > 0) amountOfPages++;
-
-        return new Page<>(pageNumber, amountOfPages, values);
+    private List<Order> generateOrderBy(CriteriaBuilder cb, Root<T> root, com.elepy.dao.Query settings) {
+        return settings.getSortingSpecification().getMap().entrySet().stream().map(sortEntry -> {
+            if (sortEntry.getValue().equals(SortOption.ASCENDING)) {
+                return cb.asc(root.get(sortEntry.getKey()));
+            } else {
+                return cb.desc(root.get(sortEntry.getKey()));
+            }
+        }).collect(Collectors.toList());
     }
 
+
     @Override
-    public Page<T> search(com.elepy.dao.Query query, PageSettings settings) {
+    public List<T> find(com.elepy.dao.Query query) {
         try (Session session = sessionFactory.openSession()) {
 
 
@@ -68,48 +57,22 @@ public class HibernateDao<T> implements Crud<T> {
 
             final Root<T> root = criteriaQuery.from(getType());
 
-            Predicate predicate = generateSearchQuery(cb, root, query);
 
-            final List<Order> orders = generateOrderBy(cb, root, settings);
+            Predicate predicate = new HibernateQueryFactory<>(schema, root, cb)
+                    .generatePredicate(query.getExpression());
 
-            Query<T> qry = session.createQuery(criteriaQuery.select(root).where(predicate).orderBy(orders));
+            final List<Order> orders = generateOrderBy(cb, root, query);
 
-            return toPage(qry, settings.getPageSize(), settings.getPageNumber(), count(query));
+            Query<T> qry = session.createQuery(criteriaQuery
+                    .select(root)
+                    .where(predicate)
+                    .orderBy(orders))
+                    .setFirstResult(query.getSkip())
+                    .setMaxResults(query.getLimit());
+
+
+            return loadLazyCollections(qry.list());
         }
-    }
-
-    private List<Order> generateOrderBy(CriteriaBuilder cb, Root<T> root, PageSettings settings) {
-        return settings.getPropertySortList().stream().map(propertySort -> {
-            if (propertySort.getSortOption().equals(SortOption.ASCENDING)) {
-                return cb.asc(root.get(propertySort.getProperty()));
-            } else {
-                return cb.desc(root.get(propertySort.getProperty()));
-            }
-        }).collect(Collectors.toList());
-    }
-
-    private Predicate generateSearchQuery(CriteriaBuilder cb, Root<T> root, com.elepy.dao.Query query) {
-
-
-        final List<Predicate> filterList = new ArrayList<>();
-        for (Filter filter : query.getFilters()) {
-            filterList.add(HibernatePredicateFactory.fromFilter(schema, root, cb, filter, schema.getProperty(filter.getPropertyName())));
-        }
-
-
-        return cb.and(cb.and(filterList.toArray(new Predicate[0])), cb.or(getSearchPredicates(root, cb, query.getSearchQuery()).toArray(new Predicate[0])));
-    }
-
-    private List<Predicate> getSearchPredicates(Root<T> root, CriteriaBuilder cb, String term) {
-
-
-        if (term == null || term.trim().isEmpty()) {
-            //Always true
-            return Collections.singletonList(cb.and());
-        }
-        return getSearchableFields().stream()
-                .map(field -> cb.like(cb.lower(root.get(getJPAFieldName(field))), cb.literal("%" + term.toLowerCase() + "%")))
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -126,27 +89,6 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-
-    @Override
-    public List<T> searchInField(Field field, String qry) {
-        try (Session session = sessionFactory.openSession()) {
-
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = cb.createQuery(getType());
-
-            final Root<T> root = criteriaQuery.from(getType());
-
-            if (field.getType().equals(String.class)) {
-                criteriaQuery.select(root).where(cb.like(root.get(getJPAFieldName(field)), qry));
-            } else {
-                criteriaQuery.select(root).where(cb.equal(root.get(getJPAFieldName(field)), Long.parseLong(qry)));
-            }
-            Query<T> query = session.createQuery(criteriaQuery);
-            final List<T> resultList = query.list();
-            loadLazyCollections(resultList);
-            return resultList;
-        }
-    }
 
     @Override
     public void update(T item) {
@@ -183,7 +125,7 @@ public class HibernateDao<T> implements Crud<T> {
 
             final Root<T> root = criteriaQuery.from(getType());
 
-            return session.createQuery(criteriaQuery.select(root)).getResultList();
+            return loadLazyCollections(session.createQuery(criteriaQuery.select(root)).getResultList());
         }
     }
 
@@ -227,7 +169,7 @@ public class HibernateDao<T> implements Crud<T> {
             final Root<T> root = criteriaQuery.from(getType());
 
             criteriaQuery.select(cb.count(root));
-            Predicate predicate = generateSearchQuery(cb, root, query);
+            Predicate predicate = new HibernateQueryFactory<>(schema, root, cb).generatePredicate(query.getExpression());
 
             criteriaQuery.where(predicate);
 
@@ -263,20 +205,11 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-    private String getJPAFieldName(Field field) {
-        Column annotation = field.getAnnotation(Column.class);
-
-        if (annotation != null && !annotation.name().isEmpty()) {
-            return annotation.name();
-        }
-
-        return field.getName();
-    }
-
-    private void loadLazyCollections(Object object) {
+    private <R> R loadLazyCollections(R object) {
 
         try {
             objectMapper.writeValueAsString(object);
+            return object;
         } catch (JsonProcessingException e) {
 
             logger.error(e.getMessage(), e);
@@ -284,14 +217,4 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-    private List<Field> getSearchableFields() {
-        List<Field> fields = ReflectionUtils.searchForFieldsWithAnnotation(getType(), Searchable.class);
-
-        Field idProperty = ReflectionUtils.getIdField(getType()).orElseThrow(() -> new ElepyConfigException("No id idProperty"));
-        fields.add(idProperty);
-
-
-        fields.removeIf(field -> !field.getType().equals(String.class));
-        return fields;
-    }
 }

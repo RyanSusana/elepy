@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,10 +23,14 @@ import java.util.stream.Collectors;
 public interface Crud<T> {
 
 
-    Page<T> search(Query query, PageSettings settings);
+    List<T> find(Query query);
 
-    default Page<T> search(Query query) {
-        return search(query, new PageSettings(1L, Integer.MAX_VALUE, List.of()));
+    default List<T> find(Expression expression) {
+        return find(Queries.create(expression));
+    }
+
+    default List<T> findLimited(Integer limit, Expression expression) {
+        return find(Queries.create(expression).limit(Optional.ofNullable(limit).orElse(100)));
     }
 
     /**
@@ -40,29 +43,6 @@ public interface Crud<T> {
 
     default List<T> getByIds(final Iterable<? extends Serializable> ids) {
         return Lists.newArrayList(ids).stream().map(this::getById).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-    }
-
-    /**
-     * This method is used to look for model items based on a specific field name. It is used to help Elepy authenticate
-     * {@link com.elepy.annotations.Unique} Identity constraints. This method is the Elepy equivalent to SQL's:
-     * <p>
-     * 'SELECT * FROM Item item WHERE item.field LIKE :qry'
-     *
-     * @param field The field of the model that you want to search
-     * @param qry   The search term.
-     * @return A list of all found model items.
-     * @see com.elepy.evaluators.IntegrityEvaluator
-     */
-    List<T> searchInField(Field field, String qry);
-
-    /**
-     * @param fieldName The name of the field
-     * @param qry       The search term
-     * @return A list of found items
-     * @see #searchInField(Field, String)
-     */
-    default List<T> searchInField(String fieldName, String qry) {
-        return searchInField(ReflectionUtils.getPropertyField(getType(), fieldName), qry);
     }
 
     /**
@@ -174,12 +154,10 @@ public interface Crud<T> {
         delete(Arrays.asList(ids));
     }
 
-    default long count(Query query) {
-        return search(query, new PageSettings(1, Integer.MAX_VALUE, List.of())).getValues().size();
-    }
+    long count(Query query);
 
     default long count() {
-        return count(new Query(null, List.of()));
+        return count(new Query(Filters.search("")));
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.elepy.tests.dao;
 
 import com.elepy.dao.FilterType;
-import com.elepy.dao.Page;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
@@ -351,8 +350,8 @@ public abstract class FiltersTest implements ElepyConfigHelper {
                 throw new ElepyException(response.getBody().getObject().getString("message"), response.getStatus());
             }
             final var mapper = new ObjectMapper();
-            JavaType type = mapper.getTypeFactory().constructParametricType(Page.class, Product.class);
-            return ((Page<Product>) mapper.readValue(response.getBody().toString(), type)).getValues();
+            JavaType type = mapper.getTypeFactory().constructParametricType(List.class, Product.class);
+            return ((List<Product>) mapper.readValue(response.getBody().toString(), type));
         } catch (JsonProcessingException | UnirestException e) {
             throw new RuntimeException(e);
         }
