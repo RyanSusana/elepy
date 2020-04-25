@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # This script allows you to work on the frontend, located in 'admin/src/main/resources/frontend'
 # It assumes you have Maven and Node installed
