@@ -91,7 +91,7 @@
                     .get(searchUrl)
                     .then(response => {
                         EventBus.$emit("stopLoading");
-                        response.data.values.map(
+                        response.data.map(
                             file => (file.size = this.translateFile(file.size))
                         );
                         ref.currentPage = response.data;

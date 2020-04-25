@@ -13,6 +13,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequest;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -54,13 +55,14 @@ public abstract class FiltersTest implements ElepyConfigHelper {
     }
 
     @Test
+    @Disabled("Should be tested via Crud Filter")
     void canSearch_withSingleQuote() {
 
         seedWithProducts(
                 Product.withDescription("Ryan's phone"),
                 Product.withDescription("Pablo's phone"));
 
-        assertThat(executeQuery(Map.of("q", "ryan's")))
+        assertThat(executeQuery(Map.of("q", "\"ryan\"")))
                 .hasSize(1);
     }
 

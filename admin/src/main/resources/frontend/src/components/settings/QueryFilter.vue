@@ -76,47 +76,8 @@
 </template>
 
 <style lang="scss">
-    #search-input {
-        border-radius: 200px;
-        width: 20em;
-        transition: all 0.2s;
 
-        &.filter-focused,
-        &.focused {
-            width: 30em;
-        }
-    }
 
-    #filter-button {
-        right: 0;
-        text-decoration: none;
-        cursor: pointer;
-
-        & > *:hover {
-            text-decoration: none;
-        }
-
-        & > .uk-badge {
-            margin-left: 5px;
-        }
-
-        &.with-filters {
-            right: 10px;
-        }
-    }
-
-    #filter-dropdown {
-        min-width: 500px;
-        max-height: 90vh;
-        overflow-y: scroll;
-        position: absolute;
-        top: 4em;
-        left: -50%;
-
-        box-shadow: 0 2px 5px rgba(#000, 0.25);
-        background: #fefefe;
-        z-index: 5;
-    }
 </style>
 
 <script>

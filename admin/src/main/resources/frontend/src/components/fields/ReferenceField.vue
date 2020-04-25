@@ -23,9 +23,7 @@
                 :options-limit="300"
                 :limit="10"
                 :limit-text="limitText"
-                :hideSelected="field.required"
                 :max-height="600"
-                :show-no-results="false"
 
                 @input="handleInput"
                 @search-change="findRecords"
@@ -81,7 +79,7 @@
     import Multiselect from 'vue-multiselect'
     import SchemaClient from "../../elepyClient"
 
-    import {throttle} from "lodash";
+    import {debounce} from "lodash";
 
     export default {
         name: "ReferenceField",
@@ -125,7 +123,7 @@
         methods: {
             handleInput(e) {
                 if (this.multiple === true) {
-                    let x = e.map(i => i[this.schema.idProperty])
+                    let x = e.map(i => i[this.schema.idProperty]);
 
                     this.$emit("input", x);
                 } else {
@@ -138,11 +136,11 @@
                 return `and ${count} other ${this.schema.name}`
             },
 
-            findRecords: throttle(async function (query) {
+            findRecords: debounce(async function (query) {
 
-                this.isLoading = true
+                this.isLoading = true;
 
-                this.foundRecords = (await new SchemaClient(this.schema).search(query).catch(err => console.log(err.response))).values;
+                this.foundRecords = (await new SchemaClient(this.schema).search(query)).values;
 
                 this.isLoading = false;
             }, 500),
@@ -158,7 +156,7 @@
                         if (this.value.length !== 0) {
                             this.isLoading = true;
 
-                            this.selected = (await schemaClient.getByIds(this.value)).values;
+                            this.selected = (await schemaClient.getByIds(this.value));
                             this.isLoading = false;
                             this.initialLoaded = true;
                         }

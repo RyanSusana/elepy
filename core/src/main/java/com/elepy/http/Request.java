@@ -4,9 +4,7 @@ import com.elepy.auth.Permissions;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.Filter;
-import com.elepy.dao.FilterType;
-import com.elepy.dao.SortOption;
-import com.elepy.dao.SortingSpecification;
+import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
@@ -20,6 +18,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.elepy.dao.Filters.*;
+import static com.elepy.dao.Queries.create;
 
 public interface Request {
 
@@ -246,8 +247,9 @@ public interface Request {
 
 
     default SortingSpecification sortingForModel(Schema<?> schema) {
-        String[] sorts = queryParamValues("sort");
 
+
+        String[] sorts = queryParamValues("sort");
         SortingSpecification sortingSpecification = new SortingSpecification();
 
 
@@ -269,12 +271,37 @@ public interface Request {
         return sortingSpecification;
     }
 
-    @SuppressWarnings("unchecked")
-    default List<Filter> filtersForModel(Class restModelType) {
+    default Query parseQuery() {
+
+        String q = Optional.ofNullable(queryParams("q")).orElse("");
+
+        final var sortingSpec = sortingForModel(schema(null).orElseThrow());
+        String ps = queryParams("pageSize");
+        String pn = queryParams("pageNumber");
+        int pageSize = ps == null ? Integer.MAX_VALUE : Integer.parseInt(ps);
+        int pageNumber = pn == null ? 1 : Integer.parseInt(pn);
+
+        final var or = or(filtersForModel(null));
+        return create(and(Queries.parse(q).getExpression(), or.getExpressions().isEmpty() ? search("") : or))
+                .purge().sort(sortingSpec).page(pageNumber, pageSize);
+    }
+
+    default <T> Optional<Schema> schema(Class<T> t) {
+        final var restModelType = Optional.ofNullable(t).orElse(attribute("modelClass"));
+
+        if (restModelType == null) {
+            return Optional.empty();
+        }
         List<Schema> schemas = Optional.ofNullable((List<Schema>) attribute("schemas")).orElse(List.of());
 
-        Optional<Schema> schema = schemas.stream().filter(s -> s.getJavaClass().equals(restModelType)).findFirst();
+        return schemas.stream().filter(s -> s.getJavaClass().equals(restModelType)).findFirst();
 
+    }
+
+    @SuppressWarnings("unchecked")
+    default List<Filter> filtersForModel(Class modelClass) {
+
+        final Optional<Schema> schema = schema(modelClass);
         final List<Filter> filterQueries = new ArrayList<>();
         for (String queryParam : queryParams()) {
             if (queryParam.contains("_")) {

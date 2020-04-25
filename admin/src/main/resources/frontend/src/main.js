@@ -28,7 +28,7 @@ axios.interceptors.request.use(function (config) {
 
     let uniqueId = Math.random().toString(36).substring(2) + Date.now().toString(36);
 
-    let description = config.description ?? "Communicating with ElepySingle";
+    let description = config.description ?? "Communicating with Elepy";
 
     config.requestInfo = {uniqueId, description}
 

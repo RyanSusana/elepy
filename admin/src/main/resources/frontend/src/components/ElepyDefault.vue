@@ -38,24 +38,30 @@
         <!-- TableView -->
         <template #main>
             <slot name="pageDetails">
-                <div class="uk-flex uk-flex-between table-controls uk-padding-small">
 
+                <div class="uk-container uk-container-expand">
+                    <div class="uk-margin-top">
 
-                    <QueryFilter :model="model" @change="getModelData()" v-model="queryFilter"/>
-                    <Pagination
-                            @change="getModelData()"
-                            v-model="pagination"
-                            :model="model"
-                    />
+                        <div class="uk-flex uk-margin-small-top uk-flex-between uk-flex-middle">
+
+                            <QueryBar class="uk-width-large" v-model="query" :model="model"/>
+
+                            <Pagination v-model="pagination" :amountOfRecords="amountOfRecords"></Pagination>
+                        </div>
+
+                        <Table
+                                v-if="!isLoading"
+                                :currentPage="currentPage"
+                                :isLoading="isLoading"
+                                :model="model"
+                                :updateEnabled="true"
+                                v-on:updateData="getModelData()"
+                        />
+
+                    </div>
+
                 </div>
-                <Table
-                        v-if="!isLoading"
-                        :currentPage="currentPage"
-                        :isLoading="isLoading"
-                        :model="model"
-                        :updateEnabled="true"
-                        v-on:updateData="getModelData()"
-                />
+
             </slot>
         </template>
     </BaseLayout>
@@ -82,6 +88,7 @@
     import ActionButton from "./base/ActionButton";
 
     import axios from "axios";
+    import QueryBar from "./settings/QueryBar";
 
     export default {
         name: "Elepy",
@@ -89,6 +96,14 @@
             $route: {
                 handler: 'getModelData',
                 immediate: true
+            },
+
+            pagination: function () {
+                return this.getModelData();
+            }
+            ,
+            query: function () {
+                return this.getModelData();
             }
         },
         computed: {
@@ -108,15 +123,16 @@
         },
         data() {
             return {
-                queryFilter: "",
+                amountOfRecords: 0,
                 currentPage: [],
                 pagination: "pageSize=25&pageNumber=1",
+                query: "",
                 isLoading: false
             };
         },
 
         props: ["model"],
-        components: {ActionButton, ActionsButton, QueryFilter, Pagination, Table, BaseLayout},
+        components: {QueryBar, ActionButton, ActionsButton, QueryFilter, Pagination, Table, BaseLayout},
         methods: {
             deleteData() {
                 return UIkit.modal
@@ -154,26 +170,24 @@
                         }
                     );
             },
-            getModelData() {
-                var ref = this;
+            async getModelData() {
                 let searchUrl =
-                    ref.model.path +
+                    this.model.path +
                     "?" +
                     this.pagination +
-                    "&" +
-                    this.queryFilter;
-
+                    "&q=" +
+                    this.query;
                 EventBus.$emit("startLoading");
-                axios
-                    .get(searchUrl)
-                    .then(function (response) {
-                        EventBus.$emit("stopLoading");
-                        ref.currentPage = response.data;
-                    })
-                    .catch(function (error) {
-                        EventBus.$emit("stopLoading");
 
-                    });
+                try {
+                    this.currentPage = (await axios.get(searchUrl)).data
+                    this.amountOfRecords = (await axios.get(searchUrl + "&count=true")).data;
+
+                } finally {
+                    EventBus.$emit("stopLoading");
+                }
+
+
             }
         },
         mounted() {

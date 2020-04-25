@@ -229,18 +229,19 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
     @Test
     void testPagination() {
-        seedWithProducts(63);
+        seedWithProducts(153);
 
         final var scenario =
                 driver
                         .createScenario()
                         .fromModel(Product.class)
-                        .changeMaxRowSize(10)
+
 
                         //Make sure that the last page remains consistent
                         .custom(scen -> IntStream.range(0, 6).forEach(i -> {
-                                    assertThat(scen.getLastPageNumber())
-                                            .isEqualTo(7);
+
+                            assertThat(scen.getLastPageNumber())
+                                          .isEqualTo(7);
 
                                     scen.nextPage();
                                 })

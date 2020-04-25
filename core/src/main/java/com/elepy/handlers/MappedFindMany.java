@@ -17,7 +17,7 @@ public abstract class MappedFindMany<T, R> extends DefaultFindMany<T> {
 
     @Override
     public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
-        List<T> result = find(context.request(), context.response(), modelContext.getCrud(), modelContext);
+        List<T> result = find(context, modelContext.getCrud());
 
         List<R> mappedResult = mapValues(result, context.request(), modelContext.getCrud());
 

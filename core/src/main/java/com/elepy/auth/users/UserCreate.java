@@ -14,6 +14,8 @@ import com.elepy.id.HexIdentityProvider;
 import com.elepy.models.ModelContext;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.List;
+
 
 public class UserCreate implements ActionHandler<User> {
 
@@ -45,7 +47,7 @@ public class UserCreate implements ActionHandler<User> {
 
         createUser(crud, user);
         context.response().result();
-        context.response().result(Message.of("Successfully created the user", 200));
+        context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user.getId())));
     }
 
     protected void createAdditionalUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {

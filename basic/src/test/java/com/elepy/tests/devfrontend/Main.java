@@ -19,17 +19,18 @@ public class Main {
 
         MongoClient client = new MongoClient(new ServerAddress(serverAddress));
 
-        new Elepy()
+        final var elepyInstance = new Elepy()
                 .addConfiguration(MongoConfiguration.of(client, "example", "bucket"))
                 .withPort(7331)
-                .addModelPackage("com.elepy.tests")
+                .addModelPackage("com.elepy.tests.devfrontend")
                 .addExtension((http, elepy) -> {
                     http.before(context -> {
                         context.response().header("Access-Control-Allow-Headers", "*");
                         context.request().addPermissions(Permissions.SUPER_USER);
                     });
                 })
-                .addExtension(new FrontendLoader())
-                .start();
+                .addExtension(new FrontendLoader());
+        elepyInstance.start();
+
     }
 } 

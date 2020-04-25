@@ -1,7 +1,7 @@
 <template>
 
 
-    <BaseLayout :back-location="singleMode? null : goBack">
+    <BaseLayout :back-location="singleMode? null : goBack" >
         <!-- Navigation -->
         <template #navigation>
             <ActionButton
@@ -33,7 +33,7 @@
 
         <!-- TableView -->
         <template #main>
-            <div class="uk-container uk-margin-top uk-margin-large-bottom" v-if="itemIsLoaded">
+            <div class="uk-container uk-margin-top uk-margin-large-bottom" @keydown.meta="typeCtrl" @keydown.ctrl="typeCtrl" v-if="itemIsLoaded">
                 <h1>{{model.name}}</h1>
                 <ObjectField :model="model" v-model="item"/>
             </div>
@@ -107,12 +107,12 @@
         components: {ActionButton, ObjectField, ActionsButton, BaseLayout},
 
         computed: {
-            actions(){
-              if(this.singleMode){
-                  return this.model.actions;
-              } else{
-                  return this.model.actions.filter(action => action.singleRecord || action.multipleRecords)
-              }
+            actions() {
+                if (this.singleMode) {
+                    return this.model.actions;
+                } else {
+                    return this.model.actions.filter(action => action.singleRecord || action.multipleRecords)
+                }
             },
             //Return if it should be a PUT or POST
             isCreating() {
@@ -199,15 +199,22 @@
                     );
             },
 
+            typeCtrl(e) {
+                if (e.key === 's') {
+                    e.preventDefault();
+                    this.save();
+                }
+            },
             getRecord() {
                 if (this.singleMode) {
                     return axios
                         .get(this.model.path + "?pageSize=1&pageNumber=1")
                         .then(response => {
-                            this.item = response.data.values[0] || {};
+                            this.item = response.data[0] || {};
                             this.itemCopy = JSON.parse(JSON.stringify(this.item));
                         })
                 }
+
 
                 if (this.isCreating) {
                     this.item = {};
@@ -229,12 +236,7 @@
         },
         mounted() {
             this.getRecord();
-            document.addEventListener("keydown", e => {
-                if (e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-                    e.preventDefault();
-                    this.save();
-                }
-            }, false);
+
         }
     };
 

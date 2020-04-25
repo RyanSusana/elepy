@@ -35,9 +35,7 @@ function createRequest(endpoint, params) {
 
         fetch() {
             return this.performRequest().then(data => {
-                this.lastPageNumber = data.lastPageNumber;
-                this.currentPageNumber = data.currentPageNumber;
-                return this.values = data.values;
+                return this.values = data;
             }).then(() => this);
         },
         performRequest() {
@@ -53,9 +51,7 @@ function createRequest(endpoint, params) {
                     this.query.pageNumber = 1;
                 }
                 return this.performRequest().then(data => {
-                    this.lastPageNumber = data.lastPageNumber;
-                    this.currentPageNumber = data.currentPageNumber;
-                    return this.values.push(...data.values);
+                    return this.values.push(...data);
                 }).then(() => this);
             } else {
                 if (this.query.pageNumber < this.lastPageNumber)

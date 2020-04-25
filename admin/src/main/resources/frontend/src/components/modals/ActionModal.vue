@@ -1,5 +1,5 @@
 <template>
-    <div class="uk-modal-dialog">
+    <div class="uk-modal-dialog" @keydown.meta="typeCtrl" @keydown.ctrl="typeCtrl" >
         <button class="uk-modal-close-default" type="button" uk-close></button>
         <div class="uk-modal-header">
             <h2 class="uk-modal-title">{{action.name}}</h2>
@@ -13,11 +13,17 @@
         <div class="uk-modal-footer uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
 
-            <ActionButton :action="triggerAction" class="uk-button-primary uk-width-small">{{action.name}}
+            <ActionButton :action="triggerAction" class="uk-button-primary action-button">{{action.name}}
             </ActionButton>
         </div>
     </div>
 </template>
+
+<style scoped>
+    .action-button{
+        min-width: 120px;
+    }
+</style>
 <script>
 
     import ObjectField from "../fields/ObjectField"
@@ -39,6 +45,12 @@
         },
 
         methods: {
+            typeCtrl(e) {
+                if (e.key === 's') {
+                    e.preventDefault();
+                    this.triggerAction();
+                }
+            },
 
             triggerAction() {
                 if (!this.action.warning) {

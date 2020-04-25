@@ -354,6 +354,7 @@ Prism.languages.clike = {
     operator: /--?|\+\+?|!=?=?|<=?|>=?|==?=?|&&?|\|\|?|\?|\*|\/|~|\^|%/,
     punctuation: /[{}[\];(),.:]/
 };
+
 Prism.languages.markdown = Prism.languages.extend("markup", {}), Prism.languages.insertBefore("markdown", "prolog", {
     blockquote: {
         pattern: /^>(?:[\t ]*>)*/m,
@@ -487,6 +488,9 @@ Prism.languages.markdown = Prism.languages.extend("markup", {}), Prism.languages
             n.content = Prism.highlight(s, o, a)
         }
     }
-}), Prism.languages.md = Prism.languages.markdown;
+}),
+    Prism.languages.md = Prism.languages.markdown;
+
+
 
 export default Prism;

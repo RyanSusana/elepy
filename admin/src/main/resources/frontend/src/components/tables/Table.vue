@@ -1,7 +1,7 @@
 <template>
     <div :class="{'is-loading': isLoading}">
 
-        <div class="uk-padding uk-padding-remove-top elepy-table">
+        <div class="elepy-table">
             <table class="uk-table uk-table-hover uk-table-divider uk-table-middle" id="table-data">
                 <thead>
                 <tr>

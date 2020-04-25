@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -144,7 +143,7 @@ public class ModelScenario<T> extends LoggedInScenario {
     public ModelScenario<T> nextPage() {
 
         final var initialTable = getTable().getAttribute("innerHTML");
-        driver.findElement(By.className("uk-pagination-next")).click();
+        driver.findElement(By.cssSelector("#pagination .uk-pagination-next")).click();
 
 
         if (getCurrentPageNumber() < getLastPageNumber()) {
@@ -165,7 +164,7 @@ public class ModelScenario<T> extends LoggedInScenario {
     public ModelScenario<T> previousPage() {
 
         final var initialTable = getTable().getAttribute("innerHTML");
-        driver.findElement(By.className("uk-pagination-previous")).click();
+        driver.findElement(By.cssSelector("#pagination .uk-pagination-previous")).click();
 
         if (getCurrentPageNumber() > 1) {
             waitUntilChange(initialTable);
@@ -179,15 +178,15 @@ public class ModelScenario<T> extends LoggedInScenario {
         return this;
     }
 
-    public ModelScenario<T> changeMaxRowSize(int i) {
-        final var select = new Select(driver.findElement(By.className("pagination-select")));
-
-        final var tableHtml = getTableHtml();
-        select.selectByValue(String.valueOf(i));
-
-        waitUntilChange(tableHtml);
-        return this;
-    }
+//    public ModelScenario<T> changeMaxRowSize(int i) {
+//        final var select = new Select(driver.findElement(By.className("pagination-select")));
+//
+//        final var tableHtml = getTableHtml();
+//        select.selectByValue(String.valueOf(i));
+//
+//        waitUntilChange(tableHtml);
+//        return this;
+//    }
 
     public ModelScenario<T> create(T item) {
         Map<String, Object> map = new ObjectMapper().convertValue(item, Map.class);
@@ -198,7 +197,7 @@ public class ModelScenario<T> extends LoggedInScenario {
 
 
     private int getCurrentPageNumber() {
-        return Integer.parseInt(driver.findElement(By.className("pagination-input")).getAttribute("value"));
+        return Integer.parseInt(driver.findElement(By.cssSelector("#pagination .current-page")).getAttribute("innerHTML"));
     }
 
     public int getRowSize() {
@@ -206,11 +205,9 @@ public class ModelScenario<T> extends LoggedInScenario {
     }
 
     public int getLastPageNumber() {
-        final var lastPageNumberWebElement = driver.findElement(By.className("pagination")).findElements(By.tagName("li")).get(2);
+        final var elements = driver.findElements(By.cssSelector("#pagination .last-page"));
+        return Integer.parseInt(elements.get(elements.size() - 1).getAttribute("innerHTML"));
 
-        final var pageNumberStrippedDown = lastPageNumberWebElement.getAttribute("innerHTML").replace("of ", "");
-
-        return Integer.parseInt(pageNumberStrippedDown);
     }
 
     private WebElement getTable() {

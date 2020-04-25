@@ -4,19 +4,20 @@ import com.elepy.dao.parser.EleQueryLexer;
 import com.elepy.dao.parser.EleQueryParser;
 import com.elepy.dao.parser.QueryListener;
 import com.elepy.dao.parser.cql.CQLParser;
+import com.elepy.utils.StringUtils;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import java.io.Serializable;
-import java.util.List;
-
 public class Queries {
 
     public static Query parse(String input) {
 
+        if (StringUtils.isEmpty(input)) {
+            return Queries.empty();
+        }
         //Lex (with Antlr's generated lexer)
         CharStream inputStream = CharStreams.fromString(input);
         EleQueryLexer lexer = new EleQueryLexer(inputStream);
@@ -42,5 +43,8 @@ public class Queries {
         return new Query(expression);
     }
 
+    public static Query empty() {
+        return create(Filters.search(""));
+    }
 
 } 

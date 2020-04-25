@@ -1,83 +1,97 @@
 <template>
-    <div class="uk-flex">
-        <div class="amount-result-box">
-            <select
-                    @change="emitChange"
-                    class="uk-select pagination-select"
-                    v-model="pagination.pageSize"
-            >
-                <option :value="10">10 results</option>
-                <option :value="25">25 results</option>
-                <option :value="75">75 Results</option>
-                <option :value="100">100 Results</option>
-            </select>
-        </div>
-        <ul class="pagination uk-pagination uk-flex-center uk-flex-middle">
-            <li>
-                <a v-on:click="setPage(pagination.currentPageNumber - 1)">
-                    <span uk-pagination-previous></span>
-                </a>
+    <div id="pagination"
+         class="uk-flex uk-flex-middle uk-flex-between uk-width-xlarge uk-background-muted uk-padding-small">
+        <ul class="uk-pagination uk-margin-remove">
+
+            <li><a @click="previousPage" v-if="currentPageNumber!==1"><span uk-pagination-previous></span></a></li>
+
+        </ul>
+        <ul class="uk-pagination uk-margin-remove">
+            <li v-if="currentPageNumber!==1"><a @click="setPage(1)">1</a></li>
+
+            <li class="uk-disabled" v-if="!currentPageIsInBeginning"><span>...</span></li>
+            <li v-for="page in previousValues"><a @click="setPage(page)">{{page}}</a></li>
+
+            <li class="uk-active"><span class="current-page"
+                                        :class="{'last-page': lastPageNumber = currentPageNumber}">{{currentPageNumber}}</span>
             </li>
-            <li>
-                <input
-                        :value="pagination.currentPageNumber "
-                        class="uk-input pagination-input"
-                        type="number"
-                        v-on:input="setPage($event.target.value)"
-                >
+
+            <li v-for="page in nextValues"><a v-on:click="setPage(page)">{{page}}</a></li>
+            <li v-if="!currentPageIsInEnd" class="uk-disabled"><span>...</span></li>
+
+            <li v-if="currentPageNumber!==lastPageNumber"><a @click="setPage(lastPageNumber)" class="last-page">{{lastPageNumber}}</a>
             </li>
-            <li>of {{lastPageNumber}}</li>
-            <li>
-                <a v-on:click="setPage(pagination.currentPageNumber + 1)">
-                    <span uk-pagination-next></span>
-                </a>
+
+        </ul>
+
+        <ul class="uk-pagination uk-margin-remove">
+            <li><a v-if="currentPageNumber !== lastPageNumber" @click="nextPage"><span uk-pagination-next></span></a>
             </li>
+
         </ul>
     </div>
 </template>
 
 <style lang="scss" scoped>
-    .pagination {
-        margin: 0 20px;
-        padding: 0 10px;
-
-        li {
-            padding: 0 10px;
-        }
+    .uk-pagination {
+        user-select: none;
     }
 
-    .pagination-select {
-        width: 150px;
-    }
-
-    .pagination-input {
-        width: 70px;
-        text-align: right;
-    }
 </style>
 
 
 <script>
-    export default {
-        props: ["value", "lastPageNumber"],
 
+    import {clamp, range} from "lodash"
+
+    export default {
+        props: ["value", "amountOfRecords"],
+
+        watch: {
+            amountOfRecords: function () {
+                this.currentPageNumber = 1;
+            }
+        },
         data() {
             return {
-                pagination: {
-                    currentPageNumber: 1,
-                    pageSize: 25,
-                    nextPageNumber: 1
-                }
+                currentPageNumber: 1,
+                pageSize: 25,
             };
         },
+
+        computed: {
+
+            currentPageIsInBeginning() {
+                return this.currentPageNumber <= 4;
+            },
+            previousValues() {
+
+                return range(Math.max(this.currentPageNumber - 3, 2), this.currentPageNumber, 1)
+
+            },
+            nextValues() {
+                return range(this.currentPageNumber + 1, Math.min(this.currentPageNumber + 4, this.lastPageNumber), 1)
+
+            },
+            currentPageIsInEnd() {
+                return this.currentPageNumber >= (this.lastPageNumber - 3);
+            },
+
+            lastPageNumber() {
+                return Math.max(1, Math.ceil((this.amountOfRecords ?? this.pageSize) / this.pageSize));
+            },
+
+        },
         methods: {
+            previousPage() {
+                return this.setPage(this.currentPageNumber - 1);
+            },
+            nextPage() {
+                return this.setPage(this.currentPageNumber + 1);
+            },
             setPage(page) {
-                let last = this.lastPageNumber;
-                if (page >= last) page = last;
+                this.currentPageNumber = clamp(page, 1, this.lastPageNumber);
 
-                if (page <= 0) page = 1;
-
-                this.pagination.currentPageNumber = page;
                 this.emitChange();
             },
 
@@ -88,9 +102,9 @@
             paginationString() {
                 return (
                     "pageSize=" +
-                    this.pagination.pageSize +
+                    this.pageSize +
                     "&pageNumber=" +
-                    this.pagination.currentPageNumber
+                    this.currentPageNumber
                 );
             }
         }

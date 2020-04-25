@@ -7,6 +7,7 @@ import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.FieldType;
 import com.elepy.utils.ModelUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -108,6 +109,7 @@ public class FiltersTest {
     }
 
     @Test
+    @Disabled("Change the way queries are validated at DAO level")
     void testThrowExceptionWithInvalidPropName() {
         Class<Resource> resourceClass = Resource.class;
 

@@ -23,7 +23,9 @@ public class QueryListener extends EleQueryBaseListener {
     }
 
     private Expression getExpression(ExpressionContext expression) {
-        if (expression.filter() != null) {
+        if (expression == null) {
+            return Filters.search("");
+        } else if (expression.filter() != null) {
             return getFilter(expression.filter());
         } else if (expression.booleanOperator() != null) {
             return getPredicateGroup(expression.booleanOperator(), expression.expression());
