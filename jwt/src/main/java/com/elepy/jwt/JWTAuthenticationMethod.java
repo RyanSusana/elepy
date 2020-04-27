@@ -3,14 +3,12 @@ package com.elepy.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.elepy.auth.Grant;
 import com.elepy.auth.TokenAuthenticationMethod;
-import com.elepy.auth.User;
-import com.elepy.http.Request;
 
 import java.util.Calendar;
-import java.util.Optional;
 
-public class JWTAuthenticationMethod implements TokenAuthenticationMethod {
+public class JWTAuthenticationMethod extends TokenAuthenticationMethod {
 
     private static final int MAXIMUM_TOKEN_DURATION = 1000 * 60 * 60;
 
@@ -20,42 +18,36 @@ public class JWTAuthenticationMethod implements TokenAuthenticationMethod {
         this.algorithm = algorithm;
     }
 
-
     @Override
-    public Optional<User> authenticateUser(Request request) {
-
-        final String token = request.token();
-
-        if (token == null) {
-            return Optional.empty();
-        }
-
+    public Grant validateToken(String rawToken) {
         try {
-            final var decodedToken = JWT.require(algorithm).build().verify(token);
+            final var decodedToken = JWT.require(algorithm).build().verify(rawToken);
 
             final var userId = decodedToken.getClaim("userId").asString();
             final var username = decodedToken.getClaim("username").asString();
             final var permissions = decodedToken.getClaim("permissions").asList(String.class);
 
-            return Optional.of(new User(userId, username, "", permissions));
+            final var grant = new Grant();
 
+            grant.setPermissions(permissions);
+            grant.setUserId(userId);
+            return grant;
         } catch (JWTVerificationException e) {
-            return Optional.empty();
+            return null;
         }
     }
 
     @Override
-    public String createToken(User user, int duration) {
+    public String createToken(Grant grant) {
 
         final var expirationDate = Calendar.getInstance();
-        expirationDate.add(Calendar.MILLISECOND, Math.min(duration, MAXIMUM_TOKEN_DURATION));
+        expirationDate.add(Calendar.MILLISECOND, MAXIMUM_TOKEN_DURATION);
 
         return JWT.create()
                 .withExpiresAt(expirationDate.getTime())
-                .withClaim("userId", user.getId())
-                .withClaim("username", user.getUsername())
-                .withArrayClaim("permissions", user.getPermissions().toArray(new String[0]))
+                .withClaim("userId", grant.getUserId())
+//                .withClaim("username", grant.getUsername())
+                .withArrayClaim("permissions", grant.getPermissions().toArray(new String[0]))
                 .sign(algorithm);
     }
-
 }

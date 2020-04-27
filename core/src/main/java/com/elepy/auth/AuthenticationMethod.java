@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface AuthenticationMethod {
 
-    Optional<? extends User> authenticateUser(Request request);
+    Optional<Grant> getGrant(Request request);
 
 }

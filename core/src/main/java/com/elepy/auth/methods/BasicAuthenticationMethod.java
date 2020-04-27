@@ -1,22 +1,21 @@
 package com.elepy.auth.methods;
 
-import com.elepy.auth.AuthenticationMethod;
-import com.elepy.auth.User;
+import com.elepy.annotations.Inject;
+import com.elepy.auth.*;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Filters;
 import com.elepy.http.Request;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 public class BasicAuthenticationMethod implements AuthenticationMethod {
 
+    @Inject
+    private UserCenter userCenter;
 
     @Override
-    public Optional<User> authenticateUser(Request request) {
+    public Optional<Grant> getGrant(Request request) {
 
         final Optional<String[]> authorizationOpt = this.basicCredentials(request);
         if (authorizationOpt.isEmpty()) {
@@ -24,28 +23,11 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
         }
 
         final String[] authorization = authorizationOpt.get();
-        return login(request.elepy().getCrudFor(User.class), authorization[0], authorization[1]);
+
+        return userCenter.login(authorization[0], authorization[1])
+                .map(userCenter::getGrantForUser);
     }
 
-
-    private Optional<User> login(Crud<User> userCrud, String usernameOrEmail, String password) {
-        Optional<User> user = getUser(userCrud, usernameOrEmail);
-
-        if (user.isPresent() && BCrypt.checkpw(password, user.get().getPassword())) {
-            return user;
-        }
-
-        return Optional.empty();
-    }
-
-    private Optional<User> getUser(Crud<User> userCrud, String usernameOrEmail) {
-        final List<? extends User> users = userCrud.findLimited(1, Filters.eq("username", usernameOrEmail));
-        if (users.size() > 0) {
-            return Optional.of(users.get(0));
-        }
-
-        return Optional.empty();
-    }
 
     private Optional<String[]> basicCredentials(Request request) {
         String header = request.headers("Authorization");

@@ -3,7 +3,6 @@ package com.elepy.auth;
 import com.elepy.annotations.*;
 import com.elepy.auth.users.*;
 import com.elepy.dao.SortOption;
-import com.elepy.models.TextType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -33,6 +32,8 @@ import java.util.Objects;
 @Update(handler = UserUpdate.class)
 @Delete(handler = UserDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_USERS)
 @Evaluators(UserEvaluator.class)
+
+@PredefinedRole(name = "owner", permissions = "owner")
 public class User {
 
     @Identifier
@@ -50,38 +51,37 @@ public class User {
     @Size(max = 30)
     private String username;
 
-
-    @ElementCollection
-    @CollectionTable(name = "elepy_user_permissions", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "permission")
-    @PrettyName("Permissions")
-    @JsonProperty("permissions")
-    private List<String> permissions = new ArrayList<>();
-
-
     @PrettyName("Password")
     @JsonProperty("password")
     @Importance(-1)
     @Input(type = "password")
     private String password;
 
+    @ElementCollection
+    @CollectionTable(name = "elepy_user_roles", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "roles")
+    @PrettyName("Policy")
+    @JsonProperty("roles")
+    private List<@Reference(to = CustomRole.class) String> roles = new ArrayList<>();
+
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
     public User() {
 
     }
 
-    public User(String id, String username, String password, List<String> permissions) {
+    public User(String id, String username, String password, List<String> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.permissions = permissions;
-    }
-
-    public List<String> getPermissions() {
-        if (permissions == null) {
-            permissions = new ArrayList<>();
-        }
-        return permissions;
+        this.roles = roles;
     }
 
     public String getId() {

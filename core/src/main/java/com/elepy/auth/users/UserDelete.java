@@ -1,6 +1,8 @@
 package com.elepy.auth.users;
 
+import com.elepy.annotations.Inject;
 import com.elepy.auth.Permissions;
+import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
@@ -9,6 +11,10 @@ import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 
 public class UserDelete implements ActionHandler<User> {
+
+    @Inject
+    private Policy policy;
+
     @Override
     public void handle(HttpContext context, ModelContext<User> modelContext) {
         final var id = context.recordId();
@@ -18,7 +24,7 @@ public class UserDelete implements ActionHandler<User> {
         if (loggedInUser.equals(toDelete)) {
             throw new ElepyException("You can't delete yourself!", 403);
         }
-        if (toDelete.getPermissions().contains(Permissions.SUPER_USER)) {
+        if (policy.userHasRole(toDelete, "owner")) {
             throw new ElepyException(String.format("You can't delete users with the permission '%s'", Permissions.SUPER_USER), 403);
         }
         modelContext.getCrud().deleteById(toDelete.getId());

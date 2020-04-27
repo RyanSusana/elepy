@@ -26,10 +26,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.Queries.create;
 import static com.elepy.dao.Filters.search;
+import static com.elepy.dao.Queries.create;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("integration")
@@ -87,9 +86,9 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .asString();
 
 
-        assertEquals(200, response.getStatus());
-        assertEquals(401, response2.getStatus());
-        assertEquals(1, userCrud.count());
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response2.getStatus()).isEqualTo(401);
+        assertThat(userCrud.count()).isEqualTo(1);
 
     }
 
@@ -105,8 +104,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .basicAuth("admin@admin.com", "admin@admin.com")
                 .asString();
 
-        assertEquals(200, authorizedFind.getStatus());
-        assertEquals(401, unauthorizedFind.getStatus());
+        assertThat(authorizedFind.getStatus()).isEqualTo(200);
+        assertThat(unauthorizedFind.getStatus()).isEqualTo(401);
     }
 
     @Test
@@ -118,7 +117,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .delete(elepy + "/users/user")
                 .asString();
 
-        assertEquals(401, unauthorizedDelete.getStatus());
+        assertThat(unauthorizedDelete.getStatus()).isEqualTo(401);
 
 
         final HttpResponse<String> authorizedDelete = Unirest
@@ -128,9 +127,9 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
 
         final List<? extends User> all1 = userCrud.getAll();
-        assertEquals(200, authorizedDelete.getStatus());
+        assertThat(authorizedDelete.getStatus()).isEqualTo(200);
 
-        assertEquals(1, userCrud.count());
+        assertThat(userCrud.count()).isEqualTo(1);
 
     }
 
@@ -152,11 +151,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization", "Bearer " + token).asString();
 
-        assertEquals(200, authenticationResponse.getStatus());
+        assertThat(authenticationResponse.getStatus()).isEqualTo(200);
     }
 
     @Test
-    void can_Login_and_UpdateOtherUserPermissions() throws JsonProcessingException, UnirestException {
+    void can_Login_and_UpdateOtherUserRoles() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
         User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.AUTHENTICATED));
@@ -174,11 +173,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final User user = userCrud.getById("user").orElseThrow();
 
-        assertEquals(200, authorizedFind.getStatus());
-        assertEquals(401, unauthorizedFind.getStatus());
-        assertEquals(2, userCrud.count());
-        assertEquals(1, user.getPermissions().size());
-        assertEquals(Permissions.AUTHENTICATED, user.getPermissions().get(0));
+        assertThat(authorizedFind.getStatus()).isEqualTo(200);
+        assertThat(unauthorizedFind.getStatus()).isEqualTo(401);
+        assertThat(userCrud.count()).isEqualTo(2);
+        assertThat(user.getRoles().size()).isEqualTo(1);
+        assertThat(user.getRoles().get(0)).isEqualTo(Permissions.AUTHENTICATED);
 
     }
 
@@ -199,8 +198,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final User user = userCrud.getById("user").orElseThrow();
 
 
-        assertEquals(403, authorizedFind.getStatus());
-        assertEquals(0, user.getPermissions().size());
+        assertThat(authorizedFind.getStatus()).isEqualTo(403);
+        assertThat(user.getRoles().size()).isEqualTo(0);
     }
 
     @Test
@@ -218,8 +217,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final User user = userCrud.getById("user").orElseThrow();
 
 
-        assertEquals(403, authorizedFind.getStatus());
-        assertEquals(0, user.getPermissions().size());
+        assertThat(authorizedFind.getStatus()).isEqualTo(403);
+        assertThat(user.getRoles().size()).isEqualTo(0);
     }
 
     @Test
@@ -234,8 +233,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final User user = userCrud.getById("user").orElseThrow();
 
 
-        assertEquals(403, authorizedFind.getStatus());
-        assertEquals(0, user.getPermissions().size());
+        assertThat(authorizedFind.getStatus()).isEqualTo(403);
+        assertThat(user.getRoles().size()).isEqualTo(0);
     }
 
     @Test
@@ -259,7 +258,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final CustomUser user = ((Crud<CustomUser>) userCrud).getById("user").orElseThrow();
 
 
-        assertEquals(200, update.getStatus());
+        assertThat(update.getStatus()).isEqualTo(200);
 
         assertThat(user.getEmail())
                 .isEqualTo("email");
@@ -278,7 +277,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .asString();
 
         final var admin = userCrud.getById("admin@admin.com").orElseThrow();
-        assertEquals(200, authorizedFind.getStatus());
+        assertThat(authorizedFind.getStatus()).isEqualTo(200);
         assertThat(BCrypt.checkpw("newPassword", admin.getPassword()))
                 .isTrue();
     }
@@ -287,16 +286,16 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     void can_AccessExtraRoutes_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources-extra").asString();
 
-        assertEquals(201, getRequest.getStatus());
-        assertEquals("generated", getRequest.getBody());
+        assertThat(getRequest.getStatus()).isEqualTo(201);
+        assertThat(getRequest.getBody()).isEqualTo("generated");
     }
 
     @Test
     void can_AccessActions_as_Intended() throws UnirestException {
         final HttpResponse<String> getRequest = Unirest.get(elepy + "/resources/actions/extra-action?ids=999,777").asString();
 
-        assertEquals(200, getRequest.getStatus());
-        assertEquals("[999,777]", getRequest.getBody());
+        assertThat(getRequest.getStatus()).isEqualTo(200);
+        assertThat(getRequest.getBody()).isEqualTo("[999,777]");
     }
 
     @Test
@@ -311,8 +310,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         List results = elepy.objectMapper().readValue(getRequest.getBody(), List.class);
 
 
-        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(count + 1, results.size());
+        assertThat(getRequest.getStatus()).as(getRequest.getBody()).isEqualTo(200);
+        assertThat(results.size()).isEqualTo(count + 1);
 
     }
 
@@ -332,10 +331,10 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         });
 
 
-        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(1, results.size());
+        assertThat(getRequest.getStatus()).as(getRequest.getBody()).isEqualTo(200);
+        assertThat(results.size()).isEqualTo(1);
 
-        Assertions.assertEquals("filterUnique", results.get(0).getUniqueField());
+        assertThat(results.get(0).getUniqueField()).isEqualTo("filterUnique");
     }
 
     @Test
@@ -352,8 +351,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         List<Resource> results = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<List<Resource>>() {
         });
 
-        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(0, results.size());
+        assertThat(getRequest.getStatus()).as(getRequest.getBody()).isEqualTo(200);
+        assertThat(results.size()).isEqualTo(0);
     }
 
     @Test
@@ -369,8 +368,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         List<Resource> results = elepy.objectMapper().readValue(getRequest.getBody(), new TypeReference<List<Resource>>() {
         });
 
-        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(1, results.size());
+        assertThat(getRequest.getStatus()).as(getRequest.getBody()).isEqualTo(200);
+        assertThat(results.size()).isEqualTo(1);
     }
 
     @Test
@@ -382,8 +381,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         Resource foundResource = elepy.objectMapper().readValue(getRequest.getBody(), Resource.class);
 
-        Assertions.assertEquals(200, getRequest.getStatus(), getRequest.getBody());
-        Assertions.assertEquals(foundResource.getId(), resource.getId());
+        assertThat(getRequest.getStatus()).as(getRequest.getBody()).isEqualTo(200);
+        assertThat(resource.getId()).isEqualTo(foundResource.getId());
 
     }
 
@@ -397,8 +396,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> postRequest = Unirest.post(elepy + "/resources").body(s).asString();
 
-        Assertions.assertEquals(201, postRequest.getStatus(), postRequest.getBody());
-        Assertions.assertEquals(count + 1, resourceCrud.count());
+        assertThat(postRequest.getStatus()).as(postRequest.getBody()).isEqualTo(201);
+        assertThat(resourceCrud.count()).isEqualTo(count + 1);
     }
 
 
@@ -419,7 +418,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         final HttpResponse<String> postRequest = Unirest.post(elepy + "/resources").body(s).asString();
 
-        Assertions.assertEquals(count, resourceCrud.count());
+        assertThat(resourceCrud.count()).isEqualTo(count);
     }
 
     @Test
@@ -438,8 +437,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         final HttpResponse<String> postRequest = Unirest.post(elepy + "/resources").body(s).asString();
 
 
-        Assertions.assertEquals(201, postRequest.getStatus(), postRequest.getBody());
-        Assertions.assertEquals(count + 2, resourceCrud.count());
+        assertThat(postRequest.getStatus()).as(postRequest.getBody()).isEqualTo(201);
+        assertThat(resourceCrud.count()).isEqualTo(count + 2);
     }
 
     @Test
@@ -452,11 +451,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         resourceCrud.create(resource);
 
-        Assertions.assertEquals(beginningCount + 1, resourceCrud.count());
+        assertThat(resourceCrud.count()).isEqualTo(beginningCount + 1);
         final HttpResponse<String> delete = Unirest.delete(elepy + "/resources/55").asString();
 
-        Assertions.assertEquals(200, delete.getStatus(), delete.getBody());
-        Assertions.assertEquals(beginningCount, resourceCrud.count());
+        assertThat(delete.getStatus()).as(delete.getBody()).isEqualTo(200);
+        assertThat(resourceCrud.count()).isEqualTo(beginningCount);
 
     }
 
@@ -471,20 +470,20 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         resourceCrud.create(resource);
 
-        Assertions.assertEquals(beginningCount + 1, resourceCrud.count());
+        assertThat(resourceCrud.count()).isEqualTo(beginningCount + 1);
         final HttpResponse<String> patch = Unirest.patch(elepy + "/resources/66").body("{\"id\":" + resource.getId() + ",\"uniqueField\": \"uniqueUpdate\"}").asString();
 
-        Assertions.assertEquals(beginningCount + 1, resourceCrud.count());
+        assertThat(resourceCrud.count()).isEqualTo(beginningCount + 1);
 
 
         Optional<Resource> updatePartialId = resourceCrud.getById(66);
 
 
-        Assertions.assertEquals(200, patch.getStatus(), patch.getBody());
-        Assertions.assertTrue(updatePartialId.isPresent());
-        Assertions.assertEquals("uniqueUpdate", updatePartialId.get().getUniqueField());
-        Assertions.assertEquals("ryan", updatePartialId.get().getMARKDOWN());
-        Assertions.assertEquals(200, patch.getStatus(), patch.getBody());
+        assertThat(patch.getStatus()).as(patch.getBody()).isEqualTo(200);
+        assertThat(updatePartialId.isPresent()).isTrue();
+        assertThat(updatePartialId.get().getUniqueField()).isEqualTo("uniqueUpdate");
+        assertThat(updatePartialId.get().getMARKDOWN()).isEqualTo("ryan");
+        assertThat(patch.getStatus()).as(patch.getBody()).isEqualTo(200);
     }
 
     @Test
@@ -576,8 +575,8 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                         .body(json(user2))
                         .asString();
 
-        assertEquals(200, response.getStatus());
-        assertEquals(200, response2.getStatus());
+        assertThat(response.getStatus()).as(response.getBody()).isEqualTo(200);
+        assertThat(response2.getStatus()).as(response2.getBody()).isEqualTo(200);
         assertThat(userCrud.count()).isEqualTo(2);
     }
 

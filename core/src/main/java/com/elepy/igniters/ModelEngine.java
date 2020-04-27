@@ -41,9 +41,7 @@ public class ModelEngine {
                 .forEach(ModelPiston::setupRouting);
     }
 
-    public List<Schema<?>> modelSchemas() {
-        return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
-    }
+
 
     public void addModel(Class<?> modelType) {
         final Schema<?> schemaFromClass = ModelUtils.createDeepSchema(modelType);

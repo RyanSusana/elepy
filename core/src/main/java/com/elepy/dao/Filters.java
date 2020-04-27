@@ -2,6 +2,8 @@ package com.elepy.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Filters {
     public static Filter eq(String propertyName, Serializable value) {
@@ -50,6 +52,10 @@ public class Filters {
 
     public static BooleanGroup and(List<? extends Expression> expressions) {
         return booleanGroup(BooleanGroup.BooleanOperator.AND, expressions);
+    }
+
+    public static BooleanGroup or(Stream<Expression> expressionStream) {
+        return or(expressionStream.collect(Collectors.toList()));
     }
 
     public static BooleanGroup or(Expression... expressions) {

@@ -118,7 +118,6 @@ public class SparkService implements HttpService {
             SparkContext sparkContext = new SparkContext(request, response);
             if (!extraRoute.getPermissions().isEmpty()) {
                 sparkContext.requirePermissions(extraRoute.getPermissions());
-                new UserPermissionFilter(extraRoute.getPermissions()).authenticate(sparkContext);
             }
             extraRoute.getHttpContextHandler().handle(sparkContext);
 

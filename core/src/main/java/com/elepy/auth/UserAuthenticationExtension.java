@@ -48,14 +48,9 @@ public class UserAuthenticationExtension implements ElepyExtension {
         });
 
         http.post("/elepy/token-login", (request, response) -> {
-
-            boolean keepLoggedIn = Boolean.parseBoolean(request.queryParamOrDefault("keepLoggedIn", "false"));
-
-            int durationInSeconds = keepLoggedIn ? 30 * 60 * 60 * 24 : 60 * 60;
-            final var token = generateToken(request, durationInSeconds * 1000);
+            final var token = generateToken(request);
 
             response.status(200);
-
 
             response.cookie("ELEPY_TOKEN", token);
             response.json(token);
@@ -70,22 +65,30 @@ public class UserAuthenticationExtension implements ElepyExtension {
         }
     }
 
-    public void tryToLogin(Request request) {
-        if (request.attribute("user") == null) {
-            request.attribute("user", authenticateUser(request).orElse(null));
+    public Optional<Grant> getGrant(Request request) {
+        final Grant grantFromRequest = request.attribute("grant");
+        if (grantFromRequest != null) {
+            return Optional.of(grantFromRequest);
+        } else {
+            final var grantMaybe = authenticateUser(request);
+
+            grantMaybe.ifPresent(g -> request.attribute("grant", g));
+            return grantMaybe;
         }
     }
 
 
-    private String generateToken(Request request, int duration) {
-        final var user1 = authenticateUser(request);
-        return user1.map(user -> getTokenAuthenticationMethod().orElseThrow(() -> new ElepyException("Only Basic Authentication supported")).createToken(user, duration))
+    private String generateToken(Request request) {
+        final Optional<Grant> grant = authenticateUser(request);
+        return grant.map(user -> getTokenAuthenticationMethod()
+                .orElseThrow(() -> new ElepyException("Only Basic Authentication supported"))
+                .createToken(user))
                 .orElseThrow(() -> new ElepyException("Credentials invalid", 401));
     }
 
-    private Optional<? extends User> authenticateUser(Request request) {
+    private Optional<Grant> authenticateUser(Request request) {
         for (AuthenticationMethod authenticationMethod : authenticationMethods) {
-            final var user = authenticationMethod.authenticateUser(request);
+            final var user = authenticationMethod.getGrant(request);
 
             if (user.isPresent()) {
                 return user;

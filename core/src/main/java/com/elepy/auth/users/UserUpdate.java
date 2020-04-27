@@ -1,6 +1,8 @@
 package com.elepy.auth.users;
 
+import com.elepy.annotations.Inject;
 import com.elepy.auth.Permissions;
+import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
@@ -18,6 +20,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.HashSet;
 
 public class UserUpdate extends DefaultUpdate<User> {
+
+    @Inject
+    private Policy policy;
 
     @Override
     public User handleUpdate(HttpContext context, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
@@ -67,20 +72,20 @@ public class UserUpdate extends DefaultUpdate<User> {
 
     private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {
         if (loggedInUser.equals(userToUpdate) &&
-                !permissionsAreTheSame(loggedInUser, userToUpdate)) {
+                !rolesAreTheSame(loggedInUser, userToUpdate)) {
             throw new ElepyException("Can't update your own permissions", 403);
         }
 
-        boolean updatedPermissionsContainsSuperUser = (userBeforeUpdate.getPermissions().contains(Permissions.SUPER_USER) ||
-                userToUpdate.getPermissions().contains(Permissions.SUPER_USER));
+        boolean updatedPermissionsContainsSuperUser = (policy.userHasRole(userBeforeUpdate, "owner") ||
+                policy.userHasRole(userToUpdate, "owner"));
 
         if (updatedPermissionsContainsSuperUser &&
-                !permissionsAreTheSame(userToUpdate, userBeforeUpdate)) {
+                !rolesAreTheSame(userToUpdate, userBeforeUpdate)) {
             throw new ElepyException(String.format("Can't edit the permissions of users that have the permission '%s'", Permissions.SUPER_USER), 403);
         }
     }
 
-    private boolean permissionsAreTheSame(User user1, User user2) {
-        return new HashSet<>(user1.getPermissions()).equals(new HashSet<>(user2.getPermissions()));
+    private boolean rolesAreTheSame(User user1, User user2) {
+        return new HashSet<>(user1.getRoles()).equals(new HashSet<>(user2.getRoles()));
     }
 }

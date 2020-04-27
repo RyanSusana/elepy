@@ -55,7 +55,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
 
         final var token = getTokenResponse.getBody().replaceAll("\"", "");
 
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization","Bearer "+ token).asString();
+        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization", "Bearer " + token).asString();
 
         assertThat(authenticationResponse.getStatus())
                 .isEqualTo(200);
@@ -91,7 +91,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         });
 
         final var authenticationResponse = Unirest.get(elepy + "/random-secured-route")
-                .header("Authorization","Bearer a_wrong_token").asString();
+                .header("Authorization", "Bearer a_wrong_token").asString();
 
         assertThat(authenticationResponse.getStatus())
                 .isEqualTo(401);
@@ -132,9 +132,13 @@ public abstract class SecurityTest implements ElepyConfigHelper {
                 .asString();
 
 
-        final var self = Unirest.get(elepy + "/elepy/logged-in-user").basicAuth("user", "userPassword").asJson().getBody().getObject();
+        final var response = Unirest.get(elepy + "/elepy/logged-in-user").basicAuth("user", "userPassword").asJson();
 
-        assertThat(self.getString("email"))
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+
+        final var responseBody = response.getBody().getObject();
+        assertThat(responseBody.getString("email"))
                 .isEqualTo("ryansemail@live.com");
 
 

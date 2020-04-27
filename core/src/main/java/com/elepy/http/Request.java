@@ -1,8 +1,6 @@
 package com.elepy.http;
 
-import com.elepy.auth.Permissions;
-import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationExtension;
+import com.elepy.auth.*;
 import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
@@ -171,19 +169,31 @@ public interface Request {
     }
 
     default UserAuthenticationExtension authService() {
-        return elepy().getDependency(UserAuthenticationExtension.class);
-    }
-
-    default void tryToLogin() {
-        try {
-            authService().tryToLogin(this);
-        } catch (ElepyException | NullPointerException ignored) {
+        final var elepy = elepy();
+        if (elepy == null) {
+            return null;
         }
+        return elepy.getDependency(UserAuthenticationExtension.class);
     }
 
     default Optional<User> loggedInUser() {
-        tryToLogin();
-        return Optional.ofNullable(attribute("user"));
+        final User userFromAttributes = attribute("user");
+        if (userFromAttributes != null) {
+            return Optional.of(userFromAttributes);
+        }
+
+        final var userCenter = elepy().getDependency(UserCenter.class);
+        final var user = grant().flatMap(userCenter::getUserFromGrant);
+        user.ifPresent(u -> attribute("user", user));
+
+        return user;
+    }
+
+    default Optional<Grant> grant() {
+        if (authService() == null) {
+            return Optional.empty();
+        }
+        return authService().getGrant(this);
     }
 
     default User loggedInUserOrThrow() {
@@ -193,9 +203,9 @@ public interface Request {
     default Permissions permissions() {
         Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
 
-        loggedInUser().ifPresent(user -> {
-            permissions.addPermissions(Permissions.AUTHENTICATED);
-            permissions.addPermissions(user.getPermissions());
+        grant().ifPresent(user -> {
+            permissions.grantPermission(Permissions.AUTHENTICATED);
+            permissions.grantPermission(user.getPermissions());
         });
 
         attribute("permissions", permissions);
@@ -204,7 +214,7 @@ public interface Request {
     }
 
     default void addPermissions(String... permissions) {
-        permissions().addPermissions(permissions);
+        permissions().grantPermission(permissions);
     }
 
 
@@ -217,7 +227,6 @@ public interface Request {
     }
 
     default void requirePermissions(Collection<String> requiredPermissions) {
-        tryToLogin();
         if (!hasPermissions(requiredPermissions)) {
             throw new ElepyException("User is not authorized.", 401);
         }

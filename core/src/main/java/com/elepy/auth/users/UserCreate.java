@@ -1,6 +1,8 @@
 package com.elepy.auth.users;
 
+import com.elepy.annotations.Inject;
 import com.elepy.auth.Permissions;
+import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
@@ -18,6 +20,9 @@ import java.util.List;
 
 
 public class UserCreate implements ActionHandler<User> {
+
+    @Inject
+    private Policy policy;
 
     @Override
     public synchronized void handle(HttpContext context, ModelContext<User> modelContext) throws Exception {
@@ -39,7 +44,7 @@ public class UserCreate implements ActionHandler<User> {
     protected void createInitialUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
         evaluateUser(modelContext, user);
 
-        user.getPermissions().add(Permissions.SUPER_USER);
+        user.getRoles().add("owner");
 
         if (user.getPassword().length() < 5) {
             throw new ElepyException("Passwords must be more than 4 characters long!", 400);
@@ -54,8 +59,8 @@ public class UserCreate implements ActionHandler<User> {
         context.loggedInUserOrThrow();
         context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
 
-        if (user.getPermissions().contains(Permissions.SUPER_USER)) {
-            throw new ElepyException(String.format("Can't create users with the permission '%s'", Permissions.SUPER_USER), 403);
+        if (policy.userHasRole(user, "owner")) {
+            throw new ElepyException("Can't create users with the owner role", 403);
         }
         context.validate(user);
         evaluateUser(modelContext, user);

@@ -1,10 +1,8 @@
 package com.elepy;
 
 import com.elepy.annotations.Model;
-import com.elepy.auth.AuthenticationMethod;
-import com.elepy.auth.Token;
-import com.elepy.auth.User;
-import com.elepy.auth.UserAuthenticationExtension;
+import com.elepy.annotations.PredefinedRole;
+import com.elepy.auth.*;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.PersistedTokenAuthenticationMethod;
 import com.elepy.dao.CrudFactory;
@@ -129,6 +127,8 @@ public class Elepy implements ElepyContext {
 
         modelEngine.start();
 
+
+        context.resolveDependencies();
         setupAuth();
         context.resolveDependencies();
 
@@ -269,13 +269,18 @@ public class Elepy implements ElepyContext {
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
-     * This object can be accessed via {@link ElepyContext#getDependency(Class, String)}
+     * This object can be accessed via {@link ElepyContext#getDependency
      *
      * @param cls    The class type of the object
      * @param tag    An optional name
      * @param object The object
      * @param <T>    The type of the object
      * @return The {@link com.elepy.Elepy} instance
+     * @Target({ElementType.TYPE})
+     * @Inherited
+     * @interface List {
+     * Action[] value();
+     * }lass, String)}
      * @see ElepyContext
      */
     public <T> Elepy registerDependency(Class<T> cls, String tag, T object) {
@@ -502,7 +507,7 @@ public class Elepy implements ElepyContext {
      * @return All ModelContext
      */
     public List<Schema<?>> modelSchemas() {
-        return modelEngine.modelSchemas();
+        return modelEngine.getSchemas();
     }
 
 
@@ -602,6 +607,7 @@ public class Elepy implements ElepyContext {
 
         retrievePackageModels();
 
+        addDefaultModel(CustomRole.class);
         addDefaultModel(User.class);
         addDefaultModel(FileReference.class);
 
@@ -636,7 +642,16 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupAuth() {
+
+        final var policy = getDependency(Policy.class);
+
+        modelEngine.getSchemas().stream().map(Schema::getJavaClass)
+                .map(c -> List.of(c.getAnnotationsByType(PredefinedRole.class)))
+                .flatMap(Collection::stream)
+                .forEach(policy::registerPredefinedRole);
+
         addExtension(userAuthenticationExtension);
+        registerDependency(initialize(UserCenter.class));
 
         if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
             userAuthenticationExtension.addAuthenticationMethod(initialize(PersistedTokenAuthenticationMethod.class));

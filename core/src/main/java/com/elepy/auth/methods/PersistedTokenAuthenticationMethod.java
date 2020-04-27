@@ -1,59 +1,50 @@
 package com.elepy.auth.methods;
 
-import com.elepy.annotations.ElepyConstructor;
+import com.elepy.annotations.Inject;
+import com.elepy.auth.Grant;
 import com.elepy.auth.Token;
 import com.elepy.auth.TokenAuthenticationMethod;
-import com.elepy.auth.User;
+import com.elepy.auth.UserCenter;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.dao.Queries;
 import com.elepy.dao.Query;
-import com.elepy.http.Request;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 
-public class PersistedTokenAuthenticationMethod implements TokenAuthenticationMethod {
+public class PersistedTokenAuthenticationMethod extends TokenAuthenticationMethod {
 
-    private final Crud<Token> tokens;
-    private final Map<Token, User> cached;
+    @Inject
+    private Crud<Token> tokens;
 
-    @ElepyConstructor
-    public PersistedTokenAuthenticationMethod(Crud<Token> tokens) {
+    private UserCenter users;
+    private Map<Token, Grant> cached = new HashMap<>();
 
-        this.tokens = tokens;
-        this.cached = new TreeMap<>();
+
+    @Override
+    public Grant validateToken(String elepyToken) {
+        return getGrantFromCache(elepyToken)
+                .or(() -> getUserFromDB(elepyToken)).orElse(null);
     }
 
     @Override
-    public Optional<User> authenticateUser(Request request) {
-
-        final String elepyToken = request.token();
-
-        if (elepyToken == null) {
-            return Optional.empty();
-        }
-        return getUserFromCache(elepyToken)
-                .or(() -> getUserFromDB(request.elepy().getCrudFor(User.class), elepyToken));
-
-    }
-
-    @Override
-    public String createToken(User user, int duration) {
+    public String createToken(Grant grant) {
         removeOverdueTokensDB();
-        final Token token = new Token().setId(UUID.randomUUID().toString()).setUserId(user.getId()).setMaxDate(duration + System.currentTimeMillis());
+        final Token token = new Token().setId(UUID.randomUUID().toString())
+                .setUserId(grant.getUserId()).setMaxDate((1000 * 60 * 60) + System.currentTimeMillis());
 
 
         tokens.create(token);
-        cached.put(token, user);
+        cached.put(token, grant);
         return token.getId();
     }
 
-    private Optional<User> getUserFromCache(String token) {
+    private Optional<Grant> getGrantFromCache(String token) {
         removeOverdueTokensCache();
         return cached.entrySet().stream()
                 .filter(tokenUserEntry -> tokenUserEntry.getKey().getId().endsWith(token))
@@ -61,17 +52,17 @@ public class PersistedTokenAuthenticationMethod implements TokenAuthenticationMe
     }
 
 
-    private Optional<User> getUserFromDB(Crud<User> userCrud, String elepyToken) {
+    private Optional<Grant> getUserFromDB(String elepyToken) {
         final Optional<Token> validToken = getValidToken(elepyToken);
 
         if (validToken.isEmpty()) {
             return Optional.empty();
         }
-        final User user = userCrud.getById(validToken.get().getUserId()).orElseThrow();
 
-        cached.put(validToken.get(), user);
+        final var grant = users.getGrantForUser(validToken.get().getUserId());
+        cached.put(validToken.get(), grant);
 
-        return Optional.of(user);
+        return Optional.of(grant);
     }
 
     private void removeOverdueTokensCache() {
@@ -101,5 +92,4 @@ public class PersistedTokenAuthenticationMethod implements TokenAuthenticationMe
         }
         return tokens.getAll().stream().filter(token -> id.equals(token.getId())).findAny();
     }
-
 }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class Permissions {
     public static final String SUPER_USER = "owner";
@@ -18,11 +17,11 @@ public class Permissions {
     private final Set<String> grantedPermissions = new TreeSet<>();
 
 
-    public void addPermissions(String... permissions) {
-        addPermissions(Arrays.asList(permissions));
+    public void grantPermission(String... permissions) {
+        grantPermission(Arrays.asList(permissions));
     }
 
-    public void addPermissions(Collection<String> permissions) {
+    public void grantPermission(Collection<String> permissions) {
         this.grantedPermissions.addAll(permissions);
     }
 
@@ -30,9 +29,21 @@ public class Permissions {
         if (grantedPermissions.contains(SUPER_USER) || permissionsToCheck.isEmpty()) {
             return true;
         }
-        return (grantedPermissions.stream().map(String::toLowerCase).collect(Collectors.toSet())
-                .containsAll(permissionsToCheck.stream().map(String::toLowerCase).collect(Collectors.toSet())));
+
+        return permissionsToCheck.stream().allMatch(this::hasPermission);
     }
 
+    public boolean hasPermission(String permission) {
+        return grantedPermissions.stream()
+                .anyMatch(grantedPermission -> permissionMatch(permission.toLowerCase(), grantedPermission.toLowerCase()));
+    }
+
+    private static boolean permissionMatch(String permission1, String permission2) {
+
+        if (SUPER_USER.equals(permission1) || SUPER_USER.equals(permission2)) {
+            return SUPER_USER.equals(permission1) && SUPER_USER.equals(permission2);
+        }
+        return permission1.matches(permission2.replace("?", ".?").replace("*", ".*?"));
+    }
 
 } 

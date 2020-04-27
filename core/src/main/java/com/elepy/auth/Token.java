@@ -14,7 +14,6 @@ import java.util.Objects;
 @Table(name = "elepy_tokens")
 @Model(name = "Tokens", path = "/tokens")
 @Hidden
-
 @Create(handler = DisabledHandler.class)
 @Update(handler = DisabledHandler.class)
 @Delete(handler = DisabledHandler.class)
@@ -25,6 +24,8 @@ public class Token implements Comparable<Token> {
 
     @Column
     private String userId;
+
+    private TokenType tokenType;
 
     @Column
     private long maxDate;
@@ -76,5 +77,13 @@ public class Token implements Comparable<Token> {
     @Override
     public int compareTo(Token o) {
         return Long.compare(this.maxDate, o.maxDate);
+    }
+
+    public TokenType getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(TokenType tokenType) {
+        this.tokenType = tokenType;
     }
 }
