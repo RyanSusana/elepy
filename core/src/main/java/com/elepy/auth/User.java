@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Objects;
 
 
+@PredefinedRole(id = "owner", name = "Owner", permissions = {"owner", "*"})
+@PredefinedRole(id = "admin", name = "Admin", permissions = {"*"})
+@PredefinedRole(id = "users", name = "User Admin", permissions = {"users.*", "roles.*"})
+@PredefinedRole(id = "user-viewer", name = "User Viewer", permissions = {"users.find", "roles.find"})
 @Model(
         path = "/users",
         name = "Users",
@@ -21,19 +25,20 @@ import java.util.Objects;
 @Entity(name = "elepy_user")
 @Table(name = "elepy_users")
 
-// Required permission is handled in UserUpdate.class
+// Required permission is handled in UserCreate.class
 @Create(handler = UserCreate.class, requiredPermissions = {})
+
 @Find(findManyHandler = UserFind.class,
         findOneHandler = UserFind.class,
-        requiredPermissions = Permissions.CAN_ADMINISTRATE_USERS
+        requiredPermissions = "users.find"
 )
 
 // Required permission is handled in UserUpdate.class
 @Update(handler = UserUpdate.class)
-@Delete(handler = UserDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_USERS)
+@Delete(handler = UserDelete.class, requiredPermissions = "users.delete")
 @Evaluators(UserEvaluator.class)
 
-@PredefinedRole(name = "owner", permissions = "owner")
+
 public class User {
 
     @Identifier
@@ -62,7 +67,7 @@ public class User {
     @Column(name = "roles")
     @PrettyName("Policy")
     @JsonProperty("roles")
-    private List<@Reference(to = CustomRole.class) String> roles = new ArrayList<>();
+    private List<@Reference(to = Role.class) String> roles = new ArrayList<>();
 
 
     public List<String> getRoles() {

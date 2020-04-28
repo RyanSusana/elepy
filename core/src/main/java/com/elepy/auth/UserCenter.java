@@ -31,13 +31,13 @@ public class UserCenter {
 
         grant.setUserId(user.getId());
         grant.setPermissions(policy.getPermissionsForUser(user));
+        grant.setUsername(user.getUsername());
         return grant;
     }
 
     public Crud<User> users() {
         return users;
     }
-
 
 
     public Optional<User> login(String usernameOrEmail, String password) {

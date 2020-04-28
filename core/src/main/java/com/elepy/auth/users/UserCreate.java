@@ -1,7 +1,6 @@
 package com.elepy.auth.users;
 
 import com.elepy.annotations.Inject;
-import com.elepy.auth.Permissions;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
@@ -51,13 +50,12 @@ public class UserCreate implements ActionHandler<User> {
         }
 
         createUser(crud, user);
-        context.response().result();
         context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user.getId())));
     }
 
     protected void createAdditionalUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
         context.loggedInUserOrThrow();
-        context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
+        context.requirePermissions("users.create");
 
         if (policy.userHasRole(user, "owner")) {
             throw new ElepyException("Can't create users with the owner role", 403);
@@ -67,7 +65,7 @@ public class UserCreate implements ActionHandler<User> {
 
 
         createUser(crud, user);
-        context.response().result(Message.of("Successfully created user", 200));
+        context.response().result(Message.of("Successfully created user", 200).withProperty("createdRecords", List.of(user.getId())));
     }
 
     private void evaluateUser(ModelContext<User> modelContext, User user) throws Exception {

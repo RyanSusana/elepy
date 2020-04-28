@@ -31,6 +31,7 @@ public class JWTAuthenticationMethod extends TokenAuthenticationMethod {
 
             grant.setPermissions(permissions);
             grant.setUserId(userId);
+            grant.setUsername(username);
             return grant;
         } catch (JWTVerificationException e) {
             return null;
@@ -46,7 +47,7 @@ public class JWTAuthenticationMethod extends TokenAuthenticationMethod {
         return JWT.create()
                 .withExpiresAt(expirationDate.getTime())
                 .withClaim("userId", grant.getUserId())
-//                .withClaim("username", grant.getUsername())
+                .withClaim("username", grant.getUsername())
                 .withArrayClaim("permissions", grant.getPermissions().toArray(new String[0]))
                 .sign(algorithm);
     }

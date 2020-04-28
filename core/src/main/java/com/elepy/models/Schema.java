@@ -25,13 +25,16 @@ public class Schema<T> {
     private String defaultSortField;
     private SortOption defaultSortDirection;
 
-    private HttpAction findOneAction;
-    private HttpAction findManyAction;
-    private HttpAction deleteAction;
-    private HttpAction updateAction;
-    private HttpAction createAction;
+    private Map<String, HttpAction> defaultActions = new HashMap<>();
 
 
+    public Map<String, HttpAction> getDefaultActions() {
+        return defaultActions;
+    }
+
+    public void setDefaultActions(Map<String, HttpAction> defaultActions) {
+        this.defaultActions = defaultActions;
+    }
 
     public String getDefaultSortField() {
         return defaultSortField;
@@ -111,46 +114,6 @@ public class Schema<T> {
                 .stream()
                 .filter(property -> name.equals(property.getName()))
                 .findFirst().orElseThrow(() -> new ElepyConfigException("No property with the name: " + name));
-    }
-
-    public HttpAction getFindOneAction() {
-        return findOneAction;
-    }
-
-    public void setFindOneAction(HttpAction findOneAction) {
-        this.findOneAction = findOneAction;
-    }
-
-    public HttpAction getFindManyAction() {
-        return findManyAction;
-    }
-
-    public void setFindManyAction(HttpAction findManyAction) {
-        this.findManyAction = findManyAction;
-    }
-
-    public HttpAction getDeleteAction() {
-        return deleteAction;
-    }
-
-    public void setDeleteAction(HttpAction deleteAction) {
-        this.deleteAction = deleteAction;
-    }
-
-    public HttpAction getUpdateAction() {
-        return updateAction;
-    }
-
-    public void setUpdateAction(HttpAction updateAction) {
-        this.updateAction = updateAction;
-    }
-
-    public HttpAction getCreateAction() {
-        return createAction;
-    }
-
-    public void setCreateAction(HttpAction createAction) {
-        this.createAction = createAction;
     }
 
     public boolean isViewableOnCMS() {

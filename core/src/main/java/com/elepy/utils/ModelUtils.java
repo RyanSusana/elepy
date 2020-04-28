@@ -144,9 +144,14 @@ public class ModelUtils {
 
 
     private static <T> void setupActions(Schema<T> schema) {
+
+        schema.getDefaultActions().put("delete", DefaultActions.getDeleteFromSchema(schema));
+        schema.getDefaultActions().put("update", DefaultActions.getUpdateFromSchema(schema));
+        schema.getDefaultActions().put("find", DefaultActions.getFindOneFromSchema(schema));
+        schema.getDefaultActions().put("create", DefaultActions.getCreateFromSchema(schema));
+
         schema.setActions(Stream.of(schema.getJavaClass().getAnnotationsByType(Action.class))
-                .map(actionAnnotation ->
-                        actionToHttpAction(schema.getPath(), actionAnnotation))
+                .map(actionAnnotation -> actionToHttpAction(schema.getPath(), actionAnnotation))
                 .collect(Collectors.toList()));
     }
 

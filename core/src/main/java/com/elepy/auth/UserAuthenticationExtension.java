@@ -9,6 +9,10 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,8 @@ public class UserAuthenticationExtension implements ElepyExtension {
 
     private List<AuthenticationMethod> authenticationMethods = new ArrayList<>();
 
+    @Inject
+    private ObjectMapper objectMapper;
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
@@ -43,7 +49,16 @@ public class UserAuthenticationExtension implements ElepyExtension {
         });
 
         http.get("/elepy/logged-in-user", ctx -> {
-            ctx.response().json(userCrud.getById(ctx.loggedInUserOrThrow().getId()).orElseThrow().withEmptyPassword());
+
+            final var grant = ctx.request().grant().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
+            final var user = ctx.request().loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
+
+            final var grantTree =  objectMapper.valueToTree(grant);
+            final var userTree =  objectMapper.valueToTree(user);
+
+            final var merged = objectMapper.readerForUpdating(grantTree).readValue(userTree);
+
+            ctx.response().json(merged);
             ctx.response().header("Vary", "*");
         });
 

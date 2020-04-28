@@ -1,11 +1,11 @@
 <template>
 
 
-    <BaseLayout :back-location="singleMode? null : goBack" >
+    <BaseLayout :back-location="singleMode? null : goBack" @keydown.meta="typeCtrl" @keydown.ctrl="typeCtrl">
         <!-- Navigation -->
         <template #navigation>
             <ActionButton
-
+                    v-if="canSave"
                     :action="save"
                     :actionName="'save'"
                     @shortkey="save"
@@ -20,20 +20,21 @@
             <a action="reset"
                @click="resetToLastSaved"
                class="uk-button uk-button-default uk-margin-small-right"
-               v-if="itemIsLoaded && !isCreating"
+               v-if="itemIsLoaded && !isCreating && canSave"
             >Reset to last saved</a>
 
 
             <a action="clear"
                @click="clear"
                class="uk-button uk-button-danger uk-margin-small-right"
-               v-if="itemIsLoaded "
+               v-if="itemIsLoaded && canSave"
             >Clear</a>
         </template>
 
         <!-- TableView -->
         <template #main>
-            <div class="uk-container uk-margin-top uk-margin-large-bottom" @keydown.meta="typeCtrl" @keydown.ctrl="typeCtrl" v-if="itemIsLoaded">
+            <div :class="{'unclickable': !canSave}" class="uk-container uk-margin-top uk-margin-large-bottom" tabindex="0" @keydown.meta="typeCtrl"
+                 @keydown.ctrl="typeCtrl" v-if="itemIsLoaded">
                 <h1>{{model.name}}</h1>
                 <ObjectField :model="model" v-model="item"/>
             </div>
@@ -44,6 +45,16 @@
 
 
 <style lang="scss" scoped>
+    .unclickable {
+
+            pointer-events: none;
+
+
+    }
+    .uk-container {
+        outline: none;
+    }
+
     .uk-button.uk-disabled {
         background-color: lightgray;
     }
@@ -87,6 +98,7 @@
 
     import isEqual from "lodash/isEqual"
     import ActionButton from "./base/ActionButton";
+    import {mapGetters} from "vuex";
 
     const UIkit = require("uikit");
     const axios = require("axios/index");
@@ -107,11 +119,20 @@
         components: {ActionButton, ObjectField, ActionsButton, BaseLayout},
 
         computed: {
+            ...mapGetters(['canExecute']),
+
+            canSave() {
+                if (this.isCreating) {
+                    return this.canExecute(this.model.defaultActions.create)
+                } else {
+                    return this.canExecute(this.model.defaultActions.update)
+                }
+            },
             actions() {
                 if (this.singleMode) {
-                    return this.model.actions;
+                    return this.model.actions.filter(this.canExecute);
                 } else {
-                    return this.model.actions.filter(action => action.singleRecord || action.multipleRecords)
+                    return this.model.actions.filter(action => this.canExecute(action) && (action.singleRecord || action.multipleRecords))
                 }
             },
             //Return if it should be a PUT or POST
@@ -189,9 +210,6 @@
                                     } else {
                                         return this.getRecord();
                                     }
-                                })
-                                .finally(error => {
-
                                 });
                         },
                         () => {
@@ -201,8 +219,11 @@
 
             typeCtrl(e) {
                 if (e.key === 's') {
+
                     e.preventDefault();
-                    this.save();
+                    if (this.canSave) {
+                        this.save();
+                    }
                 }
             },
             getRecord() {

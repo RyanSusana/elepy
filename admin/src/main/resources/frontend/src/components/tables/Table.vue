@@ -87,7 +87,7 @@
     import QueryFilter from "../settings/QueryFilter.vue";
     import Pagination from "../settings/Pagination";
 
-    import {mapState} from "vuex"
+    import {mapState, mapGetters} from "vuex"
     import EventBus from "../../event-bus";
 
     import axios from "axios";
@@ -99,8 +99,9 @@
         components: {TableRow, QueryFilter, Pagination},
         computed: {
             ...mapState(["selectedRows"]),
+            ...mapGetters([ "canExecute"]),
             singleActions() {
-                return this.model.actions.filter(action => action.singleRecord);
+                return this.model.actions.filter(action => action.singleRecord && this.canExecute(action));
             },
             tableFields() {
                 return this.model.properties.filter(function (field) {

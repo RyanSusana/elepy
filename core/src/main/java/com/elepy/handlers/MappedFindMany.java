@@ -3,7 +3,6 @@ package com.elepy.handlers;
 import com.elepy.dao.Crud;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.ModelContext;
 
 import java.util.List;
 
@@ -13,16 +12,16 @@ import java.util.List;
  * @param <T> The type of the RestModel
  * @param <R> The type you want map to
  */
-public abstract class MappedFindMany<T, R> extends DefaultFindMany<T> {
+public abstract class MappedFindMany<T, R extends T> extends DefaultFindMany<T> {
 
     @Override
-    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
-        List<T> result = find(context, modelContext.getCrud());
+    public List<? extends T> find(HttpContext context, Crud<T> dao) {
 
-        List<R> mappedResult = mapValues(result, context.request(), modelContext.getCrud());
+        List<? extends T> result = super.find(context, dao);
 
-        context.response().json(mappedResult);
+        return mapValues(result, context.request(), dao);
+
     }
 
-    public abstract List<R> mapValues(List<T> objectsToMap, Request request, Crud<T> crud);
+    public abstract List<R> mapValues(List<? extends T> objectsToMap, Request request, Crud<T> crud);
 }

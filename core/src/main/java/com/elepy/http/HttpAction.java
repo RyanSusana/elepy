@@ -5,17 +5,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class HttpAction {
-    private final String name;
-    private final String path;
-    private final String[] requiredPermissions;
-    private final HttpMethod method;
+    private String name;
+    private String path;
+    private String[] requiredPermissions;
+    private HttpMethod method;
 
-    private final boolean singleRecord;
-    private final boolean multipleRecords;
+    private boolean singleRecord;
+    private boolean multipleRecords;
 
-    private final String description;
-    private final String warning;
-    private final InputModel inputModel;
+    private String description;
+    private String warning;
+    private InputModel inputModel;
+
 
     @JsonCreator
     public HttpAction(@JsonProperty("name") String name,
@@ -39,30 +40,42 @@ public class HttpAction {
         this.inputModel = input;
     }
 
-    public static HttpAction of(String name,
-                                String path,
-                                String[] requiredPermissions,
-                                HttpMethod method,
-                                boolean singleRecord,
-                                boolean multipleRecords,
-                                String description,
-                                String warning) {
-        return of(name, path, requiredPermissions, method, singleRecord, multipleRecords, description, warning, null);
+
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public static HttpAction of(String name,
-                                String path,
-                                String[] requiredPermissions,
-                                HttpMethod method,
-                                boolean singleRecord,
-                                boolean multipleRecords,
-                                String description,
-                                String warning,
-                                InputModel inputModel) {
-
-        return new HttpAction(name, path, requiredPermissions, method, singleRecord, multipleRecords, description, warning, inputModel);
+    public void setPath(String path) {
+        this.path = path;
     }
 
+    public void setRequiredPermissions(String[] requiredPermissions) {
+        this.requiredPermissions = requiredPermissions;
+    }
+
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+    }
+
+    public void setSingleRecord(boolean singleRecord) {
+        this.singleRecord = singleRecord;
+    }
+
+    public void setMultipleRecords(boolean multipleRecords) {
+        this.multipleRecords = multipleRecords;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setWarning(String warning) {
+        this.warning = warning;
+    }
+
+    public void setInputModel(InputModel inputModel) {
+        this.inputModel = inputModel;
+    }
 
     public String getPath() {
         return path;

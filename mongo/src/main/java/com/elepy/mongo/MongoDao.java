@@ -1,6 +1,7 @@
 package com.elepy.mongo;
 
 import com.elepy.dao.Crud;
+import com.elepy.dao.Expression;
 import com.elepy.dao.Query;
 import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyConfigException;
@@ -150,6 +151,11 @@ public class MongoDao<T> implements Crud<T> {
     @Override
     public void deleteById(Serializable id) {
         mongoCollection.deleteOne(Filters.eq("_id", id));
+    }
+
+    @Override
+    public void delete(Expression expression) {
+        mongoCollection.deleteMany(queryBuilder.expression(expression));
     }
 
     @Override

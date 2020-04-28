@@ -17,12 +17,14 @@
                         :to="this.model.path+'/edit/'+this.data[this.model.idProperty]"
                         action="edit"
                         class="uk-icon-button uk-margin-small-right"
-                        uk-icon="pencil"
-                        v-if="updateEnabled"
+                        :uk-icon="canExecute(this.model.defaultActions.update) ? 'pencil' : 'info'"
+                        v-if="updateEnabled && canExecute(this.model.defaultActions.find) "
+
                 ></router-link>
                 <ActionsButton :actions="this.actions" v-if="this.actions.length >0" :ids="[id]"></ActionsButton>
 
                 <a
+                        v-if="canExecute(this.model.defaultActions.delete)"
                         @click="deleteData()"
                         action="delete"
                         class="uk-icon-button uk-button-danger uk-color-light uk-margin-small-left"
@@ -45,6 +47,7 @@
     import Utils from "../../utils";
     import EventBus from "../../event-bus.js";
     import ActionsButton from "../base/ActionsButton"
+    import {mapGetters} from "vuex";
 
     const axios = require("axios/index");
     export default {
@@ -60,18 +63,11 @@
         components: {TableColumnData, ActionsButton},
 
         computed: {
+            ...mapGetters(["canExecute"]),
             id() {
                 return this.data[this.model.idProperty];
-            }
-        },
-        data() {
-            return {
-                selectedAction: {}
-            };
-        },
+            },
 
-        created() {
-            this.selectedAction = this.actions[0];
         },
         methods: {
             selectChange() {
@@ -88,7 +84,6 @@
                     })
                     .then(
                         () => {
-                            console.log("Deleting data")
                             axios({
                                 method: "delete",
                                 url:
@@ -100,9 +95,7 @@
                                 EventBus.$emit("updateData");
                                 Utils.displayResponse(response);
                             })
-                                .catch(function (error) {
 
-                                });
                         },
 
                         function () {

@@ -40,7 +40,11 @@ public class Route {
     }
 
     public HttpContextHandler getHttpContextHandler() {
-        return httpContextHandler;
+        return (ctx) -> {
+            if (permissions != null && !permissions.isEmpty())
+                ctx.requirePermissions(permissions);
+            httpContextHandler.handle(ctx);
+        };
     }
 
     public HttpMethod getMethod() {

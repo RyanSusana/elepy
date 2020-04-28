@@ -13,7 +13,7 @@
             <li v-for="page in previousValues"><a @click="setPage(page)">{{page}}</a></li>
 
             <li class="uk-active"><span class="current-page"
-                                        :class="{'last-page': lastPageNumber = currentPageNumber}">{{currentPageNumber}}</span>
+                                        :class="{'last-page': lastPageNumber === currentPageNumber}">{{currentPageNumber}}</span>
             </li>
 
             <li v-for="page in nextValues"><a v-on:click="setPage(page)">{{page}}</a></li>

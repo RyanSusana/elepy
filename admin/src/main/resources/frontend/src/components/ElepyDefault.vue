@@ -4,7 +4,7 @@
         <template #navigation>
             <div class="default-bar action-bar">
                 <div class="button-box">
-                    <router-link v-if="model!=null"
+                    <router-link v-if="model!=null && canExecute(model.defaultActions.create)"
                                  :to="model.path+'/add'"
                                  class="uk-button uk-button-primary add-button uk-margin-small-right"
                                  id="add-button"
@@ -13,6 +13,7 @@
                     </router-link>
                     <ActionButton class="uk-button-danger uk-button uk-margin-small-right uk-width-small"
                                   :class="{'disabled': selectedRows.length === 0 }" :action="deleteData"
+                                  v-if="canExecute(model.defaultActions.delete)"
                                   action-name="delete"><i uk-icon="icon: trash"></i>
                         Delete
                     </ActionButton>
@@ -84,7 +85,7 @@
     import Pagination from "./settings/Pagination.vue";
     import BaseLayout from "./base/BaseLayout.vue";
     import ActionsButton from "./base/ActionsButton";
-    import {mapState} from "vuex";
+    import {mapState, mapGetters} from "vuex";
     import ActionButton from "./base/ActionButton";
 
     import axios from "axios";
@@ -108,16 +109,21 @@
         },
         computed: {
             ...mapState(["selectedRows"]),
+            ...mapGetters(["canExecute"]),
+
+            allActions() {
+                return this.model.actions.filter(this.canExecute);
+            },
 
             multipleActions() {
-                return this.model.actions.filter(action => action.multipleRecords === true)
+                return this.allActions.filter(action => action.multipleRecords === true)
             },
             singleOnlyActions() {
-                return this.model.actions.filter(action => action.multipleRecords === false && action.singleRecord === true)
+                return this.allActions.filter(action => action.multipleRecords === false && action.singleRecord === true)
             },
 
             noRecordActions() {
-                return this.model.actions.filter(action => !action.singleRecord && !action.multipleRecords)
+                return this.allActions.filter(action => !action.singleRecord && !action.multipleRecords)
             }
 
         },

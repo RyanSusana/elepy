@@ -12,32 +12,28 @@ import java.util.stream.Collectors;
 
 import static com.elepy.dao.Filters.search;
 
-public class Policy  {
+public class Policy {
+
 
     @Inject
-    private Crud<User> users;
-
-    @Inject
-    private Crud<CustomRole> customRoles;
+    private Crud<Role> customRoles;
 
     private List<Role> predefinedRoles = new ArrayList<>();
     private Set<String> availablePermissions = new TreeSet<>();
 
 
-
     public void registerPredefinedRole(PredefinedRole predefinedRole) {
         final var role = new Role();
 
-        role.setId(predefinedRole.name());
+        role.setId(predefinedRole.id());
         role.setName(predefinedRole.name());
         role.setPermissions(List.of(predefinedRole.permissions()));
         role.setDescription(predefinedRole.description());
         predefinedRoles.add(role);
     }
 
-    public void createCustomRole(CustomRole customRole) {
-        if (predefinedRoles.stream().anyMatch(role -> role.getId().equals(customRole.getId())
-                || role.getName().equals(customRole.getName()))) {
+    public void createCustomRole(Role customRole) {
+        if (existsAsPredefinedRole(customRole.getId()) || existsAsPredefinedRole(customRole.getName())) {
             throw new ElepyException("This role already exists as a predefined role");
         }
 
@@ -45,6 +41,28 @@ public class Policy  {
 
         customRoles.create(customRole);
     }
+
+    public void assureNotPredefinedRole(Role beforeVersion) {
+        assureNotPredefinedRole(beforeVersion.getId());
+        assureNotPredefinedRole(beforeVersion.getName());
+    }
+
+    public void assureNotPredefinedRole(String id) {
+        if (existsAsPredefinedRole(id)) {
+            throw new ElepyException("This role is a predefined role and can not be deleted or updated");
+        }
+    }
+
+    public boolean existsAsPredefinedRole(String id) {
+        return predefinedRoles.stream().anyMatch(role -> role.getId().equals(id)
+                || role.getName().equals(id));
+
+    }
+
+    public List<Role> getPredefinedRoles() {
+        return predefinedRoles;
+    }
+
 
     public List<Role> getAllRoles() {
         final var roles = new ArrayList<>(predefinedRoles);
@@ -59,14 +77,16 @@ public class Policy  {
     }
 
     public List<String> getPermissionsForUser(User user) {
-
-        return user.getRoles().stream()
+        final var collect = user.getRoles().stream()
                 .map(this::getRole)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(Role::getPermissions)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+
+        collect.add(Permissions.AUTHENTICATED);
+        return collect;
 
     }
 
@@ -78,4 +98,4 @@ public class Policy  {
     }
 
 
-} 
+}

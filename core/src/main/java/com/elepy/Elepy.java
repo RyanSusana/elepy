@@ -269,18 +269,14 @@ public class Elepy implements ElepyContext {
      * and a tag. This makes it so that you can bind multiple objects of the same type(such as
      * multiple DB classes) with different tags.
      * <p>
-     * This object can be accessed via {@link ElepyContext#getDependency
+     * This object can be accessed via {@link ElepyContext#getDependency}
      *
      * @param cls    The class type of the object
      * @param tag    An optional name
      * @param object The object
      * @param <T>    The type of the object
      * @return The {@link com.elepy.Elepy} instance
-     * @Target({ElementType.TYPE})
-     * @Inherited
-     * @interface List {
-     * Action[] value();
-     * }lass, String)}
+     *
      * @see ElepyContext
      */
     public <T> Elepy registerDependency(Class<T> cls, String tag, T object) {
@@ -607,7 +603,7 @@ public class Elepy implements ElepyContext {
 
         retrievePackageModels();
 
-        addDefaultModel(CustomRole.class);
+        addDefaultModel(Role.class);
         addDefaultModel(User.class);
         addDefaultModel(FileReference.class);
 

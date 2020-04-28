@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @param <T> The RestModel type
  * @param <R> The type you want to map to.
  */
-public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements ActionHandler<T> {
+public abstract class MappedFind<T, R extends T> extends MappedFindOne<T, R> implements ActionHandler<T> {
 
     private MappedFindMany<T, R> mappedFindMany = new DefaultMappedFindMany();
 
@@ -42,7 +42,7 @@ public abstract class MappedFind<T, R> extends MappedFindOne<T, R> implements Ac
 
     private class DefaultMappedFindMany extends com.elepy.handlers.MappedFindMany<T, R> {
         @Override
-        public List<R> mapValues(List<T> typeStream, Request request, Crud<T> crud) {
+        public List<R> mapValues(List<? extends T> typeStream, Request request, Crud<T> crud) {
             return typeStream.stream().map(t -> MappedFind.this.map(t, request, crud)).collect(Collectors.toList());
         }
     }

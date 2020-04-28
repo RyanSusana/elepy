@@ -2,11 +2,9 @@ package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
-import com.elepy.auth.Permissions;
 import com.elepy.handlers.*;
-import com.elepy.http.HttpAction;
-import com.elepy.http.HttpMethod;
 import com.elepy.models.Schema;
+import com.elepy.utils.DefaultActions;
 import com.elepy.utils.ModelUtils;
 
 import java.util.Arrays;
@@ -74,52 +72,23 @@ public class ModelHandlers<T> {
         private static ModelAction deleteAction(Elepy elepy, Schema<?> schema, boolean many) {
             final var annotation = Optional
                     .ofNullable(schema.getJavaClass().getAnnotation(Delete.class));
-
-            var path = schema.getPath();
-            if (!many) path += "/:id";
-
-            final var permissions = annotation
-                    .map(Delete::requiredPermissions)
-                    .orElse(Permissions.DEFAULT);
-
             final ActionHandler<?> handler = annotation
                     .map(anno -> (ActionHandler<?>) elepy
                             .initialize(anno.handler()))
                     .orElse(new DefaultDelete());
 
 
-            return new ModelAction<>(new HttpAction(
-                    "Delete",
-                    path,
-                    permissions,
-                    HttpMethod.DELETE,
-                    true,
-                    true,
-                    "Deletes the selected records",
-                    "Are you sure that you want to delete these record(s)",
-                    null), handler);
+            return new ModelAction<>(DefaultActions.getDeleteFromSchema(schema, many), handler);
         }
 
         private static ModelAction updateAction(Elepy elepy, Schema<?> schema, boolean whole) {
             final var annotation = Optional
                     .ofNullable(schema.getJavaClass().getAnnotation(Update.class));
 
-            final var permissions = annotation
-                    .map(Update::requiredPermissions)
-                    .orElse(Permissions.DEFAULT);
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultUpdate<>());
 
-            return new ModelAction<>(new HttpAction(
-                    "Update",
-                    schema.getPath() + "/:id",
-                    permissions,
-                    whole ? HttpMethod.PUT : HttpMethod.PATCH,
-                    true,
-                    false,
-                    "",
-                    "",
-                    null), handler);
+            return new ModelAction<>(DefaultActions.getUpdateFromSchema(schema, whole), handler);
         }
 
         private static ModelAction findOneAction(Elepy elepy, Schema<?> schema) {
@@ -129,16 +98,7 @@ public class ModelHandlers<T> {
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findOneHandler())).orElse(new DefaultFindOne<>());
 
-            return new ModelAction<>(new HttpAction(
-                    "Find One",
-                    schema.getPath() + "/:id",
-                    getFindPermissions(schema),
-                    HttpMethod.GET,
-                    false,
-                    false,
-                    "",
-                    "",
-                    null), handler);
+            return new ModelAction<>(DefaultActions.getFindOneFromSchema(schema), handler);
         }
 
         private static ModelAction findManyAction(Elepy elepy, Schema<?> schema) {
@@ -147,32 +107,19 @@ public class ModelHandlers<T> {
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findManyHandler())).orElse(new DefaultFindMany<>());
 
-            return new ModelAction<>(new HttpAction("Find Many", schema.getPath(),
-                    getFindPermissions(schema), HttpMethod.GET, true, true, "", "", null), handler);
+            return new ModelAction<>(DefaultActions.getFindFromSchema(schema), handler);
         }
 
         private static ModelAction createAction(Elepy elepy, Schema<?> schema) {
 
             final var annotation = Optional
                     .ofNullable(schema.getJavaClass().getAnnotation(Create.class));
-            final var permissions = annotation
-                    .map(Create::requiredPermissions)
-                    .orElse(Permissions.DEFAULT);
 
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultCreate<>());
 
-            return new ModelAction<>(new HttpAction("Create", schema.getPath(),
-                    permissions, HttpMethod.POST, true, true, "", "", null),
-
+            return new ModelAction<>(DefaultActions.getCreateFromSchema(schema),
                     handler);
-        }
-
-        private static String[] getFindPermissions(Schema<?> schema) {
-            return Optional
-                    .ofNullable(schema.getJavaClass().getAnnotation(Find.class))
-                    .map(Find::requiredPermissions)
-                    .orElse(Permissions.NONE);
         }
 
 

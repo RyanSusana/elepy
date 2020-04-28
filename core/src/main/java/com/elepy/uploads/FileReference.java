@@ -1,7 +1,6 @@
 package com.elepy.uploads;
 
 import com.elepy.annotations.*;
-import com.elepy.auth.Permissions;
 import com.elepy.dao.SortOption;
 import com.elepy.handlers.DisabledHandler;
 
@@ -14,9 +13,11 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@PredefinedRole(id = "files", name = "File Admin", permissions = "files.*")
 @Model(name = "Files", path = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
-@Update(handler = DisabledHandler.class)
-@Delete(handler = FileReferenceDelete.class, requiredPermissions = Permissions.CAN_ADMINISTRATE_FILES)
+@Update(handler = DisabledHandler.class, requiredPermissions = "disabled")
+@Delete(handler = FileReferenceDelete.class, requiredPermissions = "files.delete")
+@Create(requiredPermissions = "files.create")
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
 @View(View.Defaults.FILE)

@@ -1,6 +1,7 @@
 package com.elepy.firebase;
 
 import com.elepy.dao.Crud;
+import com.elepy.dao.Expression;
 import com.elepy.dao.Query;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
@@ -147,6 +148,12 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (ExecutionException e) {
             throw new ElepyException(e.getMessage(), 500, e);
         }
+    }
+
+    @Override
+    public void delete(Expression expression) {
+        // TODO
+        
     }
 
     @Override

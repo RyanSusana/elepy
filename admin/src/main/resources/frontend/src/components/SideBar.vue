@@ -8,7 +8,7 @@
                 <h4 class="uk-heading-bullet">Resources</h4>
                 <ul class="link-list uk-list">
 
-                    <li v-for="model in this.allModels" :key="model.name">
+                    <li v-for="model in this.allModels" v-if="canExecute(model.defaultActions.find)" :key="model.name">
                         <router-link :to="model.path">{{model.name}}</router-link>
                     </li>
 
@@ -34,13 +34,14 @@
     </div>
 </template>
 <script>
-    import {mapState} from "vuex";
+    import {mapGetters, mapState} from "vuex";
 
     export default {
         name: 'SideBar',
 
         computed: {
             ...mapState(['allModels']),
+            ...mapGetters(['canExecute'])
         },
         methods: {
             logOut() {

@@ -22,8 +22,12 @@
                 }
                 this.busy = true;
 
-                await this.action();
-                this.busy = false;
+                try{
+                    await this.action();
+                }finally {
+                    this.busy = false;
+                }
+
             }
         }
     }

@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Filters {
+    public static Expression any() {
+        return search("");
+    }
+
     public static Filter eq(String propertyName, Serializable value) {
         return filter(propertyName, FilterType.EQUALS, value);
     }

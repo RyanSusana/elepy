@@ -1,6 +1,7 @@
 package com.elepy.hibernate;
 
 import com.elepy.dao.Crud;
+import com.elepy.dao.Expression;
 import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
@@ -177,7 +178,6 @@ public class HibernateDao<T> implements Crud<T> {
             Query<Long> query1 = session.createQuery(criteriaQuery);
 
 
-            query1.getResultList();
             return query1.getSingleResult();
         }
     }
@@ -196,14 +196,25 @@ public class HibernateDao<T> implements Crud<T> {
         }
     }
 
-
     @Override
-    public long count() {
+    public void delete(Expression expression) {
         try (Session session = sessionFactory.openSession()) {
-            final Query<Long> query = session.createQuery("select count(*) from " + getType().getName(), Long.class);
-            return query.getSingleResult();
+            final Transaction transaction = session.beginTransaction();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+
+            final var criteriaDelete = cb.createCriteriaDelete(getType());
+
+            final Root<T> root = criteriaDelete.from(getType());
+
+            Predicate predicate = new HibernateQueryFactory<>(schema, root, cb)
+                    .generatePredicate(expression);
+
+            session.createQuery(criteriaDelete.where(predicate)).executeUpdate();
+
+            transaction.commit();
         }
     }
+
 
     private <R> R loadLazyCollections(R object) {
 

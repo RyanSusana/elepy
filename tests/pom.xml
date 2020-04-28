@@ -13,6 +13,11 @@
     <name>Elepy Tests</name>
     <dependencies>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
             <version>${project.version}</version>

@@ -146,6 +146,7 @@ public interface Crud<T> {
      */
     void deleteById(final Serializable id);
 
+    void delete(Expression expression);
     default void delete(Iterable<Serializable> ids) {
         ids.forEach(this::deleteById);
     }

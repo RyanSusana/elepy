@@ -23,7 +23,9 @@
                 :options-limit="300"
                 :limit="10"
                 :limit-text="limitText"
+                :hideSelected="field.required"
                 :max-height="600"
+                :show-no-results="false"
 
                 @input="handleInput"
                 @search-change="findRecords"
@@ -93,7 +95,7 @@
                 immediate: true,
                 handler: function (o, n) {
                     //  In case value has cleared
-                    if (n)
+                    if (n && !this.initialLoaded)
                         this.selected = o;
 
                     if (typeof o !== 'undefined' && !this.initialLoaded) {
@@ -151,12 +153,13 @@
             async sync() {
                 let schemaClient = new SchemaClient(this.schema);
 
+                console.log("sync")
                 if (this.value !== undefined && this.value != null) {
                     if (this.multiple) {
                         if (this.value.length !== 0) {
                             this.isLoading = true;
 
-                            this.selected = (await schemaClient.getByIds(this.value));
+                            this.selected = (await schemaClient.getByIds(this.value)).values;
                             this.isLoading = false;
                             this.initialLoaded = true;
                         }

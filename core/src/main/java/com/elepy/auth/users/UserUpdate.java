@@ -35,7 +35,7 @@ public class UserUpdate extends DefaultUpdate<User> {
 
         // You can only execute this if the updating user is yourself, or you can administrate users
         if (!userToUpdateAfter.equals(loggedInUser)) {
-            context.requirePermissions(Permissions.CAN_ADMINISTRATE_USERS);
+            context.requirePermissions("users.update");
         }
         checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 

@@ -115,6 +115,23 @@ export default new Vuex.Store({
     getters: {
         getModel: state => (modelPath) => state.allModels.filter((m) => m.path.includes(modelPath))[0],
 
+        canExecute: state => action => {
+            if (state.loggedInUser == null) {
+                return false;
+            }
+            let grantedPermissions = state.loggedInUser.permissions ?? [];
+            let requiredPermissions = action.requiredPermissions ?? [];
+
+            if (requiredPermissions.includes("disabled")) {
+                return false;
+            }
+
+            return requiredPermissions
+                .every(requiredPermission => grantedPermissions
+                    .some(grantedPermission => matchRuleShort(requiredPermission, grantedPermission)));
+
+        },
+
         isModerator: (state, getters) =>
             getters.loggedIn && (
             state.loggedInUser.permissions.includes("moderator")
@@ -133,3 +150,11 @@ export default new Vuex.Store({
 
     }
 });
+
+function matchRuleShort(str, rule) {
+    if (str === 'authenticated') {
+        return true;
+    }
+    let escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    return new RegExp("^" + rule.split("*").map(escapeRegex).join(".*") + "$").test(str);
+}

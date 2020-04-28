@@ -8,6 +8,8 @@ import java.lang.annotation.*;
 @Inherited
 public @interface PredefinedRole {
 
+    String id();
+
     String name();
 
     String description() default "";

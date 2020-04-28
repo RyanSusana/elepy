@@ -57,12 +57,14 @@ public class ModelPiston<T> {
     }
 
     private Stream<Route> routesFromDefaultActions() {
-        return serviceExtraction.getDefaultActions().values().stream().map(modelAction -> anElepyRoute()
-                .path(modelAction.getAction().getPath())
-                .addPermissions(modelAction.getAction().getRequiredPermissions())
-                .method(modelAction.getAction().getMethod())
-                .route(ctx -> modelAction.getActionHandler().handle(injectModelClassInHttpContext(ctx), modelContext))
-                .build());
+        return serviceExtraction.
+                getDefaultActions().values().stream()
+                .map(modelAction -> anElepyRoute()
+                        .path(modelAction.getAction().getPath())
+                        .addPermissions(modelAction.getAction().getRequiredPermissions())
+                        .method(modelAction.getAction().getMethod())
+                        .route(ctx -> modelAction.getActionHandler().handle(injectModelClassInHttpContext(ctx), modelContext))
+                        .build());
     }
 
     private Stream<Route> routesFromAnnotation() {
