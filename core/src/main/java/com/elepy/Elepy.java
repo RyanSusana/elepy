@@ -3,8 +3,7 @@ package com.elepy;
 import com.elepy.annotations.Model;
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.*;
-import com.elepy.auth.methods.BasicAuthenticationMethod;
-import com.elepy.auth.methods.PersistedTokenAuthenticationMethod;
+import com.elepy.auth.methods.PersistedTokenGenerator;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
@@ -119,16 +118,11 @@ public class Elepy implements ElepyContext {
         configurations.forEach(this::injectFields);
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
-        if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
-            addDefaultModel(Token.class);
-        }
 
         configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
         modelEngine.start();
 
-
-        context.resolveDependencies();
         setupAuth();
         context.resolveDependencies();
 
@@ -276,7 +270,6 @@ public class Elepy implements ElepyContext {
      * @param object The object
      * @param <T>    The type of the object
      * @return The {@link com.elepy.Elepy} instance
-     *
      * @see ElepyContext
      */
     public <T> Elepy registerDependency(Class<T> cls, String tag, T object) {
@@ -544,8 +537,8 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    public Elepy addAuthenticationMethod(AuthenticationMethod authenticationMethod) {
-        authenticationService().addAuthenticationMethod(authenticationMethod);
+    public Elepy setTokenGenerator(TokenGenerator authenticationMethod) {
+        authenticationService().setTokenGenerator(authenticationMethod);
         return this;
     }
 
@@ -603,6 +596,7 @@ public class Elepy implements ElepyContext {
 
         retrievePackageModels();
 
+        addDefaultModel(Token.class);
         addDefaultModel(Role.class);
         addDefaultModel(User.class);
         addDefaultModel(FileReference.class);
@@ -649,11 +643,9 @@ public class Elepy implements ElepyContext {
         addExtension(userAuthenticationExtension);
         registerDependency(initialize(UserCenter.class));
 
-        if (userAuthenticationExtension.getTokenAuthenticationMethod().isEmpty()) {
-            userAuthenticationExtension.addAuthenticationMethod(initialize(PersistedTokenAuthenticationMethod.class));
+        if (!userAuthenticationExtension.hasTokenGenerator()) {
+            userAuthenticationExtension.setTokenGenerator(initialize(PersistedTokenGenerator.class));
         }
-
-        userAuthenticationExtension.addAuthenticationMethod(initialize(BasicAuthenticationMethod.class));
     }
 
     private void injectExtensions() {

@@ -4,7 +4,7 @@ import com.elepy.http.Request;
 
 import java.util.Optional;
 
-public abstract class TokenAuthenticationMethod implements AuthenticationMethod {
+public abstract class TokenGenerator implements AuthenticationMethod {
 
     @Override
     public final Optional<Grant> getGrant(Request request) {

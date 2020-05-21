@@ -44,7 +44,8 @@ class Injector {
             injectFields(object);
             return object;
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ElepyConfigException("Failed to instantiate an Elepy Object", e);
+            throw new ElepyConfigException("Failed to instantiate an Elepy Object: " + cls
+                    .getName(), e);
         }
     }
 

@@ -3,7 +3,6 @@ package com.elepy.auth.methods;
 import com.elepy.annotations.Inject;
 import com.elepy.auth.Grant;
 import com.elepy.auth.Token;
-import com.elepy.auth.TokenAuthenticationMethod;
 import com.elepy.auth.UserCenter;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
@@ -16,24 +15,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+public class Tokens {
 
-public class PersistedTokenAuthenticationMethod extends TokenAuthenticationMethod {
-
-    @Inject
-    private Crud<Token> tokens;
-
-    private UserCenter users;
-    private Map<Token, Grant> cached = new HashMap<>();
-
-
-    @Override
-    public Grant validateToken(String elepyToken) {
+    public Grant getGrant(String elepyToken) {
         return getGrantFromCache(elepyToken)
                 .or(() -> getUserFromDB(elepyToken)).orElse(null);
     }
-
-    @Override
-    public String createToken(Grant grant) {
+    public String createAccessToken(Grant grant) {
         removeOverdueTokensDB();
         final Token token = new Token().setId(UUID.randomUUID().toString())
                 .setUserId(grant.getUserId()).setMaxDate((1000 * 60 * 60) + System.currentTimeMillis());
@@ -43,6 +31,13 @@ public class PersistedTokenAuthenticationMethod extends TokenAuthenticationMetho
         cached.put(token, grant);
         return token.getId();
     }
+
+    @Inject
+    private Crud<Token> tokens;
+
+    @Inject
+    private UserCenter users;
+    private Map<Token, Grant> cached = new HashMap<>();
 
     private Optional<Grant> getGrantFromCache(String token) {
         removeOverdueTokensCache();
@@ -92,4 +87,4 @@ public class PersistedTokenAuthenticationMethod extends TokenAuthenticationMetho
         }
         return tokens.getAll().stream().filter(token -> id.equals(token.getId())).findAny();
     }
-}
+} 

@@ -40,12 +40,12 @@ public class JWTConfiguration implements Configuration {
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
         if (algorithm != null) {
-            elepy.addAuthenticationMethod(new JWTAuthenticationMethod(algorithm));
+            elepy.setTokenGenerator(new JWTGenerator(algorithm));
         } else {
             final var secret = Optional.ofNullable(elepy.getPropertyConfig().getString("jwt.secret"))
                     .orElseThrow(() -> new ElepyConfigException("No jwt.secret found in Elepy properties or environmental variables"));
 
-            elepy.addAuthenticationMethod(new JWTAuthenticationMethod(Algorithm.HMAC256(secret)));
+            elepy.setTokenGenerator(new JWTGenerator(Algorithm.HMAC256(secret)));
         }
 
     }

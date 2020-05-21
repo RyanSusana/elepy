@@ -5,7 +5,16 @@ import java.util.List;
 public class Grant {
     private String userId;
     private String username;
+    private long maxDate;
     private List<String> permissions;
+
+    public long getMaxDate() {
+        return maxDate;
+    }
+
+    public void setMaxDate(long maxDate) {
+        this.maxDate = maxDate;
+    }
 
     public String getUsername() {
         return username;

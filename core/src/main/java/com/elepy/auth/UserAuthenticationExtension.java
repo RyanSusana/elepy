@@ -4,17 +4,14 @@ package com.elepy.auth;
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.annotations.Inject;
+import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,15 +20,18 @@ public class UserAuthenticationExtension implements ElepyExtension {
     @Inject
     private Crud<User> userCrud;
 
-    private List<AuthenticationMethod> authenticationMethods = new ArrayList<>();
+
+    @Inject
+    private BasicAuthenticationMethod basicAuthenticationMethod;
+
+
+    private TokenGenerator tokenGenerator;
 
     @Inject
     private ObjectMapper objectMapper;
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
-
-        authenticationMethods.forEach(elepy::injectFields);
 
         http.get("/elepy/has-users", ctx -> {
             final var count = userCrud.count();
@@ -53,8 +53,8 @@ public class UserAuthenticationExtension implements ElepyExtension {
             final var grant = ctx.request().grant().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
             final var user = ctx.request().loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
 
-            final var grantTree =  objectMapper.valueToTree(grant);
-            final var userTree =  objectMapper.valueToTree(user);
+            final var grantTree = objectMapper.valueToTree(grant);
+            final var userTree = objectMapper.valueToTree(user);
 
             final var merged = objectMapper.readerForUpdating(grantTree).readValue(userTree);
 
@@ -72,12 +72,12 @@ public class UserAuthenticationExtension implements ElepyExtension {
         });
     }
 
-    public void addAuthenticationMethod(AuthenticationMethod authHandler) {
-        if (authHandler instanceof TokenAuthenticationMethod) {
-            authenticationMethods.add(0, authHandler);
-        } else {
-            authenticationMethods.add(authHandler);
-        }
+    public boolean hasTokenGenerator() {
+        return tokenGenerator != null;
+    }
+
+    public void setTokenGenerator(TokenGenerator authHandler) {
+        this.tokenGenerator = authHandler;
     }
 
     public Optional<Grant> getGrant(Request request) {
@@ -85,7 +85,7 @@ public class UserAuthenticationExtension implements ElepyExtension {
         if (grantFromRequest != null) {
             return Optional.of(grantFromRequest);
         } else {
-            final var grantMaybe = authenticateUser(request);
+            final var grantMaybe = authenticate(request, List.of(basicAuthenticationMethod, tokenGenerator));
 
             grantMaybe.ifPresent(g -> request.attribute("grant", g));
             return grantMaybe;
@@ -94,14 +94,17 @@ public class UserAuthenticationExtension implements ElepyExtension {
 
 
     private String generateToken(Request request) {
-        final Optional<Grant> grant = authenticateUser(request);
-        return grant.map(user -> getTokenAuthenticationMethod()
-                .orElseThrow(() -> new ElepyException("Only Basic Authentication supported"))
-                .createToken(user))
+        final Optional<Grant> grant = authenticate(request, List.of(basicAuthenticationMethod));
+        return grant
+                .map(grant1 -> {
+                    grant1.setMaxDate(System.currentTimeMillis() + (1000 * 60 * 60));
+                    return grant1;
+                }).map(grant1 -> tokenGenerator
+                        .createToken(grant1))
                 .orElseThrow(() -> new ElepyException("Credentials invalid", 401));
     }
 
-    private Optional<Grant> authenticateUser(Request request) {
+    private Optional<Grant> authenticate(Request request, List<AuthenticationMethod> authenticationMethods) {
         for (AuthenticationMethod authenticationMethod : authenticationMethods) {
             final var user = authenticationMethod.getGrant(request);
 
@@ -112,10 +115,5 @@ public class UserAuthenticationExtension implements ElepyExtension {
         return Optional.empty();
     }
 
-    public Optional<TokenAuthenticationMethod> getTokenAuthenticationMethod() {
-        return authenticationMethods.stream()
-                .filter(authenticationMethod -> authenticationMethod instanceof TokenAuthenticationMethod)
-                .findFirst()
-                .map(authenticationMethod -> (TokenAuthenticationMethod) authenticationMethod);
-    }
+
 }

@@ -4,17 +4,17 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.elepy.auth.Grant;
-import com.elepy.auth.TokenAuthenticationMethod;
+import com.elepy.auth.TokenGenerator;
 
 import java.util.Calendar;
 
-public class JWTAuthenticationMethod extends TokenAuthenticationMethod {
+public class JWTGenerator extends TokenGenerator {
 
     private static final int MAXIMUM_TOKEN_DURATION = 1000 * 60 * 60;
 
     private final Algorithm algorithm;
 
-    public JWTAuthenticationMethod(Algorithm algorithm) {
+    public JWTGenerator(Algorithm algorithm) {
         this.algorithm = algorithm;
     }
 
