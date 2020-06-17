@@ -10,7 +10,7 @@ public @interface View {
     String value() default Defaults.DEFAULT;
 
     class Defaults {
-        public static final String DEFAULT = "default", SINGLE = "single", FILE = "file";
+        public static final String DEFAULT = "default", SINGLE = "single";
     }
 
 
