@@ -1,24 +1,12 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
 
-$primary-color: #39f;
+$primary-color: hsl(210, 100%, 60%);
 
-$dark-grey: #212121;
 
-:root {
-  --primary-color: #{$primary-color};
-  --primary-hover-color: #{darken($primary-color, 5%)};
-  --navbar-bg: var(--primary-color);
-  --navbar-hover-bg: var(--primary-hover-color);
-  --sidebar-color: white;
-  --sidebar-bg: #111;
-  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55);
-  --hover-bg: #99999933;
-  --text-color: #{$dark-grey};
-  --navbar-color: var(--sidebar-color);
-  --text-muted-color: lighten($dark-grey, 10%);
-  --link-color: var(--primary-color);
-  --link-hover-color: var(--primary-hover-color);
-}
+$dark-grey: hsl(210, 10%, 10%);
+
+$global-muted-color: hsl(210, 10%, 60%);
+
 
 $sidebar-color: $primary-color;
 $global-link-color: $primary-color;
@@ -28,7 +16,6 @@ sans-serif;
 $notification-message-background: lighten($dark-grey, 3%);
 $notification-message-color: #ccc;
 $global-primary-background: $primary-color;
-$dark-grey: #212121;
 $global-secondary-background: $dark-grey;
 $grey: #b2b2b2;
 $off-white: #f2f2f2;
@@ -54,6 +41,23 @@ $quicksand: "Quicksand",
 sans-serif;
 $roboto-slab: "Roboto Slab",
 serif;
+
+:root {
+  --primary-color: #{$primary-color};
+  --primary-hover-color: #{darken($primary-color, 5%)};
+  --navbar-bg: var(--primary-color);
+  --navbar-hover-bg: var(--primary-hover-color);
+  --sidebar-bg: #{$dark-grey};
+  --text-muted-color: #{$global-muted-color};
+  --text-muted-color-dark: #{darken($global-muted-color,20%)};
+  --body-bg: linear-gradient(to top left, #ffffff55, #ffffff55);
+  --hover-bg: #99999933;
+  --text-color: #{$dark-grey};
+  --navbar-color: var(--sidebar-color);
+  --link-color: var(--primary-color);
+  --link-hover-color: var(--primary-hover-color);
+}
+
 
 .edit-modal-body {
   min-height: 65vh !important;
@@ -155,7 +159,6 @@ serif;
 }
 
 
-
 @import "~uikit/src/scss/uikit-theme.scss";
 @import "components/sidebar";
 @import "components/nav";
@@ -185,12 +188,13 @@ serif;
 .uk-background-primary {
   background-color: $background-primary-background;
   background-color: var(--primary-color);
-  .disabled{
+
+  .disabled {
     background-color: var(--primary-disabled-color);
   }
 }
 
-.uk-button-danger.disabled{
+.uk-button-danger.disabled {
   background-color: lighten(desaturate($global-danger-background, 30%), 15%);
 
 }
