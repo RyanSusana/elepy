@@ -138,7 +138,7 @@ public class HibernateQueryFactory<T> {
     }
 
     private String getJPAFieldName(Field field) {
-        Column annotation = field.getAnnotation(Column.class);
+        Column annotation = com.elepy.utils.Annotations.get(field,Column.class);
 
         if (annotation != null && !annotation.name().isEmpty()) {
             return annotation.name();

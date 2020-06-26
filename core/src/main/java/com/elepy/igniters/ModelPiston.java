@@ -10,6 +10,7 @@ import com.elepy.http.Route;
 import com.elepy.http.RouteBuilder;
 import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
+import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
 
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ModelPiston<T> {
     }
 
     private Stream<Route> routesFromAnnotation() {
-        final ExtraRoutes extraRoutesAnnotation = schema.getJavaClass().getAnnotation(ExtraRoutes.class);
+        final ExtraRoutes extraRoutesAnnotation = Annotations.get(schema.getJavaClass(), ExtraRoutes.class);
 
         if (extraRoutesAnnotation == null) {
             return Stream.empty();

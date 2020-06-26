@@ -19,7 +19,7 @@ public class DefaultActions {
     }
 
     public static HttpAction getUpdateFromSchema(Schema<?> schema, boolean whole) {
-        final var permissions = Optional.ofNullable(schema.getJavaClass().getAnnotation(Update.class))
+        final var permissions = Optional.ofNullable(Annotations.get(schema.getJavaClass(), Update.class))
                 .map(Update::requiredPermissions)
                 .orElse(Permissions.DEFAULT);
 
@@ -37,7 +37,7 @@ public class DefaultActions {
 
     public static HttpAction getCreateFromSchema(Schema<?> schema) {
 
-        final var permissions = Optional.ofNullable(schema.getJavaClass().getAnnotation(Create.class))
+        final var permissions = Optional.ofNullable(Annotations.get(schema.getJavaClass(), Create.class))
                 .map(Create::requiredPermissions)
                 .orElse(Permissions.DEFAULT);
         return new HttpAction("Create", schema.getPath(),
@@ -73,7 +73,7 @@ public class DefaultActions {
     public static HttpAction getDeleteFromSchema(Schema<?> schema, boolean many) {
         var path = schema.getPath();
         if (!many) path += "/:id";
-        final var permissions = Optional.ofNullable(schema.getJavaClass().getAnnotation(Delete.class))
+        final var permissions = Optional.ofNullable(Annotations.get(schema.getJavaClass(), Delete.class))
                 .map(Delete::requiredPermissions)
                 .orElse(Permissions.DEFAULT);
 
@@ -91,7 +91,7 @@ public class DefaultActions {
 
     private static String[] getFindPermissions(Schema<?> schema) {
         return Optional
-                .ofNullable(schema.getJavaClass().getAnnotation(Find.class))
+                .ofNullable(Annotations.get(schema.getJavaClass(), Find.class))
                 .map(Find::requiredPermissions)
                 .orElse(Permissions.NONE);
     }

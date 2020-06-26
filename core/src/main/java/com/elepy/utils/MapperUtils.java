@@ -54,7 +54,7 @@ public class MapperUtils {
                 throw new ElepyConfigException("Enum field not found");
             }
 
-            PrettyName annotation = declaredField.getAnnotation(PrettyName.class);
+            PrettyName annotation = Annotations.get(declaredField, PrettyName.class);
             if (annotation != null) {
 
                 toAdd.put("enumName", annotation.value());
@@ -88,7 +88,7 @@ public class MapperUtils {
         if (fieldType.equals(FieldType.NUMBER)) {
             return toNumberFromString(field, value);
         } else if (fieldType.equals(FieldType.DATE)) {
-            final DateTime annotation = field.getAnnotation(DateTime.class);
+            final DateTime annotation = Annotations.get(field, DateTime.class);
             final String format;
 
             if (annotation == null) {
@@ -133,7 +133,7 @@ public class MapperUtils {
     }
 
     public static Serializable toBooleanFromString(Field field, String value) {
-        final TrueFalse annotation = field.getAnnotation(TrueFalse.class);
+        final TrueFalse annotation = com.elepy.utils.Annotations.get(field,TrueFalse.class);
 
         if (annotation != null && value.equalsIgnoreCase(annotation.trueValue())) {
             return true;

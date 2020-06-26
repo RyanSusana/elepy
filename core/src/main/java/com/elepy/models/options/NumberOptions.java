@@ -2,6 +2,7 @@ package com.elepy.models.options;
 
 import com.elepy.annotations.Number;
 import com.elepy.models.NumberType;
+import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AnnotatedElement;
@@ -18,7 +19,7 @@ public class NumberOptions implements Options {
     }
 
     public static NumberOptions of(AnnotatedElement field) {
-        final Number annotation = field.getAnnotation(Number.class);
+        final Number annotation = Annotations.get(field, Number.class);
         return new NumberOptions(
                 annotation == null ? Integer.MIN_VALUE : annotation.minimum(),
                 annotation == null ? Integer.MAX_VALUE : annotation.maximum(),

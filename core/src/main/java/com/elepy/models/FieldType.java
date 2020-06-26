@@ -4,6 +4,7 @@ package com.elepy.models;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.utils.Annotations;
 import com.google.common.primitives.Primitives;
 
 import java.lang.annotation.Annotation;
@@ -29,7 +30,8 @@ public enum FieldType {
     TEXTAREA,
     MARKDOWN,
     HTML,
-    REFERENCE;
+    REFERENCE,
+    CUSTOM;
 
     private final Class<?> baseClass;
 
@@ -41,7 +43,8 @@ public enum FieldType {
                     com.elepy.annotations.HTML.class, HTML,
                     com.elepy.annotations.FileReference.class, FILE_REFERENCE,
                     Number.class, NUMBER,
-                    Reference.class, REFERENCE
+                    Reference.class, REFERENCE,
+                    Custom.class, CUSTOM
             );
 
     FieldType() {
@@ -54,8 +57,6 @@ public enum FieldType {
 
 
     public static FieldType guessFieldType(AnnotatedElement property) {
-
-
         if (property instanceof Field) {
             return guessByField((Field) property);
         } else if (property instanceof Method) {
@@ -109,7 +110,7 @@ public enum FieldType {
     private static Optional<FieldType> getByAnnotation(AnnotatedElement property) {
 
         final var typeFromAnnotation = annotationMap.keySet().stream()
-                .filter(property::isAnnotationPresent)
+                .filter(annotationClass -> Annotations.isPresent(property, annotationClass))
                 .findFirst()
                 .map(annotationMap::get);
 

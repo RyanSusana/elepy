@@ -3,7 +3,6 @@ package com.elepy.models.options;
 import com.elepy.annotations.FileReference;
 import com.elepy.uploads.FileUploadEvaluator;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 
 public class FileReferenceOptions implements Options {
@@ -16,7 +15,7 @@ public class FileReferenceOptions implements Options {
     }
 
     public static FileReferenceOptions of(AnnotatedElement accessibleObject){
-        final var annotation = accessibleObject.getAnnotation(FileReference.class);
+        final var annotation = com.elepy.utils.Annotations.get(accessibleObject,FileReference.class);
 
         return new FileReferenceOptions(annotation == null ? "*/*" : annotation.allowedMimeType(), annotation == null ? FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE : annotation.maximumFileSize());
 

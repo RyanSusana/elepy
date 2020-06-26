@@ -3,6 +3,7 @@ package com.elepy.di;
 import com.elepy.annotations.Inject;
 import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.converters.StringConverter;
@@ -76,12 +77,8 @@ class Injector {
         final Class<?> wrapper = ReflectionUtils.returnTypeOf(annotatedElement);
 
         if (annotatedElement.isAnnotationPresent(Property.class)) {
-
-
-            final var property = annotatedElement.getAnnotation(Property.class);
+            final var property = Annotations.get(annotatedElement, Property.class);
             return getProp(wrapper, property);
-
-
         } else {
             final var contextKey = ContextKey.forAnnotatedElement(annotatedElement);
 

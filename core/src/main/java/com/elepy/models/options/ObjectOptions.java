@@ -31,7 +31,7 @@ public class ObjectOptions implements Options {
 
     public static ObjectOptions of(AnnotatedElement field) {
         Class<?> objectType = ReflectionUtils.returnTypeOf(field);
-        final InnerObject annotation = field.getAnnotation(InnerObject.class);
+        final InnerObject annotation = com.elepy.utils.Annotations.get(field,InnerObject.class);
         return of(objectType, annotation);
     }
 

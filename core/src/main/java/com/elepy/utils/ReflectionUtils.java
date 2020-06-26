@@ -86,7 +86,7 @@ public class ReflectionUtils {
     }
 
     public static String getPropertyName(AccessibleObject property) {
-        JsonProperty jsonProperty = property.getAnnotation(JsonProperty.class);
+        JsonProperty jsonProperty = Annotations.get(property, JsonProperty.class);
         if (jsonProperty != null) {
             return jsonProperty.value();
         } else {
@@ -105,7 +105,7 @@ public class ReflectionUtils {
 
     public static String getPrettyName(AccessibleObject field) {
         if (field.isAnnotationPresent(PrettyName.class)) {
-            return field.getAnnotation(PrettyName.class).value();
+            return com.elepy.utils.Annotations.get(field, PrettyName.class).value();
         }
         return getPropertyName(field);
     }
@@ -166,7 +166,7 @@ public class ReflectionUtils {
     public static Optional<Field> findFieldWithName(Class cls, String name) {
         return findFieldThatMatches(cls, field -> {
             if (field.isAnnotationPresent(JsonProperty.class)) {
-                final JsonProperty annotation = field.getAnnotation(JsonProperty.class);
+                final JsonProperty annotation = com.elepy.utils.Annotations.get(field, JsonProperty.class);
                 return annotation.value().equals(name);
             } else {
                 return field.getName().equals(name);
@@ -200,7 +200,7 @@ public class ReflectionUtils {
         final List<Field> fields = searchForFieldsWithAnnotation(cls, Column.class);
 
         for (Field field : fields) {
-            final Column unique = field.getAnnotation(Column.class);
+            final Column unique = com.elepy.utils.Annotations.get(field, Column.class);
             if (unique.unique()) {
                 return true;
             }
@@ -211,7 +211,7 @@ public class ReflectionUtils {
     public static List<Field> getUniqueFields(Class cls) {
         List<Field> uniqueFields = searchForFieldsWithAnnotation(cls, Unique.class);
         uniqueFields.addAll(searchForFieldsWithAnnotation(cls, Column.class).stream().filter(field -> {
-            final Column column = field.getAnnotation(Column.class);
+            final Column column = com.elepy.utils.Annotations.get(field, Column.class);
             return column.unique();
         }).collect(Collectors.toList()));
 
@@ -222,7 +222,7 @@ public class ReflectionUtils {
 
 
     public static Route routeFromMethod(Object obj, Method method) {
-        com.elepy.annotations.Route annotation = method.getAnnotation(com.elepy.annotations.Route.class);
+        com.elepy.annotations.Route annotation = Annotations.get(method, com.elepy.annotations.Route.class);
         HttpContextHandler route;
         if (method.getParameterCount() == 0) {
             route = ctx -> {

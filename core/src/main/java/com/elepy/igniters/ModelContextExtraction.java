@@ -10,8 +10,9 @@ import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.Schema;
 import com.elepy.models.ModelContext;
+import com.elepy.models.Schema;
+import com.elepy.utils.Annotations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ModelContextExtraction {
     private static <T> IdentityProvider<T> extractIdProvider(Schema<T> schema, Elepy elepy) {
         var classType = schema.getJavaClass();
         if (classType.isAnnotationPresent(IdProvider.class)) {
-            return elepy.initialize(classType.getAnnotation(IdProvider.class).value());
+            return elepy.initialize(Annotations.get(classType, IdProvider.class).value());
         } else {
             return new DefaultIdentityProvider<>();
         }
@@ -40,7 +41,7 @@ public class ModelContextExtraction {
 
         List<ObjectEvaluator<T>> objectEvaluators = new ArrayList<>();
 
-        final Evaluators annotation = schema.getJavaClass().getAnnotation(Evaluators.class);
+        final Evaluators annotation = Annotations.get(schema.getJavaClass(), Evaluators.class);
         objectEvaluators.add(new DefaultObjectEvaluator<>());
 
         if (annotation != null) {
@@ -60,13 +61,13 @@ public class ModelContextExtraction {
      */
     private static <T> Crud<T> extractCrud(Schema<T> schema, Elepy elepy) {
         var modelType = schema.getJavaClass();
-        var annotation = modelType.getAnnotation(DaoFactory.class);
+        var annotation = Annotations.get(modelType, DaoFactory.class);
 
         var crudProvider = annotation == null ?
                 elepy.defaultCrudFactory()
                 : elepy.initialize(annotation.value());
 
-        final Dao daoAnnotation = modelType.getAnnotation(Dao.class);
+        final Dao daoAnnotation = Annotations.get(modelType, Dao.class);
         if (daoAnnotation != null) {
             return elepy.initialize(daoAnnotation.value());
         } else {

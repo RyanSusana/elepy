@@ -125,18 +125,30 @@ public class SchemaUtilsTest {
         final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("fileReference");
-        final FileReferenceOptions reference = property.getOptions();
+        final FileReferenceOptions fileReference = property.getOptions();
 
-        assertThat(reference.getAllowedMimeType())
+        assertThat(fileReference.getAllowedMimeType())
                 .isEqualTo("image/png");
-        assertThat(reference.getMaximumFileSize())
+        assertThat(fileReference.getMaximumFileSize())
                 .isEqualTo(FileUploadEvaluator.DEFAULT_MAX_FILE_SIZE);
 
         assertThat(property.getType())
                 .isEqualTo(FILE_REFERENCE);
-
     }
 
+    @Test
+    void testCorrectReference_viaCustomAnnotation() {
+        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final var property = schemaFromClass.getProperty("customAnnotation");
+        final ReferenceOptions options = property.getOptions();
+
+        assertThat(options.getReferenceSchema().getJavaClass())
+                .isEqualTo(Category.class);
+
+        assertThat(property.getType())
+                .isEqualTo(REFERENCE);
+
+    }
 
     @Test
     void testCorrectRequired() {

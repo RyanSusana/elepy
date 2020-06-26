@@ -40,7 +40,7 @@ public class ArrayOptions<T extends Options> implements Options {
     public static ArrayOptions of(AnnotatedElement field, Options options) {
         if (field instanceof Field) {
 
-            final Array annotation = field.getAnnotation(Array.class);
+            final Array annotation = com.elepy.utils.Annotations.get(field,Array.class);
 
 
             final boolean isDefaultSortable = ReflectionUtils.returnTypeOf(field).isAssignableFrom(List.class);

@@ -2,7 +2,6 @@ package com.elepy.models.options;
 
 import com.elepy.annotations.TrueFalse;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 
 public class BooleanOptions implements Options {
@@ -17,7 +16,7 @@ public class BooleanOptions implements Options {
 
 
     public static BooleanOptions of(AnnotatedElement field) {
-        final TrueFalse annotation = field.getAnnotation(TrueFalse.class);
+        final TrueFalse annotation = com.elepy.utils.Annotations.get(field,TrueFalse.class);
         return new BooleanOptions(
                 annotation == null ? "true" : annotation.trueValue(),
                 annotation == null ? "false" : annotation.falseValue()

@@ -76,6 +76,10 @@ public class Resource {
     @Hidden
     private String hidden;
 
+
+    @CustomAnno
+    private String customAnnotation;
+
     public Resource() {
     }
 

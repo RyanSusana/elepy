@@ -3,12 +3,11 @@ package com.elepy.di;
 import com.elepy.annotations.Model;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.utils.Annotations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.validation.Validator;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public interface ElepyContext {
 
@@ -41,7 +40,7 @@ public interface ElepyContext {
      * @return the Crud
      */
     default <T> Crud<T> getCrudFor(Class<T> cls) {
-        final Model annotation = cls.getAnnotation(Model.class);
+        final Model annotation = Annotations.get(cls, Model.class);
 
         if (annotation == null) {
             throw new ElepyConfigException("Resources must have the @RestModel Annotation");

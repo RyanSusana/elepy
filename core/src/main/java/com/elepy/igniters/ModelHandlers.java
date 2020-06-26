@@ -4,6 +4,7 @@ import com.elepy.Elepy;
 import com.elepy.annotations.*;
 import com.elepy.handlers.*;
 import com.elepy.models.Schema;
+import com.elepy.utils.Annotations;
 import com.elepy.utils.DefaultActions;
 import com.elepy.utils.ModelUtils;
 
@@ -71,7 +72,7 @@ public class ModelHandlers<T> {
 
         private static ModelAction deleteAction(Elepy elepy, Schema<?> schema, boolean many) {
             final var annotation = Optional
-                    .ofNullable(schema.getJavaClass().getAnnotation(Delete.class));
+                    .ofNullable(Annotations.get(schema.getJavaClass(), Delete.class));
             final ActionHandler<?> handler = annotation
                     .map(anno -> (ActionHandler<?>) elepy
                             .initialize(anno.handler()))
@@ -83,7 +84,7 @@ public class ModelHandlers<T> {
 
         private static ModelAction updateAction(Elepy elepy, Schema<?> schema, boolean whole) {
             final var annotation = Optional
-                    .ofNullable(schema.getJavaClass().getAnnotation(Update.class));
+                    .ofNullable(Annotations.get(schema.getJavaClass(), Update.class));
 
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultUpdate<>());
@@ -93,7 +94,7 @@ public class ModelHandlers<T> {
 
         private static ModelAction findOneAction(Elepy elepy, Schema<?> schema) {
             final var annotation = Optional
-                    .ofNullable(schema.getJavaClass().getAnnotation(Find.class));
+                    .ofNullable(Annotations.get(schema.getJavaClass(), Find.class));
 
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findOneHandler())).orElse(new DefaultFindOne<>());
@@ -103,7 +104,7 @@ public class ModelHandlers<T> {
 
         private static ModelAction findManyAction(Elepy elepy, Schema<?> schema) {
             final var annotation = Optional
-                    .ofNullable(schema.getJavaClass().getAnnotation(Find.class));
+                    .ofNullable(Annotations.get(schema.getJavaClass(), Find.class));
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.findManyHandler())).orElse(new DefaultFindMany<>());
 
@@ -113,7 +114,7 @@ public class ModelHandlers<T> {
         private static ModelAction createAction(Elepy elepy, Schema<?> schema) {
 
             final var annotation = Optional
-                    .ofNullable(schema.getJavaClass().getAnnotation(Create.class));
+                    .ofNullable(Annotations.get(schema.getJavaClass(), Create.class));
 
 
             final ActionHandler<?> handler = annotation.map(anno -> (ActionHandler<?>) elepy.initialize(anno.handler())).orElse(new DefaultCreate<>());

@@ -24,6 +24,7 @@ import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
 import com.elepy.uploads.FileUploadExtension;
+import com.elepy.utils.Annotations;
 import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -568,7 +569,7 @@ public class Elepy implements ElepyContext {
                 .noneMatch(model::isAssignableFrom)) {
             addModel(model);
         } else {
-            logger.info(String.format("Default %s model overridden", model.getAnnotation(Model.class).name()));
+            logger.info(String.format("Default %s model overridden", Annotations.get(model, Model.class).name()));
         }
     }
 
