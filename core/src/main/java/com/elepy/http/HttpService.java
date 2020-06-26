@@ -1,6 +1,8 @@
 package com.elepy.http;
 
 
+import com.elepy.exceptions.ElepyException;
+
 public interface HttpService {
 
     void port(int port);
@@ -12,6 +14,25 @@ public interface HttpService {
     void ignite();
 
     void stop();
+
+    default void staticFile(String path, String resourceLocation, String contentType, boolean gzip) {
+        final var file = RouteBuilder.anElepyRoute().acceptType(contentType)
+                .method(HttpMethod.GET)
+                .path(path)
+                .route(context -> {
+                    context.type(contentType);
+                    if (gzip)
+                        context.response().header("Content-Encoding", "gzip");
+                    final var resourceAsStream = getClass().getClassLoader().getResourceAsStream(resourceLocation);
+
+                    if (resourceAsStream == null) {
+                        throw new ElepyException(String.format("Resource '%s' not found", resourceLocation));
+                    }
+                    context.response().result(resourceAsStream);
+                }).build();
+
+        this.addRoute(file);
+    }
 
     void staticFiles(String path, StaticFileLocation location);
 

@@ -48,8 +48,7 @@ public class FrontendLoader implements ElepyExtension {
                             ".css"
                     )
             ).flatMap(s -> s)
-                    .map(Resource::toRoute)
-                    .forEach(http::addRoute);
+                    .forEach(resource -> http.staticFile(resource.getPath(), resource.getLocation(), resource.getContentType(), true));
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
