@@ -70,6 +70,7 @@ build/Release
 # Dependency directories
 **/node_modules/**
 **/dist/**
+**/dist_lazy/**
 **/node/**
 
 jspm_packages/

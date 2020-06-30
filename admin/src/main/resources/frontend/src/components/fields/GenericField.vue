@@ -8,6 +8,13 @@
                 v-if="trueFieldType === 'DATE'"
         />
 
+        <CustomField
+                :field="field"
+                :value="value"
+                @input="handleInput"
+                v-if="trueFieldType === 'CUSTOM'"
+        />
+
         <ReferenceField
                 :field="field"
                 :value="value"
@@ -127,11 +134,13 @@
     import ArrayField from "./ArrayField.vue";
     import FileField from "./FileField.vue";
     import ReferenceField from "./ReferenceField";
+    import CustomField from "./CustomField";
 
     export default {
         props: ["value", "fieldType", "field"],
         name: "GenericField",
         components: {
+            CustomField,
             ReferenceField,
             NumberField,
             TextField,

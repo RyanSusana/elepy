@@ -14,7 +14,7 @@ import com.elepy.http.HttpMethod;
 public class Post {
     private String id;
 
-    @TextArea
+    @EditorJs
     @Searchable
     @Featured
     private String content;

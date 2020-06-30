@@ -174,7 +174,7 @@ public class ReflectionUtils {
         });
     }
 
-    public static <T> Optional<Constructor<? extends T>> getEmptyConstructor(Class<?> cls) {
+    public static <T> Optional<Constructor<? extends T>> getEmptyConstructor(Class<T> cls) {
         return getConstructor(cls, 0);
     }
 

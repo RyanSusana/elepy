@@ -1,25 +1,35 @@
 <template>
-    <component :is="loadedComponent" v-bind="field.props" :value="value"></component>
+
+    <component :is="loadedComponent" v-bind="field.props" @input="handleInput" :value="value"></component>
+
 </template>
 
 <script>
 
     import Vue from "vue"
+    import EditorJsField from "./custom/EditorJsField";
 
     export default {
         name: "CustomField",
         props: ["value", "field"],
+        components: {EditorJsField},
         computed: {
             loadedComponent() {
-                return Vue.component('loadedComponent-' + this.field.name, () => externalComponent(this.field.url));
+                return Vue.component('loadedComponent-' + this.field.name, () => externalComponent(this.field.scriptLocation));
+            }
+        },
+        methods: {
+            handleInput(e) {
+                this.$emit("input", e);
             }
         }
     }
 
-    async function externalComponent(url) {
-        const name = url.split(`/`).reverse()[0].match(/^(.*?)\.umd/)[1];
+    async function externalComponent(url, componentName) {
 
-        console.log(name)
+        const name = componentName || url.split(`/`).reverse()[0].match(/^(.*?)\.umd/)[1];
+
+
         if (window[name]) return window[name];
 
         window[name] = new Promise((resolve, reject) => {
