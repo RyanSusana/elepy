@@ -152,6 +152,9 @@
             },
 
             title() {
+                if (this.singleMode) {
+                    return this.model.name;
+                }
                 if (this.isCreating) {
                     return 'Add to ' + this.model.name;
                 } else {
