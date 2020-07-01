@@ -33,7 +33,8 @@
 
         <!-- TableView -->
         <template #main>
-            <div :class="{'unclickable': !canSave}" class="uk-container uk-margin-top uk-margin-large-bottom" tabindex="0" @keydown.meta="typeCtrl"
+            <div :class="{'unclickable': !canSave}" class="uk-container uk-margin-top uk-margin-large-bottom"
+                 tabindex="0" @keydown.meta="typeCtrl"
                  @keydown.ctrl="typeCtrl" v-if="itemIsLoaded">
                 <h1>{{model.name}}</h1>
                 <ObjectField :model="model" v-model="item"/>
@@ -47,10 +48,11 @@
 <style lang="scss" scoped>
     .unclickable {
 
-            pointer-events: none;
+        pointer-events: none;
 
 
     }
+
     .uk-container {
         outline: none;
     }
@@ -149,12 +151,25 @@
                 return this.recordId ?? this.item[this.model.idProperty];
             },
 
-
+            title() {
+                if (this.isCreating) {
+                    return 'Add to ' + this.model.name;
+                } else {
+                    return this.model.name + "/" + this.id;
+                }
+            }
         },
 
+        watch: {
+            'title': {
+                immediate: true,
+                handler: function () {
+                    document.title = this.title + " - Elepy"
+                }
+            }
+        },
         methods: {
             goBack() {
-
                 if (isEqual(this.item, this.itemCopy)) {
                     this.$router.push(this.model.path)
                 } else {
@@ -257,6 +272,7 @@
         },
         mounted() {
             this.getRecord();
+
 
         }
     };

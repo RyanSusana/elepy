@@ -42,6 +42,12 @@ public class FrontendLoader implements ElepyExtension {
                             ".js"
                     ),
                     getResources(
+                            "frontend/dist/",
+                            "/elepy/favicon.png",
+                            "image/png",
+                            ".png"
+                    ),
+                    getResources(
                             "frontend/dist/css/",
                             "/elepy/css/:name",
                             "text/css",

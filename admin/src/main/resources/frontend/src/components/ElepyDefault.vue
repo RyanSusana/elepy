@@ -177,6 +177,7 @@
                     );
             },
             async getModelData() {
+                document.title = this.model.name + ' - Elepy'
                 let searchUrl =
                     this.model.path +
                     "?" +

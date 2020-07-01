@@ -35,9 +35,17 @@
         data() {
             return {};
         },
-
-
-        methods: {},
+        watch: {
+            '$route': {
+                // eslint-disable-next-line no-unused-vars
+                handler: (to, from) => {
+                    if (to.meta.title) {
+                        document.title = to.meta.title + ' - Elepy'
+                    }
+                },
+                immediate: true
+            }
+        },
 
     };
 </script>

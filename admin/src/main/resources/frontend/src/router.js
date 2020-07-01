@@ -64,23 +64,32 @@ const routes = [
     {
         path: '/login',
         component: () => import( './views/LoginView.vue'),
+        meta: {
+            title: "Login"
+        },
         beforeEnter: noLogin
     },
     {
         path: '/initial-user',
         component: () => import( './views/InitialUserView.vue'),
+        meta: {
+            title: "Initial User"
+        },
         beforeEnter: noLogin
     },
-
     {
         path: '/',
         component: () => import( './views/MainView.vue'),
+
         beforeEnter: requireLogin,
         children: [
 
             {
                 path: '/',
                 component: () => import( './views/HomeView.vue'),
+                meta: {
+                    title: "Home"
+                },
             },
             {
                 path: '/:modelPath',
@@ -91,15 +100,12 @@ const routes = [
                     auth: false
                 },
             },
-
             {
                 path: '/:modelPath/edit/:recordId',
-
                 component: () => import( './views/EditRecordView.vue')
             },
             {
                 path: '/:modelPath/add',
-
                 component: () => import( './views/AddRecordView.vue')
             }
         ]
