@@ -1,6 +1,7 @@
 <template>
 
-    <component :is="loadedComponent" v-bind="field.props" @input="handleInput" :value="value"></component>
+    <component :is="loadedComponent" v-bind="field.props" @input="handleInput" :value="value"
+               v-if="value !==null"></component>
 
 </template>
 

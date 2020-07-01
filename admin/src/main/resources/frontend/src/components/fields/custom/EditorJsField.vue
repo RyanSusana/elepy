@@ -1,12 +1,14 @@
 <template>
-    <div contenteditable="true" :id="this._uid"></div>
+    <div :id="'editor-'+this._uid"></div>
 </template>
 
 <script>
     import EditorJS from '@editorjs/editorjs';
+    import Header from '@editorjs/header'
+    import SimpleImage from '@editorjs/simple-image'
+    import Embed from '@editorjs/embed'
 
 
-    const editor = new EditorJS();
 
     export default {
         name: "EditorJsField",
@@ -28,28 +30,39 @@
         methods: {
             async onChange() {
                 let data = await this.editor.saver.save();
+
                 this.$emit("input", JSON.stringify(data));
             }
         },
         mounted() {
+
             this.editor = new EditorJS({
                     placeholder: 'Type here...',
-                    holder: '' + this._uid,
-                    data: this.dataAsJson,
+                    logLevel: 'WARN',
+                    holder: 'editor-' + this._uid,
+                    tools: {
+                        image: SimpleImage,
+                        embed: Embed,
+                        header: {
+                            class: Header,
+                            shortcut: 'CMD+SHIFT+H',
+                            placeholder: 'Enter a header',
+                            levels: [1, 2, 3, 4, 5, 6],
+                            defaultLevel: 3
+                        },
+                    },
                     onChange: this.onChange
                 }
             );
             this.editor.isReady.then(_ => {
-                this.editor.render(this.dataAsJson)
-            })
+                if (this.value)
+                    this.editor.render(this.dataAsJson)
+            });
+
         }
 
     }
 </script>
 
 <style>
-
-    .ce-block > * {
-        margin-left: 20px !important;
-    }
 </style>
