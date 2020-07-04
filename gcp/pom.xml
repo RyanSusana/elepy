@@ -11,6 +11,8 @@
 
     <artifactId>elepy-gcp</artifactId>
 
+    <name>Elepy GCP</name>
+
 
     <dependencies>
         <dependency>
