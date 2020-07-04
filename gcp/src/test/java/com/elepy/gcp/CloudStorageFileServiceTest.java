@@ -1,4 +1,4 @@
-package com.elepy.firebase;
+package com.elepy.gcp;
 
 import com.elepy.Configuration;
 import com.elepy.mongo.MongoConfiguration;
@@ -15,10 +15,7 @@ public class CloudStorageFileServiceTest extends FileServiceTest {
 
     @Override
     public FileService fileService() {
-
         final Storage service = LocalStorageHelper.getOptions().getService();
-
         return new CloudStorageFileService(service, "test");
-
     }
 }

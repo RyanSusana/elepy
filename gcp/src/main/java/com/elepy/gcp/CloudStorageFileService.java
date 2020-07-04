@@ -1,4 +1,4 @@
-package com.elepy.firebase;
+package com.elepy.gcp;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.FileService;

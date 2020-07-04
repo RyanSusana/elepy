@@ -58,6 +58,7 @@
         <module>firebase</module>
         <module>jwt</module>
         <module>swagger</module>
+        <module>gcp</module>
     </modules>
 
     <distributionManagement>

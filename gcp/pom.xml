@@ -9,22 +9,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>elepy-firebase</artifactId>
-
-    <name>Elepy Firebase</name>
+    <artifactId>elepy-gcp</artifactId>
 
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.firebase</groupId>
-            <artifactId>firebase-admin</artifactId>
-            <version>6.10.0</version>
-        </dependency>
         <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+            <version>1.111.1</version>
         </dependency>
         <dependency>
             <groupId>com.elepy</groupId>
