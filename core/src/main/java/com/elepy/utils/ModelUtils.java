@@ -126,7 +126,7 @@ public class ModelUtils {
         property.setHiddenFromCMS(accessibleObject.isAnnotationPresent(Hidden.class));
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
         property.setJavaName(ReflectionUtils.getJavaName(accessibleObject));
-        property.setPrettyName(ReflectionUtils.getPrettyName(accessibleObject));
+        property.setLabel(ReflectionUtils.getLabel(accessibleObject));
         property.setRequired(com.elepy.utils.Annotations.get(accessibleObject,Required.class) != null);
         property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
         property.setImportance(importance == null ? 0 : importance.value());

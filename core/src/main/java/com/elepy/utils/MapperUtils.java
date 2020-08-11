@@ -1,7 +1,7 @@
 package com.elepy.utils;
 
 import com.elepy.annotations.DateTime;
-import com.elepy.annotations.PrettyName;
+import com.elepy.annotations.Label;
 import com.elepy.annotations.TrueFalse;
 import com.elepy.annotations.Uneditable;
 import com.elepy.exceptions.ElepyConfigException;
@@ -35,7 +35,7 @@ public class MapperUtils {
     }
 
     /**
-     * This method goes through an Enum's fields and maps the PrettyName of the field to the value of the Enum
+     * This method goes through an Enum's fields and maps the Label of the field to the value of the Enum
      *
      * @param enumClass The class of the enum
      */
@@ -54,7 +54,7 @@ public class MapperUtils {
                 throw new ElepyConfigException("Enum field not found");
             }
 
-            PrettyName annotation = Annotations.get(declaredField, PrettyName.class);
+            Label annotation = Annotations.get(declaredField, Label.class);
             if (annotation != null) {
 
                 toAdd.put("enumName", annotation.value());

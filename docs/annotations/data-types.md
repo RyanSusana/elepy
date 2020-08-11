@@ -106,7 +106,7 @@ class Translation {
     private String locale;
     
     @Featured
-    @PrettyName("Language Name")
+    @Label("Language Name")
     private String languageName;
     
     

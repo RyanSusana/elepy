@@ -26,17 +26,17 @@ public class FileReference {
     @Identifier
     @com.elepy.annotations.FileReference
     @Uneditable
-    @PrettyName("File")
+    @Label("File")
     @Searchable
     private String uploadName;
 
     @Column
-    @PrettyName("Name")
+    @Label("Name")
     @Searchable
     private String name;
 
     @Column
-    @PrettyName("Content Type")
+    @Label("Content Type")
     @Uneditable
     private String contentType;
 
@@ -44,23 +44,23 @@ public class FileReference {
     @Column
     @Uneditable
     @Importance(-100)
-    @PrettyName("Main Type")
+    @Label("Main Type")
     private String mimeMainType;
 
     @Column
     @Uneditable
     @Importance(-100)
-    @PrettyName("Subtype")
+    @Label("Subtype")
     private String mimeSubType;
 
     @Column
     @Uneditable
-    @PrettyName("Size (Bytes)")
+    @Label("Size (Bytes)")
     private long size;
 
     @Column
     @Uneditable
-    @PrettyName("Created")
+    @Label("Created")
     private Date createdDate;
 
 

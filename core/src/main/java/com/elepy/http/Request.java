@@ -326,7 +326,7 @@ public interface Request {
                     schema.ifPresent(schema1 -> {
                         final var property = schema1.getProperty(propertyName);
                         if (!filterType1.canBeUsedBy(property)) {
-                            throw new ElepyException(String.format("'%s' can't be applied to the field '%s'", filterType1.getPrettyName(), property.getPrettyName()), 400);
+                            throw new ElepyException(String.format("'%s' can't be applied to the field '%s'", filterType1.getPrettyName(), property.getLabel()), 400);
                         }
                     });
 

@@ -43,7 +43,7 @@ public class User {
 
     @Identifier
     @Id
-    @PrettyName("User ID")
+    @Label("User ID")
     @JsonProperty("id")
     @Importance(1)
     private String id;
@@ -51,12 +51,12 @@ public class User {
     @Unique
     @Searchable
     @JsonProperty("username")
-    @PrettyName("Username")
+    @Label("Username")
     @Importance(1)
     @Size(max = 30)
     private String username;
 
-    @PrettyName("Password")
+    @Label("Password")
     @JsonProperty("password")
     @Importance(-1)
     @Input(type = "password")
@@ -65,7 +65,7 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "elepy_user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "roles")
-    @PrettyName("Roles")
+    @Label("Roles")
     @JsonProperty("roles")
     private List<@Reference(to = Role.class) String> roles = new ArrayList<>();
 

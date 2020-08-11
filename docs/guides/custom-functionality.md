@@ -14,34 +14,34 @@ import com.elepy.annotations.*;
 public class Product {
 
     @Identifier // All elepy models must have atleast 1 identifying field. By default it can be a 'String productId;'
-    @PrettyName("Product ID") // A nice name to be used in Elepy error messages and such
+    @Label("Product ID") // A nice name to be used in Elepy error messages and such
     @JsonProperty("productId")
     private String productId;
 
 
-    @PrettyName("Short Description")
+    @Label("Short Description")
     private String shortDescription;
 
-    @PrettyName("Long Description")
+    @Label("Long Description")
     
     @Importance(-10)
     private String htmlDescription;
 
-    @PrettyName("Product Name")
+    @Label("Product Name")
     @Required // All products must have a name
     @Uneditable // You can't edit the product's name after it has been set
     @Unique // Product  names must be unique
     private String name;
 
-    @PrettyName("Product Price")
+    @Label("Product Price")
     @Number(minimum = 0)
     private BigDecimal price;
 
-    @PrettyName("Amount of stock left")
+    @Label("Amount of stock left")
     @Number(minimum = 0)
     private int stockLeft;
 
-    @PrettyName("Amount sold")
+    @Label("Amount sold")
     @Number(minimum = 0)
     private int amountSold;
 

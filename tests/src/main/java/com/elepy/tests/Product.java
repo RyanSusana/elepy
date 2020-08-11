@@ -21,16 +21,16 @@ import java.util.List;
 @Action(name = "Remove2", handler = DeleteAllAction.class)
 public class Product {
 
-    @PrettyName("Product ID")
+    @Label("Product ID")
     @Identifier(generated = false)
     @Id
     private Integer id;
 
-    @PrettyName("Price")
+    @Label("Price")
     private BigDecimal price;
 
     @DateTime()
-    @PrettyName("Expiration Date")
+    @Label("Expiration Date")
     private Date date;
 
     @TextArea

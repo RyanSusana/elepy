@@ -1,7 +1,7 @@
 <template>
     <div class="pad">
         <input :checked="value" @input="handleInput" class="uk-checkbox" type="checkbox">
-        <label for>{{prettyName}}</label>
+        <label for>{{label}}</label>
     </div>
 </template>
 
@@ -25,7 +25,7 @@
             };
         },
         computed: {
-            prettyName() {
+            label() {
                 if (this.value === true) {
                     return this.field.trueValue;
                 } else {

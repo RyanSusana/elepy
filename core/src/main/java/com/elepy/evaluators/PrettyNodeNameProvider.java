@@ -23,7 +23,7 @@ public class PrettyNodeNameProvider implements PropertyNodeNameProvider {
         if(propertyField == null){
             return property.getName();
         }
-        return ReflectionUtils.getPrettyName(propertyField);
+        return ReflectionUtils.getLabel(propertyField);
     }
 
     private String getDefaultName(Property property) {

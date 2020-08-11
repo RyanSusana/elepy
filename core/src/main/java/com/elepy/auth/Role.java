@@ -28,7 +28,7 @@ public class Role {
 
     @Identifier
     @Id
-    @PrettyName("Role ID")
+    @Label("Role ID")
     @JsonProperty("id")
     @Importance(1)
     private String id;
@@ -36,7 +36,7 @@ public class Role {
     @Unique
     @Searchable
     @JsonProperty("name")
-    @PrettyName("Name")
+    @Label("Name")
     @Importance(1)
     @Size(max = 30)
     private String name;
@@ -45,13 +45,13 @@ public class Role {
     @JsonProperty("description")
     @Importance(1)
     @TextArea
-    @PrettyName("Description")
+    @Label("Description")
     private String description;
 
     @ElementCollection
     @CollectionTable(name = "elepy_role_permissions", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "permission")
-    @PrettyName("Permissions")
+    @Label("Permissions")
     @JsonProperty("permissions")
     private List<String> permissions = new ArrayList<>();
 

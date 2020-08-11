@@ -52,7 +52,7 @@ public class Product {
     
     private String htmlDescription;
 
-    @PrettyName("Product Name")
+    @Label("Product Name")
     @Required
     @Unique
     private String name;

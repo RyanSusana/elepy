@@ -49,7 +49,7 @@
                                     :key="field.name"
                                     :value="field"
                                     v-for="field in filterableFields"
-                            >{{field.prettyName}}
+                            >{{field.label}}
                             </option>
                         </select>
 

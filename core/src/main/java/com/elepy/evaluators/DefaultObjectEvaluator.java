@@ -38,7 +38,7 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
     private void checkRequired(Object obj, Property property) {
         if (property.isRequired() && (obj == null || (obj instanceof Date && ((Date) obj).getTime() < 1000) || (obj instanceof String && ((String) obj).isEmpty()))) {
-            throw new ElepyException(property.getPrettyName() + " is blank, please fill it in!");
+            throw new ElepyException(property.getLabel() + " is blank, please fill it in!");
         }
     }
 
@@ -47,10 +47,10 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
         if (property.getType().equals(FieldType.NUMBER)) {
 
-            checkNumberConfig(obj, property.getOptions(), property.getPrettyName());
+            checkNumberConfig(obj, property.getOptions(), property.getLabel());
         }
         if (property.getType().equals(FieldType.DATE)) {
-            checkDateConfig(obj, property.getOptions(), property.getPrettyName());
+            checkDateConfig(obj, property.getOptions(), property.getLabel());
         }
 
         if (property.getType().equals(FieldType.ARRAY)) {
@@ -71,15 +71,15 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
         final int minimumArrayLength = options.getMinimumArrayLength();
 
         if (objects.length > maximumArrayLength || objects.length < minimumArrayLength) {
-            throw new ElepyException(String.format("%s can only consist of between  %d and %d items, was %d", property.getPrettyName(), minimumArrayLength, maximumArrayLength, objects.length), 400);
+            throw new ElepyException(String.format("%s can only consist of between  %d and %d items, was %d", property.getLabel(), minimumArrayLength, maximumArrayLength, objects.length), 400);
         }
         for (Object arrayObject : objects) {
             switch (options.getArrayType()) {
                 case DATE:
-                    checkDateConfig(arrayObject, (DateOptions) options.getGenericOptions(), property.getPrettyName());
+                    checkDateConfig(arrayObject, (DateOptions) options.getGenericOptions(), property.getLabel());
                     break;
                 case NUMBER:
-                    checkNumberConfig(arrayObject, (NumberOptions) options.getGenericOptions(), property.getPrettyName());
+                    checkNumberConfig(arrayObject, (NumberOptions) options.getGenericOptions(), property.getLabel());
                     break;
                 case OBJECT:
                     evaluateObject(arrayObject, arrayObject.getClass());
@@ -90,27 +90,27 @@ public class DefaultObjectEvaluator<T> implements ObjectEvaluator<T> {
 
     }
 
-    private void checkNumberConfig(Object obj, NumberOptions numberAnnotation, String prettyName) {
+    private void checkNumberConfig(Object obj, NumberOptions numberAnnotation, String label) {
         if (obj == null) {
             obj = 0;
         }
         if (!(obj instanceof Number)) {
-            throw new ElepyException(prettyName + " must be a number");
+            throw new ElepyException(label + " must be a number");
         }
         Number number = (Number) obj;
 
         if (number.floatValue() > numberAnnotation.getMaximum() || number.floatValue() < numberAnnotation.getMinimum()) {
-            throw new ElepyException(String.format("%s must be between %d and %d, was %d", prettyName, (int) numberAnnotation.getMinimum(), (int) numberAnnotation.getMaximum(), number.intValue()));
+            throw new ElepyException(String.format("%s must be between %d and %d, was %d", label, (int) numberAnnotation.getMinimum(), (int) numberAnnotation.getMaximum(), number.intValue()));
         }
     }
 
-    private void checkDateConfig(Object obj, DateOptions dateTimeAnnotation, String prettyName) {
+    private void checkDateConfig(Object obj, DateOptions dateTimeAnnotation, String label) {
         Date date = obj == null ? new Date(0) : (Date) obj;
 
         Date min = dateTimeAnnotation.getMinimumDate();
         Date max = dateTimeAnnotation.getMaximumDate();
         if (date.before(min) || date.after(max)) {
-            throw new ElepyException(String.format("%s must be between '%s' and '%s'", prettyName, dateTimeAnnotation.getMinimumDate(), dateTimeAnnotation.getMaximumDate()));
+            throw new ElepyException(String.format("%s must be between '%s' and '%s'", label, dateTimeAnnotation.getMinimumDate(), dateTimeAnnotation.getMaximumDate()));
         }
     }
 }

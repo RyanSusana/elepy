@@ -53,13 +53,13 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
             if (foundItems.size() > 0) {
 
                 if (foundItems.size() > 1) {
-                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ReflectionUtils.getPrettyName(field), String.valueOf(prop)));
+                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ReflectionUtils.getLabel(field), String.valueOf(prop)));
                 }
 
                 T foundRecord = foundItems.get(0);
                 final Optional<Serializable> foundId = ReflectionUtils.getId(foundRecord);
                 if ((id.isPresent() || foundId.isPresent()) && !id.equals(foundId)) {
-                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ReflectionUtils.getPrettyName(field), String.valueOf(prop)));
+                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ReflectionUtils.getLabel(field), String.valueOf(prop)));
                 }
             }
         }

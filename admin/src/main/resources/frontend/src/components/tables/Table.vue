@@ -22,7 +22,7 @@
                             :key="field.name"
                             class="data-head"
                             v-for="field in tableFields"
-                    >{{field.prettyName}}
+                    >{{field.label}}
                     </th>
                     <th>Actions</th>
                 </tr>

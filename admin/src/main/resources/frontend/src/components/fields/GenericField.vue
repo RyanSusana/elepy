@@ -1,6 +1,6 @@
 <template>
     <div :property="field.name">
-        <div class="uk-text-emphasis uk-text-bold" v-if="trueFieldType !== 'OBJECT'">{{field.prettyName}}</div>
+        <div class="uk-text-emphasis uk-text-bold" v-if="trueFieldType !== 'OBJECT'">{{field.label}}</div>
         <DatePicker
                 :field="field"
                 :value="value"
@@ -162,11 +162,11 @@
             objectName: function () {
                 if (this.field.type === 'ARRAY') {
                     let featuredProperty = this.field.featuredProperty;
-                    return this.value[featuredProperty] || 'One of the ' + this.field.prettyName;
+                    return this.value[featuredProperty] || 'One of the ' + this.field.label;
 
                 }
 
-                return this.field.prettyName
+                return this.field.label
             }
         },
         methods: {

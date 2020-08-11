@@ -12,7 +12,7 @@ public class Property implements Comparable<Property> {
 
     private String name;
     private String javaName;
-    private String prettyName;
+    private String label;
     private boolean editable;
     private boolean required;
     private boolean unique;
@@ -62,12 +62,12 @@ public class Property implements Comparable<Property> {
         this.name = name;
     }
 
-    public String getPrettyName() {
-        return prettyName;
+    public String getLabel() {
+        return label;
     }
 
-    public void setPrettyName(String prettyName) {
-        this.prettyName = prettyName;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public boolean isEditable() {

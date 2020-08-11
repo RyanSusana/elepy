@@ -2,7 +2,7 @@ package com.elepy.utils;
 
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Identifier;
-import com.elepy.annotations.PrettyName;
+import com.elepy.annotations.Label;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
@@ -103,9 +103,9 @@ public class ReflectionUtils {
         return findFieldThatMatches(cls, field -> getPropertyName(field).equals(property)).orElse(null);
     }
 
-    public static String getPrettyName(AccessibleObject field) {
-        if (field.isAnnotationPresent(PrettyName.class)) {
-            return com.elepy.utils.Annotations.get(field, PrettyName.class).value();
+    public static String getLabel(AccessibleObject field) {
+        if (field.isAnnotationPresent(Label.class)) {
+            return com.elepy.utils.Annotations.get(field, Label.class).value();
         }
         return getPropertyName(field);
     }
