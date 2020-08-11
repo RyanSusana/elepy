@@ -150,10 +150,18 @@
                 this.handleInput([])
             },
 
+            // This method makes sure that the 'selected' match items in the 'value' prop
+            // This is a double check, because not everyone uses Elepy's default functionality
+            matchSelected() {
+                this.selected = this.selected.filter(selection => {
+                        let selectionId = selection[this.schema.idProperty]
+                        return this.value.includes(selectionId)
+                    }
+                )
+            },
             async sync() {
                 let schemaClient = new SchemaClient(this.schema);
 
-                console.log("sync")
                 if (this.value !== undefined && this.value != null) {
                     if (this.multiple) {
                         if (this.value.length !== 0) {
@@ -162,6 +170,7 @@
                             this.selected = (await schemaClient.getByIds(this.value)).values;
                             this.isLoading = false;
                             this.initialLoaded = true;
+                            this.matchSelected()
                         }
                     } else {
                         this.isLoading = true;
@@ -170,6 +179,8 @@
                         this.initialLoaded = true;
                     }
                 }
+
+
             }
         },
         mounted() {
