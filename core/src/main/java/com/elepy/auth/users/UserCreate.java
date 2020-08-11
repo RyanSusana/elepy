@@ -50,7 +50,7 @@ public class UserCreate implements ActionHandler<User> {
         }
 
         createUser(crud, user);
-        context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user.getId())));
+        context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user)));
     }
 
     protected void createAdditionalUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
@@ -65,7 +65,7 @@ public class UserCreate implements ActionHandler<User> {
 
 
         createUser(crud, user);
-        context.response().result(Message.of("Successfully created user", 200).withProperty("createdRecords", List.of(user.getId())));
+        context.response().result(Message.of("Successfully created user", 200).withProperty("createdRecords", List.of(user)));
     }
 
     private void evaluateUser(ModelContext<User> modelContext, User user) throws Exception {
