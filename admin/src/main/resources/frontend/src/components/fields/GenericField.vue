@@ -125,7 +125,7 @@
 <script>
     import DatePicker from "./DatePicker";
     import NumberField from "./NumberField";
-    import TextField from "./TextField";
+    import TextField from "./InputField";
     import TextArea from "./TextArea";
     import MarkdownEditor from "./MarkdownEditor.vue";
     import HtmlEditor from "./HtmlEditor.vue";

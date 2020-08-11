@@ -3,7 +3,7 @@
             :value="(field.generated === true &&(value == null || value === '')) ? 'Generated' : value"
             @input="handleInput"
             class="uk-input"
-            :type="field.type"
+            :type="field.inputType"
             v-bind:disabled="field.generated == true || (field.editable == false && (value !== null))"
 
     >

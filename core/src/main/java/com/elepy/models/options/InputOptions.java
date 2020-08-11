@@ -7,10 +7,10 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Optional;
 
 public class InputOptions implements Options {
-    private final String type;
+    private final String inputType;
 
-    public InputOptions(String type) {
-        this.type = type;
+    public InputOptions(String inputType) {
+        this.inputType = inputType;
     }
 
     public static InputOptions of(AnnotatedElement accessibleObject) {
@@ -22,7 +22,7 @@ public class InputOptions implements Options {
         );
     }
 
-    public String getType() {
-        return type;
+    public String getInputType() {
+        return inputType;
     }
 }
