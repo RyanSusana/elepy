@@ -65,7 +65,7 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "elepy_user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "roles")
-    @PrettyName("Policy")
+    @PrettyName("Roles")
     @JsonProperty("roles")
     private List<@Reference(to = Role.class) String> roles = new ArrayList<>();
 
