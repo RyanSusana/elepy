@@ -15,6 +15,7 @@
 
     <properties>
         <exclude.tests>nothing-to-exclude</exclude.tests>
+        <exclude.groups>nothing</exclude.groups>
         <junit.version>5.3.1</junit.version>
         <awaitility.version>3.1.2</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
@@ -133,9 +134,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M5</version>
 
                 <configuration>
+                    <excludedGroups>${exclude.groups}</excludedGroups>
                     <excludes>
                         <exclude>${exclude.tests}</exclude>
                     </excludes>
@@ -252,6 +254,7 @@
             </activation>
             <properties>
                 <exclude.tests>**/slow/**</exclude.tests>
+                <exclude.groups>e2e,slow</exclude.groups>
             </properties>
         </profile>
         <profile>
