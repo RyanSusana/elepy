@@ -125,8 +125,7 @@ public class ModelScenario<T> extends LoggedInScenario {
         final var searchInput = By.id("search-input");
         driver.waitTillCanSee(searchInput);
         final var element = driver.findElement(searchInput);
-        element.sendKeys(query);
-        element.sendKeys(Keys.ENTER);
+        element.sendKeys(query, Keys.ENTER);
 
         if (expectChanges) {
             waitUntilChange();
