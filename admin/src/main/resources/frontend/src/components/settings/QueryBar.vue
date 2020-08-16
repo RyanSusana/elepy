@@ -2,10 +2,10 @@
 
     <div class="query-bar">
         <div id="search" class="uk-flex-1">
-
             <div class="bar" tabindex="0" :class="{'focus': focus}">
                 <div class="badges">
                     <span class="uk-badge" v-for="filter in this.filters">{{clamp(filter, 5) }}</span>
+
                     <input
                             class="input"
                             id="search-input"
@@ -30,7 +30,9 @@
 </template>
 
 <script>
-
+    Array.prototype.unique = function () {
+        return Array.from(new Set(this));
+    }
 
     export default {
         name: "QueryBar",
@@ -41,8 +43,20 @@
             }
         },
         computed: {
+            suggestions() {
+
+                if (this.selectedPropertyName == null) {
+
+                    return this.propertyNames.filter(p => p.startsWith(this.trimmedInput))
+                } else if (this.selectedFilterName == null) {
+                    return this.filterNames.filter(p => p.startsWith(this.filterValue))
+                }
+                return []
+            },
+
+
             trimmedInput() {
-                return this.input.trim()
+                return (this.input ?? "").trim()
             },
 
             selectedPropertyName() {
@@ -80,18 +94,24 @@
             },
 
             propertyNames() {
-                return this.model.properties.map(p => p.name).sort((p1, p2) => p2.length - p1.length)
+                return this.model.properties.map(p => p.name).sort((p1, p2) => p2.length - p1.length).unique()
             },
 
             propertyRegex() {
                 return new RegExp("^(" + this.propertyNames.join("|") + ")")
             },
 
+            filterNames() {
+                return this.selectedProperty.availableFilters.map(f => {
+                    f.synonyms.push(f.filter);
+                    return f
+                }).flatMap(f => f.synonyms).sort((p1, p2) => p2.length - p1.length).unique()
+            },
             filterRegex() {
                 if (!this.selectedProperty) {
                     return null
                 }
-                return new RegExp("^(" + this.selectedProperty.availableFilters.map(f => f.filter).join("|") + ")")
+                return new RegExp("^(" + this.filterNames.join("|") + ")")
             }
 
         },

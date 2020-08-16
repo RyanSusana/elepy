@@ -25,15 +25,15 @@ public class Property implements Comparable<Property> {
     private Options options;
 
 
-    private Set<Map<String, String>> availableFilters;
+    private Set<Map<String, Object>> availableFilters;
     private FieldType type;
 
 
-    public Set<Map<String, String>> getAvailableFilters() {
+    public Set<Map<String, Object>> getAvailableFilters() {
         return availableFilters;
     }
 
-    public void setAvailableFilters(Set<Map<String, String>> availableFilters) {
+    public void setAvailableFilters(Set<Map<String, Object>> availableFilters) {
         this.availableFilters = availableFilters;
     }
 

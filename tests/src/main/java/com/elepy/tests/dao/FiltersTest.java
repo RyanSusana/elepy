@@ -120,31 +120,6 @@ public abstract class FiltersTest implements ElepyConfigHelper {
         assertThat(executeFilter("price", NOT_EQUALS, 10))
                 .hasSize(0);
     }
-
-    @Test
-    public void canFilter_IS_NULL_onString() {
-        var product = new Product();
-        product.setShortDescription(null);
-
-        seedWithProducts(product);
-
-
-        assertThat(executeFilter("shortDescription", IS_NULL, "true"))
-                .hasSize(1);
-    }
-
-    @Test
-    public void canFilter_NOT_NULL_onString() {
-        var product = new Product();
-        product.setShortDescription("not null");
-
-        seedWithProducts(product);
-
-
-        assertThat(executeFilter("shortDescription", NOT_NULL, "true"))
-                .hasSize(1);
-    }
-
     @Test
     public void canFilter_STARTS_WITH_onString() {
         var product = new Product();

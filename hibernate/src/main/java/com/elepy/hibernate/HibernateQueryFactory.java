@@ -109,10 +109,6 @@ public class HibernateQueryFactory<T> {
                 } else {
                     return cb.le(root.get(fieldName), (Number) value);
                 }
-            case IS_NULL:
-                return cb.isNull(root.get(fieldName));
-            case NOT_NULL:
-                return cb.isNotNull(root.get(fieldName));
             case STARTS_WITH:
                 return cb.like(root.get(fieldName), value + "%");
         }

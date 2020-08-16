@@ -136,7 +136,7 @@ public class ModelUtils {
 
     private static void setupSearch(AccessibleObject accessibleObject, Property property, boolean idProperty) {
         property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idProperty);
-        Set<Map<String, String>> availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
+        Set<Map<String, Object>> availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
 
         property.setAvailableFilters(availableFilters);
     }

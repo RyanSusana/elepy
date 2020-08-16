@@ -41,16 +41,12 @@ public class FiltersTest {
                         FilterType.LESSER_THAN,
                         FilterType.LESSER_THAN_OR_EQUALS,
                         FilterType.EQUALS,
-                        FilterType.NOT_NULL,
-                        FilterType.IS_NULL,
                         FilterType.NOT_EQUALS);
 
         assertThat(FilterType.getForFieldType(FieldType.INPUT))
                 .containsExactlyInAnyOrder(
                         FilterType.CONTAINS,
                         FilterType.EQUALS,
-                        FilterType.NOT_NULL,
-                        FilterType.IS_NULL,
                         FilterType.STARTS_WITH,
                         FilterType.NOT_EQUALS);
     }
