@@ -127,6 +127,11 @@ public class ModelScenario<T> extends LoggedInScenario {
         final var element = driver.findElement(searchInput);
         element.sendKeys(query, Keys.ENTER);
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (expectChanges) {
             waitUntilChange();
         }
