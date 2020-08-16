@@ -125,15 +125,12 @@ public class ModelScenario<T> extends LoggedInScenario {
         final var searchInput = By.id("search-input");
         driver.waitTillCanSee(searchInput);
         final var element = driver.findElement(searchInput);
+
+        final var innerHTML = getTable().getAttribute("innerHTML");
         element.sendKeys(query, Keys.ENTER);
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if (expectChanges) {
-            waitUntilChange();
+            waitUntilChange(innerHTML);
         }
 
         return this;
