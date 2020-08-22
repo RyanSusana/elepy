@@ -20,11 +20,7 @@
 
     .page{
         display: grid;
-        grid-template-columns: 350px 1fr;
-    }
-
-    .sidebar{
-        flex: 1;
+        grid-template-columns: 275px 1fr;
     }
 
     .main-view{

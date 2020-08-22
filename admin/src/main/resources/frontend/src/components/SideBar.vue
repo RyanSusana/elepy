@@ -1,8 +1,8 @@
 <template>
     <div id="sidebar" class="">
-        <a href="/admin" class="sidebar-header uk-flex uk-flex-center">
+        <router-link to="/" class="sidebar-header uk-flex uk-flex-center">
             <img class="banner-image" :src="$store.getters.logo" alt="logo">
-        </a>
+        </router-link>
 
         <div class="sidebar-content">
             <div class="sidebar-nav uk-light">
