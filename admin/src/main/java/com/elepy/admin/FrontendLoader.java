@@ -63,15 +63,12 @@ public class FrontendLoader implements ElepyExtension {
     private void setupLogo(ElepyPostConfiguration elepy, HttpService http) throws IOException {
         final var logo = Optional.ofNullable(elepy.getPropertyConfig().getString("cms.logo")).orElse("/banner.jpg");
 
-        final var logoURI = Optional.ofNullable(getClass().getResource(logo)).orElseThrow(() -> new ElepyConfigException(logo + " can't be found"));
-        final var logoContentType = Files.probeContentType(Paths.get(logoURI.getPath()));
         final var input = Objects.requireNonNull(getClass().getResourceAsStream(logo));
         final var logoBytes = IOUtils.toByteArray(input);
         http.get("/elepy/logo", ctx -> {
             if (logo.startsWith("http://") || logo.startsWith("https://")) {
                 ctx.redirect(logo);
             } else {
-                ctx.type(logoContentType);
                 ctx.response().result(logoBytes);
             }
         });
