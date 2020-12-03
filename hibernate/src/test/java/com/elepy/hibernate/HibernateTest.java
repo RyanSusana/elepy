@@ -14,6 +14,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -63,6 +64,7 @@ public class HibernateTest {
     }
 
     @Test
+    @Disabled("Replace with better mocking of Request and Response")
     public void testFilterEndToEnd() throws IOException {
         Resource resource = validObject();
         resource.setUnique("filterUnique");
