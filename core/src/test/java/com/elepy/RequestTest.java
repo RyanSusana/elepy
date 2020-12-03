@@ -1,6 +1,7 @@
 package com.elepy;
 
 import com.elepy.http.Request;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled("Replace with better mocking of Request and Response")
 public class RequestTest {
 
     @Spy
