@@ -68,7 +68,7 @@ public class ProductUpdate extends SimpleUpdate<Product> {
         logger.info("Product is being updated.");
 
         // execute extra logic code like sending an e-mail to the boss :D
-        // throw an exception(preferably ElepyErrorMessage) to block the update
+        // throw an exception(preferably ElepyException) to block the update
     }
 
     public void afterUpdate(Product before, Product after, Crud<Product> crud, ElepyContext elepy) {

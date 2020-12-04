@@ -1,7 +1,7 @@
 package com.elepy.tests.http;
 
 
-import com.elepy.exceptions.ElepyErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.uploads.FileUpload;
@@ -189,7 +189,7 @@ public abstract class HttpServiceTest {
             response.result("Exception not handled");
         });
 
-        service.exception(ElepyErrorMessage.class, (e, context) -> {
+        service.exception(ElepyException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(e.getStatus());
         });
@@ -215,7 +215,7 @@ public abstract class HttpServiceTest {
             response.result("Exception not handled");
         });
 
-        service.exception(ElepyErrorMessage.class, (e, context) -> {
+        service.exception(ElepyException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(e.getStatus());
         });

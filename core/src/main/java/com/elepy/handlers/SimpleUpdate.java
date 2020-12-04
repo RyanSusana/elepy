@@ -55,7 +55,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
      * @param crud          The crud implementation
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
-     * @see com.elepy.exceptions.ElepyErrorMessage
+     * @see com.elepy.exceptions.ElepyException
      */
     public abstract void beforeUpdate(T beforeVersion, T updatedVersion, Request httpRequest, Crud<T> crud) throws Exception;
 

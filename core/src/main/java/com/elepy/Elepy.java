@@ -11,7 +11,7 @@ import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.evaluators.PrettyNodeNameProvider;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.exceptions.ElepyErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
@@ -690,27 +690,27 @@ public class Elepy implements ElepyContext {
         http.options("/*", (request, response) -> response.result(""));
 
         http.exception(Exception.class, (exception, context) -> {
-            final ElepyErrorMessage elepyErrorMessage;
-            if (exception instanceof InvocationTargetException && ((InvocationTargetException) exception).getTargetException() instanceof ElepyErrorMessage) {
-                exception = (ElepyErrorMessage) ((InvocationTargetException) exception).getTargetException();
+            final ElepyException ElepyException;
+            if (exception instanceof InvocationTargetException && ((InvocationTargetException) exception).getTargetException() instanceof ElepyException) {
+                exception = (ElepyException) ((InvocationTargetException) exception).getTargetException();
             }
-            if (exception instanceof ElepyErrorMessage) {
-                elepyErrorMessage = (ElepyErrorMessage) exception;
+            if (exception instanceof ElepyException) {
+                ElepyException = (ElepyException) exception;
             } else {
-                elepyErrorMessage = ErrorMessageBuilder
-                        .anElepyErrorMessage()
+                ElepyException = ErrorMessageBuilder
+                        .anElepyException()
                         .withMessage(exception.getMessage())
                         .withStatus(500).build();
             }
 
-            if (elepyErrorMessage.getStatus() == 500) {
+            if (ElepyException.getStatus() == 500) {
                 logger.error(exception.getMessage(), exception);
                 exception.printStackTrace();
             }
             context.type("application/json");
 
-            context.status(elepyErrorMessage.getStatus());
-            context.result(Message.of(elepyErrorMessage.getMessage(), elepyErrorMessage.getStatus()));
+            context.status(ElepyException.getStatus());
+            context.result(Message.of(ElepyException.getMessage(), ElepyException.getStatus()));
 
         });
     }

@@ -51,7 +51,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
      * @param httpRequest       the HTTP request
      * @throws Exception you can throw any exception and Elepy handles them nicely.
      * @see ElepyException
-     * @see com.elepy.exceptions.ElepyErrorMessage
+     * @see com.elepy.exceptions.ElepyException
      */
     public abstract void beforeCreate(T objectForCreation, Request httpRequest, Crud<T> crud) throws Exception;
 

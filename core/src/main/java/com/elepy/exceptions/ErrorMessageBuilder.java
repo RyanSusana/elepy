@@ -7,7 +7,7 @@ public final class ErrorMessageBuilder {
     private ErrorMessageBuilder() {
     }
 
-    public static ErrorMessageBuilder anElepyErrorMessage() {
+    public static ErrorMessageBuilder anElepyException() {
         return new ErrorMessageBuilder();
     }
 
@@ -21,7 +21,7 @@ public final class ErrorMessageBuilder {
         return this;
     }
 
-    public ElepyErrorMessage build() {
-        return new ElepyErrorMessage(message, status);
+    public ElepyException build() {
+        return new ElepyException(message, status);
     }
 }

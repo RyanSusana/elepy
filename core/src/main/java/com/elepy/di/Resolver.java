@@ -1,7 +1,7 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Inject;
-import com.elepy.exceptions.ElepyErrorMessage;
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ class Resolver {
                 Object o = elepyContext.initialize(contextKey.getType());
                 ContextKey objectContextKey = new ContextKey<>(contextKey.getType(), null);
                 elepyContext.registerDependency(objectContextKey.getType(), objectContextKey.getTag(), o);
-            } catch (ElepyErrorMessage e) {
+            } catch (ElepyException e) {
 
                 logger.error("Dependency injection error", e);
             }
