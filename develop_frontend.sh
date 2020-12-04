@@ -17,7 +17,7 @@ trap "shutdown" SIGINT SIGTERM
 
 
 pushd basic
-mvn clean compile package exec:java -Dexec.mainClass="com.elepy.tests.devfrontend.Main" -Dexec.classpathScope=test -DskipTests=true&
+mvn clean compile package exec:java -Dexec.mainClass="com.elepy.tests.devfrontend.Main" -Dexec.classpathScope=test -DskipTests=true &
 popd
 
 pushd admin/src/main/resources/frontend
