@@ -1,5 +1,5 @@
 package com.elepy.revisions;
 
 public enum RevisionType {
-    CREATION, DELETION,  UPDATE
+    CREATE, DELETE, UPDATE
 } 

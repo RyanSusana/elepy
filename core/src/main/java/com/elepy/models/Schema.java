@@ -24,6 +24,7 @@ public class Schema<T> {
 
     private String defaultSortField;
     private SortOption defaultSortDirection;
+    private int keepRevisions = 0;
 
     private Map<String, HttpAction> defaultActions = new HashMap<>();
 
@@ -132,4 +133,7 @@ public class Schema<T> {
         this.view = view;
     }
 
+    public int getKeepRevisions() {
+        return keepRevisions;
+    }
 }

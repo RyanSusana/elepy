@@ -18,15 +18,25 @@ public class Revision {
 
     // Id of the record
     private String recordId;
-    private Integer revisionNumber;
 
-    private String revisionName;
+    private String description;
     private RevisionType revisionType;
     private String userId;
 
 
     private Date timestamp;
-    private String recordSnapshot;
+
+    private String oldSnapshot;
+    private String newSnapshot;
+
+    public String getNewSnapshot() {
+        return newSnapshot;
+    }
+
+    public void setNewSnapshot(String newSnapshot) {
+        this.newSnapshot = newSnapshot;
+    }
+
 
     public String getId() {
         return id;
@@ -52,20 +62,12 @@ public class Revision {
         this.recordId = recordId;
     }
 
-    public Integer getRevisionNumber() {
-        return revisionNumber;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRevisionNumber(Integer revisionNumber) {
-        this.revisionNumber = revisionNumber;
-    }
-
-    public String getRevisionName() {
-        return revisionName;
-    }
-
-    public void setRevisionName(String revisionName) {
-        this.revisionName = revisionName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getUserId() {
@@ -84,12 +86,12 @@ public class Revision {
         this.timestamp = timestamp;
     }
 
-    public String getRecordSnapshot() {
-        return recordSnapshot;
+    public String getOldSnapshot() {
+        return oldSnapshot;
     }
 
-    public void setRecordSnapshot(String recordSnapshot) {
-        this.recordSnapshot = recordSnapshot;
+    public void setOldSnapshot(String oldSnapshot) {
+        this.oldSnapshot = oldSnapshot;
     }
 
     public RevisionType getRevisionType() {
