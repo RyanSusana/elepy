@@ -4,6 +4,7 @@ import com.elepy.Elepy;
 import com.elepy.annotations.ExtraRoutes;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.Context;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Route;
@@ -64,7 +65,7 @@ public class ModelPiston<T> {
                         .path(modelAction.getAction().getPath())
                         .addPermissions(modelAction.getAction().getRequiredPermissions())
                         .method(modelAction.getAction().getMethod())
-                        .route(ctx -> modelAction.getActionHandler().handle(injectModelClassInHttpContext(ctx), modelContext))
+                        .route(ctx -> modelAction.getActionHandler().handle(new Context<>(ctx.injectModelClassInHttpContext(schema.getJavaClass()), modelContext)))
                         .build());
     }
 
@@ -97,7 +98,8 @@ public class ModelPiston<T> {
                     .route(ctx -> {
                         ctx.attribute("action", action);
                         ctx.result(Message.of("Executed action", 200));
-                        actionHandler.handle(ctx.injectModelClassInHttpContext(schema.getJavaClass()), modelContext);
+
+                        actionHandler.handle(new Context<>(ctx.injectModelClassInHttpContext(schema.getJavaClass()), modelContext));
                     });
 
             //add two routes for multi select and single select.

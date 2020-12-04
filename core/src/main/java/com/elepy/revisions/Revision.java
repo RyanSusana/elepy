@@ -3,6 +3,8 @@ package com.elepy.revisions;
 import com.elepy.annotations.Hidden;
 import com.elepy.annotations.Model;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import java.util.Date;
 
@@ -20,6 +22,8 @@ public class Revision {
     private String recordId;
 
     private String description;
+    
+    @Enumerated(EnumType.STRING)
     private RevisionType revisionType;
     private String userId;
 

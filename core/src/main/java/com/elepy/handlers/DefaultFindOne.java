@@ -29,8 +29,10 @@ public class DefaultFindOne<T> implements ActionHandler<T> {
     }
 
     @Override
-    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
-        T object = findOne(context.request(), context.response(), modelContext.getCrud(), modelContext);
+    public void handle(Context<T> ctx) throws Exception {
+ final var context = ctx.http();
+ final var modelContext = ctx.model();
+        T object = findOne(context.request(), context.response(), ctx.crud(), modelContext);
         context.response().json(object);
     }
 }

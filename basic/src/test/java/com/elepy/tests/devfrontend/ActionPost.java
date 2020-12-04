@@ -1,6 +1,7 @@
 package com.elepy.tests.devfrontend;
 
 import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.Context;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 
@@ -13,10 +14,10 @@ public class ActionPost implements ActionHandler<Post> {
     private static int counter = 1;
 
     @Override
-    public void handle(HttpContext context, ModelContext<Post> modelContext) throws Exception {
-        final var postActionInput = context.request().inputAs(PostActionInput.class);
+    public void handle(Context<Post> ctx) throws Exception {
+        final var postActionInput = ctx.http().request().inputAs(PostActionInput.class);
 
-        final var post = modelContext.getCrud().getById(postActionInput.getPostId()).orElseThrow();
+        final var post = ctx.crud().getById(postActionInput.getPostId()).orElseThrow();
 
 
         final var newPosts = IntStream.range(1, postActionInput.getAmount()).mapToObj(i -> {
@@ -29,6 +30,6 @@ public class ActionPost implements ActionHandler<Post> {
             return postCopy;
         }).collect(Collectors.toList());
 
-        modelContext.getCrud().create(newPosts);
+        ctx.crud().create(newPosts);
     }
 }

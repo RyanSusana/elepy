@@ -21,7 +21,9 @@ import java.util.List;
 public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
     @Override
-    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+    public void handle(Context<T> ctx) throws Exception {
+        final var context = ctx.http();
+        final var modelContext = ctx.model();
 
         try {
 
@@ -30,11 +32,11 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
 
             T item = objectMapper.readValue(body, modelContext.getModelType());
 
-            beforeCreate(item, context.request(), modelContext.getCrud());
+            beforeCreate(item, context.request(), ctx.crud());
 
-            super.singleCreate(context, item, modelContext.getCrud(), modelContext);
+            super.singleCreate(context, item, ctx.crud(), modelContext);
 
-            afterCreate(item, modelContext.getCrud());
+            afterCreate(item, ctx.crud());
             context.response().status(200);
             context.response().result(Message.of("Successfully created item", 200).withProperty("createdRecords", List.of(item)));
 

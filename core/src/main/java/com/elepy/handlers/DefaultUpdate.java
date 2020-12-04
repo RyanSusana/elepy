@@ -38,33 +38,35 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
         }
     }
 
-    public T handleUpdate(HttpContext context, ModelContext<T> modelContext, ObjectMapper objectMapper) throws Exception {
+    public T handleUpdate(Context<T> ctx, ObjectMapper objectMapper) throws Exception {
+        final var context = ctx.http();
+        final var modelContext = ctx.model();
         String body = context.body();
 
         if (body == null || body.isEmpty()) {
             throw new ElepyException("No changes detected.");
         }
 
-        T before = modelContext.getCrud().getById(context.recordId()).orElseThrow(() -> new ElepyException("No object found with this ID", 404));
+        T before = ctx.crud().getById(context.recordId()).orElseThrow(() -> new ElepyException("No object found with this ID", 404));
         final T updated = updatedObjectFromRequest(before, context.request(), objectMapper, modelContext.getSchema());
 
-        evaluateAndUpdate(context, updated, modelContext);
+        evaluateAndUpdate(ctx, updated);
 
         context.result(Message.of("Successfully updated item", 200));
         return updated;
     }
 
-    public T evaluateAndUpdate(HttpContext context, T update, ModelContext<T> modelContext) throws Exception {
-        for (ObjectEvaluator<T> objectEvaluator : modelContext.getObjectEvaluators()) {
+    public T evaluateAndUpdate(Context<T> ctx, T update) throws Exception {
+        for (ObjectEvaluator<T> objectEvaluator : ctx.model().getObjectEvaluators()) {
             if (update != null) {
                 objectEvaluator.evaluate(update);
             }
         }
 
-        context.validate(update);
+        ctx.http().validate(update);
 
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(update, EvaluationType.UPDATE);
-        modelContext.getCrud().update(update);
+        new DefaultIntegrityEvaluator<>(ctx.model()).evaluate(update, EvaluationType.UPDATE);
+        ctx.crud().update(update);
 
         return update;
     }
@@ -81,7 +83,8 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
     }
 
     @Override
-    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
-        this.handleUpdate(context, modelContext, context.elepy().objectMapper());
+    public void handle(Context<T> ctx) throws Exception {
+        final var context = ctx.http();
+        this.handleUpdate(ctx, context.elepy().objectMapper());
     }
 }

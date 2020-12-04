@@ -14,10 +14,12 @@ import com.elepy.models.ModelContext;
 public abstract class MappedFindOne<T, R> extends DefaultFindOne<T> {
 
     @Override
-    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
-        T object = findOne(context.request(), context.response(), modelContext.getCrud(), modelContext);
+    public void handle(Context<T> ctx) throws Exception {
+ final var context = ctx.http();
+ final var modelContext = ctx.model();
+        T object = findOne(context.request(), context.response(), ctx.crud(), modelContext);
 
-        R mapped = map(object, context.request(), modelContext.getCrud());
+        R mapped = map(object, context.request(), ctx.crud());
 
         context.response().json(mapped);
     }

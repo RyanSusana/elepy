@@ -5,6 +5,6 @@ import com.elepy.models.ModelContext;
 
 public interface ActionHandler<T> {
 
-    void handle(HttpContext context, ModelContext<T> modelContext) throws Exception;
+    void handle(Context<T> ctx) throws Exception;
 
 }

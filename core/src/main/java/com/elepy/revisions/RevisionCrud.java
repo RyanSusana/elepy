@@ -18,13 +18,14 @@ import java.util.stream.StreamSupport;
 
 public class RevisionCrud<T> implements Crud<T> {
     private final Crud<T> crud;
+
+    private final Crud<Revision> revisionCrud;
     private final HttpContext http;
 
-    private Crud<Revision> revisionCrud;
-    private ObjectMapper objectMapper;
 
-    public RevisionCrud(Crud<T> crud, HttpContext http) {
+    public RevisionCrud(Crud<T> crud, Crud<Revision> revisionCrud, HttpContext http) {
         this.crud = crud;
+        this.revisionCrud = revisionCrud;
         this.http = http;
     }
 
@@ -144,9 +145,9 @@ public class RevisionCrud<T> implements Crud<T> {
         revision.setDescription(description);
         try {
             if (oldSnapshot != null)
-                revision.setOldSnapshot(objectMapper.writeValueAsString(oldSnapshot));
+                revision.setOldSnapshot(getObjectMapper().writeValueAsString(oldSnapshot));
             if (newSnapshot != null)
-                revision.setNewSnapshot(objectMapper.writeValueAsString(newSnapshot));
+                revision.setNewSnapshot(getObjectMapper().writeValueAsString(newSnapshot));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

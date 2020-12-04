@@ -21,21 +21,21 @@ public class DefaultCreate<T> implements ActionHandler<T> {
 
 
     @Override
-    public void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
-        String body = context.request().body();
+    public void handle(Context<T> context) throws Exception {
+        String body = context.http().request().body();
 
-        final var objectMapper = context.elepy().objectMapper();
-        final var dao = modelContext.getCrud();
+        final var objectMapper = context.http().elepy().objectMapper();
+        final var dao = context.crud();
 
         try {
             JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, dao.getType());
 
             final List<T> ts = objectMapper.readValue(body, type);
-            multipleCreate(context, ts, dao, modelContext);
+            multipleCreate(context.http(), ts, dao, context.model());
         } catch (JsonMappingException e) {
 
             T item = objectMapper.readValue(body, dao.getType());
-            singleCreate(context, item, dao, modelContext);
+            singleCreate(context.http(), item, dao, context.model());
         }
     }
 

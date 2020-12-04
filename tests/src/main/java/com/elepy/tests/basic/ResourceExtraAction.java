@@ -1,17 +1,14 @@
 package com.elepy.tests.basic;
 
-import com.elepy.dao.Crud;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.elepy.handlers.Context;
 
 public class ResourceExtraAction implements ActionHandler {
     @Override
-    public void handle(HttpContext context,  ModelContext modelContext) throws Exception {
+    public void handle(Context ctx) throws Exception {
 
-        context.type("application/json");
-        context.response().json(context.recordIds());
+        ctx.http().type("application/json");
+        ctx.http().response().json(ctx.http().recordIds());
 
     }
 }

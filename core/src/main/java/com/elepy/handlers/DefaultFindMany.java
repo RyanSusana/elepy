@@ -27,13 +27,15 @@ public class DefaultFindMany<T> implements ActionHandler<T> {
 
 
     @Override
-    public final void handle(HttpContext context, ModelContext<T> modelContext) throws Exception {
+    public void handle(Context<T> ctx) throws Exception {
+        final var context = ctx.http();
+        final var modelContext = ctx.model();
 
         context.status(200);
         if (context.queryParams("count") != null) {
-            context.response().json(count(context, modelContext.getCrud()));
+            context.response().json(count(context, ctx.crud()));
         } else {
-            context.response().json(find(context, modelContext.getCrud()));
+            context.response().json(find(context, ctx.crud()));
         }
     }
 }

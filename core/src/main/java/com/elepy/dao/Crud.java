@@ -92,6 +92,8 @@ public interface Crud<T> {
         }
     }
 
+    // TODO remove
+    @Deprecated
     default void updateWithPrototype(Map<String, Object> prototype, Serializable... ids) {
         List<T> toUpdate = new ArrayList<>();
 
@@ -147,6 +149,7 @@ public interface Crud<T> {
     void deleteById(final Serializable id);
 
     void delete(Expression expression);
+
     default void delete(Iterable<Serializable> ids) {
         ids.forEach(this::deleteById);
     }

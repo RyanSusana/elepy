@@ -4,6 +4,7 @@ import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.Context;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,16 +18,16 @@ public class FileReferenceDelete implements ActionHandler<FileReference> {
     private FileService fileService;
 
     @Override
-    public void handle(HttpContext context, ModelContext<FileReference> modelContext) throws Exception {
-        Set<Serializable> paramIds = context.recordIds();
+    public void handle(Context<FileReference> ctx) throws Exception {
+        Set<Serializable> paramIds = ctx.http().recordIds();
 
-        final var crud = modelContext.getCrud();
+        final var crud = ctx.crud();
         crud.getByIds(paramIds).forEach(fileReference -> {
             fileService.deleteFile(fileReference.getUploadName());
             crud.deleteById(fileReference.getUploadName());
         });
 
-        context.result(Message.of("Successfully deleted items", 200));
+        ctx.http().result(Message.of("Successfully deleted items", 200));
     }
 
 }

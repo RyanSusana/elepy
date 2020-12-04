@@ -11,6 +11,7 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
+import com.elepy.handlers.Context;
 import com.elepy.handlers.DefaultUpdate;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
@@ -25,13 +26,14 @@ public class UserUpdate extends DefaultUpdate<User> {
     private Policy policy;
 
     @Override
-    public User handleUpdate(HttpContext context, ModelContext<User> modelContext, ObjectMapper objectMapper) throws Exception {
-        Crud<User> crud = modelContext.getCrud();
+    public User handleUpdate(Context<User> ctx, ObjectMapper objectMapper) throws Exception {
+        final var context = ctx.http();
+        Crud<User> crud = ctx.crud();
         User loggedInUser = context.loggedInUserOrThrow();
 
         User userToUpdateBefore = crud.getById(context.recordId()).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
 
-        User userToUpdateAfter = updatedObjectFromRequest(userToUpdateBefore, context.request(), objectMapper, modelContext.getSchema());
+        User userToUpdateAfter = updatedObjectFromRequest(userToUpdateBefore, context.request(), objectMapper, ctx.model().getSchema());
 
         // You can only execute this if the updating user is yourself, or you can administrate users
         if (!userToUpdateAfter.equals(loggedInUser)) {
@@ -39,7 +41,7 @@ public class UserUpdate extends DefaultUpdate<User> {
         }
         checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 
-        validateUpdate(context, modelContext, userToUpdateBefore, userToUpdateAfter);
+        validateUpdate(context, ctx.model(), userToUpdateBefore, userToUpdateAfter);
 
         //If password is empty, use the old password
         if (userToUpdateAfter.getPassword().isEmpty()) {

@@ -7,6 +7,7 @@ import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.Context;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 
@@ -16,9 +17,11 @@ public class UserDelete implements ActionHandler<User> {
     private Policy policy;
 
     @Override
-    public void handle(HttpContext context, ModelContext<User> modelContext) {
+    public void handle(Context<User> ctx) {
+        final var context = ctx.http();
+        final var modelContext = ctx.model();
         final var id = context.recordId();
-        final User toDelete = modelContext.getCrud().getById(id).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
+        final User toDelete = ctx.crud().getById(id).orElseThrow(() -> new ElepyException("No user with this ID is found.", 404));
         final User loggedInUser = context.request().loggedInUserOrThrow();
 
         if (loggedInUser.equals(toDelete)) {
@@ -27,7 +30,7 @@ public class UserDelete implements ActionHandler<User> {
         if (policy.userHasRole(toDelete, "owner")) {
             throw new ElepyException(String.format("You can't delete users with the permission '%s'", Permissions.SUPER_USER), 403);
         }
-        modelContext.getCrud().deleteById(toDelete.getId());
+        ctx.crud().deleteById(toDelete.getId());
 
         context.response().result(Message.of("Successfully deleted user", 200));
     }
