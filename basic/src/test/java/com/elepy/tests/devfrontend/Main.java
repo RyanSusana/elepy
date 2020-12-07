@@ -1,6 +1,9 @@
 package com.elepy.tests.devfrontend;
 
+import com.elepy.Configuration;
 import com.elepy.Elepy;
+import com.elepy.ElepyPostConfiguration;
+import com.elepy.ElepyPreConfiguration;
 import com.elepy.admin.FrontendLoader;
 import com.elepy.auth.Permissions;
 import com.elepy.mongo.MongoConfiguration;
@@ -30,6 +33,8 @@ public class Main {
                     });
                 })
                 .addExtension(new FrontendLoader());
+
+        elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisions(10));
         elepyInstance.start();
 
     }

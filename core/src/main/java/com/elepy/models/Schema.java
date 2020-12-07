@@ -24,7 +24,13 @@ public class Schema<T> {
 
     private String defaultSortField;
     private SortOption defaultSortDirection;
+
     private int keepRevisions = 0;
+
+    public void setKeepRevisions(int keepRevisions) {
+        this.keepRevisions = keepRevisions;
+    }
+
 
     private Map<String, HttpAction> defaultActions = new HashMap<>();
 

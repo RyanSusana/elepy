@@ -1,7 +1,8 @@
 package com.elepy.revisions;
 
-import com.elepy.annotations.Hidden;
-import com.elepy.annotations.Model;
+import com.elepy.annotations.*;
+import com.elepy.auth.Permissions;
+import com.elepy.handlers.DisabledHandler;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,19 +11,20 @@ import java.util.Date;
 
 @Hidden
 @Model(name = "Revision History", path = "/revisions")
+@Update(handler = DisabledHandler.class, requiredPermissions = "disabled")
+@Delete(handler = DisabledHandler.class, requiredPermissions = "disabled")
+@Create(handler = DisabledHandler.class, requiredPermissions = "disabled")
+@Find(requiredPermissions = Permissions.AUTHENTICATED, findManyHandler = RevisionFind.class, findOneHandler = RevisionFind.class)
 public class Revision {
-    // Global identifier
     @Id
     private String id;
 
-    //
     private String schemaPath;
 
-    // Id of the record
     private String recordId;
 
     private String description;
-    
+
     @Enumerated(EnumType.STRING)
     private RevisionType revisionType;
     private String userId;

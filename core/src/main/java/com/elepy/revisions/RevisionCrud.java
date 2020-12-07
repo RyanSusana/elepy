@@ -21,12 +21,14 @@ public class RevisionCrud<T> implements Crud<T> {
 
     private final Crud<Revision> revisionCrud;
     private final HttpContext http;
+    private final ObjectMapper objectMapper;
 
 
     public RevisionCrud(Crud<T> crud, Crud<Revision> revisionCrud, HttpContext http) {
         this.crud = crud;
         this.revisionCrud = revisionCrud;
         this.http = http;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -47,13 +49,13 @@ public class RevisionCrud<T> implements Crud<T> {
 
             final var newRecords = StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(this::getId, Function.identity()));
 
-            if (oldRecords.keySet().containsAll(newRecords.keySet())) {
+            if (!oldRecords.keySet().containsAll(newRecords.keySet())) {
                 // TODO fix error message, maybe log instead
                 throw new ElepyException("Error updating records: old vs new");
             }
 
             final var revisions = oldRecords.keySet().stream()
-                    .map(recordId -> createRevision(recordId.toString(), "Updated", RevisionType.DELETE, oldRecords.get(recordId), newRecords.get(recordId)))
+                    .map(recordId -> createRevision(recordId.toString(), "Updated", RevisionType.UPDATE, oldRecords.get(recordId), newRecords.get(recordId)))
                     .collect(Collectors.toList());
             crud.update(items);
             revisionCrud.create(revisions);
@@ -79,7 +81,8 @@ public class RevisionCrud<T> implements Crud<T> {
             crud.create(items);
         } else {
             final var revisions = StreamSupport.stream(items.spliterator(), false)
-                    .map(record -> createRevision(getId(record), "Created", RevisionType.CREATE, null, record)).collect(Collectors.toList());
+                    .map(record -> createRevision(getId(record), "Created", RevisionType.CREATE, null, record))
+                    .collect(Collectors.toList());
 
             crud.create(items);
             revisionCrud.create(revisions);
@@ -138,6 +141,7 @@ public class RevisionCrud<T> implements Crud<T> {
 
         final var revision = new Revision();
 
+        revision.setId(UUID.randomUUID().toString());
         revision.setRecordId(recordId.toString());
         revision.setSchemaPath(getSchema().getPath());
         revision.setUserId(getUserId());
@@ -145,9 +149,9 @@ public class RevisionCrud<T> implements Crud<T> {
         revision.setDescription(description);
         try {
             if (oldSnapshot != null)
-                revision.setOldSnapshot(getObjectMapper().writeValueAsString(oldSnapshot));
+                revision.setOldSnapshot(objectMapper.writeValueAsString(oldSnapshot));
             if (newSnapshot != null)
-                revision.setNewSnapshot(getObjectMapper().writeValueAsString(newSnapshot));
+                revision.setNewSnapshot(objectMapper.writeValueAsString(newSnapshot));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

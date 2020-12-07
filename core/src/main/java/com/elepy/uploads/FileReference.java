@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @Model(name = "Files", path = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
 @Update(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Delete(handler = FileReferenceDelete.class, requiredPermissions = "files.delete")
-@Create(requiredPermissions = "disabled")
+@Create(requiredPermissions = "disabled", handler = DisabledHandler.class)
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
 public class FileReference {

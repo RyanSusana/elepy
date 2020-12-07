@@ -20,6 +20,7 @@ import com.elepy.http.Route;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.ModelChange;
 import com.elepy.models.Schema;
+import com.elepy.revisions.Revision;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
@@ -601,7 +602,7 @@ public class Elepy implements ElepyContext {
         addDefaultModel(Role.class);
         addDefaultModel(User.class);
         addDefaultModel(FileReference.class);
-
+        addDefaultModel(Revision.class);
         addExtension(new FileUploadExtension());
         registerDependency(userAuthenticationExtension);
 

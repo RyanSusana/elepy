@@ -301,10 +301,13 @@ public interface Request {
         if (restModelType == null) {
             return Optional.empty();
         }
-        List<Schema> schemas = Optional.ofNullable((List<Schema>) attribute("schemas")).orElse(List.of());
 
-        return schemas.stream().filter(s -> s.getJavaClass().equals(restModelType)).findFirst();
+        return schemas().stream().filter(s -> s.getJavaClass().equals(restModelType)).findFirst();
 
+    }
+
+    default <T> List<Schema> schemas() {
+        return Optional.ofNullable((List<Schema>) attribute("schemas")).orElse(List.of());
     }
 
     @SuppressWarnings("unchecked")
