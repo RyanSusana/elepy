@@ -1,6 +1,7 @@
 <template>
 
     <component :is="loadedComponent" v-bind="field.props" @input="handleInput" :value="value"
+               :field="field"
                v-if="value !==null"></component>
 
 </template>
@@ -16,6 +17,9 @@
         components: {EditorJsField},
         computed: {
             loadedComponent() {
+                if(process.env.NODE_ENV !== 'production'){
+                    return EditorJsField;
+                }
                 return Vue.component('loadedComponent-' + this.field.name, () => externalComponent(this.field.scriptLocation));
             }
         },

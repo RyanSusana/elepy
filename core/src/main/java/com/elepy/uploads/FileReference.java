@@ -30,6 +30,12 @@ public class FileReference {
     @Searchable
     private String uploadName;
 
+    @Unique
+    @Uneditable
+    @Label("Upload path")
+    @Searchable
+    private String fullPath;
+
     @Column
     @Label("Name")
     @Searchable
@@ -152,4 +158,11 @@ public class FileReference {
         return (m.find());
     }
 
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
+    }
 }

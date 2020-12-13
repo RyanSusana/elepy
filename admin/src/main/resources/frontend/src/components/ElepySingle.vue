@@ -40,7 +40,7 @@
 
     <!-- TableView -->
     <template #main>
-      <div :class="{'unclickable': !canSave}" class="uk-container uk-margin-top uk-margin-large-bottom"
+      <div :class="{'unclickable': !canSave}" class="uk-container uk-container-small uk-margin-large-top uk-margin-large-bottom"
            tabindex="0" @keydown.meta="typeCtrl"
            @keydown.ctrl="typeCtrl" v-if="itemIsLoaded">
         <h1>{{ model.name }}</h1>
@@ -94,7 +94,6 @@
   font-size: 0.8em;
 
   height: 100vh;
-  overflow-y: scroll;
 }
 </style>
 

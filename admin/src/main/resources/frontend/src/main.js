@@ -62,7 +62,7 @@ Vibrant.from(store.getters.logo).getPalette()
         let primaryDisabled = palette.DarkVibrant.hsl;
 
 
-        primaryDisabled = "hsla(" + primaryDisabled[0]*360 + ", 75%, 82%, 1)";
+        primaryDisabled = "hsla(" + primaryDisabled[0] * 360 + ", 75%, 82%, 1)";
 
 
         document.documentElement.style

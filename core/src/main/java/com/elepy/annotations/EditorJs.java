@@ -1,6 +1,7 @@
 package com.elepy.annotations;
 
-import com.elepy.annotations.processors.EditorJsProcessor;
+import com.elepy.annotations.editorjs.EditorJsProcessor;
+import com.elepy.annotations.editorjs.Embed;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,4 +13,5 @@ import java.lang.annotation.Target;
 @ElepyAnnotationsInside
 @Custom(processor = EditorJsProcessor.class)
 public @interface EditorJs {
+    Embed embed() default @Embed();
 }

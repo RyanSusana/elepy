@@ -34,7 +34,7 @@
                 this.$emit("input", e);
             },
             handleImageAdded(file, Editor, cursorLocation, resetUploader) {
-                var formData = new FormData();
+                let formData = new FormData();
                 formData.append("files", file);
 
                 axios({
@@ -44,12 +44,8 @@
                 })
                     .then(result => {
                         let file = result.data.files[0];
-                        let url = Utils.url + "/elepy/uploads/" + file.uploadName;
-                        Editor.insertEmbed(cursorLocation, "image", url);
+                        Editor.insertEmbed(cursorLocation, "image", file.fullPath);
                         resetUploader();
-                    })
-                    .catch(err => {
-
                     });
             },
 

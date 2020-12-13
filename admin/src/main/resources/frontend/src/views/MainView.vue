@@ -26,7 +26,6 @@
     .main-view{
         flex:4;
         height: 100vh;
-        overflow-y: scroll;
 
     }
 </style>

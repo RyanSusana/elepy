@@ -3,7 +3,6 @@ package com.elepy.uploads;
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.annotations.Inject;
-import com.elepy.auth.Permissions;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
@@ -79,6 +78,8 @@ public class FileUploadExtension implements ElepyExtension {
             uploadedFile.setName(generateUniqueFileName(originalName));
             reference.setUploadName(uploadedFile.getName());
 
+            final var fullPath = String.format("%s://%s/elepy/uploads/%s", request.scheme(), request.host(), reference.getUploadName());
+            reference.setFullPath(fullPath);
 
             fileService.uploadFile(uploadedFile);
             fileCrud.create(reference);

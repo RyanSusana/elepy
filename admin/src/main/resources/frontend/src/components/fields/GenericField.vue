@@ -1,6 +1,7 @@
 <template>
     <div :property="field.name">
-        <div class="uk-text-emphasis uk-text-bold" v-if="trueFieldType !== 'OBJECT'">{{field.label}}</div>
+        <div class="uk-text-emphasis uk-text-bold label" v-if="trueFieldType !== 'OBJECT'">{{field.label}}</div>
+        <p v-if="field.description" class="description uk-text-muted">{{field.description}}</p>
         <DatePicker
                 :field="field"
                 :value="value"
@@ -96,6 +97,19 @@
 </template>
 
 <style lang="scss" scoped>
+
+    .label {
+        font-size: 16px;
+        margin-bottom: 6px;
+
+        margin-top: 30px;
+    }
+
+    .description {
+        margin-top: 0;
+        font-size: 14px;
+        max-width: 512px;
+    }
 
     .uk-accordion {
         list-style: none;
