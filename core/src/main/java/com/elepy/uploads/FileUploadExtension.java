@@ -78,8 +78,7 @@ public class FileUploadExtension implements ElepyExtension {
             uploadedFile.setName(generateUniqueFileName(originalName));
             reference.setUploadName(uploadedFile.getName());
 
-            final var fullPath = String.format("%s://%s/elepy/uploads/%s", request.scheme(), request.host(), reference.getUploadName());
-            reference.setFullPath(fullPath);
+            reference.setFullPath(request.uri() + "/" + reference.getUploadName());
 
             fileService.uploadFile(uploadedFile);
             fileCrud.create(reference);
