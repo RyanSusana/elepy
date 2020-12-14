@@ -121,7 +121,7 @@
     .editor {
         font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
-        background: #f5f5f5;
+        background: #f8f8f8;
 
         padding-top: 50px;
 
