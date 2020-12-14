@@ -95,3 +95,8 @@
         }
     }
 </script>
+<style>
+    .login-box {
+        width: 512px;
+    }
+</style>
