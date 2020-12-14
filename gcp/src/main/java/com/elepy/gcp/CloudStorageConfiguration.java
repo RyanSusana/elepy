@@ -16,11 +16,11 @@ public class CloudStorageConfiguration implements Configuration {
         this.bucket = bucket;
     }
 
-    public CloudStorageConfiguration of(String bucketName) {
+    public static CloudStorageConfiguration of(String bucketName) {
         return of(StorageOptions.getDefaultInstance().getService(), bucketName);
     }
 
-    public CloudStorageConfiguration of(Storage storage, String bucketName) {
+    public static CloudStorageConfiguration of(Storage storage, String bucketName) {
         return new CloudStorageConfiguration(storage, bucketName);
     }
 
