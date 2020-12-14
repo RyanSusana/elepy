@@ -5,7 +5,7 @@
 
 
             <div id="login-app"
-                 class="login-box uk-card uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s  uk-margin-large-top">
+                 class="login-box uk-card uk-margin-large-top">
 
 
                 <div class="uk-background-primary">
@@ -40,7 +40,9 @@
                         </div>
 
                         <div class="uk-flex uk-flex-center">
-                            <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary" :action="login">Login</ActionButton>
+                            <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary"
+                                          :action="login">Login
+                            </ActionButton>
                         </div>
                     </div>
                 </form>
@@ -51,7 +53,6 @@
 
 <script>
 
-    import Utils from '../utils'
     import ActionButton from '../components/base/ActionButton';
 
     export default {
@@ -90,6 +91,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .login-box {
+        width: 512px;
+    }
 </style>

@@ -5,7 +5,7 @@
 
 
             <div id="register-app"
-                 class="login-box uk-card uk-width-1-4@xl uk-width-2-5@m uk-width-1-2@s uk-margin-large-top">
+                 class="login-box uk-card uk-margin-large-top">
 
 
                 <div class="uk-background-primary">
