@@ -167,7 +167,7 @@
                 completeAll: function () {
                     let file = JSON.parse(arguments[0].response).files[0];
 
-                    let fileLocation = "/elepy/uploads/" + file.uploadName;
+                    let fileLocation = file.fullPath;
                     vm.handleInput(fileLocation);
                 }
             });
