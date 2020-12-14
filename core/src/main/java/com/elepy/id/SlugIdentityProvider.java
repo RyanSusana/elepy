@@ -37,7 +37,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public void provideId(T item, Crud<T> dao) {
-        final String path = getPath(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available path property. This must be a String."));
+        final String path = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property. This must be a String."));
         String generatedPath = generatePath(path, 0, dao);
 
         Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
@@ -52,7 +52,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     }
 
-    private Optional<String> getPath(T obj, List<String> slugFieldNames) {
+    private Optional<String> getSlug(T obj, List<String> slugFieldNames) {
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             final Object value;
