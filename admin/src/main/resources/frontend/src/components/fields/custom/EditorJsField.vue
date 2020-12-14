@@ -21,7 +21,7 @@
                 required: true
             },
             value: {
-                type: String,
+                type: Object,
             }
         },
         data() {
@@ -33,14 +33,14 @@
 
         computed: {
             dataAsJson() {
-                return JSON.parse(this.value ?? "{}")
+                return this.value || {};
             }
         },
         methods: {
             async onChange() {
                 let data = await this.editor.saver.save();
 
-                this.$emit("input", JSON.stringify(data));
+                this.$emit("input", data);
             },
             uploadFile(file) {
                 let formData = new FormData();
