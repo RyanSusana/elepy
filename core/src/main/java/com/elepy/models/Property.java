@@ -11,6 +11,7 @@ import java.util.Set;
 public class Property implements Comparable<Property> {
 
     private String name;
+    private String description;
     private String javaName;
     private String label;
     private boolean editable;
@@ -143,5 +144,13 @@ public class Property implements Comparable<Property> {
 
     public void setJavaName(String javaName) {
         this.javaName = javaName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

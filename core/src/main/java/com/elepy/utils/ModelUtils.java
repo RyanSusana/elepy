@@ -28,7 +28,7 @@ public class ModelUtils {
      */
     public static <T> Schema<T> createShallowSchema(Class<T> classType) {
         var model = new Schema<T>();
-        final Model restModel = com.elepy.utils.Annotations.get(classType,Model.class);
+        final Model restModel = Annotations.get(classType, Model.class);
 
 
         if (restModel == null) {
@@ -43,7 +43,7 @@ public class ModelUtils {
         model.setJavaClass(classType);
         model.setDefaultSortDirection(restModel.defaultSortDirection());
 
-        model.setView(Optional.ofNullable(com.elepy.utils.Annotations.get(classType,View.class)).map(View::value).orElse(View.Defaults.DEFAULT));
+        model.setView(Optional.ofNullable(Annotations.get(classType, View.class)).map(View::value).orElse(View.Defaults.DEFAULT));
 
 
         setupImportantFields(model);
@@ -120,18 +120,20 @@ public class ModelUtils {
 
 
     public static void setupPropertyBasics(AccessibleObject accessibleObject, boolean idProperty, Property property) {
-        final Column column = com.elepy.utils.Annotations.get(accessibleObject,Column.class);
-        final Importance importance = com.elepy.utils.Annotations.get(accessibleObject,Importance.class);
-
+        final Column column = Annotations.get(accessibleObject, Column.class);
+        final Importance importance = Annotations.get(accessibleObject, Importance.class);
+        final Description description = Annotations.get(accessibleObject, Description.class);
         property.setHiddenFromCMS(accessibleObject.isAnnotationPresent(Hidden.class));
+
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
+        property.setDescription(Optional.ofNullable(description).map(Description::value).orElse(null));
         property.setJavaName(ReflectionUtils.getJavaName(accessibleObject));
         property.setLabel(ReflectionUtils.getLabel(accessibleObject));
-        property.setRequired(com.elepy.utils.Annotations.get(accessibleObject,Required.class) != null);
+        property.setRequired(Annotations.get(accessibleObject, Required.class) != null);
         property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
         property.setImportance(importance == null ? 0 : importance.value());
         property.setUnique(idProperty || accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
-        property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && com.elepy.utils.Annotations.get(accessibleObject,Identifier.class).generated()));
+        property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && Annotations.get(accessibleObject, Identifier.class).generated()));
     }
 
     private static void setupSearch(AccessibleObject accessibleObject, Property property, boolean idProperty) {
