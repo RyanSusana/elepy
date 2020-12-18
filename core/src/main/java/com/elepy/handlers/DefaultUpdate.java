@@ -5,9 +5,7 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
 import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
@@ -38,7 +36,7 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
         }
     }
 
-    public T handleUpdate(Context<T> ctx, ObjectMapper objectMapper) throws Exception {
+    public T handleUpdate(HandlerContext<T> ctx, ObjectMapper objectMapper) throws Exception {
         final var context = ctx.http();
         final var modelContext = ctx.model();
         String body = context.body();
@@ -56,7 +54,7 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
         return updated;
     }
 
-    public T evaluateAndUpdate(Context<T> ctx, T update) throws Exception {
+    public T evaluateAndUpdate(HandlerContext<T> ctx, T update) throws Exception {
         for (ObjectEvaluator<T> objectEvaluator : ctx.model().getObjectEvaluators()) {
             if (update != null) {
                 objectEvaluator.evaluate(update);
@@ -83,7 +81,7 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
     }
 
     @Override
-    public void handle(Context<T> ctx) throws Exception {
+    public void handle(HandlerContext<T> ctx) throws Exception {
         final var context = ctx.http();
         this.handleUpdate(ctx, context.elepy().objectMapper());
     }

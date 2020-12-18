@@ -3,9 +3,7 @@ package com.elepy.handlers;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.ModelContext;
 
 import java.io.Serializable;
 
@@ -20,7 +18,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
 
     @Override
-    public void handle(Context<T> ctx) throws Exception {
+    public void handle(HandlerContext<T> ctx) throws Exception {
         final var context = ctx.http();
         final var modelContext = ctx.model();
 

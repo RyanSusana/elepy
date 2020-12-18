@@ -1,9 +1,7 @@
 package com.elepy.tests.devfrontend;
 
 import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.Context;
-import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
+import com.elepy.handlers.HandlerContext;
 
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -14,7 +12,7 @@ public class ActionPost implements ActionHandler<Post> {
     private static int counter = 1;
 
     @Override
-    public void handle(Context<Post> ctx) throws Exception {
+    public void handle(HandlerContext<Post> ctx) throws Exception {
         final var postActionInput = ctx.http().request().inputAs(PostActionInput.class);
 
         final var post = ctx.crud().getById(postActionInput.getPostId()).orElseThrow();

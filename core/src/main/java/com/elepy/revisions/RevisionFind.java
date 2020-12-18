@@ -1,11 +1,9 @@
 package com.elepy.revisions;
 
-import com.elepy.annotations.Inject;
-import com.elepy.annotations.Input;
 import com.elepy.dao.*;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.Context;
+import com.elepy.handlers.HandlerContext;
 import com.elepy.models.Schema;
 
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ import static com.elepy.dao.Filters.eq;
 public class RevisionFind implements ActionHandler<Revision> {
 
     @Override
-    public void handle(Context<Revision> ctx) throws Exception {
+    public void handle(HandlerContext<Revision> ctx) throws Exception {
 
         final var context = ctx.http();
 

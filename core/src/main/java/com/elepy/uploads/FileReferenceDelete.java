@@ -1,13 +1,9 @@
 package com.elepy.uploads;
 
 import com.elepy.annotations.Inject;
-import com.elepy.dao.Crud;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.Context;
-import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.elepy.handlers.HandlerContext;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -18,7 +14,7 @@ public class FileReferenceDelete implements ActionHandler<FileReference> {
     private FileService fileService;
 
     @Override
-    public void handle(Context<FileReference> ctx) throws Exception {
+    public void handle(HandlerContext<FileReference> ctx) throws Exception {
         Set<Serializable> paramIds = ctx.http().recordIds();
 
         final var crud = ctx.crud();

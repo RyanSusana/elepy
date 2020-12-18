@@ -10,6 +10,7 @@ import java.io.IOException;
 public class EditorJsDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+
         final JsonNode treeNode = p.readValueAsTree();
 
         return treeNode.toString();

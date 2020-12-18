@@ -99,10 +99,21 @@ public class Elepy implements ElepyContext {
         withFileService(new DefaultFileService());
 
 
-        registerDependencySupplier(ObjectMapper.class, () -> new ObjectMapper()
+        registerDependencySupplier(ObjectMapper.class, () -> createObjectMapper());
+    }
+
+    private ObjectMapper createObjectMapper() {
+
+        ObjectMapper objectMapper = new ObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .setInjectableValues(new ElepyInjectableValues(this));// here you create the ObjectMapper will all your configs
+
+        objectMapper.setConfig(objectMapper.getSerializationConfig().withAttribute(ElepyContext.class, this));
+        objectMapper.setConfig(objectMapper.getDeserializationConfig().withAttribute(ElepyContext.class, this));
+        return objectMapper;
+
     }
 
 

@@ -7,9 +7,7 @@ import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.Context;
-import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
+import com.elepy.handlers.HandlerContext;
 
 public class UserDelete implements ActionHandler<User> {
 
@@ -17,7 +15,7 @@ public class UserDelete implements ActionHandler<User> {
     private Policy policy;
 
     @Override
-    public void handle(Context<User> ctx) {
+    public void handle(HandlerContext<User> ctx) {
         final var context = ctx.http();
         final var modelContext = ctx.model();
         final var id = context.recordId();

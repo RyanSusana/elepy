@@ -21,7 +21,7 @@ public class DefaultCreate<T> implements ActionHandler<T> {
 
 
     @Override
-    public void handle(Context<T> context) throws Exception {
+    public void handle(HandlerContext<T> context) throws Exception {
         String body = context.http().request().body();
 
         final var objectMapper = context.http().elepy().objectMapper();

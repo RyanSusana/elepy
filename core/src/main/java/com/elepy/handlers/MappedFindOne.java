@@ -1,9 +1,7 @@
 package com.elepy.handlers;
 
 import com.elepy.dao.Crud;
-import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.ModelContext;
 
 /**
  * Use this class to map the result of a RestModel to another type.
@@ -14,7 +12,7 @@ import com.elepy.models.ModelContext;
 public abstract class MappedFindOne<T, R> extends DefaultFindOne<T> {
 
     @Override
-    public void handle(Context<T> ctx) throws Exception {
+    public void handle(HandlerContext<T> ctx) throws Exception {
  final var context = ctx.http();
  final var modelContext = ctx.model();
         T object = findOne(context.request(), context.response(), ctx.crud(), modelContext);

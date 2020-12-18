@@ -1,9 +1,7 @@
 package com.elepy.handlers;
 
 import com.elepy.dao.Crud;
-import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
-import com.elepy.models.ModelContext;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +25,7 @@ public abstract class MappedFind<T, R extends T> extends MappedFindOne<T, R> imp
     public abstract R map(T object, Request request, Crud<T> crud);
 
     @Override
-    public void handle(Context<T> ctx) throws Exception {
+    public void handle(HandlerContext<T> ctx) throws Exception {
         final var context = ctx.http();
         final var modelContext = ctx.model();
 

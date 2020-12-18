@@ -11,7 +11,7 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.handlers.Context;
+import com.elepy.handlers.HandlerContext;
 import com.elepy.handlers.DefaultUpdate;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
@@ -26,7 +26,7 @@ public class UserUpdate extends DefaultUpdate<User> {
     private Policy policy;
 
     @Override
-    public User handleUpdate(Context<User> ctx, ObjectMapper objectMapper) throws Exception {
+    public User handleUpdate(HandlerContext<User> ctx, ObjectMapper objectMapper) throws Exception {
         final var context = ctx.http();
         Crud<User> crud = ctx.crud();
         User loggedInUser = context.loggedInUserOrThrow();

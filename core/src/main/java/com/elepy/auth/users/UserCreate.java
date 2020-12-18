@@ -10,7 +10,7 @@ import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
-import com.elepy.handlers.Context;
+import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.models.ModelContext;
@@ -25,7 +25,7 @@ public class UserCreate implements ActionHandler<User> {
     private Policy policy;
 
     @Override
-    public void handle(Context<User> ctx) throws Exception {
+    public void handle(HandlerContext<User> ctx) throws Exception {
         final var context = ctx.http();
         final var modelContext = ctx.model();
 

@@ -6,11 +6,11 @@ import com.elepy.models.ModelContext;
 import com.elepy.revisions.Revision;
 import com.elepy.revisions.RevisionCrud;
 
-public class Context<T> {
+public class HandlerContext<T> {
     private final HttpContext http;
     private final ModelContext<T> model;
 
-    public Context(HttpContext http, ModelContext<T> model) {
+    public HandlerContext(HttpContext http, ModelContext<T> model) {
         this.http = http;
         this.model = model;
     }
