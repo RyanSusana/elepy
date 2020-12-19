@@ -1,8 +1,12 @@
 package com.elepy.revisions;
 
 import com.elepy.annotations.*;
+import com.elepy.json.RawJsonDeserializer;
+import com.elepy.json.RawJsonSerializer;
 import com.elepy.auth.Permissions;
 import com.elepy.handlers.DisabledHandler;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,7 +36,12 @@ public class Revision {
 
     private Date timestamp;
 
+    @JsonSerialize(using = RawJsonSerializer.class)
+    @JsonDeserialize(using = RawJsonDeserializer.class)
     private String oldSnapshot;
+
+    @JsonSerialize(using = RawJsonSerializer.class)
+    @JsonDeserialize(using = RawJsonDeserializer.class)
     private String newSnapshot;
 
     public String getNewSnapshot() {

@@ -1,4 +1,4 @@
-package com.elepy.annotations.editorjs;
+package com.elepy.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class EditorJsSerializer extends JsonSerializer<String> {
+public class RawJsonSerializer extends JsonSerializer<String> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

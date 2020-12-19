@@ -1,8 +1,8 @@
 package com.elepy.annotations;
 
-import com.elepy.annotations.editorjs.EditorJsDeserializer;
+import com.elepy.json.RawJsonDeserializer;
 import com.elepy.annotations.editorjs.EditorJsProcessor;
-import com.elepy.annotations.editorjs.EditorJsSerializer;
+import com.elepy.json.RawJsonSerializer;
 import com.elepy.annotations.editorjs.Embed;
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,8 +18,8 @@ import java.lang.annotation.Target;
 @ElepyAnnotationsInside
 @JacksonAnnotationsInside
 @Custom(processor = EditorJsProcessor.class)
-@JsonDeserialize(using = EditorJsDeserializer.class)
-@JsonSerialize(using = EditorJsSerializer.class)
+@JsonDeserialize(using = RawJsonDeserializer.class)
+@JsonSerialize(using = RawJsonSerializer.class)
 public @interface EditorJs {
     Embed embed() default @Embed();
 }
