@@ -1,12 +1,16 @@
 package com.elepy.models.options;
 
+import com.elepy.annotations.Localized;
 import com.elepy.annotations.TrueFalse;
 
 import java.lang.reflect.AnnotatedElement;
 
 public class BooleanOptions implements Options {
 
+    @Localized
     private String trueValue;
+
+    @Localized
     private String falseValue;
 
     private BooleanOptions(String trueValue, String falseValue) {
@@ -16,7 +20,7 @@ public class BooleanOptions implements Options {
 
 
     public static BooleanOptions of(AnnotatedElement field) {
-        final TrueFalse annotation = com.elepy.utils.Annotations.get(field,TrueFalse.class);
+        final TrueFalse annotation = com.elepy.utils.Annotations.get(field, TrueFalse.class);
         return new BooleanOptions(
                 annotation == null ? "true" : annotation.trueValue(),
                 annotation == null ? "false" : annotation.falseValue()

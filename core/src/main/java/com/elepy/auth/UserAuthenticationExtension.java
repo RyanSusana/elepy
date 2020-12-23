@@ -62,13 +62,13 @@ public class UserAuthenticationExtension implements ElepyExtension {
             ctx.response().header("Vary", "*");
         });
 
-        http.post("/elepy/token-login", (request, response) -> {
-            final var token = generateToken(request);
+        http.post("/elepy/token-login", ctx -> {
+            final var token = generateToken(ctx.request());
 
-            response.status(200);
+            ctx.response().status(200);
 
-            response.cookie("ELEPY_TOKEN", token);
-            response.json(token);
+            ctx.response().cookie("ELEPY_TOKEN", token);
+            ctx.response().json(token);
         });
     }
 

@@ -54,9 +54,6 @@ public interface ElepyContext {
         return getDependency(ObjectMapper.class);
     }
 
-    default Validator validator() {
-        return getDependency(Validator.class);
-    }
 
     Set<ContextKey> getDependencyKeys();
 

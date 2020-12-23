@@ -38,16 +38,20 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
+import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
+
+import static org.hibernate.validator.messageinterpolation.AbstractMessageInterpolator.USER_VALIDATION_MESSAGES;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -84,13 +88,13 @@ public class Elepy implements ElepyContext {
 
         this.propertyConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
 
-        registerDependencySupplier(Validator.class,
+        registerDependency(ResourceBundleLocator.class, new PlatformResourceBundleLocator(USER_VALIDATION_MESSAGES));
+        registerDependencySupplier(ValidatorFactory.class,
                 () -> Validation
                         .byProvider(HibernateValidator.class)
                         .configure()
                         .propertyNodeNameProvider(new PrettyNodeNameProvider())
-
-                        .buildValidatorFactory().getValidator());
+                        .buildValidatorFactory());
 
 
         registerDependencySupplier(org.apache.commons.configuration2.Configuration.class, () -> propertyConfiguration);
@@ -99,7 +103,7 @@ public class Elepy implements ElepyContext {
         withFileService(new DefaultFileService());
 
 
-        registerDependencySupplier(ObjectMapper.class, () -> createObjectMapper());
+        registerDependencySupplier(ObjectMapper.class, this::createObjectMapper);
     }
 
     private ObjectMapper createObjectMapper() {
@@ -107,8 +111,7 @@ public class Elepy implements ElepyContext {
         ObjectMapper objectMapper = new ObjectMapper()
                 .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
                 .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .setInjectableValues(new ElepyInjectableValues(this));// here you create the ObjectMapper will all your configs
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         objectMapper.setConfig(objectMapper.getSerializationConfig().withAttribute(ElepyContext.class, this));
         objectMapper.setConfig(objectMapper.getDeserializationConfig().withAttribute(ElepyContext.class, this));
@@ -686,20 +689,20 @@ public class Elepy implements ElepyContext {
 
 
     private void setupLoggingAndExceptions() {
-        http.before((request, response) -> {
-            request.attribute("elepyContext", this);
-            request.attribute("schemas", this.schemas());
-            request.attribute("start", System.currentTimeMillis());
+        http.before(ctx -> {
+            ctx.request().attribute("elepyContext", this);
+            ctx.request().attribute("schemas", this.schemas());
+            ctx.request().attribute("start", System.currentTimeMillis());
         });
-        http.after((request, response) -> {
-            response.header("Access-Control-Allow-Origin", "*");
-            response.header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
-            response.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
+        http.after(ctx -> {
+            ctx.response().header("Access-Control-Allow-Origin", "*");
+            ctx.response().header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
+            ctx.response().header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
 
-            if (!request.method().equalsIgnoreCase("OPTIONS") && response.status() != 404)
-                logger.debug(String.format("%s\t['%s']: %dms", request.method(), request.uri(), System.currentTimeMillis() - ((Long) request.attribute("start"))));
+            if (!ctx.request().method().equalsIgnoreCase("OPTIONS") && ctx.response().status() != 404)
+                logger.debug(String.format("%s\t['%s']: %dms", ctx.request().method(), ctx.request().uri(), System.currentTimeMillis() - ((Long) ctx.attribute("start"))));
         });
-        http.options("/*", (request, response) -> response.result(""));
+        http.options("/*", ctx -> ctx.result(""));
 
         http.exception(Exception.class, (exception, context) -> {
             final ElepyException ElepyException;

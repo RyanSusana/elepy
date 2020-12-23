@@ -1,9 +1,9 @@
 package com.elepy.models;
 
+import com.elepy.annotations.Localized;
 import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpAction;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class Schema<T> {
 
+    @Localized
     private String name;
     private String path;
     private Class<T> javaClass;

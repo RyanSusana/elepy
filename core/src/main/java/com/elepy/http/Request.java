@@ -1,5 +1,6 @@
 package com.elepy.http;
 
+import com.elepy.ElepyInterpolator;
 import com.elepy.auth.*;
 import com.elepy.dao.Filter;
 import com.elepy.dao.*;
@@ -13,6 +14,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,6 +72,10 @@ public interface Request {
     String[] queryParamValues(String key);
 
     List<FileUpload> uploadedFiles(String key);
+
+    default Locale locale() {
+        return Locale.US;
+    }
 
     default FileUpload uploadedFile(String key) {
 
@@ -157,8 +164,12 @@ public interface Request {
         return attribute("elepyContext");
     }
 
+    default Validator validator() {
+        return elepy().getDependency(ValidatorFactory.class).usingContext().messageInterpolator(new ElepyInterpolator(locale())).getValidator();
+    }
+
     default void validate(Object o) {
-        final var violations = elepy().validator().validate(o);
+        final var violations = validator().validate(o);
         if (!violations.isEmpty()) {
             var message = violations.stream()
                     .map(cv -> cv == null ? "null" : cv.getPropertyPath().toString().replaceAll("\\.", " -> ") + ": " + cv.getMessage())

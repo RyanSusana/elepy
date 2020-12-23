@@ -43,7 +43,7 @@ public interface HttpContext {
         return request().elepy();
     }
 
-    default void validate(Object o){
+    default void validate(Object o) {
         request().validate(o);
     }
 
@@ -230,6 +230,9 @@ public interface HttpContext {
     }
 
 
+    default Locale locale() {
+        return Locale.US;
+    }
 }
 
 

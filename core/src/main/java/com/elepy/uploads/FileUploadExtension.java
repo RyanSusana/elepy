@@ -7,6 +7,7 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
+import com.elepy.http.HttpContext;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
@@ -40,14 +41,17 @@ public class FileUploadExtension implements ElepyExtension {
         httpService.get("/uploads/:fileName", this::handleFileGet);
     }
 
-    private void handleFileDelete(Request request, Response response) {
-
+    private void handleFileDelete(HttpContext httpContext) {
+        Request request = httpContext.request();
+        Response response = httpContext.response();
         fileCrud.delete(request.params("fileName"));
 
         response.result(Message.of("File removed", 200));
     }
 
-    private void handleFileGet(Request request, Response response) throws IOException, ExecutionException {
+    private void handleFileGet(HttpContext httpContext) throws IOException, ExecutionException {
+        Request request = httpContext.request();
+        Response response = httpContext.response();
         final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("File not found", 404));
 
         response.type(file.getContentType());
@@ -65,7 +69,9 @@ public class FileUploadExtension implements ElepyExtension {
                 .anyMatch(queryParam -> Set.of("width", "height", "size", "scale").contains(queryParam.toLowerCase()));
     }
 
-    private void handleUpload(Request request, Response response) {
+    private void handleUpload(HttpContext httpContext) {
+        Request request = httpContext.request();
+        Response response = httpContext.response();
         request.requirePermissions("files.upload");
 
         final List<FileUpload> files = request.uploadedFiles("files");

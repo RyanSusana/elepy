@@ -13,6 +13,4 @@ import java.util.Locale;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Label {
     String value();
-
-    String locales();
 }

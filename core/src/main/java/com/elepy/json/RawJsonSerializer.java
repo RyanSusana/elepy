@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 
 public class RawJsonSerializer extends JsonSerializer<String> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        final var objectMapper = (ObjectMapper) serializers.getConfig().getAttributes().getAttribute("objectMapper");
+
         gen.setCodec(objectMapper);
         gen.writeTree(objectMapper.readTree(value));
     }

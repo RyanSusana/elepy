@@ -1,6 +1,7 @@
 package com.elepy.http;
 
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.handlers.DefaultHttpContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +91,7 @@ public class HttpServiceConfiguration implements HttpService {
     public void staticFiles(String path, StaticFileLocation location) {
         //Add staticfiles to the front
         if (started) {
-           implementation.staticFiles(path,location);
+            implementation.staticFiles(path, location);
         } else {
             this.actions.add(0, http -> http.staticFiles(path, location));
         }
@@ -98,27 +99,31 @@ public class HttpServiceConfiguration implements HttpService {
     }
 
     @Override
-    public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> handler) {
-        add(http -> http.exception(exceptionClass, handler));
+    public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> exceptionHandler) {
+        add(http -> http.exception(exceptionClass, (exception, context) -> exceptionHandler.handleException(exception, new DefaultHttpContext(context))));
     }
 
     @Override
     public void before(HttpContextHandler contextHandler) {
-        add(http -> http.before(contextHandler));
+        add(http -> http.before(wrapContextHandler(contextHandler)));
     }
 
     @Override
     public void before(String path, HttpContextHandler contextHandler) {
-        add(http -> http.before(path, contextHandler));
+        add(http -> http.before(path, wrapContextHandler(contextHandler)));
     }
 
     @Override
     public void after(String path, HttpContextHandler contextHandler) {
-        add(http -> http.after(path, contextHandler));
+        add(http -> http.after(path, wrapContextHandler(contextHandler)));
     }
 
     @Override
     public void after(HttpContextHandler contextHandler) {
-        add(http -> http.after(contextHandler));
+        add(http -> http.after(wrapContextHandler(contextHandler)));
+    }
+
+    public HttpContextHandler wrapContextHandler(HttpContextHandler ctxHandler) {
+        return ctx -> ctxHandler.handle(new DefaultHttpContext(ctx));
     }
 }

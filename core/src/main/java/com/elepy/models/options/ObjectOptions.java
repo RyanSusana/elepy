@@ -2,6 +2,7 @@ package com.elepy.models.options;
 
 import com.elepy.annotations.Featured;
 import com.elepy.annotations.InnerObject;
+import com.elepy.annotations.Localized;
 import com.elepy.models.FieldType;
 import com.elepy.models.Property;
 import com.elepy.utils.ModelUtils;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class ObjectOptions implements Options {
 
+    @Localized
     private String objectName;
     private String featuredProperty;
     private List<Property> properties;

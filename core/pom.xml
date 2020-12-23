@@ -70,6 +70,11 @@
             <version>2.0.1.Final</version>
         </dependency>
         <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>68.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>6.1.0.Final</version>

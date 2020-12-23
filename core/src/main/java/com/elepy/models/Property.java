@@ -1,5 +1,6 @@
 package com.elepy.models;
 
+import com.elepy.annotations.Localized;
 import com.elepy.models.options.Options;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -11,8 +12,12 @@ import java.util.Set;
 public class Property implements Comparable<Property> {
 
     private String name;
+
+    @Localized
     private String description;
     private String javaName;
+
+    @Localized
     private String label;
     private boolean editable;
     private boolean required;
