@@ -7,10 +7,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     plugins: [createPersistedState({
-        paths: ["token"]
+        paths: ["token", "locale"]
     })],
     state: {
         allModels: [],
+        locale: "",
         ready: false,
         loggedInUser: null,
         token: null,
@@ -20,6 +21,10 @@ export default new Vuex.Store({
         loadingItems: []
     },
     mutations: {
+        SET_LOCALE(state, newLocale) {
+            state.locale = newLocale || "en-US";
+            axios.defaults.headers["Accept-Language"] = state.locale;
+        },
         SELECT_ROWS(state, rows) {
             state.selectedRows.push(...rows)
         },
@@ -61,7 +66,10 @@ export default new Vuex.Store({
             return axios.get("/elepy/config")
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
         },
-
+        async changeLocale({dispatch, commit}, newLocale) {
+            commit('SET_LOCALE', newLocale);
+            return dispatch('getModels');
+        },
         async init({dispatch, commit, state}) {
             await axios.get("/elepy/has-users")
                 .then(() =>

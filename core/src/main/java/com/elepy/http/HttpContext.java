@@ -231,7 +231,7 @@ public interface HttpContext {
 
 
     default Locale locale() {
-        return Locale.US;
+        return request().locale();
     }
 }
 

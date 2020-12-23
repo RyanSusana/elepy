@@ -13,7 +13,7 @@ import java.util.List;
 
 @Model(
         path = "/roles",
-        name = "Roles",
+        name = "{elepy.messages.roles}",
         defaultSortField = "name",
         defaultSortDirection = SortOption.ASCENDING
 )
@@ -28,7 +28,7 @@ public class Role {
 
     @Identifier
     @Id
-    @Label("Role ID")
+    @Label("{elepy.messages.roles.id}")
     @JsonProperty("id")
     @Importance(1)
     private String id;
@@ -36,22 +36,22 @@ public class Role {
     @Unique
     @Searchable
     @JsonProperty("name")
-    @Label("Name")
+    @Label("{elepy.messages.roles.name}")
     @Importance(1)
     @Size(max = 30)
     private String name;
 
     @Searchable
     @JsonProperty("description")
+    @Label("{elepy.messages.roles.description}")
     @Importance(1)
     @TextArea
-    @Label("Description")
     private String description;
 
     @ElementCollection
     @CollectionTable(name = "elepy_role_permissions", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "permission")
-    @Label("Permissions")
+    @Label("{elepy.messages.roles.permissions}")
     @JsonProperty("permissions")
     private List<String> permissions = new ArrayList<>();
 

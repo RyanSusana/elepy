@@ -17,6 +17,7 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
+import com.elepy.i18n.Resources;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.ModelChange;
 import com.elepy.models.Schema;
@@ -38,8 +39,6 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
-
-import static org.hibernate.validator.messageinterpolation.AbstractMessageInterpolator.USER_VALIDATION_MESSAGES;
 
 /**
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
@@ -64,7 +61,7 @@ public class Elepy implements ElepyContext {
     private final List<ElepyExtension> modules = new ArrayList<>();
     private final List<String> packages = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
-    private HttpServiceConfiguration http = new HttpServiceConfiguration();
+    private HttpServiceConfiguration http = new HttpServiceConfiguration(this);
     private String configPath = "/elepy/config";
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private List<Route> routes = new ArrayList<>();
@@ -88,7 +85,7 @@ public class Elepy implements ElepyContext {
 
         this.propertyConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
 
-        registerDependency(ResourceBundleLocator.class, new PlatformResourceBundleLocator(USER_VALIDATION_MESSAGES));
+        registerDependency(Resources.class, new Resources());
         registerDependencySupplier(ValidatorFactory.class,
                 () -> Validation
                         .byProvider(HibernateValidator.class)
@@ -102,9 +99,9 @@ public class Elepy implements ElepyContext {
         registerDependencySupplier(Properties.class, () -> ConfigurationConverter.getProperties(propertyConfiguration));
         withFileService(new DefaultFileService());
 
-
         registerDependencySupplier(ObjectMapper.class, this::createObjectMapper);
     }
+
 
     private ObjectMapper createObjectMapper() {
 
@@ -178,6 +175,7 @@ public class Elepy implements ElepyContext {
     public UserAuthenticationExtension authenticationService() {
         return userAuthenticationExtension;
     }
+
 
     /**
      * @return if Elepy is initiated or not
@@ -558,6 +556,10 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    public void addResources(String... bundleNames) {
+        getDependency(Resources.class).addResourceBundles(bundleNames);
+    }
+
     public Elepy withProperties(URL url) {
         try {
 
@@ -697,7 +699,7 @@ public class Elepy implements ElepyContext {
         http.after(ctx -> {
             ctx.response().header("Access-Control-Allow-Origin", "*");
             ctx.response().header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
-            ctx.response().header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
+            ctx.response().header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin, Accept-Language");
 
             if (!ctx.request().method().equalsIgnoreCase("OPTIONS") && ctx.response().status() != 404)
                 logger.debug(String.format("%s\t['%s']: %dms", ctx.request().method(), ctx.request().uri(), System.currentTimeMillis() - ((Long) ctx.attribute("start"))));

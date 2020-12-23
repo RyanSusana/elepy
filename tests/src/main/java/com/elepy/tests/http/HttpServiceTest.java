@@ -2,7 +2,6 @@ package com.elepy.tests.http;
 
 
 import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.uploads.FileUpload;
 import com.google.common.net.HttpHeaders;
@@ -62,7 +61,7 @@ public abstract class HttpServiceTest {
 
     @Test
     void can_handleGET() {
-        service.get("/test", (request, response) -> response.result("hi"));
+        service.get("/test", ctx -> ctx.response().result("hi"));
 
 
         service.ignite();
@@ -97,7 +96,7 @@ public abstract class HttpServiceTest {
         final HttpResponse<InputStream> send = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
 
-        //assert it doesn't interfere with existing request.
+        //assert it doesn't interfere with existing ctx.request().
         assertResponseReturns("get", "/test", "hi");
         assertThat(IOUtils.contentEquals(send.body(), inputStream("static/doggo.jpg"))).as("Static file returning a wrong input stream").isTrue();
 
@@ -106,7 +105,7 @@ public abstract class HttpServiceTest {
 
     @Test
     void can_handlePOST() {
-        service.post("/test", (request, response) -> response.result("hi"));
+        service.post("/test", ctx -> ctx.response().result("hi"));
 
         service.ignite();
         assertResponseReturns("post", "/test", "hi");
@@ -139,8 +138,8 @@ public abstract class HttpServiceTest {
 
     @Test
     void can_handleMultipleRoutes() {
-        service.get("/testGET", (request, response) -> response.result("hiGET"));
-        service.post("/testPOST", (request, response) -> response.result("hiPOST"));
+        service.get("/testGET", ctx -> ctx.response().result("hiGET"));
+        service.post("/testPOST", ctx -> ctx.response().result("hiPOST"));
         service.put("/testPUT", ctx -> ctx.result("hiPUT"));
         service.patch("/testPATCH", ctx -> ctx.result("hiPATCH"));
         service.delete("/testDELETE", ctx -> ctx.result("hiDELETE"));
@@ -157,8 +156,8 @@ public abstract class HttpServiceTest {
 
     @Test
     void can_handleException_inRoute() throws IOException, InterruptedException {
-        service.get("/testException", (request, response) -> {
-            response.result("Exception not handled");
+        service.get("/testException", ctx -> {
+            ctx.response().result("Exception not handled");
             throw new ElepyException("Exception handled", 400);
         });
 
@@ -185,8 +184,8 @@ public abstract class HttpServiceTest {
             throw new ElepyException("Exception handled", 400);
         });
 
-        service.get("/testException2", (request, response) -> {
-            response.result("Exception not handled");
+        service.get("/testException2", ctx -> {
+            ctx.response().result("Exception not handled");
         });
 
         service.exception(ElepyException.class, (e, context) -> {
@@ -211,8 +210,8 @@ public abstract class HttpServiceTest {
             throw new ElepyException("Exception handled", 400);
         });
 
-        service.get("/testException2", (request, response) -> {
-            response.result("Exception not handled");
+        service.get("/testException2", ctx -> {
+            ctx.response().result("Exception not handled");
         });
 
         service.exception(ElepyException.class, (e, context) -> {
@@ -235,8 +234,8 @@ public abstract class HttpServiceTest {
     void requests_haveProper_QueryString() throws IOException, InterruptedException {
 
         AtomicReference<String> queryString = new AtomicReference<>();
-        service.get("/queryString", (request, response) ->
-                queryString.set(request.queryString()));
+        service.get("/queryString", ctx ->
+                queryString.set(ctx.request().queryString()));
 
         service.ignite();
 
@@ -254,8 +253,8 @@ public abstract class HttpServiceTest {
     void requests_haveProper_Method() throws IOException, InterruptedException {
 
         AtomicReference<String> queryString = new AtomicReference<>();
-        service.get("/queryString", (request, response) ->
-                queryString.set(request.method()));
+        service.get("/queryString", ctx ->
+                queryString.set(ctx.request().method()));
 
         service.ignite();
 
@@ -273,8 +272,8 @@ public abstract class HttpServiceTest {
     void requests_haveProper_Scheme() throws IOException, InterruptedException {
 
         AtomicReference<String> queryString = new AtomicReference<>();
-        service.get("/queryString", (request, response) ->
-                queryString.set(request.scheme()));
+        service.get("/queryString", ctx ->
+                queryString.set(ctx.request().scheme()));
 
         service.ignite();
 
@@ -292,8 +291,8 @@ public abstract class HttpServiceTest {
     void requests_haveProper_Host() throws IOException, InterruptedException {
 
         AtomicReference<String> queryString = new AtomicReference<>();
-        service.get("/queryString", (request, response) ->
-                queryString.set(request.host()));
+        service.get("/queryString", ctx ->
+                queryString.set(ctx.request().host()));
 
         service.ignite();
 
@@ -466,11 +465,11 @@ public abstract class HttpServiceTest {
         AtomicReference<Set<String>> queryParams = new AtomicReference<>();
         AtomicReference<String[]> queryParamValuesX = new AtomicReference<>();
 
-        service.get("/queryString", (request, response) -> {
+        service.get("/queryString", ctx -> {
 
-            queryParams.set(request.queryParams());
-            queryParamValueQ.set(request.queryParamOrDefault("q", "NOT_FOUND"));
-            queryParamValuesX.set(request.queryParamValues("x"));
+            queryParams.set(ctx.request().queryParams());
+            queryParamValueQ.set(ctx.request().queryParamOrDefault("q", "NOT_FOUND"));
+            queryParamValuesX.set(ctx.request().queryParamValues("x"));
         });
 
         service.ignite();
@@ -502,9 +501,9 @@ public abstract class HttpServiceTest {
         AtomicReference<String> headerQ = new AtomicReference<>();
         AtomicReference<Set<String>> headers = new AtomicReference<>();
 
-        service.get("/queryString", (request, response) -> {
-            headers.set(request.headers());
-            headerQ.set(request.headers("q"));
+        service.get("/queryString", ctx -> {
+            headers.set(ctx.request().headers());
+            headerQ.set(ctx.request().headers("q"));
         });
 
         service.ignite();
@@ -527,12 +526,12 @@ public abstract class HttpServiceTest {
 
         AtomicReference<String> attribute = new AtomicReference<>();
 
-        service.before("/queryString", (request, response) -> {
+        service.before("/queryString", ctx -> {
 
-            request.attribute("attribute", "theAttribute");
+            ctx.request().attribute("attribute", "theAttribute");
         });
 
-        service.get("/queryString", (request, response) -> attribute.set(request.attribute("attribute")));
+        service.get("/queryString", ctx -> attribute.set(ctx.request().attribute("attribute")));
 
         service.ignite();
 
@@ -553,7 +552,7 @@ public abstract class HttpServiceTest {
 
         AtomicReference<List<FileUpload>> atomicReference = new AtomicReference<>();
 
-        service.post("/elepy/uploads", (request, response) -> atomicReference.set(request.uploadedFiles("files")));
+        service.post("/elepy/uploads", ctx -> atomicReference.set(ctx.request().uploadedFiles("files")));
 
         service.ignite();
         final InputStream file1 = inputStream("cv.pdf");

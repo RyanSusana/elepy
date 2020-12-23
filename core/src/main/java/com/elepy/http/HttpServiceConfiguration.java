@@ -1,5 +1,6 @@
 package com.elepy.http;
 
+import com.elepy.Elepy;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.handlers.DefaultHttpContext;
 
@@ -9,6 +10,7 @@ import java.util.function.Consumer;
 
 public class HttpServiceConfiguration implements HttpService {
 
+    private final Elepy elepy;
     private HttpService implementation;
 
 
@@ -20,12 +22,13 @@ public class HttpServiceConfiguration implements HttpService {
 
     private int port;
 
-    public HttpServiceConfiguration() {
-        this(null);
+    public HttpServiceConfiguration(Elepy elepy) {
+        this(elepy, null);
     }
 
-    public HttpServiceConfiguration(HttpService implementation) {
+    public HttpServiceConfiguration(Elepy elepy, HttpService implementation) {
         this.implementation = implementation;
+        this.elepy = elepy;
         port(1337);
     }
 
@@ -100,17 +103,17 @@ public class HttpServiceConfiguration implements HttpService {
 
     @Override
     public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> exceptionHandler) {
-        add(http -> http.exception(exceptionClass, (exception, context) -> exceptionHandler.handleException(exception, new DefaultHttpContext(context))));
+        add(http -> http.exception(exceptionClass, (exception, context) -> exceptionHandler.handleException(exception, new DefaultHttpContext(elepy, context))));
     }
 
     @Override
     public void before(HttpContextHandler contextHandler) {
-        add(http -> http.before(wrapContextHandler(contextHandler)));
+        add(http -> http.before(contextHandler));
     }
 
     @Override
     public void before(String path, HttpContextHandler contextHandler) {
-        add(http -> http.before(path, wrapContextHandler(contextHandler)));
+        add(http -> http.before(path, contextHandler));
     }
 
     @Override
@@ -124,6 +127,6 @@ public class HttpServiceConfiguration implements HttpService {
     }
 
     public HttpContextHandler wrapContextHandler(HttpContextHandler ctxHandler) {
-        return ctx -> ctxHandler.handle(new DefaultHttpContext(ctx));
+        return ctx -> ctxHandler.handle(new DefaultHttpContext(elepy, ctx));
     }
 }

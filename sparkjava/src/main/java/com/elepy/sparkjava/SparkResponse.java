@@ -29,6 +29,11 @@ public class SparkResponse implements Response {
     }
 
     @Override
+    public <T> T attribute(String attribute) {
+        return request.attribute(attribute);
+    }
+
+    @Override
     public void type(String contentType) {
         response.type(contentType);
     }

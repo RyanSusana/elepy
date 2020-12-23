@@ -23,6 +23,12 @@
 
                 </ul>
             </div>
+            <div class="language-selection">
+                <select @change="switchLanguage" :value="locale" id="">
+                    <option value="en">English</option>
+                    <option value="nl">Nederlands</option>
+                </select>
+            </div>
         </div>
 
 
@@ -30,15 +36,22 @@
 </template>
 <script>
     import {mapGetters, mapState} from "vuex";
+    import axios from "axios";
 
     export default {
         name: 'SideBar',
 
         computed: {
-            ...mapState(['allModels']),
-            ...mapGetters(['canExecute'])
+            ...mapState(['allModels', 'locale']),
+            ...mapGetters(['canExecute']),
+            currentLocale(){
+                return axios.defaults.headers["Accept-Language"] || 'en';
+            }
         },
         methods: {
+            switchLanguage(event) {
+                return this.$store.dispatch('changeLocale',event.target.value);
+            },
             logOut() {
                 this.$store.dispatch('logOut').then(() => this.$router.push('/login'))
             }

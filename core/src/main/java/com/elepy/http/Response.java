@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface Response {
-    ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 
     void status(int statusCode);
 
     int status();
+
+    <T> T attribute(String attribute);
 
     void result(String body);
 
@@ -59,7 +60,7 @@ public interface Response {
     default void json(Object object) {
         try {
             type("application/json");
-            result(DEFAULT_MAPPER.writeValueAsString(object));
+            result(((ObjectMapper) attribute("objectMapper")).writeValueAsString(object));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new ElepyException("Failed to parse json.");

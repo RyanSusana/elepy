@@ -18,7 +18,7 @@ import java.util.Objects;
 @PredefinedRole(id = "user-viewer", name = "User Viewer", permissions = {"users.find", "roles.find"})
 @Model(
         path = "/users",
-        name = "Users",
+        name = "{elepy.messages.users}",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING
 )
@@ -43,7 +43,7 @@ public class User {
 
     @Identifier
     @Id
-    @Label("User ID")
+    @Label("{elepy.messages.users.id}")
     @JsonProperty("id")
     @Importance(1)
     private String id;
@@ -51,12 +51,13 @@ public class User {
     @Unique
     @Searchable
     @JsonProperty("username")
-    @Label("Username")
+    @Label("{elepy.messages.users.username}")
     @Importance(1)
     @Size(max = 30)
     private String username;
 
-    @Label("Password")
+
+    @Label("{elepy.messages.users.password}")
     @JsonProperty("password")
     @Importance(-1)
     @Input(type = "password")
@@ -65,7 +66,7 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "elepy_user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "roles")
-    @Label("Roles")
+    @Label("{elepy.messages.users.roles}")
     @JsonProperty("roles")
     private List<@Reference(to = Role.class) String> roles = new ArrayList<>();
 

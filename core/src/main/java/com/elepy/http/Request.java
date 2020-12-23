@@ -6,6 +6,7 @@ import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.i18n.Resources;
 import com.elepy.models.Schema;
 import com.elepy.uploads.FileUpload;
 import com.elepy.utils.ReflectionUtils;
@@ -74,7 +75,10 @@ public interface Request {
     List<FileUpload> uploadedFiles(String key);
 
     default Locale locale() {
-        return Locale.US;
+        return Locale.LanguageRange.parse(Optional.ofNullable(headers("Accept-Language")).orElse("en-US"))
+                .stream()
+                .map(range -> new Locale(range.getRange()))
+                .findFirst().orElse(Locale.US);
     }
 
     default FileUpload uploadedFile(String key) {
@@ -165,7 +169,7 @@ public interface Request {
     }
 
     default Validator validator() {
-        return elepy().getDependency(ValidatorFactory.class).usingContext().messageInterpolator(new ElepyInterpolator(locale())).getValidator();
+        return elepy().getDependency(ValidatorFactory.class).usingContext().messageInterpolator(new ElepyInterpolator(locale(), elepy().getDependency(Resources.class))).getValidator();
     }
 
     default void validate(Object o) {
