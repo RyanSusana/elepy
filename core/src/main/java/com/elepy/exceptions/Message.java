@@ -1,5 +1,6 @@
 package com.elepy.exceptions;
 
+import com.elepy.annotations.Localized;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -7,15 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Message {
-
-    private final String message;
+    @Localized
+    private final Object message;
     private final int status;
 
 
     private final Map<String, Object> properties;
 
     @JsonCreator
-    public Message(@JsonProperty("message") String message, @JsonProperty("status") int status, @JsonProperty("properties") Map<String, Object> properties) {
+    public Message(@JsonProperty("message") Object message, @JsonProperty("status") int status, @JsonProperty("properties") Map<String, Object> properties) {
         this.message = message;
         this.status = status;
         this.properties = properties;
@@ -30,7 +31,7 @@ public class Message {
         return this;
     }
 
-    public static Message of(String message, int status) {
+    public static Message of(Object message, int status) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", status >= 300 ? MessageType.ERROR : MessageType.MESSAGE);
         return new Message(message, status, properties);
@@ -65,7 +66,7 @@ public class Message {
         return properties;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 

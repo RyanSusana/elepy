@@ -1,13 +1,16 @@
 package com.elepy.exceptions;
 
+import com.elepy.annotations.Localized;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
 public class ElepyException extends RuntimeException {
 
-    @JsonProperty
-    private final String message;
+
+    private final Object detail;
+    @Localized
+    private Object message;
 
     @JsonProperty
     private final int status;
@@ -15,34 +18,35 @@ public class ElepyException extends RuntimeException {
     @JsonProperty
     private final Map<String, Object> metadata;
 
-    public ElepyException(String message) {
+    public ElepyException(Object message) {
         this(message, 400);
     }
 
-    public ElepyException(String message, int status) {
+    public ElepyException(Object message, int status) {
         this(message, status, Map.of(), null);
     }
 
-    public ElepyException(String message, int status, Throwable cause) {
+    public ElepyException(Object message, int status, Throwable cause) {
         this(message, status, Map.of(), cause);
     }
 
-    public ElepyException(String message, int status, Map<String, Object> metadata, Throwable cause) {
-        super(message, cause);
+    public ElepyException(Object message, int status, Map<String, Object> metadata, Throwable cause) {
+        super(message.toString(), cause);
         this.message = message;
+        this.detail = message;
         this.status = status;
         this.metadata = metadata;
     }
 
-    public static ElepyException of(String message, int status, Throwable cause) {
+    public static ElepyException of(Object message, int status, Throwable cause) {
         return new ElepyException(message, status, cause);
     }
 
-    public static ElepyException of(String message, int status) {
+    public static ElepyException of(Object message, int status) {
         return new ElepyException(message, status);
     }
 
-    public static ElepyException of(String message) {
+    public static ElepyException of(Object message) {
         return new ElepyException(message);
     }
 
@@ -53,5 +57,9 @@ public class ElepyException extends RuntimeException {
 
     public Map<String, Object> getMetadata() {
         return metadata;
+    }
+
+    public Object getTranslatedMessage() {
+        return message;
     }
 }

@@ -72,7 +72,7 @@ public interface Response {
         status(status);
     }
 
-    default void terminateWithResult(String message, int status) {
+    default void terminateWithResult(Object message, int status) {
         throw new ElepyException(message, status);
     }
 

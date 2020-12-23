@@ -707,27 +707,28 @@ public class Elepy implements ElepyContext {
         http.options("/*", ctx -> ctx.result(""));
 
         http.exception(Exception.class, (exception, context) -> {
-            final ElepyException ElepyException;
+            final ElepyException elepyException;
             if (exception instanceof InvocationTargetException && ((InvocationTargetException) exception).getTargetException() instanceof ElepyException) {
                 exception = (ElepyException) ((InvocationTargetException) exception).getTargetException();
             }
             if (exception instanceof ElepyException) {
-                ElepyException = (ElepyException) exception;
+                elepyException = (ElepyException) exception;
             } else {
-                ElepyException = ErrorMessageBuilder
+                elepyException = ErrorMessageBuilder
                         .anElepyException()
                         .withMessage(exception.getMessage())
                         .withStatus(500).build();
             }
 
-            if (ElepyException.getStatus() == 500) {
+            if (elepyException.getStatus() == 500) {
                 logger.error(exception.getMessage(), exception);
                 exception.printStackTrace();
             }
             context.type("application/json");
 
-            context.status(ElepyException.getStatus());
-            context.result(Message.of(ElepyException.getMessage(), ElepyException.getStatus()));
+            context.status(elepyException.getStatus());
+            final var message = elepyException.getTranslatedMessage();
+            context.result(Message.of(message, elepyException.getStatus()));
 
         });
     }

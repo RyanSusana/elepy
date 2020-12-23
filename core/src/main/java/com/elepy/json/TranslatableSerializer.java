@@ -1,5 +1,6 @@
 package com.elepy.json;
 
+import com.elepy.exceptions.TranslatedMessage;
 import com.elepy.i18n.Resources;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -7,16 +8,17 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 import java.io.IOException;
-import java.util.Locale;
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-public class TranslatableSerializer extends JsonSerializer<String> {
+public class TranslatableSerializer extends JsonSerializer<Object> {
 
 
     @Override
-    public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         var resourceBundleLocator = (ResourceBundleLocator) serializers.getConfig().getAttributes().getAttribute("resourceBundleLocator");
 
         if (resourceBundleLocator == null) {
@@ -24,13 +26,29 @@ public class TranslatableSerializer extends JsonSerializer<String> {
         }
         final var locale = serializers.getConfig().getLocale();
         final var resourceBundle = resourceBundleLocator.getResourceBundle(locale);
-        gen.writeString(interpolate(value, resourceBundle));
 
+        if (value instanceof TranslatedMessage) {
+            gen.writeString(interpolate((TranslatedMessage) value, resourceBundle));
+        } else {
+            gen.writeString(interpolate(value.toString(), resourceBundle));
+        }
+    }
 
+    private String interpolate(TranslatedMessage translatedMessage, ResourceBundle resourceBundle) {
+
+        String interpolated;
+        try {
+            interpolated = resourceBundle.getString(translatedMessage.getMessageTemplate());
+        } catch (MissingResourceException e) {
+            interpolated = translatedMessage.getMessageTemplate();
+        }
+
+        final var messageFormat = new MessageFormat(interpolated, resourceBundle.getLocale());
+        return messageFormat.format(translatedMessage.getInput());
     }
 
     private String interpolate(String input, ResourceBundle resourceBundle) {
-        final var pattern = Pattern.compile("\\{\\W*([\\w\\\\.]+)\\W*}");
+        final var pattern = Pattern.compile("\\{\\W*([a-zA-Z]+[\\w\\\\.]*)\\W*}");
 
         final var matcher = pattern.matcher(input);
 
