@@ -13,7 +13,7 @@ import java.util.List;
 
 @Model(
         path = "/roles",
-        name = "{elepy.messages.roles}",
+        name = "{elepy.messages.roles.roles}",
         defaultSortField = "name",
         defaultSortDirection = SortOption.ASCENDING
 )

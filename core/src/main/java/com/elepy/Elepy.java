@@ -18,6 +18,7 @@ import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
 import com.elepy.i18n.Resources;
+import com.elepy.i18n.TranslationsExtension;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.ModelChange;
 import com.elepy.models.Schema;
@@ -620,6 +621,7 @@ public class Elepy implements ElepyContext {
         addDefaultModel(FileReference.class);
         addDefaultModel(Revision.class);
         addExtension(new FileUploadExtension());
+        addExtension(new TranslationsExtension());
         registerDependency(userAuthenticationExtension);
 
         setupLoggingAndExceptions();

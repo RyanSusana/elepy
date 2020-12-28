@@ -18,7 +18,7 @@ import java.util.Objects;
 @PredefinedRole(id = "user-viewer", name = "User Viewer", permissions = {"users.find", "roles.find"})
 @Model(
         path = "/users",
-        name = "{elepy.messages.users}",
+        name = "{elepy.messages.users.users}",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING
 )
@@ -37,7 +37,6 @@ import java.util.Objects;
 @Update(handler = UserUpdate.class)
 @Delete(handler = UserDelete.class, requiredPermissions = "users.delete")
 @Evaluators(UserEvaluator.class)
-
 
 public class User {
 
