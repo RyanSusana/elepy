@@ -5,7 +5,7 @@ import org.hibernate.validator.spi.nodenameprovider.JavaBeanProperty;
 import org.hibernate.validator.spi.nodenameprovider.Property;
 import org.hibernate.validator.spi.nodenameprovider.PropertyNodeNameProvider;
 
-public class PrettyNodeNameProvider implements PropertyNodeNameProvider {
+public class JsonNodeNameProvider implements PropertyNodeNameProvider {
 
     @Override
     public String getName(Property property) {
@@ -20,10 +20,10 @@ public class PrettyNodeNameProvider implements PropertyNodeNameProvider {
 
         final var propertyField = ReflectionUtils.getPropertyField(property.getDeclaringClass(), property.getName());
 
-        if(propertyField == null){
+        if (propertyField == null) {
             return property.getName();
         }
-        return ReflectionUtils.getLabel(propertyField);
+        return ReflectionUtils.getPropertyName(propertyField);
     }
 
     private String getDefaultName(Property property) {

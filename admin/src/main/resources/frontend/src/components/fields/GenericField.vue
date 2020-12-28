@@ -1,7 +1,20 @@
 <template>
     <div :property="field.name">
-        <div class="uk-text-emphasis uk-text-bold label" v-if="trueFieldType !== 'OBJECT'">{{field.label}}</div>
-        <p v-if="field.description" class="description uk-text-muted">{{field.description}}</p>
+        <div
+                v-if="trueFieldType !== 'OBJECT'">
+
+            <h3 class="uk-text-emphasis uk-text-bold label" :class="{'uk-text-danger': hasErrors}">
+
+                {{field.label}}<span
+                    v-if="hasErrors"
+                    uk-icon="warning" class="uk-margin-small-left"></span></h3>
+            <p v-if="field.description" class="description uk-text-muted">{{field.description}}</p>
+
+            <ul>
+                <li class="uk-text-danger" v-for="violation in formattedViolations">{{violation.message}}</li>
+            </ul>
+        </div>
+
         <DatePicker
                 :field="field"
                 :value="value"
@@ -13,6 +26,7 @@
                 :field="field"
                 :value="value"
                 @input="handleInput"
+                :violations="passOnViolations(field)"
                 v-if="trueFieldType === 'CUSTOM'"
         />
 
@@ -33,6 +47,7 @@
                 :field="field"
                 :value="value"
                 @input="handleInput"
+                :violations="passOnViolations(field)"
                 v-if="trueFieldType === 'INPUT'"
         />
 
@@ -75,6 +90,7 @@
                 :value="value || []"
                 @input="handleInput"
                 v-if="trueFieldType === 'ARRAY'"
+                :violations="passOnViolations()"
         />
 
         <FileField
@@ -84,15 +100,20 @@
                 v-if="trueFieldType === 'FILE_REFERENCE'"
         />
 
-        <ul class="background-darken" uk-accordion="multiple: true" v-if="trueFieldType === 'OBJECT'">
-            <li>
-                <a class="uk-accordion-title uk-padding-small background-darken" href="#">{{objectName}}</a>
+        <div class="background-darken" uk-accordion="multiple: true" v-if="trueFieldType === 'OBJECT'">
+            <div>
+                <a class="uk-accordion-title uk-padding-small background-darken"
+                   :class="{'uk-text-danger': formattedViolations.length}" href="#"><span
+                        v-if="formattedViolations.length"
+                        uk-icon="warning" class="uk-margin-small-right"></span>{{objectName}}</a>
                 <div class="uk-accordion-content uk-padding-small">
-                    <ObjectField :model="field" :value="value == null ? {} : value" @input="handleInput"/>
+                    <ObjectField :model="field" :violations="violations" :value="value == null ? {} : value"
+
+                                 @input="handleInput"/>
 
                 </div>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -151,7 +172,7 @@
     import CustomField from "./CustomField";
 
     export default {
-        props: ["value", "fieldType", "field"],
+        props: ["value", "fieldType", "field", "violations"],
         name: "GenericField",
         components: {
             CustomField,
@@ -170,6 +191,19 @@
         },
 
         computed: {
+            hasErrors() {
+                return this.violations.filter(violation => {
+                    return violation === '' || violation.propertyPath.startsWith(this.field.name);
+                }).length > 0
+            },
+            formattedViolations() {
+                return this.violations.filter(violation => {
+                    if (this.trueFieldType === 'OBJECT') {
+                        return this.field.properties
+                    }
+                    return violation === '' || violation.propertyPath === this.field.name;
+                })
+            },
             trueFieldType() {
                 return this.fieldType || this.field.type;
             },
@@ -184,6 +218,16 @@
             }
         },
         methods: {
+            passOnViolations() {
+                return this.violations
+                    .filter(violation => violation.propertyPath.startsWith(this.field.name))
+                    .map(violation => {
+                        return {
+                            ...violation,
+                            propertyPath: violation.propertyPath.replace(`${this.field.name}`, '').replace(/^\./, "")
+                        }
+                    })
+            },
             handleInput(e) {
                 this.$emit("input", e);
             }

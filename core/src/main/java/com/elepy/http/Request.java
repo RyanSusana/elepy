@@ -6,6 +6,7 @@ import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
 import com.elepy.models.Schema;
 import com.elepy.uploads.FileUpload;
@@ -175,11 +176,11 @@ public interface Request {
     default void validate(Object o) {
         final var violations = validator().validate(o);
         if (!violations.isEmpty()) {
-            var message = violations.stream()
-                    .map(cv -> cv == null ? "null" : cv.getPropertyPath().toString().replaceAll("\\.", " -> ") + ": " + cv.getMessage())
-                    .collect(Collectors.joining(",\n"));
+            var formattedViolations = violations.stream()
+                    .map(FormattedViolation::new).collect(Collectors.toList());
 
-            throw new ElepyException(message);
+            throw new ElepyException("Errors", 400, Map.of("violations", formattedViolations));
+
         }
     }
 

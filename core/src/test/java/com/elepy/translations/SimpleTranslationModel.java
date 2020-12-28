@@ -2,7 +2,7 @@ package com.elepy.translations;
 
 import com.elepy.annotations.Localized;
 
-public class TranslationModel {
+public class SimpleTranslationModel {
     @Localized
     private String toTranslate;
 

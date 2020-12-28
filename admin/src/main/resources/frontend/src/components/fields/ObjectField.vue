@@ -7,6 +7,7 @@
                     :fieldType="field.type"
                     :value="value[field.name]"
                     @input="handleInput(field.name, $event)"
+                    :violations="violations"
             />
         </div>
     </div>
@@ -17,7 +18,7 @@
     import GenericField from "./GenericField.vue";
 
     export default {
-        props: ["model", "value", "fieldType"],
+        props: ["model", "value", "fieldType", "violations"],
         name: "ObjectField",
         components: {
             GenericField

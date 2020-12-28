@@ -1,11 +1,10 @@
 package com.elepy.tests.devfrontend;
 
-import com.elepy.Configuration;
 import com.elepy.Elepy;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
 import com.elepy.admin.FrontendLoader;
 import com.elepy.auth.Permissions;
+import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.TranslatedMessage;
 import com.elepy.mongo.MongoConfiguration;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -13,6 +12,7 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -27,6 +27,16 @@ public class Main {
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
                 .addExtension((http, elepy) -> {
+                    http.get("/hi", ctx -> {
+                        throw new ElepyException(new TranslatedMessage("Ryan  is {0}.", "cool"), 400);
+                    });
+                    http.get("/doggo", ctx -> {
+                        final var dog = new Dog();
+                        dog.setName("Doug, the Pug");
+                        dog.setDescription("A very very very good fluffin boy");
+                        dog.setNicknames(List.of("Roberto"));
+                        ctx.validate(dog);
+                    });
                     http.before(context -> {
                         context.response().header("Access-Control-Allow-Headers", "*");
                         context.request().addPermissions(Permissions.SUPER_USER);

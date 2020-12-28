@@ -9,7 +9,7 @@ import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.ObjectEvaluator;
-import com.elepy.evaluators.PrettyNodeNameProvider;
+import com.elepy.evaluators.JsonNodeNameProvider;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.ErrorMessageBuilder;
@@ -90,7 +90,7 @@ public class Elepy implements ElepyContext {
                 () -> Validation
                         .byProvider(HibernateValidator.class)
                         .configure()
-                        .propertyNodeNameProvider(new PrettyNodeNameProvider())
+                        .propertyNodeNameProvider(new JsonNodeNameProvider())
                         .buildValidatorFactory());
 
 
@@ -728,7 +728,7 @@ public class Elepy implements ElepyContext {
 
             context.status(elepyException.getStatus());
             final var message = elepyException.getTranslatedMessage();
-            context.result(Message.of(message, elepyException.getStatus()));
+            context.result(Message.of(message, elepyException.getMetadata(), elepyException.getStatus()));
 
         });
     }

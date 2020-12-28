@@ -26,9 +26,14 @@ public class ElepyException extends RuntimeException {
         this(message, status, Map.of(), null);
     }
 
+    public ElepyException(Object message, int status, Map<String, Object> metadata) {
+        this(message, status, metadata, null);
+    }
+
     public ElepyException(Object message, int status, Throwable cause) {
         this(message, status, Map.of(), cause);
     }
+
 
     public ElepyException(Object message, int status, Map<String, Object> metadata, Throwable cause) {
         super(message.toString(), cause);

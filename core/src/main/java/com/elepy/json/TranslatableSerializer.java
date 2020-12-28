@@ -43,6 +43,7 @@ public class TranslatableSerializer extends JsonSerializer<Object> {
             interpolated = translatedMessage.getMessageTemplate();
         }
 
+        interpolated = interpolate(interpolated, resourceBundle);
         final var messageFormat = new MessageFormat(interpolated, resourceBundle.getLocale());
         return messageFormat.format(translatedMessage.getInput());
     }
@@ -66,7 +67,7 @@ public class TranslatableSerializer extends JsonSerializer<Object> {
                     .orElse(group));
 
         }
-
+        matcher.appendTail(stringBuilder);
         final var interpolatedInput = stringBuilder.toString();
         if (!pattern.matcher(interpolatedInput).find()) {
             return interpolatedInput;

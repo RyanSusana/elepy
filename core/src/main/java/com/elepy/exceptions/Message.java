@@ -31,6 +31,15 @@ public class Message {
         return this;
     }
 
+    public static Message of(Object message, Map<String, Object> metadata, int status) {
+        if (metadata == null) {
+            return of(message, status);
+        }
+        Map<String, Object> properties = new HashMap<>(metadata);
+        properties.put("type", status >= 300 ? MessageType.ERROR : MessageType.MESSAGE);
+        return new Message(message, status, properties);
+    }
+
     public static Message of(Object message, int status) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", status >= 300 ? MessageType.ERROR : MessageType.MESSAGE);

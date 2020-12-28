@@ -28,62 +28,25 @@
                     v-bind:class="{ 'array-item': isBigField  }"
                     v-for="(val, index) in values"
             >
-                <div class="uk-flex" v-if="isNumberOrTextfield">
-                    <div class="width-10 uk-flex uk-flex-center uk-flex-middle">
-                        <a class uk-icon="menu"></a>
-                    </div>
-
-                    <div class="uk-inline width-90">
-                        <a @click="removeIndex(index)" class="uk-form-icon" uk-icon="close"></a>
-                        <input
-                                :id="field.name+'-'+index"
-                                :value="val"
-                                @input="updateIndexWithEvent(index,$event)"
-                                class="uk-input"
-                                v-on:keydown.backspace="backspace(index, $event)"
-                                v-on:keyup.enter="nextField(index)"
-                        >
-                    </div>
-                </div>
-                <div class v-else>
-                    <div class="uk-flex">
-                        <div
-                                class="width-10 uk-margin-small-bottom uk-flex uk-flex-middle uk-flex-around uk-flex-column"
-                                v-if="isBigField"
-                        >
-                            <div class="uk-flex uk-flex-column"><a @click="moveUp(index)" class uk-icon="arrow-up"></a>
-                                <a class uk-icon="menu"></a>
-                                <a @click="moveDown(index)" class uk-icon="arrow-down"></a></div>
-
-
-                            <a
-                                    @click="removeIndex(index)"
-                                    class="uk-icon-button uk-button-danger uk-icon-button-small"
-                                    uk-icon="close"
-                            ></a>
-                        </div>
-
-                        <div class="width-10 uk-flex-middle uk-flex-center uk-flex" v-else>
-                            <a
-                                    @click="removeIndex(index)"
-                                    class="uk-margin-right uk-icon-button uk-button-danger uk-icon-button-small"
-                                    uk-icon="close"
-                            ></a>
-
-                            <a class uk-icon="menu"></a>
-                        </div>
-                        <div class="width-90 uk-flex uk-flex-middle">
-                            <div class="uk-width-1-1">
-                                <GenericField
-                                        :field="field"
-                                        :fieldType="field.arrayType"
-                                        :value="val"
-                                        @input="updateIndexWithValue(index, $event)"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ArrayInputField v-if="isNumberOrTextfield"
+                                 :field="field"
+                                 :index="index"
+                                 :val="val"
+                                 :violations="getViolationsFor(index)"
+                                 @next="nextField(index)"
+                                 @remove="removeIndex(index)"
+                                 @input="updateIndexWithEvent(index,$event)"
+                />
+                <ArrayGenericField v-else
+                                   :field="field"
+                                   :index="index"
+                                   :val="val"
+                                   :violations="getViolationsFor(index)"
+                                   @moveDown="moveDown(index)"
+                                   @moveUp="moveUp(index)"
+                                   @remove="removeIndex(index)"
+                                   @input="updateIndexWithValue(index, $event)"
+                />
             </div>
         </draggable>
     </div>
@@ -93,15 +56,6 @@
     .uk-icon-button-small {
         width: 26px;
         height: 26px;
-    }
-
-    .width-10 {
-        width: calc(7%);
-    }
-
-    .width-90 {
-        width: calc(93%);
-
     }
 
     [uk-icon="menu"] {
@@ -121,9 +75,11 @@
 <script>
     import draggable from "vuedraggable";
     import ReferenceField from "./ReferenceField";
+    import ArrayInputField from "./arrays/ArrayInputField";
+    import ArrayGenericField from "./arrays/ArrayGenericField";
 
     export default {
-        props: ["field", "value"],
+        props: ["field", "value", "violations"],
         name: "ArrayField",
         data() {
             return {
@@ -137,8 +93,9 @@
             }
         },
         components: {
+            ArrayGenericField,
+            ArrayInputField,
             ReferenceField,
-            GenericField: () => import("./GenericField.vue"),
             draggable
         },
 
@@ -155,10 +112,28 @@
                     !this.isNumberOrTextfield && !smallFields.includes(this.field.arrayType)
                 );
             }
+
         },
         methods: {
-            handleInput(e) {
-                this.$emit("input", this.values);
+            getViolationsFor(idx) {
+                return (this.violations || [])
+                    // Makes sure that the filtered violation does not belong to the array itself
+                    .filter(violation => violation.propertyPath)
+                    .filter(violation => {
+                        const violationIndex = violation.propertyPath.match(/\[(\d+)]/)[1];
+                        return idx === Number(violationIndex);
+                    }).map(
+                        violation => {
+                            return {
+                                ...violation,
+                                propertyPath: violation.propertyPath.replace(/\[\d+]/, '').replace(/^\./, "")
+                            }
+                        }
+                    )
+
+            },
+            handleInput() {
+                this.$emit("input", this.values || []);
                 this.$forceUpdate();
             },
 
@@ -180,20 +155,7 @@
                     }
                 }
             },
-            backspace(index, e) {
-                if (this.values[index] == "") {
-                    e.preventDefault();
 
-                    this.removeIndex(index);
-                    if (index !== 0 && this.isNumberOrTextfield) {
-                        this.$nextTick(() => {
-                            document
-                                .getElementById(this.field.name + "-" + (index - 1))
-                                .focus();
-                        });
-                    }
-                }
-            },
 
             updateIndexWithEvent(index, e) {
                 this.updateIndexWithValue(index, e.target.value);
@@ -242,6 +204,10 @@
                     });
                 }
             }
+        },
+
+        mounted() {
+            this.handleInpuFt();
         }
     };
 </script>
