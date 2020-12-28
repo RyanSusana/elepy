@@ -11,7 +11,7 @@ export default new Vuex.Store({
     })],
     state: {
         allModels: [],
-        locale: "",
+        locale: "en",
         ready: false,
         loggedInUser: null,
         token: null,
@@ -71,6 +71,8 @@ export default new Vuex.Store({
             return dispatch('getModels');
         },
         async init({dispatch, commit, state}) {
+
+            axios.defaults.headers["Accept-Language"] = state.locale;
             await axios.get("/elepy/has-users")
                 .then(() =>
                     commit('SET_HAS_USERS', true))

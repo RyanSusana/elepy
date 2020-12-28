@@ -207,7 +207,7 @@
         },
 
         mounted() {
-            this.handleInpuFt();
+            this.handleInput();
         }
     };
 </script>
