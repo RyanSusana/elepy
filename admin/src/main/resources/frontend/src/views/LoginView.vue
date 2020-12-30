@@ -15,33 +15,27 @@
 
                 <form @submit.prevent>
                     <div class="login-box-content uk-padding">
-
-                        <div v-if="initialUser">
-                            <p>Login with your recently created user.</p>
-                            <hr>
-                        </div>
-
                         <div class="uk-margin">
-                            <label class="uk-form-label">Username</label>
+                            <label class="uk-form-label">{{ $t('elepy.ui.forms.username') }}</label>
                             <div class="uk-form-controls">
                                 <input name="username" class="uk-input" v-model="username" type="text"
-                                       placeholder="Username">
+                                       :placeholder="$t('elepy.ui.forms.username')">
                             </div>
                         </div>
 
 
                         <div class="uk-margin">
-                            <label class="uk-form-label">Password</label>
+                            <label class="uk-form-label">{{ $t('elepy.ui.forms.password') }}</label>
                             <div class="uk-form-controls">
                                 <input name="password" class="uk-input" v-model="password"
                                        type="password"
-                                       placeholder="Password">
+                                       :placeholder="$t('elepy.ui.forms.password')">
                             </div>
                         </div>
 
                         <div class="uk-flex uk-flex-center">
                             <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary"
-                                          :action="login">Login
+                                          :action="login">{{ $t('elepy.ui.login') }}
                             </ActionButton>
                         </div>
                     </div>
@@ -83,9 +77,6 @@
 
                         this.$router.push(this.$route.query.redirect ?? '/')
                     })
-                    .catch(error => {
-
-                    });
             }
         }
     }

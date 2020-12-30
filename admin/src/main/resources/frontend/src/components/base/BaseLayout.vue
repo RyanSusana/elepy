@@ -9,7 +9,7 @@
 
 
                     <a v-if="backEnabled" @click="goBack" class="back-button" action="back"><span
-                            uk-icon="icon: arrow-left; ratio:2"></span><span>Back</span></a>
+                            uk-icon="icon: arrow-left; ratio:2"></span><span>{{ $t('elepy.ui.actions.back')}}</span></a>
 
                     <LoadingSpinner class="uk-margin-small-left" v-if="isLoading"/>
                 </div>

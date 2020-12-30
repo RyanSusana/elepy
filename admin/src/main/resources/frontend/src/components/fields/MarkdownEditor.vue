@@ -3,7 +3,7 @@
         <div
                 @click="showCode = true"
                 class="compiled-markdown uk-background-muted"
-                v-html="(content == null || content == '') ? 'Click to edit...' :compileMarkdown(value)"
+                v-html="!content ? $t('elepy.ui.placeholders.markdown') :compileMarkdown(value)"
                 v-show="!showCode"
         ></div>
         <pre class="language-md" v-show="showCode"><code

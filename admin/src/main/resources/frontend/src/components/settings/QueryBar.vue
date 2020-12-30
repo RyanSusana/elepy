@@ -9,7 +9,7 @@
                     <input
                             class="input"
                             id="search-input"
-                            placeholder="Search..."
+                            :placeholder="$t('elepy.ui.placeholders.search')"
                             type="text"
                             v-on:keypress.enter="addFilter"
                             v-on:keydown.delete="backspace"

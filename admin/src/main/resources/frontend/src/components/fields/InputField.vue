@@ -1,6 +1,6 @@
 <template>
     <input
-            :value="(field.generated === true &&(value == null || value === '')) ? 'Generated' : value"
+            :value="(field.generated === true &&(value == null || value === '')) ? $t('elepy.ui.placeholders.generated') : value"
             @input="handleInput"
             class="uk-input"
             :class="{'error': violations.length}"

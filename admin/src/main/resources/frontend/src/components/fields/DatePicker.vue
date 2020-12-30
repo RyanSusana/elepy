@@ -11,7 +11,7 @@
                 calendar-class="uk-dark"
                 input-class="uk-input"
                 output-format="x"
-                placeholder="Click to select a date"
+                :placeholder=" $t('elepy.ui.placeholders.date') "
                 v-bind:disabled="field.generated == true || (field.editable == false )"
         ></vue-ctk-date-time-picker>
     </div>

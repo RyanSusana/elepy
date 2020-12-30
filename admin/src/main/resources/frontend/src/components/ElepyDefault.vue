@@ -9,13 +9,13 @@
                                  class="uk-button uk-button-primary add-button uk-margin-small-right"
                                  id="add-button"
                     >
-                        <i uk-icon="icon: plus"></i> Add
+                        <i uk-icon="icon: plus"></i> {{ $t('elepy.ui.actions.add') }}
                     </router-link>
                     <ActionButton class="uk-button-danger uk-button uk-margin-small-right uk-width-small"
                                   :class="{'disabled': selectedRows.length === 0 }" :action="deleteData"
                                   v-if="canExecute(model.defaultActions.delete)"
                                   action-name="delete"><i uk-icon="icon: trash"></i>
-                        Delete
+                        {{ $t('elepy.ui.actions.delete') }}
                     </ActionButton>
                     <ActionsButton id="multi-actions" class="uk-margin-small-right actions"
                                    :actions="multipleActions"
@@ -77,15 +77,13 @@
     }
 </style>
 <script>
-    import QueryFilter from "./settings/QueryFilter.vue";
-
     import Utils from "../utils"
     import EventBus from "../event-bus";
     import Table from "./tables/Table.vue";
     import Pagination from "./settings/Pagination.vue";
     import BaseLayout from "./base/BaseLayout.vue";
     import ActionsButton from "./base/ActionsButton";
-    import {mapState, mapGetters} from "vuex";
+    import {mapGetters, mapState} from "vuex";
     import ActionButton from "./base/ActionButton";
 
     import axios from "axios";
@@ -138,18 +136,16 @@
         },
 
         props: ["model"],
-        components: {QueryBar, ActionButton, ActionsButton, QueryFilter, Pagination, Table, BaseLayout},
+        components: {QueryBar, ActionButton, ActionsButton, Pagination, Table, BaseLayout},
         methods: {
             deleteData() {
                 return UIkit.modal
                     .confirm(
-                        "Are you sure that you want to delete " +
-                        this.selectedRows.length +
-                        " items?",
+                        this.$t('elepy.ui.prompts.delete', [this.selectedRows.length]),
                         {
                             labels: {
-                                ok: "Yes",
-                                cancel: "Cancel"
+                                ok: this.$t('elepy.ui.yes'),
+                                cancel: this.$t('elepy.ui.cancel'),
                             },
                             stack: true
                         }
@@ -168,9 +164,6 @@
                                     this.getModelData();
                                     Utils.displayResponse(response);
                                 })
-                                .catch(function (error) {
-
-                                });
                         },
                         function () {
                         }

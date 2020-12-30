@@ -17,7 +17,7 @@
                         class="uk-icon-button uk-button-primary uk-icon-button-small uk-margin-small-right"
                         uk-icon="plus"
                 ></a>
-                <a class="uk-link-reset uk-text-small">Add Field</a>
+                <a class="uk-link-reset uk-text-small">{{ $t('elepy.ui.actions.add') }}</a>
             </a>
         </div>
 

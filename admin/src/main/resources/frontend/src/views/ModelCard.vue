@@ -6,10 +6,10 @@
         <ul class="uk-list">
 
             <li>
-                <router-link :to="model.path">View {{model.name}}</router-link>
+                <router-link :to="model.path">{{ $t('elepy.ui.actions.view') }} {{model.name}}</router-link>
             </li>
             <li v-if="model.view!== 'single'">
-                <router-link :to="model.path +'/add'">Add to {{model.name}}</router-link>
+                <router-link :to="model.path +'/add'">{{ $t('elepy.ui.actions.addTo', [model.name]) }}</router-link>
             </li>
 
         </ul>

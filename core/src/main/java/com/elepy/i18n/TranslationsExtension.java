@@ -6,6 +6,7 @@ import com.elepy.http.HttpService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 
+import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -16,7 +17,9 @@ public class TranslationsExtension implements ElepyExtension {
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
         final var propsMapper = JavaPropsMapper.builder().build();
         http.get("/elepy/translations", context -> {
-            final var bundle = elepy.getDependency(Resources.class).getResourceBundle(context.locale());
+            final var locale = context.locale();
+
+            final var bundle = elepy.getDependency(Resources.class).getResourceBundle(locale);
             context.response().json(propsMapper.readPropertiesAs(getResourceBundleAsProperties(bundle), JsonNode.class));
         });
     }

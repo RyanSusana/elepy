@@ -6,7 +6,7 @@
 
         <div class="sidebar-content">
             <div class="sidebar-nav uk-light">
-                <h4 class="sidebar-heading">Resources</h4>
+                <h4 class="sidebar-heading">{{$t('elepy.ui.resources')}}</h4>
                 <ul class="sidebar-list">
                     <li v-for="model in this.allModels" v-if="canExecute(model.defaultActions.find)" :key="model.name">
                         <router-link :to="model.path"><span uk-icon="folder"></span> {{model.name}}</router-link>
@@ -44,13 +44,11 @@
         computed: {
             ...mapState(['allModels', 'locale']),
             ...mapGetters(['canExecute']),
-            currentLocale(){
-                return axios.defaults.headers["Accept-Language"] || 'en';
-            }
         },
         methods: {
             switchLanguage(event) {
-                return this.$store.dispatch('changeLocale',event.target.value);
+
+                 return this.$store.dispatch('changeLocale', event.target.value);
             },
             logOut() {
                 this.$store.dispatch('logOut').then(() => this.$router.push('/login'))

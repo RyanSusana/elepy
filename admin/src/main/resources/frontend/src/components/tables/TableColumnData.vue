@@ -2,8 +2,8 @@
     <td v-if="field.type === 'FILE_REFERENCE'">
         <ImageLightBox :height="100" :src="valueAsUpload" :width="100" v-if="isImageUrl"/>
 
-        <a :href="valueAsUpload" target="_blank" v-else-if="value!=null &&!value.isEmpty()">Download Link</a>
-        <span class="uk-text-muted" v-else>Nothing uploaded</span>
+        <a :href="valueAsUpload" target="_blank" v-else-if="value!=null &&!value.isEmpty()">{{ $t('elepy.ui.downloadLink') }}</a>
+        <span class="uk-text-muted" v-else>{{ $t('elepy.ui.nothingUploaded') }}</span>
     </td>
     <td v-else-if="field.type === 'HTML'">
         <div v-html="value"></div>

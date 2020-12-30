@@ -24,7 +24,7 @@
                             v-for="field in tableFields"
                     >{{field.label}}
                     </th>
-                    <th>Actions</th>
+                    <th>{{ }}</th>
                 </tr>
                 </thead>
 
@@ -84,7 +84,6 @@
 <script>
     import TableRow from "./TableRow.vue";
     import Utils from "../../utils";
-    import QueryFilter from "../settings/QueryFilter.vue";
     import Pagination from "../settings/Pagination";
 
     import {mapGetters, mapState} from "vuex"
@@ -96,7 +95,7 @@
         props: ["model", "current-page", "isLoading", "updateEnabled"],
 
 
-        components: {TableRow, QueryFilter, Pagination},
+        components: {TableRow, Pagination},
         computed: {
             ...mapState(["selectedRows"]),
             ...mapGetters(["canExecute"]),

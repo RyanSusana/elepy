@@ -108,7 +108,6 @@
                         uk-icon="warning" class="uk-margin-small-right"></span>{{objectName}}</a>
                 <div class="uk-accordion-content uk-padding-small">
                     <ObjectField :model="field" :violations="violations" :value="value == null ? {} : value"
-
                                  @input="handleInput"/>
 
                 </div>
@@ -192,12 +191,12 @@
 
         computed: {
             hasErrors() {
-                return this.violations.filter(violation => {
+                return this.violations && this.violations.filter(violation => {
                     return violation === '' || violation.propertyPath.startsWith(this.field.name);
                 }).length > 0
             },
             formattedViolations() {
-                return this.violations.filter(violation => {
+                return !this.violations ? [] : this.violations.filter(violation => {
                     if (this.trueFieldType === 'OBJECT') {
                         return this.field.properties
                     }

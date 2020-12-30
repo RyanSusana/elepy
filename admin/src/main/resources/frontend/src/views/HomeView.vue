@@ -1,6 +1,6 @@
 <template>
     <div class="uk-container uk-container-expand uk-margin-large-top">
-        <h1>Home</h1>
+        <h1>{{ $t('elepy.ui.home') }}</h1>
 
 
         <div class="models">

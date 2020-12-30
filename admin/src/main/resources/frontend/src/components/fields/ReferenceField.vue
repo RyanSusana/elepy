@@ -71,7 +71,7 @@
                 </div>
             </template>
 
-            <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
+            <span slot="noResult">{{ $t('elepy.ui.notFound')}}</span>
         </multiselect>
     </div>
 </template>

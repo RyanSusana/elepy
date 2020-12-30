@@ -12,7 +12,7 @@
                     class="uk-button uk-button-primary uk-width-small uk-margin-small-right"
                     v-shortkey.once="['ctrl',  'save']"
 
-            ><i uk-icon="icon: file-edit"></i> Save
+            ><i uk-icon="icon: file-edit"></i> {{ $t('elepy.ui.save') }}
             </ActionButton>
             <ActionsButton class="uk-margin-small-right" :actions="model.actions"
                            :ids="[id]"
@@ -21,20 +21,20 @@
                @click="resetToLastSaved"
                class="uk-button uk-button-default uk-margin-small-right"
                v-if="itemIsLoaded && !isCreating && canSave"
-            >Reset to last saved</a>
+            >{{ $t('elepy.ui.reset') }}</a>
 
 
             <a action="clear"
                @click="clear"
                class="uk-button uk-button-danger uk-margin-small-right"
                v-if="itemIsLoaded && canSave"
-            >Clear</a>
+            >{{ $t('elepy.ui.clear') }}</a>
 
             <a action="clear"
                uk-toggle="target: #revisions"
                class="uk-button uk-button-danger uk-margin-small-right"
                v-if="itemIsLoaded && canSave"
-            >Revisions</a>
+            >{{ $t('elepy.ui.revisions') }}</a>
 
         </template>
 
@@ -168,7 +168,7 @@
                     return this.model.name;
                 }
                 if (this.isCreating) {
-                    return 'Add to ' + this.model.name;
+                    return this.$t('elepy.ui.actions.addTo',[this.model.name]);
                 } else {
                     return this.model.name + "/" + this.id;
                 }
@@ -188,10 +188,10 @@
                 if (isEqual(this.item, this.itemCopy)) {
                     this.$router.push(this.model.path)
                 } else {
-                    UIkit.modal.confirm("Are you sure you want to go back? Any unsaved changes will be lost.", {
+                    UIkit.modal.confirm(this.$t('elepy.ui.yes'), {
                         labels: {
-                            ok: "Yes",
-                            cancel: "No"
+                            ok: this.$t('elepy.ui.yes'),
+                            cancel: this.$t('elepy.ui.no'),
                         }
                     }).then(
                         () => this.$router.push(this.model.path),
@@ -211,10 +211,10 @@
             },
             save() {
                 return UIkit.modal
-                    .confirm("Are you sure that you want to save this item?", {
+                    .confirm(this.$t('elepy.ui.prompts.save'), {
                         labels: {
-                            ok: "Yes",
-                            cancel: "No"
+                            ok: this.$t('elepy.ui.yes'),
+                            cancel: this.$t('elepy.ui.no'),
                         }
                     })
                     .then(

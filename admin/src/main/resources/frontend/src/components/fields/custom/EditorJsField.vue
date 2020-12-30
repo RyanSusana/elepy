@@ -72,20 +72,14 @@
             },
         },
         mounted() {
-            console.log(this.field);
-
-
             this.editor = new EditorJS({
                     minHeight: 50,
-                    placeholder: 'Type here...',
                     logLevel: 'WARN',
                     holder: 'editor-' + this._uid,
                     tools: {
 
                         header: {
                             class: Header,
-                            shortcut: 'CMD+SHIFT+H',
-                            placeholder: 'Enter a header',
                             levels: [1, 2, 3, 4, 5, 6],
                             defaultLevel: 3
                         },

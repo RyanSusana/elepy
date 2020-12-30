@@ -1,6 +1,7 @@
 import axios from "axios"
 import Vue from "vue"
 import Vuex from "vuex";
+import {loadLanguage} from "./i18nSetup";
 import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
@@ -21,9 +22,8 @@ export default new Vuex.Store({
         loadingItems: []
     },
     mutations: {
-        SET_LOCALE(state, newLocale) {
-            state.locale = newLocale || "en-US";
-            axios.defaults.headers["Accept-Language"] = state.locale;
+        SET_LOCALE(state, lang) {
+            state.locale = lang || "en-US";
         },
         SELECT_ROWS(state, rows) {
             state.selectedRows.push(...rows)
@@ -67,12 +67,15 @@ export default new Vuex.Store({
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
         },
         async changeLocale({dispatch, commit}, newLocale) {
-            commit('SET_LOCALE', newLocale);
+
+           const lang =  await loadLanguage(newLocale)
+            commit('SET_LOCALE', lang)
             return dispatch('getModels');
+
         },
         async init({dispatch, commit, state}) {
-
-            axios.defaults.headers["Accept-Language"] = state.locale;
+            console.debug('initializing store')
+            await dispatch('changeLocale', state.locale)
             await axios.get("/elepy/has-users")
                 .then(() =>
                     commit('SET_HAS_USERS', true))

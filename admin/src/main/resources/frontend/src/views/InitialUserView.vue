@@ -16,41 +16,40 @@
                 <form @submit.prevent>
                     <div class="login-box-content uk-padding">
 
-                        <p>Create the initial super-user of the CMS. This user has the most privileges and can only be
-                            created
-                            once.</p>
+                        <p>{{ $t('elepy.ui.initialUser') }}</p>
 
                         <hr>
                         <div class="uk-margin">
-                            <label class="uk-form-label">Username</label>
+                            <label class="uk-form-label">{{ $t('elepy.ui.forms.username') }}</label>
                             <div class="uk-form-controls">
                                 <input name="username" class="uk-input" v-model="user.username" type="text"
-                                       placeholder="Username">
+                                       :placeholder="$t('elepy.ui.forms.username') ">
                             </div>
                         </div>
                         <hr>
                         <div class="uk-margin">
-                            <label class="uk-form-label">Password</label>
+                            <label class="uk-form-label">{{ $t('elepy.ui.forms.password') }}</label>
                             <div class="uk-form-controls">
                                 <input name="password" class="uk-input" v-model="user.password"
                                        type="password"
-                                       placeholder="Password">
+                                       :placeholder="$t('elepy.ui.forms.password')">
                             </div>
                         </div>
 
                         <div class="uk-margin">
-                            <label class="uk-form-label">Confirm Password</label>
+                            <label class="uk-form-label">{{ $t('elepy.ui.forms.confirmPassword') }}</label>
                             <div class="uk-form-controls">
                                 <input name="confirm-password" class="uk-input"
                                        v-model="confirmPassword"
                                        type="password"
-                                       placeholder="Confirm Password">
+                                       :placeholder="$t('elepy.ui.forms.confirmPassword')">
                             </div>
                         </div>
 
                         <div class="uk-flex uk-flex-center">
-                            <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary" :action="register">
-                                Create User
+                            <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary"
+                                          :action="register">
+                                {{ $t('elepy.ui.forms.createUser') }}
                             </ActionButton>
 
                         </div>

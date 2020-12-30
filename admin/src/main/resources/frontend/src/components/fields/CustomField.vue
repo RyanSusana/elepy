@@ -2,6 +2,8 @@
 
     <component :is="loadedComponent" v-bind="field.props" @input="handleInput" :value="value"
                :field="field"
+               :locale="locale"
+               :violations="violations"
                v-if="value !==null"></component>
 
 </template>
@@ -10,14 +12,16 @@
 
     import Vue from "vue"
     import EditorJsField from "./custom/EditorJsField";
+    import {mapState} from "vuex"
 
     export default {
         name: "CustomField",
-        props: ["value", "field"],
+        props: ["value", "field", "violations"],
         components: {EditorJsField},
         computed: {
+            ...mapState(['locale']),
             loadedComponent() {
-                if(process.env.NODE_ENV !== 'production'){
+                if (process.env.NODE_ENV !== 'production') {
                     return EditorJsField;
                 }
                 return Vue.component('loadedComponent-' + this.field.name, () => externalComponent(this.field.scriptLocation));

@@ -75,10 +75,10 @@
             },
             deleteData() {
                 UIkit.modal
-                    .confirm("Are you sure that you want to delete this item?", {
+                    .confirm(this.$t('elepy.ui.prompts.delete', [1]), {
                         labels: {
-                            ok: "Yes",
-                            cancel: "Cancel"
+                            ok: this.$t('elepy.ui.yes'),
+                            cancel: this.$t('elepy.ui.cancel'),
                         },
                         stack: true
                     })

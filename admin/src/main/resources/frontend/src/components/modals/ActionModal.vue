@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+            <button class="uk-button uk-button-default uk-modal-close" type="button">{{$t('elepy.ui.cancel')}}</button>
 
             <ActionButton :action="triggerAction" class="uk-button-primary action-button">{{action.name}}
             </ActionButton>
@@ -58,11 +58,11 @@
                 } else {
                     UIkit.modal
                         .confirm(
-                            "<p><span class='uk-text-danger uk-text-bold'>Warning!</span><br>" + this.action.warning + "</p>",
+                            `<p><span class='uk-text-danger uk-text-bold'>${ this.$t('elepy.ui.prompts.warning')}</span><br>${ this.action.warning }"</p>`,
                             {
                                 labels: {
                                     ok: this.action.name,
-                                    cancel: "Cancel"
+                                    cancel: this.$t('elepy.ui.cancel')
                                 },
                                 stack: true
                             }
