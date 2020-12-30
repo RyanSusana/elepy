@@ -206,12 +206,12 @@ public class SparkRequest implements Request {
                             try {
                                 return FileUpload.of(part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize());
                             } catch (IOException e) {
-                                throw new ElepyException("File upload failed", 500);
+                                throw ElepyException.internalServerError(e);
                             }
                         }
                 ).collect(Collectors.toList());
             } catch (ServletException | IOException e) {
-                throw new ElepyException("File upload failed", 500);
+                throw ElepyException.internalServerError(e);
             }
         }
         return Collections.emptyList();

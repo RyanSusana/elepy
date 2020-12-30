@@ -20,7 +20,7 @@ public class DefaultIdentityProvider<T> implements IdentityProvider<T> {
             return;
         }
 
-        Class<?> idType = ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
+        Class<?> idType = ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> ElepyException.internalServerError()).getType();
 
         if (idType == String.class) {
             hexIdentityProvider.provideId(item, dao);

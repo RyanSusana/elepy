@@ -1,14 +1,14 @@
 package com.elepy.json;
 
-import com.elepy.exceptions.TranslatedMessage;
+import com.elepy.exceptions.Translated;
 import com.elepy.i18n.Resources;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.ibm.icu.text.MessageFormat;
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -27,14 +27,14 @@ public class TranslatableSerializer extends JsonSerializer<Object> {
         final var locale = serializers.getConfig().getLocale();
         final var resourceBundle = resourceBundleLocator.getResourceBundle(locale);
 
-        if (value instanceof TranslatedMessage) {
-            gen.writeString(interpolate((TranslatedMessage) value, resourceBundle));
+        if (value instanceof Translated) {
+            gen.writeString(interpolate((Translated) value, resourceBundle));
         } else {
             gen.writeString(interpolate(value.toString(), resourceBundle));
         }
     }
 
-    private String interpolate(TranslatedMessage translatedMessage, ResourceBundle resourceBundle) {
+    private String interpolate(Translated translatedMessage, ResourceBundle resourceBundle) {
 
         String interpolated;
         try {

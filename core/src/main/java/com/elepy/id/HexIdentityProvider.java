@@ -45,14 +45,14 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
         if (currentId.isEmpty() || dao.getById(currentId).isPresent()) {
             String id = generateId(dao);
 
-            Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+            Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(ElepyException::internalServerError);
 
             field.setAccessible(true);
 
             try {
                 field.set(item, id);
             } catch (IllegalAccessException e) {
-                throw new ElepyException("Can't reflectively access ID field: " + field.getName(), 500);
+                throw ElepyException.internalServerError();
             }
         }
 

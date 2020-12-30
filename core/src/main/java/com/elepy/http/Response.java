@@ -2,6 +2,7 @@ package com.elepy.http;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
+import com.elepy.exceptions.Translated;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +26,7 @@ public interface Response {
         try {
             result(IOUtils.toByteArray(stream));
         } catch (IOException e) {
-            throw new ElepyException("Error processing InputStream", 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -53,7 +54,7 @@ public interface Response {
             result(s, message.getStatus());
             type("application/json");
         } catch (JsonProcessingException e) {
-            throw new ElepyException("Error writing json", 500);
+            throw ElepyException.internalServerError();
         }
     }
 

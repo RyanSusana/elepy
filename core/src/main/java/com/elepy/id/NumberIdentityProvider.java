@@ -18,13 +18,13 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public void provideId(T item, Crud<T> dao) {
-        Class<?> idType = ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> new ElepyException("Can't findMany the ID field", 500)).getType();
+        Class<?> idType = ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> ElepyException.internalServerError()).getType();
 
         provideId(item, dao, idType);
     }
 
     public void provideId(T item, Crud<T> dao, Class<?> idType) {
-        Field idProperty = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> new ElepyException("No ID field", 500));
+        Field idProperty = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> ElepyException.internalServerError());
 
         idProperty.setAccessible(true);
         try {
@@ -38,7 +38,7 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
             }
 
         } catch (IllegalAccessException e) {
-            throw new ElepyException("Failed to reflectively access: " + idProperty.getName(), 500);
+            throw ElepyException.internalServerError();
         }
     }
 

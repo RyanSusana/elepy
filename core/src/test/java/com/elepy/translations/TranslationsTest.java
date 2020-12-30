@@ -1,6 +1,6 @@
 package com.elepy.translations;
 
-import com.elepy.exceptions.TranslatedMessage;
+import com.elepy.exceptions.Translated;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +61,7 @@ public class TranslationsTest {
         final var translationModel = new MessageFormatTranslationModel();
 
         objectMapper.setLocale(new Locale(language, "NL"));
-        translationModel.setToTranslate(new TranslatedMessage(input, argument));
+        translationModel.setToTranslate(Translated.of(input, argument));
 
         final var output = objectMapper.writeValueAsString(translationModel);
 

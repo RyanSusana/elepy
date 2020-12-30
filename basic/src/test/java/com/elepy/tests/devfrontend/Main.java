@@ -4,7 +4,7 @@ import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
 import com.elepy.auth.Permissions;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.TranslatedMessage;
+import com.elepy.exceptions.Translated;
 import com.elepy.mongo.MongoConfiguration;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -27,9 +27,6 @@ public class Main {
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
                 .addExtension((http, elepy) -> {
-                    http.get("/hi", ctx -> {
-                        throw new ElepyException(new TranslatedMessage("Ryan  is {0}.", "cool"), 400);
-                    });
                     http.get("/doggo", ctx -> {
                         final var dog = new Dog();
                         dog.setName("Doug, the Pug");

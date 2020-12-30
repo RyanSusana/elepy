@@ -43,6 +43,14 @@ public class ElepyException extends RuntimeException {
         this.metadata = metadata;
     }
 
+    public static ElepyException internalServerError() {
+        return internalServerError(null);
+    }
+
+    public static ElepyException internalServerError(Throwable e) {
+        return of(Translated.of("{elepy.messages.exceptions.internal}"), 500, e);
+    }
+
     public static ElepyException of(Object message, int status, Throwable cause) {
         return new ElepyException(message, status, cause);
     }

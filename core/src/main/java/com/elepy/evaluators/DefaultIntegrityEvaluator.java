@@ -4,6 +4,7 @@ import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Translated;
 import com.elepy.models.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 
@@ -30,7 +31,7 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
         try {
             checkUniqueness(item, crud, isACreate.equals(EvaluationType.CREATE));
         } catch (IllegalAccessException e) {
-            throw new ElepyException("Can't reflectively checkUniqueness()", 500);
+            throw ElepyException.internalServerError();
         }
     }
 

@@ -1,17 +1,17 @@
 package com.elepy.translations;
 
 import com.elepy.annotations.Localized;
-import com.elepy.exceptions.TranslatedMessage;
+import com.elepy.exceptions.Translated;
 
 public class MessageFormatTranslationModel {
     @Localized
-    private TranslatedMessage toTranslate;
+    private Translated toTranslate;
 
-    public TranslatedMessage getToTranslate() {
+    public Translated getToTranslate() {
         return toTranslate;
     }
 
-    public void setToTranslate(TranslatedMessage toTranslate) {
+    public void setToTranslate(Translated toTranslate) {
         this.toTranslate = toTranslate;
     }
 }

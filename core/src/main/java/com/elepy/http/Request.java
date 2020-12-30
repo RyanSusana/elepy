@@ -6,6 +6,7 @@ import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Translated;
 import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
 import com.elepy.models.Schema;
@@ -136,14 +137,14 @@ public interface Request {
                 } else if (jsonNode.fields().hasNext()) {
                     return (T) jsonNode.fields().next().getValue().asText();
                 } else {
-                    throw new ElepyException("Can't extract string from " + body(), 500);
+                    throw ElepyException.internalServerError();
                 }
             }
             return DEFAULT_MAPPER.readValue(body(), t);
         } catch (JsonParseException e) {
             throw new ElepyException("Invalid JSON: " + e.getMessage(), 400, e);
         } catch (JsonProcessingException e) {
-            throw new ElepyException("Error processing JSON: " + e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 

@@ -6,6 +6,7 @@ import com.elepy.annotations.Label;
 import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.exceptions.Translated;
 import com.elepy.http.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.googlecode.gentyref.GenericTypeReflector;
@@ -134,7 +135,7 @@ public class ReflectionUtils {
     }
 
     public static Serializable toObjectIdFromString(Class tClass, String value) {
-        Class<?> idType = ReflectionUtils.getIdField(tClass).orElseThrow(() -> new ElepyException("Can't find the ID field", 500)).getType();
+        Class<?> idType = ReflectionUtils.getIdField(tClass).orElseThrow(() -> ElepyException.internalServerError()).getType();
 
         try {
             return toObject(idType, value);
@@ -151,6 +152,10 @@ public class ReflectionUtils {
         } else {
             return findFieldWithName(cls, "id");
         }
+    }
+
+    public static Field getIdFieldOrThrow(Class cls){
+        return getIdField(cls).orElseThrow((()-> ElepyException.internalServerError()));
     }
 
     public static Class<?> returnTypeOf(AnnotatedElement field) {

@@ -13,7 +13,7 @@ public interface HttpContextHandler {
         } catch (ElepyException e) {
             throw e;
         } catch (Exception e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 }

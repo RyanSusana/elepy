@@ -67,7 +67,7 @@ public class ImageProcessor {
             return outputStream.toByteArray();
 
         } catch (IOException e) {
-            throw new ElepyException("Failed to resize image", 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 

@@ -71,7 +71,7 @@ public class DirectoryFileService implements FileService {
         } catch (NoSuchFileException e) {
             return Optional.empty();
         } catch (IOException e) {
-            throw new ElepyException("Failed at retrieving file: " + name, 500);
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class DirectoryFileService implements FileService {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new ElepyException("Failed to delete file: " + encodedFileName, 500);
+            throw ElepyException.internalServerError(e);
         }
     }
 
