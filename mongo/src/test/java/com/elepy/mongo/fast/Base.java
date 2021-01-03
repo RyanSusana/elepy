@@ -21,7 +21,6 @@ public class Base {
         resource.setTextArea("textarea");
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
-        resource.setRequired("required");
 
         resource.setNonEditable("nonEditable");
 

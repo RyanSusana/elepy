@@ -16,7 +16,7 @@
                 <form @submit.prevent>
                     <div class="login-box-content uk-padding">
 
-                        <p>{{ $t('elepy.ui.initialUser') }}</p>
+                        <p>{{ $t('elepy.ui.forms.initialMessage') }}</p>
 
                         <hr>
                         <div class="uk-margin">

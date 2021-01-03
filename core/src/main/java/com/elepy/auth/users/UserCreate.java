@@ -34,9 +34,9 @@ public class UserCreate implements ActionHandler<User> {
         User user = context.elepy().objectMapper().readValue(body, crud.getType());
 
         context.validate(user);
-        evaluateIntegrity(modelContext, user);
+
         if (crud.count() > 0) {
-            createAdditionalUser(context, crud, user);
+            createAdditionalUser(modelContext, context, crud, user);
         } else {
             createInitialUser(context, crud, user);
         }
@@ -49,13 +49,14 @@ public class UserCreate implements ActionHandler<User> {
         context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user)));
     }
 
-    protected void createAdditionalUser(HttpContext context, Crud<User> crud, User user) throws Exception {
+    protected void createAdditionalUser(ModelContext<User> modelContext, HttpContext context, Crud<User> crud, User user) throws Exception {
         context.loggedInUserOrThrow();
         context.requirePermissions("users.create");
 
         if (policy.userHasRole(user, "owner")) {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
         }
+        evaluateIntegrity(modelContext, user);
 
         createUser(crud, user);
         context.response().result(Message.of("Successfully created user", 200).withProperty("createdRecords", List.of(user)));

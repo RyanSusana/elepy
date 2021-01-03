@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class FormInputScenario<T> extends LoggedInScenario {
 
     public static final By SAVE_BUTTON = By.cssSelector("*[action='save']");
-    public static final By YES_BUTTON = By.xpath("//button[contains(., 'Yes')]");
+    public static final By YES_BUTTON = By.cssSelector(".uk-modal-dialog .uk-button-primary");
     private final Schema<T> schema;
 
     public FormInputScenario(ElepyDriver driver, Schema<T> schema) {
@@ -39,6 +39,7 @@ public class FormInputScenario<T> extends LoggedInScenario {
     @SuppressWarnings("unchecked")
     public FormInputScenario<T> save() {
         driver.findElement(SAVE_BUTTON).click();
+
         driver.waitTillCanSee(YES_BUTTON);
         driver.findElement(YES_BUTTON).click();
         driver.closeNotifications();

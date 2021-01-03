@@ -27,6 +27,9 @@ public class FillInText implements FillIn<String> {
             case HTML:
             case MARKDOWN:
                 return propertyBox().findElement(By.cssSelector("*[contenteditable=\"true\"]"));
+
+            case INPUT:
+                return propertyBox().findElement(By.tagName("input"));
             default:
                 return propertyBox().findElement(By.cssSelector(":not(div)"));
         }
@@ -40,10 +43,11 @@ public class FillInText implements FillIn<String> {
     public void fillIn(String value) {
         doPreSetup();
 
+        final var webElement = targetInputElement();
         if (property.getType().equals(FieldType.INPUT)) {
-            targetInputElement().clear();
+            webElement.clear();
         }
-        targetInputElement().sendKeys(value);
+        webElement.sendKeys(value);
     }
 
     private void doPreSetup() {

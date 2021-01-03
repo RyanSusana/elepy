@@ -8,9 +8,7 @@ import com.elepy.handlers.DisabledHandler;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Hidden
@@ -19,6 +17,8 @@ import java.util.Date;
 @Delete(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Create(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Find(requiredPermissions = Permissions.AUTHENTICATED, findManyHandler = RevisionFind.class, findOneHandler = RevisionFind.class)
+@Entity(name = "elepy_revision")
+@Table(name = "elepy_revisions")
 public class Revision {
     @Id
     private String id;

@@ -151,13 +151,6 @@ public class SchemaUtilsTest {
     }
 
     @Test
-    void testCorrectRequired() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
-
-        assertThat(schemaFromClass.getProperty("required").isRequired()).isTrue();
-    }
-
-    @Test
     void testCorrectUneditable() {
         final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
 

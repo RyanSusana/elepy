@@ -54,7 +54,7 @@ public class User {
     @Label("{elepy.models.users.fields.username.label}")
     @Importance(1)
     @Size(max = 30, min = 4)
-    @Pattern(regexp = "[a-z0-9]", message = "{elepy.models.users.exceptions.username}")
+//    @Pattern(regexp = "[a-z0-9@.]", message = "{elepy.models.users.exceptions.username}")
     private String username;
 
 

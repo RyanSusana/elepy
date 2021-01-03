@@ -547,7 +547,6 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         resource.setTextArea("textarea");
         resource.setTextField("textfield");
         resource.setSearchableField("searchable");
-        resource.setRequiredField("required");
 
         resource.setNonEditable("nonEditable");
 

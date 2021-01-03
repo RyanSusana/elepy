@@ -158,7 +158,7 @@ public abstract class HttpServiceTest {
     void can_handleException_inRoute() throws IOException, InterruptedException {
         service.get("/testException", ctx -> {
             ctx.response().result("Exception not handled");
-            throw ElepyException.translated(400, "Exception handled");
+            throw new ElepyException( "Exception handled");
         });
 
         service.exception(ElepyException.class, (e, context) -> {
@@ -181,7 +181,7 @@ public abstract class HttpServiceTest {
     void can_handleException_inBefore() throws IOException, InterruptedException {
 
         service.before(context -> {
-            throw ElepyException.translated(400, "Exception handled");
+            throw new ElepyException("Exception handled");
         });
 
         service.get("/testException2", ctx -> {
@@ -207,7 +207,7 @@ public abstract class HttpServiceTest {
     void can_handleException_inAfter() throws IOException, InterruptedException {
 
         service.after(context -> {
-            throw ElepyException.translated(400, "Exception handled");
+            throw new ElepyException("Exception handled");
         });
 
         service.get("/testException2", ctx -> {

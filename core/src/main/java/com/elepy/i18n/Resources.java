@@ -11,7 +11,7 @@ public class Resources implements ResourceBundleLocator {
     private ResourceBundleLocator resourceBundleLocator;
 
     public Resources() {
-        resourceBundleLocator = new AggregateResourceBundleLocator(List.of("elepy-messages", "messages", "elepy-ui"));
+        resourceBundleLocator = new AggregateResourceBundleLocator(List.of("elepy-messages", "messages", "elepy-ui", "elepy-exceptions", "elepy-users"));
     }
 
     @Override

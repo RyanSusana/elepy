@@ -25,6 +25,7 @@ public class LoginScenario extends GenericScenario {
 
         driver.findElement(By.id("login-button")).click();
 
+        driver.closeNotifications();
         await().atMost(20, TimeUnit.SECONDS).until(() -> {
             try {
                 return driver.findElement(By.cssSelector(".uk-notification")) != null;
@@ -36,7 +37,7 @@ public class LoginScenario extends GenericScenario {
         if (!driver.getCurrentUrl().contains("login")) {
             return new HomepageScenario(driver);
         } else {
-            throw ElepyException.translated(401, String.format("Failed to login with '%s:%s'", username, password));
+            throw new ElepyException(String.format("Failed to login with '%s:%s'", username, password), 401);
         }
     }
 
