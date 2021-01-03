@@ -11,7 +11,7 @@
                     >
                         <i uk-icon="icon: plus"></i> {{ $t('elepy.ui.actions.add') }}
                     </router-link>
-                    <ActionButton class="uk-button-danger uk-button uk-margin-small-right uk-width-small"
+                    <ActionButton class="uk-button-danger uk-button uk-margin-small-right"
                                   :class="{'disabled': selectedRows.length === 0 }" :action="deleteData"
                                   v-if="canExecute(model.defaultActions.delete)"
                                   action-name="delete"><i uk-icon="icon: trash"></i>
