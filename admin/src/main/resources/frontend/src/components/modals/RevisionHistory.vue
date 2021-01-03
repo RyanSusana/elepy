@@ -4,7 +4,7 @@
 
 
       <h3><a class="close-button" uk-icon="icon: arrow-left; ratio: 1.5;" uk-toggle="target: #revisions"
-             type="button"></a> {{$t(elepy.ui.revisions)}}
+             type="button"></a> {{$t('elepy.ui.revisions')}}
       </h3>
       <div class="">
 
