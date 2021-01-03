@@ -36,7 +36,7 @@ public class LoginScenario extends GenericScenario {
         if (!driver.getCurrentUrl().contains("login")) {
             return new HomepageScenario(driver);
         } else {
-            throw new ElepyException(String.format("Failed to login with '%s:%s'", username, password), 401);
+            throw ElepyException.translated(401, String.format("Failed to login with '%s:%s'", username, password));
         }
     }
 

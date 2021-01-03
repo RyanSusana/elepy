@@ -22,6 +22,6 @@ public final class ErrorMessageBuilder {
     }
 
     public ElepyException build() {
-        return new ElepyException(message, status);
+        return ElepyException.translated(message, status);
     }
 }

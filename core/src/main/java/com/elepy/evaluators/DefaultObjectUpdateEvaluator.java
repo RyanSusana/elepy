@@ -13,7 +13,7 @@ public class DefaultObjectUpdateEvaluator<T> implements ObjectUpdateEvaluator<T>
             field.setAccessible(true);
             Property describer = ModelUtils.describeAccessibleObject(field);
             if (!describer.isEditable() && !field.get(before).equals(field.get(updated))) {
-                throw new ElepyException("Not allowed to edit: " + describer.getLabel());
+                throw ElepyException.translated("{elepy.messages.exceptions.notAllowedToEditField}" ,describer.getLabel());
             }
         }
     }

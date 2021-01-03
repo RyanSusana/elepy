@@ -129,7 +129,6 @@ public class ModelUtils {
         property.setDescription(Optional.ofNullable(description).map(Description::value).orElse(null));
         property.setJavaName(ReflectionUtils.getJavaName(accessibleObject));
         property.setLabel(ReflectionUtils.getLabel(accessibleObject));
-        property.setRequired(Annotations.get(accessibleObject, Required.class) != null);
         property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
         property.setImportance(importance == null ? 0 : importance.value());
         property.setUnique(idProperty || accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));

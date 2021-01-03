@@ -80,6 +80,7 @@ public class HibernateQueryFactory<T> {
                 return cb.notEqual(root.get(fieldName), value);
             case CONTAINS:
                 if (fieldType.equals(FieldType.ARRAY)) {
+                    //TODO
                     throw new ElepyException("The 'contains' filter can't be applied to arrays (yet)");
                 } else {
                     return cb.like(root.get(fieldName), "%" + value + "%");
@@ -112,6 +113,7 @@ public class HibernateQueryFactory<T> {
             case STARTS_WITH:
                 return cb.like(root.get(fieldName), value + "%");
         }
+        //TODO
         throw new ElepyException("Hibernate does not support the filter: " + filter.getFilterType().getName());
     }
 

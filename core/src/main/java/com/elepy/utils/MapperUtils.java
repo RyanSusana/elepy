@@ -22,9 +22,9 @@ public class MapperUtils {
     public static <T> T objectFromMaps(ObjectMapper objectMapper, Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, Class<T> cls) {
 
 
-        final Field idProperty = ReflectionUtils.getIdField(cls).orElseThrow(() -> ElepyException.internalServerError());
+        final Field idProperty = ReflectionUtils.getIdField(cls).orElseThrow(ElepyException::internalServerError);
         fieldsToAdd.forEach((fieldName, fieldObject) -> {
-            final Field field = ReflectionUtils.findFieldWithName(cls, fieldName).orElseThrow(() -> new ElepyException(String.format("Unknown field: %s", fieldName)));
+            final Field field = ReflectionUtils.findFieldWithName(cls, fieldName).orElseThrow(() -> ElepyException.translated("{elepy.messages.exceptions.unknownProperty}", fieldName));
             FieldType fieldType = FieldType.guessFieldType(field);
             if (fieldType.isPrimitive() && !idProperty.getName().equals(field.getName()) && shouldEdit(field)) {
                 objectAsMap.put(fieldName, fieldObject);
@@ -133,7 +133,7 @@ public class MapperUtils {
     }
 
     public static Serializable toBooleanFromString(Field field, String value) {
-        final TrueFalse annotation = com.elepy.utils.Annotations.get(field,TrueFalse.class);
+        final TrueFalse annotation = com.elepy.utils.Annotations.get(field, TrueFalse.class);
 
         if (annotation != null && value.equalsIgnoreCase(annotation.trueValue())) {
             return true;

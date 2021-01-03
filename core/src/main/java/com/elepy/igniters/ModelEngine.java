@@ -42,7 +42,6 @@ public class ModelEngine {
     }
 
 
-
     public void addModel(Class<?> modelType) {
         final Schema<?> schemaFromClass = ModelUtils.createDeepSchema(modelType);
         final ModelPiston<?> piston = new ModelPiston<>(schemaFromClass, elepy);
@@ -90,7 +89,7 @@ public class ModelEngine {
                         .map(ModelPiston::getSchema)
                         .filter(model -> model.getJavaClass().equals(clazz))
                         .findFirst()
-                        .orElseThrow(() -> new ElepyException(String.format("Can not find model: %s", clazz.getName())));
+                        .orElseThrow(() -> ElepyException.notFound(clazz.getName()));
     }
 
     public List<Schema<?>> getSchemas() {

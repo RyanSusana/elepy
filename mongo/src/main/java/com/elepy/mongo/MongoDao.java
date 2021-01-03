@@ -128,9 +128,9 @@ public class MongoDao<T> implements Crud<T> {
         if (idMaybe.isEmpty()) {
 
             try {
-                throw new ElepyException(String.format("No Identifier provided to the object: %s", objectMapper.writeValueAsString(item)), 400);
+                throw new ElepyException(String.format("No Identifier provided to the object: %s", objectMapper.writeValueAsString(item)));
             } catch (JsonProcessingException e) {
-                throw new ElepyException("No Identifier provided to the object", 500, e);
+                throw ElepyException.internalServerError(e);
             }
         }
 

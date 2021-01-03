@@ -63,8 +63,7 @@ public interface Response {
             type("application/json");
             result(((ObjectMapper) attribute("objectMapper")).writeValueAsString(object));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new ElepyException("Failed to parse json.");
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingJson}");
         }
     }
 

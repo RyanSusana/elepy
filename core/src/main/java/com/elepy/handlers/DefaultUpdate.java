@@ -42,10 +42,10 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
         String body = context.body();
 
         if (body == null || body.isEmpty()) {
-            throw new ElepyException("No changes detected.");
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingJson}");
         }
 
-        T before = ctx.crud().getById(context.recordId()).orElseThrow(() -> new ElepyException("No object found with this ID", 404));
+        T before = ctx.crud().getById(context.recordId()).orElseThrow(() -> ElepyException.notFound("Object"));
         final T updated = updatedObjectFromRequest(before, context.request(), objectMapper, modelContext.getSchema());
 
         evaluateAndUpdate(ctx, updated);

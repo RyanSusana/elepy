@@ -1,5 +1,6 @@
 package com.elepy.uploads;
 
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 
 import java.util.ArrayList;
@@ -31,6 +32,6 @@ public class DefaultFileService implements FileService {
     }
 
     private void error() {
-        throw new ElepyException("No FileService specified, please configure one!");
+        throw new ElepyConfigException("No FileService specified, please configure one!");
     }
 }

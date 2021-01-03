@@ -39,9 +39,6 @@ public class Resource {
     @JsonProperty("unique")
     private String unique;
 
-    @Required
-    private String required;
-
     @Size(min = 20)
     private String minLen20;
 
@@ -115,14 +112,6 @@ public class Resource {
 
     public void setUnique(String unique) {
         this.unique = unique;
-    }
-
-    public String getRequired() {
-        return this.required;
-    }
-
-    public void setRequired(String required) {
-        this.required = required;
     }
 
     public String getMinLen20() {

@@ -28,9 +28,11 @@ public class FirestoreQueryFactory {
                 if (property.getType().equals(FieldType.ARRAY)) {
                     return query.whereArrayContains(propertyName, value);
                 } else {
+                    //TODO
                     throw new ElepyException("Firestore 'CONTAINS' only works on arrays");
                 }
             default:
+                //TODO
                 throw new ElepyException("Firestore does not support the filter: " + filter.getFilterType().getName());
         }
 

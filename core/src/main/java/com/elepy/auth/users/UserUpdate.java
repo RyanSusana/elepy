@@ -1,7 +1,6 @@
 package com.elepy.auth.users;
 
 import com.elepy.annotations.Inject;
-import com.elepy.auth.Permissions;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
@@ -11,8 +10,8 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.handlers.HandlerContext;
 import com.elepy.handlers.DefaultUpdate;
+import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +30,7 @@ public class UserUpdate extends DefaultUpdate<User> {
         Crud<User> crud = ctx.crud();
         User loggedInUser = context.loggedInUserOrThrow();
 
-        User userToUpdateBefore = crud.getById(context.recordId()).orElseThrow(() -> new ElepyException("No user found with this ID", 404));
+        User userToUpdateBefore = crud.getById(context.recordId()).orElseThrow(() -> ElepyException.notFound("User"));
 
         User userToUpdateAfter = updatedObjectFromRequest(userToUpdateBefore, context.request(), objectMapper, ctx.model().getSchema());
 
@@ -75,7 +74,7 @@ public class UserUpdate extends DefaultUpdate<User> {
     private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {
         if (loggedInUser.equals(userToUpdate) &&
                 !rolesAreTheSame(loggedInUser, userToUpdate)) {
-            throw new ElepyException("Can't update your own permissions", 403);
+            throw ElepyException.translated(403, "{elepy.models.users.exceptions.cantUpdateSelf}");
         }
 
         boolean updatedPermissionsContainsSuperUser = (policy.userHasRole(userBeforeUpdate, "owner") ||
@@ -83,7 +82,7 @@ public class UserUpdate extends DefaultUpdate<User> {
 
         if (updatedPermissionsContainsSuperUser &&
                 !rolesAreTheSame(userToUpdate, userBeforeUpdate)) {
-            throw new ElepyException(String.format("Can't edit the permissions of users that have the permission '%s'", Permissions.SUPER_USER), 403);
+            throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
         }
     }
 

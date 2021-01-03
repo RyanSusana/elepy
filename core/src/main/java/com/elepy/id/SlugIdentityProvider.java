@@ -1,6 +1,7 @@
 package com.elepy.id;
 
 import com.elepy.dao.Crud;
+import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Translated;
 import com.elepy.utils.ReflectionUtils;
@@ -38,10 +39,10 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     @Override
     public void provideId(T item, Crud<T> dao) {
-        final String path = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyException("There is no available slug property. This must be a String."));
+        final String path = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyConfigException("There is no available slug property. This must be a String."));
         String generatedPath = generatePath(path, 0, dao);
 
-        Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> ElepyException.internalServerError());
+        Field field = ReflectionUtils.getIdField(dao.getType()).orElseThrow(ElepyException::internalServerError);
 
         field.setAccessible(true);
 

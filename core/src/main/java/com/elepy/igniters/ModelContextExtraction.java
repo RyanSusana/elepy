@@ -6,7 +6,6 @@ import com.elepy.annotations.DaoFactory;
 import com.elepy.annotations.Evaluators;
 import com.elepy.annotations.IdProvider;
 import com.elepy.dao.Crud;
-import com.elepy.evaluators.DefaultObjectEvaluator;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
@@ -42,7 +41,6 @@ public class ModelContextExtraction {
         List<ObjectEvaluator<T>> objectEvaluators = new ArrayList<>();
 
         final Evaluators annotation = Annotations.get(schema.getJavaClass(), Evaluators.class);
-        objectEvaluators.add(new DefaultObjectEvaluator<>());
 
         if (annotation != null) {
             for (Class<? extends ObjectEvaluator> objectEvaluatorClass : annotation.value()) {

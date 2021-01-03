@@ -32,7 +32,7 @@ public class CloudStorageFileService implements FileService {
         try {
             storage.create(blobInfo, file.getContent().readAllBytes());
         } catch (Exception e) {
-            throw new ElepyException("Failed uploading to Firebase", 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 

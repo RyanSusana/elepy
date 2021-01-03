@@ -1,6 +1,9 @@
 package com.elepy.revisions;
 
-import com.elepy.dao.*;
+import com.elepy.dao.Filter;
+import com.elepy.dao.Queries;
+import com.elepy.dao.Query;
+import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
@@ -23,7 +26,7 @@ public class RevisionFind implements ActionHandler<Revision> {
 
         final Schema<?> schema = Optional.ofNullable(context.queryParams("schema"))
                 .flatMap(schemaPath -> context.request().schemas().stream().filter(s -> s.getPath().equalsIgnoreCase(schemaPath)).findFirst())
-                .orElseThrow(() -> new ElepyException(String.format("Schema not found"), 404));
+                .orElseThrow(() -> ElepyException.notFound("Schema"));
 
         context.requirePermissions(schema.getDefaultActions().get("find").getRequiredPermissions());
         final var query = createQuery(schema,

@@ -50,8 +50,8 @@ public class UserAuthenticationExtension implements ElepyExtension {
 
         http.get("/elepy/logged-in-user", ctx -> {
 
-            final var grant = ctx.request().grant().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
-            final var user = ctx.request().loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
+            final var grant = ctx.request().grant().orElseThrow(() -> ElepyException.notAuthorized());
+            final var user = ctx.request().loggedInUser().orElseThrow(() -> ElepyException.notAuthorized());
 
             final var grantTree = objectMapper.valueToTree(grant);
             final var userTree = objectMapper.valueToTree(user);
@@ -101,7 +101,7 @@ public class UserAuthenticationExtension implements ElepyExtension {
                     return grant1;
                 }).map(grant1 -> tokenGenerator
                         .createToken(grant1))
-                .orElseThrow(() -> new ElepyException("Credentials invalid", 401));
+                .orElseThrow(() -> ElepyException.notAuthorized());
     }
 
     private Optional<Grant> authenticate(Request request, List<AuthenticationMethod> authenticationMethods) {

@@ -113,8 +113,7 @@ public class HibernateDao<T> implements Crud<T> {
             transaction.commit();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ElepyException(e.getMessage());
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -141,8 +140,7 @@ public class HibernateDao<T> implements Crud<T> {
             transaction.commit();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ElepyException(e.getMessage());
+            throw ElepyException.internalServerError(e);
         }
     }
 

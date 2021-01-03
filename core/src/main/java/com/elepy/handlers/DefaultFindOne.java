@@ -23,7 +23,7 @@ public class DefaultFindOne<T> implements ActionHandler<T> {
             return id.get();
 
         } else {
-            throw new ElepyException(String.format("No %s found", modelContext.getName()), 404);
+            throw ElepyException.notFound(modelContext.getName());
         }
     }
 

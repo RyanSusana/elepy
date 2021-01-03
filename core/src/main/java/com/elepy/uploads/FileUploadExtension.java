@@ -52,7 +52,7 @@ public class FileUploadExtension implements ElepyExtension {
     private void handleFileGet(HttpContext httpContext) throws IOException, ExecutionException {
         Request request = httpContext.request();
         Response response = httpContext.response();
-        final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> new ElepyException("File not found", 404));
+        final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> ElepyException.notFound("File"));
 
         response.type(file.getContentType());
 

@@ -18,23 +18,23 @@ public class FileUploadEvaluator {
     }
 
     public static FileUploadEvaluator fromRequest(Request request) {
+        final String maximumFileSize = request.queryParams("maximumFileSize");
         try {
-            final String maximumFileSize = request.queryParams("maximumFileSize");
             return new FileUploadEvaluator(maximumFileSize == null ? null : Long.parseLong(maximumFileSize), request.queryParams("allowedMimeType"));
         } catch (NumberFormatException e) {
-            throw new ElepyException("maximumFileSize must be a number");
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingNumber}", maximumFileSize);
         }
     }
 
     public FileReference evaluate(FileUpload file) {
         if (!file.contentTypeMatches(allowedMimeType)) {
-            throw new ElepyException(String.format("Content type must match %s, was %s", allowedMimeType, file.getContentType()), 400);
+            throw ElepyException.translated("{elepy.messages.exceptions.invalidMimeType}", allowedMimeType, file.getContentType());
         }
 
         if (file.getSize() > maximumFileSize) {
-            throw new ElepyException(String.format("File size can't exceed %s, was %s",
+            throw ElepyException.translated("{elepy.messages.exceptions.fileTooLarge}",
                     translateToRepresentableString(maximumFileSize),
-                    translateToRepresentableString(file.getSize())));
+                    translateToRepresentableString(file.getSize()));
         }
         return FileReference.newFileReference(file);
     }

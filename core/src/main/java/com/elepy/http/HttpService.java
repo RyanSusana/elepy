@@ -26,7 +26,7 @@ public interface HttpService {
                     final var resourceAsStream = getClass().getClassLoader().getResourceAsStream(resourceLocation);
 
                     if (resourceAsStream == null) {
-                        throw new ElepyException(String.format("Resource '%s' not found", resourceLocation));
+                        throw ElepyException.notFound();
                     }
                     context.response().result(resourceAsStream);
                 }).build();

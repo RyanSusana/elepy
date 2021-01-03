@@ -73,9 +73,9 @@ public class FirestoreCrud<T> implements Crud<T> {
             return query.get().get().size();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new ElepyException("Thread interrupted", 500, e);
+            throw ElepyException.internalServerError(e);
         } catch (ExecutionException e) {
-            throw new ElepyException("Failed getting count", 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -92,7 +92,7 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
 
         return Optional.empty();
@@ -105,7 +105,7 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
 
     }
@@ -117,7 +117,7 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -134,7 +134,7 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
         return List.of();
     }
@@ -146,7 +146,7 @@ public class FirestoreCrud<T> implements Crud<T> {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            throw new ElepyException(e.getMessage(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -174,7 +174,7 @@ public class FirestoreCrud<T> implements Crud<T> {
     }
 
     private String id(T t) {
-        return ReflectionUtils.getId(t).orElseThrow(() -> new ElepyException("Can't find ID", 404)).toString();
+        return ReflectionUtils.getId(t).orElseThrow(() -> ElepyException.notFound("ID of record")).toString();
     }
 
     private DocumentReference document(String id) {

@@ -57,7 +57,7 @@ public class DateUtils {
                 return dateFormat.parse(string);
             }
         } catch (NumberFormatException | ParseException e) {
-            throw new ElepyException(String.format("Can't parse the date '%s'.", string));
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingDate}", string);
         }
     }
 

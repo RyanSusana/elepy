@@ -8,6 +8,6 @@ public final class DisabledHandler<T> implements ActionHandler<T> {
     public void handle(HandlerContext<T> ctx) {
  final var context = ctx.http();
  final var modelContext = ctx.model();
-        throw new ElepyException("Not found", 404);
+        throw ElepyException.notFound();
     }
 }

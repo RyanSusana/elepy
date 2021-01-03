@@ -47,6 +47,18 @@ public class ElepyException extends RuntimeException {
         return internalServerError(null);
     }
 
+    public static ElepyException notAuthorized() {
+        return translated(401, "{elepy.messages.exceptions.notAuthorized}");
+    }
+
+    public static ElepyException notFound() {
+        return notFound(null);
+    }
+
+    public static ElepyException notFound(String s) {
+        return translated(404, "{elepy.messages.exceptions.notFound}", s);
+    }
+
     public static ElepyException internalServerError(Throwable e) {
         return of(Translated.of("{elepy.messages.exceptions.internal}"), 500, e);
     }
@@ -58,6 +70,23 @@ public class ElepyException extends RuntimeException {
     public static ElepyException of(Object message, int status) {
         return new ElepyException(message, status);
     }
+
+    public static ElepyException translated(int status, String message, Object... input) {
+        return of(Translated.of(message, input), status);
+    }
+
+    public static ElepyException translated(int status, String message, Map<String, Object> input) {
+        return of(Translated.of(message, input), status);
+    }
+
+    public static ElepyException translated(String message, Object... input) {
+        return of(Translated.of(message, input), 400);
+    }
+
+    public static ElepyException translated(String message, Map<String, Object> input) {
+        return of(Translated.of(message, input), 400);
+    }
+
 
     public static ElepyException of(Object message) {
         return new ElepyException(message);

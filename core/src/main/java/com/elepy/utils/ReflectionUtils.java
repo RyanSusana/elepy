@@ -114,11 +114,11 @@ public class ReflectionUtils {
     public static Optional<Serializable> getId(Object object) {
 
         try {
-            Field field = getIdField(object.getClass()).orElseThrow(() -> new ElepyException("No ID field found"));
+            Field field = getIdField(object.getClass()).orElseThrow(ElepyException::internalServerError);
             field.setAccessible(true);
             return Optional.ofNullable((Serializable) field.get(object));
         } catch (IllegalAccessException e) {
-            throw new ElepyException("Illegally accessing id field");
+            throw ElepyException.internalServerError(e);
         }
 
     }
@@ -140,7 +140,7 @@ public class ReflectionUtils {
         try {
             return toObject(idType, value);
         } catch (NumberFormatException e) {
-            throw new ElepyException(String.format("'%s' is not a number", value));
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingNumber}", value);
         }
     }
 
@@ -155,7 +155,7 @@ public class ReflectionUtils {
     }
 
     public static Field getIdFieldOrThrow(Class cls){
-        return getIdField(cls).orElseThrow((()-> ElepyException.internalServerError()));
+        return getIdField(cls).orElseThrow((ElepyException::internalServerError));
     }
 
     public static Class<?> returnTypeOf(AnnotatedElement field) {

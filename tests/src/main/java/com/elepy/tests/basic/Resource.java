@@ -43,9 +43,6 @@ public class Resource {
     @JsonProperty("uniqueField")
     private String uniqueField;
 
-    @Required
-    private String requiredField;
-
     @Size(min = 20)
     private String minLen20;
 
@@ -109,14 +106,6 @@ public class Resource {
 
     public void setUniqueField(String uniqueField) {
         this.uniqueField = uniqueField;
-    }
-
-    public String getRequiredField() {
-        return this.requiredField;
-    }
-
-    public void setRequiredField(String requiredField) {
-        this.requiredField = requiredField;
     }
 
     public String getMinLen20() {

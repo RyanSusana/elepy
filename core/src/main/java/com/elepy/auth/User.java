@@ -4,8 +4,11 @@ import com.elepy.annotations.*;
 import com.elepy.auth.users.*;
 import com.elepy.dao.SortOption;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +21,7 @@ import java.util.Objects;
 @PredefinedRole(id = "user-viewer", name = "User Viewer", permissions = {"users.find", "roles.find"})
 @Model(
         path = "/users",
-        name = "{elepy.messages.users.users}",
+        name = "{elepy.models.users.fields.users.label}",
         defaultSortField = "username",
         defaultSortDirection = SortOption.ASCENDING
 )
@@ -36,13 +39,11 @@ import java.util.Objects;
 // Required permission is handled in UserUpdate.class
 @Update(handler = UserUpdate.class)
 @Delete(handler = UserDelete.class, requiredPermissions = "users.delete")
-@Evaluators(UserEvaluator.class)
-
 public class User {
 
     @Identifier
     @Id
-    @Label("{elepy.messages.users.id}")
+    @Label("{elepy.models.users.fields.id.label}")
     @JsonProperty("id")
     @Importance(1)
     private String id;
@@ -50,22 +51,25 @@ public class User {
     @Unique
     @Searchable
     @JsonProperty("username")
-    @Label("{elepy.messages.users.username}")
+    @Label("{elepy.models.users.fields.username.label}")
     @Importance(1)
-    @Size(max = 30)
+    @Size(max = 30, min = 4)
+    @Pattern(regexp = "[a-z0-9]", message = "{elepy.models.users.exceptions.username}")
     private String username;
 
 
-    @Label("{elepy.messages.users.password}")
+    @Label("{elepy.models.users.fields.password.label}")
     @JsonProperty("password")
     @Importance(-1)
     @Input(type = "password")
+    @NotBlank(groups = PasswordCheck.class)
+    @Length(min = 4, groups = PasswordCheck.class)
     private String password;
 
     @ElementCollection
     @CollectionTable(name = "elepy_user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "roles")
-    @Label("{elepy.messages.users.roles}")
+    @Label("{elepy.models.users.fields.roles.label}")
     @JsonProperty("roles")
     private List<@Reference(to = Role.class) String> roles = new ArrayList<>();
 

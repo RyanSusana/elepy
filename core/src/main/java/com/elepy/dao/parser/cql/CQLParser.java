@@ -66,7 +66,7 @@ public class CQLParser {
             case NOT_EQUALS:
                 break;
             default:
-                throw new ElepyException(String.format("%s not supported", operator.getToken()));
+                throw ElepyException.translated("{elepy.messages.exceptions.notSupported}", operator.getToken());
         }
 
         return null;

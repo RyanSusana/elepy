@@ -26,7 +26,7 @@ public abstract class SimpleUpdate<T> extends DefaultUpdate<T> {
 
         final var crud = ctx.crud();
 
-        final T before = crud.getById(id).orElseThrow(() -> new ElepyException("This item doesn't exist and therefor can't be updated"));
+        final T before = crud.getById(id).orElseThrow(ElepyException::notFound);
 
         T updatedObjectFromRequest = updatedObjectFromRequest(before,
                 context.request(),

@@ -6,7 +6,6 @@ import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
@@ -33,48 +32,36 @@ public class UserCreate implements ActionHandler<User> {
 
         final var crud = ctx.crud();
         User user = context.elepy().objectMapper().readValue(body, crud.getType());
-        if (user.getUsername().trim().isEmpty()) {
-            throw new ElepyException("Usernames can't be empty!", 400);
-        }
+
+        context.validate(user);
+        evaluateIntegrity(modelContext, user);
         if (crud.count() > 0) {
-            createAdditionalUser(context, crud, modelContext, user);
+            createAdditionalUser(context, crud, user);
         } else {
-            createInitialUser(context, crud, modelContext, user);
+            createInitialUser(context, crud, user);
         }
     }
 
-    protected void createInitialUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
-        evaluateUser(modelContext, user);
-
+    protected void createInitialUser(HttpContext context, Crud<User> crud, User user) {
         user.getRoles().add("owner");
-
-        if (user.getPassword().length() < 5) {
-            throw new ElepyException("Passwords must be more than 4 characters long!", 400);
-        }
 
         createUser(crud, user);
         context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user)));
     }
 
-    protected void createAdditionalUser(HttpContext context, Crud<User> crud, ModelContext<User> modelContext, User user) throws Exception {
+    protected void createAdditionalUser(HttpContext context, Crud<User> crud, User user) throws Exception {
         context.loggedInUserOrThrow();
         context.requirePermissions("users.create");
 
         if (policy.userHasRole(user, "owner")) {
-            throw new ElepyException("Can't create users with the owner role", 403);
+            throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
         }
-        context.validate(user);
-        evaluateUser(modelContext, user);
-
 
         createUser(crud, user);
         context.response().result(Message.of("Successfully created user", 200).withProperty("createdRecords", List.of(user)));
     }
 
-    private void evaluateUser(ModelContext<User> modelContext, User user) throws Exception {
-        for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(user);
-        }
+    private void evaluateIntegrity(ModelContext<User> modelContext, User user) {
         new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
     }
 
@@ -83,7 +70,6 @@ public class UserCreate implements ActionHandler<User> {
 
         //This line didn't exist before for some reason it got deleted
         new HexIdentityProvider<User>().provideId(user, crud);
-
 
         crud.create(user);
     }

@@ -123,7 +123,7 @@ public class QueryListener extends EleQueryBaseListener {
     private FilterType getFilterType(ParserRuleContext filterType) {
         final var filterTypeToken = getFilterTypeToken(filterType);
         if (filterTypeToken == null) {
-            throw new ElepyException(String.format("%s not supported", filterType.getText()), 400);
+            throw ElepyException.translated("{elepy.messages.exceptions.notSupported}", filterType.getText());
         }
         switch (filterTypeToken.getSymbol().getType()) {
             case EQUALS:
@@ -143,7 +143,7 @@ public class QueryListener extends EleQueryBaseListener {
             case LESSER_THAN_OR_EQUALS:
                 return FilterType.LESSER_THAN_OR_EQUALS;
             default:
-                throw new ElepyException(String.format("%s not supported", filterTypeToken.getSymbol().getText()), 400);
+                throw ElepyException.translated("{elepy.messages.exceptions.notSupported}", filterTypeToken.getSymbol().getText());
         }
 
 

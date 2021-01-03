@@ -51,7 +51,7 @@ public class PersonEvaluator implements ObjectEvaluator<Person> {
         boolean isValid = emailValidator.isValid(person.getEmail());
 
         if (!isValid) {
-            throw new ElepyException("Email is not valid", 400);
+            throw ElepyException.translated(400, "Email is not valid");
         }
     }
 }

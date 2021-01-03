@@ -56,17 +56,17 @@ public class AtomicIntegrityEvaluator<T> {
 
 
             if (foundItems.size() > 1) {
-                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ReflectionUtils.getLabel(field), String.valueOf(prop)));
+                throw ElepyException.translated("{elepy.messages.exceptions.notUniqueField}", ReflectionUtils.getLabel(field), String.valueOf(prop));
             }
 
             T foundRecord = foundItems.get(0);
             final Optional<Serializable> foundId = ReflectionUtils.getId(foundRecord);
             if (id.isPresent() || foundId.isPresent()) {
                 if (!id.equals(foundId)) {
-                    throw new ElepyException(String.format("An item with the %s: '%s' already exists in the system!", ReflectionUtils.getLabel(field), String.valueOf(prop)));
+                    throw ElepyException.translated("{elepy.messages.exceptions.notUniqueField}", ReflectionUtils.getLabel(field), String.valueOf(prop));
                 }
             } else {
-                throw new ElepyException(String.format("There are duplicates with the %s: '%s' in the given array!", ReflectionUtils.getLabel(field), String.valueOf(prop)));
+                throw ElepyException.translated("{elepy.messages.exceptions.notUniqueField}", ReflectionUtils.getLabel(field), String.valueOf(prop));
 
             }
         }

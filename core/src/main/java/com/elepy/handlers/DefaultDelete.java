@@ -14,7 +14,7 @@ public class DefaultDelete<T> implements ActionHandler<T> {
 
     protected void delete(Set<Serializable> paramIds, Crud<T> dao, HttpContext context, ModelContext<T> modelContext) {
         if (paramIds.size() == 1) {
-            dao.getById(paramIds.iterator().next()).orElseThrow(() -> new ElepyException(String.format("No %s found", modelContext.getName()), 404));
+            dao.getById(paramIds.iterator().next()).orElseThrow(() -> ElepyException.notFound(modelContext.getName()));
 
             dao.deleteById(paramIds.iterator().next());
 

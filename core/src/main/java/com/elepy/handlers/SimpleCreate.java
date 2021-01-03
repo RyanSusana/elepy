@@ -38,7 +38,7 @@ public abstract class SimpleCreate<T> extends DefaultCreate<T> {
             context.response().result(Message.of("Successfully created item", 200).withProperty("createdRecords", List.of(item)));
 
         } catch (JsonMappingException e) {
-            throw new ElepyException("Error mapping SimpleCreate: " + e.getMessage());
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingJson}");
         }
     }
 

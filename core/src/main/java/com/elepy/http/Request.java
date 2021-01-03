@@ -6,7 +6,6 @@ import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.Translated;
 import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
 import com.elepy.models.Schema;
@@ -142,7 +141,7 @@ public interface Request {
             }
             return DEFAULT_MAPPER.readValue(body(), t);
         } catch (JsonParseException e) {
-            throw new ElepyException("Invalid JSON: " + e.getMessage(), 400, e);
+            throw ElepyException.translated("{elepy.messages.exceptions.errorParsingJson}");
         } catch (JsonProcessingException e) {
             throw ElepyException.internalServerError(e);
         }
@@ -174,8 +173,8 @@ public interface Request {
         return elepy().getDependency(ValidatorFactory.class).usingContext().messageInterpolator(new ElepyInterpolator(locale(), elepy().getDependency(Resources.class))).getValidator();
     }
 
-    default void validate(Object o) {
-        final var violations = validator().validate(o);
+    default void validate(Object o, Class<?>... groups) {
+        final var violations = validator().validate(o, groups);
         if (!violations.isEmpty()) {
             var formattedViolations = violations.stream()
                     .map(FormattedViolation::new).collect(Collectors.toList());
@@ -214,7 +213,7 @@ public interface Request {
     }
 
     default User loggedInUserOrThrow() {
-        return loggedInUser().orElseThrow(() -> new ElepyException("Must be logged in.", 401));
+        return loggedInUser().orElseThrow(() -> ElepyException.notAuthorized());
     }
 
     default Permissions permissions() {
@@ -245,7 +244,7 @@ public interface Request {
 
     default void requirePermissions(Collection<String> requiredPermissions) {
         if (!hasPermissions(requiredPermissions)) {
-            throw new ElepyException("User is not authorized.", 401);
+            throw ElepyException.notAuthorized();
         }
     }
 
@@ -346,7 +345,8 @@ public interface Request {
                     schema.ifPresent(schema1 -> {
                         final var property = schema1.getProperty(propertyName);
                         if (!filterType1.canBeUsedBy(property)) {
-                            throw new ElepyException(String.format("'%s' can't be applied to the field '%s'", filterType1.getPrettyName(), property.getLabel()), 400);
+                            throw
+                                    ElepyException.translated("{elepy.messages.exceptions.badFilter}", filterType1.getPrettyName(), property.getLabel());
                         }
                     });
 

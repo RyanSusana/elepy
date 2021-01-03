@@ -32,24 +32,9 @@ public class Policy {
         predefinedRoles.add(role);
     }
 
-    public void createCustomRole(Role customRole) {
-        if (existsAsPredefinedRole(customRole.getId()) || existsAsPredefinedRole(customRole.getName())) {
-            throw new ElepyException("This role already exists as a predefined role");
-        }
-
-        new DefaultIntegrityEvaluator<>(customRoles).evaluate(customRole, EvaluationType.CREATE);
-
-        customRoles.create(customRole);
-    }
-
-    public void assureNotPredefinedRole(Role beforeVersion) {
-        assureNotPredefinedRole(beforeVersion.getId());
-        assureNotPredefinedRole(beforeVersion.getName());
-    }
-
     public void assureNotPredefinedRole(String id) {
         if (existsAsPredefinedRole(id)) {
-            throw new ElepyException("This role is a predefined role and can not be deleted or updated");
+            throw ElepyException.translated("{elepy.models.roles.exceptions.predefinedRole}");
         }
     }
 

@@ -63,7 +63,7 @@ public class MongoFileService implements FileService {
 
     @Override
     public void deleteFile(String path) {
-        var file = findByName(path).orElseThrow(() -> new ElepyException(String.format("No file '%s' found", path), 404)).getObjectId();
+        var file = findByName(path).orElseThrow(() -> ElepyException.notFound(path)).getObjectId();
 
         bucket.delete(file);
     }

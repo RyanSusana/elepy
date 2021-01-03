@@ -55,9 +55,9 @@ public class DirectoryFileService implements FileService {
             Files.createDirectories(path.getParent() == null ? path : path.getParent());
             Files.copy(file.getContent(), path);
         } catch (FileAlreadyExistsException e) {
-            throw new ElepyException("FileReference Already Exists: " + file.getName(), 409);
+            throw ElepyException.translated(409, "FileReference Already Exists: " + file.getName());
         } catch (IOException e) {
-            throw new ElepyException("Failed to upload file: " + file.getName(), 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 
@@ -87,7 +87,7 @@ public class DirectoryFileService implements FileService {
                     .collect(Collectors.toList());
 
         } catch (IOException e) {
-            throw new ElepyException("Failed to list all files on Server", 500, e);
+            throw ElepyException.internalServerError(e);
         }
     }
 
