@@ -31,8 +31,8 @@ public class Stacks {
 
         dataAccessMap.put("mongo", MONGO);
         dataAccessMap.put("hibernate", HIBERNATE);
-
-        routingMap.put("javalin", JAVALIN);
+//TODO fix  javalin attributes bug
+//        routingMap.put("javalin", JAVALIN);
         routingMap.put("sparkjava", SPARKJAVA);
 
         stackMap.putAll(routingMap);
