@@ -13,10 +13,20 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+          server-id: maven # Value of the distributionManagement/repository/id field of the pom.xml
+          server-username: MAVEN_USERNAME # env variable for username in deploy
+          server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+
       - name: Setup GPG
         run: |
           echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import --no-tty --batch
           echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust --no-tty --batch
       - name: Deploy Script
-        run: bash deploy.sh $TRAVIS_TAG
+        run: mvn deploy -Psign-artifacts -Ptravis -DskipTests=true -B -U -e
+        env:
+          MAVEN_USERNAME: maven_username123
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
