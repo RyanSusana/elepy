@@ -19,9 +19,12 @@ export default new Vuex.Store({
         hasUsers: null,
         settings: null,
         selectedRows: [],
-        loadingItems: []
+        loadingItems: [],
     },
     mutations: {
+        SET_SETTINGS(state, settings) {
+            state.settings = settings;
+        },
         SET_LOCALE(state, lang) {
             state.locale = lang || "en-US";
         },
@@ -63,12 +66,12 @@ export default new Vuex.Store({
     },
     actions: {
         async getModels({commit}) {
-            return axios.get("/elepy/config")
+            return axios.get("/elepy/schemas")
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
         },
         async changeLocale({dispatch, commit}, newLocale) {
 
-           const lang =  await loadLanguage(newLocale)
+            const lang = await loadLanguage(newLocale)
             commit('SET_LOCALE', lang)
             return dispatch('getModels');
 
@@ -76,6 +79,10 @@ export default new Vuex.Store({
         async init({dispatch, commit, state}) {
             console.debug('initializing store')
             await dispatch('changeLocale', state.locale)
+
+            axios.get("/elepy/settings").then(({data}) => {
+                commit('SET_SETTINGS', data)
+            })
             await axios.get("/elepy/has-users")
                 .then(() =>
                     commit('SET_HAS_USERS', true))

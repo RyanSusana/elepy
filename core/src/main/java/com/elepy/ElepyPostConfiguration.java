@@ -171,12 +171,6 @@ public class ElepyPostConfiguration {
         return elepy.modelSchemas();
     }
 
-    /**
-     * @param handler What to do when elepy stops gracefully
-     */
-    public void onStop(EventHandler handler) {
-        elepy.onStop(handler);
-    }
 
     /**
      * @param tClass      the class of the model

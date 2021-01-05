@@ -31,7 +31,7 @@ public class ModelEngine {
         this.elepy = elepy;
         this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
-        setupDescriptors(elepy.getConfigPath(), elepy.http());
+        setupDescriptors( elepy.http());
     }
 
     public void start() {
@@ -62,10 +62,10 @@ public class ModelEngine {
                 .changeModel(modelChange));
     }
 
-    public void setupDescriptors(String configPath, HttpService http) {
+    public void setupDescriptors( HttpService http) {
 
         final Route build = anElepyRoute()
-                .path(configPath)
+                .path("/elepy/schemas")
                 .addPermissions(Permissions.AUTHENTICATED)
                 .method(HttpMethod.GET)
 

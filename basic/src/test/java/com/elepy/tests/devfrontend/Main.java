@@ -13,6 +13,7 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,6 +27,7 @@ public class Main {
                 .addConfiguration(MongoConfiguration.of(client, "example", "bucket"))
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
+                .addLocale(new Locale("nl"), "Nederlands")
                 .addExtension((http, elepy) -> {
                     http.get("/doggo", ctx -> {
                         final var dog = new Dog();

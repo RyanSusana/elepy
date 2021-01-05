@@ -37,7 +37,6 @@ public class WithSetupConfiguration implements Configuration {
     @Override
     public void postConfig(ElepyPostConfiguration elepy) {
         postConf.postConfig(elepy);
-        elepy.onStop(teardown);
     }
 
 }

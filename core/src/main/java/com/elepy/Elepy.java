@@ -63,7 +63,6 @@ public class Elepy implements ElepyContext {
     private final List<String> packages = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
     private HttpServiceConfiguration http = new HttpServiceConfiguration(this);
-    private String configPath = "/elepy/config";
     private ObjectEvaluator<Object> baseObjectEvaluator;
     private List<Route> routes = new ArrayList<>();
     private boolean initialized = false;
@@ -75,6 +74,7 @@ public class Elepy implements ElepyContext {
     private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
+    private final ElepyConfig config = new ElepyConfig();
 
 
     public Elepy() {
@@ -407,19 +407,6 @@ public class Elepy implements ElepyContext {
     }
 
     /**
-     * Changes the URI for the configuration of the Elepy instance.
-     * This is where Elepy describes it's models
-     *
-     * @param configPath the URI for the configuration description
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy withConfigPath(String configPath) {
-        checkConfig();
-        this.configPath = configPath;
-        return this;
-    }
-
-    /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
      * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
      *
@@ -557,6 +544,12 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
+    public Elepy addLocale(Locale locale, String name) {
+        checkConfig();
+        config.addLocale(locale, name);
+        return this;
+    }
+
     public void addResources(String... bundleNames) {
         getDependency(Resources.class).addResourceBundles(bundleNames);
     }
@@ -622,6 +615,7 @@ public class Elepy implements ElepyContext {
         addDefaultModel(Revision.class);
         addExtension(new FileUploadExtension());
         addExtension(new TranslationsExtension());
+        addExtension(config);
         registerDependency(userAuthenticationExtension);
 
         setupLoggingAndExceptions();
@@ -743,19 +737,6 @@ public class Elepy implements ElepyContext {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, please do all configuration before calling start()");
         }
-    }
-
-
-    //TODO REMOVE THIS in 3.0
-
-    @Deprecated(forRemoval = true)
-    public void onStop(EventHandler handler) {
-        stopEventHandlers.add(handler);
-    }
-
-    @Deprecated(forRemoval = true)
-    public String getConfigPath() {
-        return configPath;
     }
 
     public org.apache.commons.configuration2.Configuration getPropertyConfig() {
