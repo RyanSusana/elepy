@@ -14,7 +14,7 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Publish Package
-        run: mvn deploy -Psign-artifacts -Ptravis -B -U -e
+        run: mvn deploy -Psign-artifacts -DskipTests=true -Ptravis -B -U -e
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
