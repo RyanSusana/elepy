@@ -11,7 +11,6 @@ jobs:
         with:
           java-version: 11
           server-id: ossrh
-          gpg-private-key: ${{ secrets.GPG_SECRET_KEYS }}
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Publish Package
