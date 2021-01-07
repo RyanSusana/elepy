@@ -1,12 +1,10 @@
 <template>
   <div id="sidebar" class="">
-    <router-link to="/" class="sidebar-header uk-flex uk-flex-center">
-      <img class="banner-image" :src="$store.getters.logo" alt="logo">
-    </router-link>
     <div class="sidebar-content">
-
-      <LanguageSelect class="uk-margin-bottom"/>
-      <div class="sidebar-nav uk-light">
+      <router-link to="/" class="sidebar-header uk-flex uk-flex-center">
+        <img class="banner-image" :src="$store.getters.logo" alt="logo">
+      </router-link>
+      <div class="sidebar-main uk-light">
         <h4 class="sidebar-heading">{{ $t('elepy.ui.resources') }}</h4>
         <ul class="sidebar-list">
           <li v-for="model in this.allModels" v-if="canExecute(model.defaultActions.find)" :key="model.name">
@@ -23,6 +21,9 @@
           <li><a @click="logOut"><span uk-icon="sign-out"></span> Log out</a></li>
 
         </ul>
+      </div>
+      <div class="sidebar-footer">
+        <LanguageSelect/>
       </div>
 
     </div>
@@ -58,22 +59,27 @@ export default {
   background-color: var(--sidebar-bg);
   font-size: 0.9em;
   top: 0;
-  overflow-y: auto;
 
   .sidebar-content {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+    display: grid;
 
-  .sidebar-header {
-    max-height: 100px;
+    height: 100%;
+    box-sizing: border-box;
+    grid-template-rows: 128px 1fr min-content;
 
-    .banner-image {
+    .sidebar-footer {
+      padding: 12px;
+    }
+
+    .sidebar-main {
+      padding: 20px;
+    }
+
+    .sidebar-header .banner-image {
       object-fit: cover;
     }
   }
+
 
   .sidebar-heading {
     color: var(--text-muted-color-dark);

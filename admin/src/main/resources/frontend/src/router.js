@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import vue from "./main"
 
 import store from './store'
 
@@ -118,6 +119,7 @@ const router = new VueRouter({
     mode: 'history',
     base: '/elepy/admin',
     routes,
+
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
@@ -126,5 +128,25 @@ const router = new VueRouter({
         }
     },
 });
+
+router.beforeEach((to, from, next) => {
+    if (store.state.navigationWarning) {
+        UIkit.modal.confirm(store.state.navigationWarning, {
+            labels: {
+                ok: vue.$t('elepy.ui.yes'),
+                cancel: vue.$t('elepy.ui.no'),
+            }
+        }).then(
+            () => {
+                store.commit('CLEAR_NAVIGATION_WARNING')
+                next();
+            },
+            () => {
+            }
+        );
+    } else {
+        next();
+    }
+})
 
 export default router

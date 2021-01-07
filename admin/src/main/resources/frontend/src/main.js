@@ -91,3 +91,5 @@ Vibrant.from(store.getters.logo).getPalette()
         document.documentElement.style
             .setProperty('--primary-disabled-color', primaryDisabled);
     });
+
+export default vue

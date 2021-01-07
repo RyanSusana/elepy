@@ -34,7 +34,7 @@ $navbar-nav-item-active-color: white;
 $global-background: lighten($off-white, 40%);
 
 $card-default-hover-background: white;
-
+$button-padding-horizontal: 20px;
 $raleway: "Raleway",
 sans-serif;
 
@@ -102,6 +102,7 @@ serif;
 @mixin hook-pagination-item-active() {
   font-weight: bold;
 }
+
 
 @mixin hook-button() {
   text-transform: none;
@@ -177,7 +178,7 @@ serif;
 
 
 .uk-button {
-  border-radius: $button-line-height*2;
+  border-radius: 3px;
   transition: all .3s;
 }
 

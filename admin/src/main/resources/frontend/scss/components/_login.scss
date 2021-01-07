@@ -10,10 +10,10 @@
 
 #login-button {
   margin-top: 2em;
-  width: 50%;
-  padding: 10px;
+  min-width: 96px;
+  padding: 4px 20px;
   text-transform: none;
-  font-size: 1.08em;
+  font-size: 16px;
 }
 
 
@@ -23,15 +23,17 @@
 
   background: #FAFAFA;
 
-  box-shadow: 0 2px 1px #aaa;
+  box-shadow: 0 10px 50px #CCC;
+
+  img {
+    max-height: 192px;
+    width: 100%;
+    object-fit: cover;
+  }
 
   hr {
     border-top: 1px solid #aaa;
   }
-}
-
-.login-box-content {
-
 }
 
 .login-logo {
@@ -39,4 +41,12 @@
   .logo-image {
     padding: 2.5em 4em;
   }
+}
+
+.uk-form-label {
+  color: #777;
+}
+
+.uk-form-controls {
+  margin-top: 4px;
 }

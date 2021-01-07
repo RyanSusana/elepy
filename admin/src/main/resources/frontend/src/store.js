@@ -18,10 +18,18 @@ export default new Vuex.Store({
         token: null,
         hasUsers: null,
         settings: null,
+        navigationWarning: null,
         selectedRows: [],
         loadingItems: [],
     },
     mutations: {
+        CLEAR_NAVIGATION_WARNING(state) {
+            state.navigationWarning = null
+
+        },
+        SET_NAVIGATION_WARNING(state, warning) {
+            state.navigationWarning = warning;
+        },
         SET_SETTINGS(state, settings) {
             state.settings = settings;
         },

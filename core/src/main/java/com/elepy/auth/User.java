@@ -17,8 +17,6 @@ import java.util.Objects;
 
 @PredefinedRole(id = "owner", name = "Owner", permissions = {"owner", "*"})
 @PredefinedRole(id = "admin", name = "Admin", permissions = {"*"})
-@PredefinedRole(id = "users", name = "User Admin", permissions = {"users.*", "roles.*"})
-@PredefinedRole(id = "user-viewer", name = "User Viewer", permissions = {"users.find", "roles.find"})
 @Model(
         path = "/users",
         name = "{elepy.models.users.fields.users.label}",

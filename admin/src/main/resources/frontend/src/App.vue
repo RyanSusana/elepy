@@ -15,15 +15,6 @@
         display: grid;
         grid-template-columns: 1fr 3fr;
     }
-
-    .sidebar{
-
-        flex: 1;
-    }
-
-    .main-view{
-        flex:4;
-    }
 </style>
 
 <script>

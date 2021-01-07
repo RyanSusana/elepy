@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@PredefinedRole(id = "files", name = "File Admin", permissions = "files.*")
 @Model(name = "Files", path = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
 @Update(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Delete(handler = FileReferenceDelete.class, requiredPermissions = "files.delete")
