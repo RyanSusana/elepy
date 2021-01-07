@@ -15,7 +15,7 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Setup GPG
-          run: |
+        run: |
             echo ${{ secrets.GPG_SECRET_KEYS }} | base64 --decode | ${{ secrets.GPG_EXECUTABLE }} --import --no-tty --batch
             echo ${{ secrets.GPG_OWNERTRUST }}  | ${{ secrets.GPG_EXECUTABLE }} --import-ownertrust --no-tty --batch
       - name: Publish Package
