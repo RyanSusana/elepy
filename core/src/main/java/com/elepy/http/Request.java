@@ -179,7 +179,7 @@ public interface Request {
             var formattedViolations = violations.stream()
                     .map(FormattedViolation::new).collect(Collectors.toList());
 
-            throw new ElepyException("Errors", 400, Map.of("violations", formattedViolations));
+            throw new ElepyException("{elepy.messages.exceptions.validationFail}", 400, Map.of("violations", formattedViolations));
 
         }
     }
