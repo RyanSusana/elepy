@@ -5,7 +5,7 @@
 
 
       <div id="register-app"
-           class="login-box uk-card uk-margin-large-top">
+           class="login-box uk-card uk-margin-top uk-margin-large-bottom">
 
 
         <div class="uk-background-primary">
@@ -47,7 +47,7 @@
             </div>
 
             <div class="uk-flex uk-flex-center">
-              <ActionButton type="submit" id="login-button" class="uk-width-small uk-button-primary"
+              <ActionButton type="submit" id="login-button" class="uk-width-1-1 uk-button-primary"
                             :action="register">
                 {{ $t('elepy.ui.forms.createUser') }}
               </ActionButton>

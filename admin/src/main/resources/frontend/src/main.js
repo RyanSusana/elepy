@@ -53,18 +53,18 @@ axios.interceptors.response.use((response) => {
     logResponse(response);
     return response;
 }, (error) => {
-    if (error.response) {
+    if (error.response && !error.response.config.exceptionHandled) {
         store.commit("REMOVE_LOAD_ITEM", error.response.config.requestInfo.id);
         logResponse(error.response)
         Utils.displayError(error);
-    }else {
+    } else {
         console.error(error)
     }
     return Promise.reject(error);
 });
 
-function logResponse(response){
-    const timeSpent = Date.now() -  response.config.requestInfo.timestamp
+function logResponse(response) {
+    const timeSpent = Date.now() - response.config.requestInfo.timestamp
     console.debug(`[${timeSpent}ms]\t${response.status} ${response.config.method.toUpperCase()}\t - ${response.config.url}`)
 }
 

@@ -1,6 +1,6 @@
 <template>
   <select @change="switchLanguage" :value="locale" id="" class="language-select light "
-          v-if="Object.keys(settings.availableLocales).length>1">
+          v-if="settings && Object.keys(settings.availableLocales).length>1">
     <option v-for="(localeName, code) in settings.availableLocales" :value="code">{{ localeName }}</option>
   </select>
 </template>

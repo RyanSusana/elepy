@@ -74,32 +74,42 @@ export default new Vuex.Store({
     },
     actions: {
         async getModels({commit}) {
-            return axios.get("/elepy/schemas")
+            return axios.get("/elepy/schemas", {exceptionHandled: true})
                 .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
         },
         async changeLocale({dispatch, commit}, newLocale) {
 
             const lang = await loadLanguage(newLocale)
             commit('SET_LOCALE', lang)
-            return dispatch('getModels');
 
+            // try {
+            //     dispatch('getModels');
+            // } catch (e) {
+            //     console.warn(e);
+            // }
         },
         async init({dispatch, commit, state}) {
             console.debug('initializing store')
             await dispatch('changeLocale', state.locale)
 
-            axios.get("/elepy/settings").then(({data}) => {
+            await axios.get("/elepy/settings", {exceptionHandled: true}).then(({data}) => {
                 commit('SET_SETTINGS', data)
             })
-            await axios.get("/elepy/has-users")
+            await axios.get("/elepy/has-users", {exceptionHandled: true})
                 .then(() =>
                     commit('SET_HAS_USERS', true))
-                .catch(() =>
-                    commit('SET_HAS_USERS', false));
+                .catch(error => {
+                        error.handled = true;
+                        commit('SET_HAS_USERS', false)
+                    }
+                );
 
             if (state.token != null) {
                 return dispatch('logInWithToken', state.token)
-                    .catch(() => window.localStorage.removeItem('token'))
+                    .catch(error => {
+                        error.response.handled = true
+                        return window.localStorage.removeItem('token');
+                    })
                     .finally(() => commit("READY"));
             } else {
                 return commit("READY");
@@ -109,12 +119,13 @@ export default new Vuex.Store({
             let userResponse = (await axios({
                 url: "/elepy/logged-in-user",
                 method: 'get',
-                headers: {'Authorization': 'Bearer ' + loginResponseToken}
+                headers: {'Authorization': 'Bearer ' + loginResponseToken},
+                exceptionHandled: loginResponseToken !== null
             })).data;
 
+            axios.defaults.headers.authorization = 'Bearer ' + loginResponseToken;
             await dispatch('getModels');
 
-            axios.defaults.headers.authorization = 'Bearer ' + loginResponseToken;
 
             commit("SET_USER", userResponse);
             commit("SET_TOKEN", loginResponseToken)

@@ -38,7 +38,7 @@ public class Main {
                     });
                     http.before(context -> {
                         context.response().header("Access-Control-Allow-Headers", "*");
-                        context.request().addPermissions(Permissions.SUPER_USER);
+//                        context.request().addPermissions(Permissions.SUPER_USER);
                     });
                 })
                 .addExtension(new FrontendLoader());
