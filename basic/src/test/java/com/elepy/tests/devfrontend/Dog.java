@@ -24,6 +24,8 @@ public class Dog {
     @Size(min = 0, max = 10)
     private String description;
 
+    @Valid
+    private BreedDetail breedDetail;
 
     @Label("Nicknames")
     @Size(min = 0, max = 5)
@@ -33,15 +35,7 @@ public class Dog {
 
     @Label("Details")
     @Description("The Description")
-    private List<@Valid DogDetail> details;
-
-    public List<DogDetail> getDetails() {
-        return details;
-    }
-
-    public void setDetails(List<DogDetail> details) {
-        this.details = details;
-    }
+    private List<@Valid BreedDetail> details;
 
     public String getId() {
         return id;
@@ -73,5 +67,21 @@ public class Dog {
 
     public void setNicknames(List<String> nicknames) {
         this.nicknames = nicknames;
+    }
+
+    public BreedDetail getBreedDetail() {
+        return breedDetail;
+    }
+
+    public void setBreedDetail(BreedDetail breedDetail) {
+        this.breedDetail = breedDetail;
+    }
+
+    public List<BreedDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<BreedDetail> details) {
+        this.details = details;
     }
 }

@@ -46,7 +46,7 @@
            tabindex="0" @keydown.meta="typeCtrl"
            @keydown.ctrl="typeCtrl" v-if="itemIsLoaded">
         <h1>{{ model.name }}</h1>
-        <ObjectField :model="model" v-model="item" :violations="violations" @input="navigationGuard"/>
+        <ObjectField :root="true" :model="model" v-model="item" :violations="violations" @input="navigationGuard"/>
       </div>
       <RevisionHistory
           :model="model"

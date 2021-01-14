@@ -1,7 +1,7 @@
 <template>
   <div :property="field.name">
     <div
-        v-if="trueFieldType !== 'OBJECT' && !partOfArray ">
+        v-if="!partOfArray">
 
       <h3 class="uk-text-emphasis uk-text-bold label" :class="{'uk-text-danger': hasErrors}">
 
@@ -15,6 +15,7 @@
       </ul>
     </div>
 
+
     <DatePicker
         :field="field"
         :value="value"
@@ -26,7 +27,7 @@
         :field="field"
         :value="value"
         @input="handleInput"
-        :violations="passOnViolations(field)"
+        :violations="filteredViolations"
         v-if="trueFieldType === 'CUSTOM'"
     />
 
@@ -47,7 +48,7 @@
         :field="field"
         :value="value"
         @input="handleInput"
-        :violations="passOnViolations(field)"
+        :violations="filteredViolations"
         v-if="trueFieldType === 'INPUT'"
     />
 
@@ -90,7 +91,7 @@
         :value="value || []"
         @input="handleInput"
         v-if="trueFieldType === 'ARRAY'"
-        :violations="passOnViolations()"
+        :violations="filteredViolations"
     />
 
     <FileField
@@ -107,7 +108,11 @@
             v-if="formattedViolations.length"
             uk-icon="warning" class="uk-margin-small-right"></span>{{ objectName }}</a>
         <div class="uk-accordion-content uk-padding-small">
-          <ObjectField :model="field" :violations="violations" :value="value == null ? {} : value"
+          <ul v-if="partOfArray">
+            <li class="uk-text-danger" v-for="violation in formattedViolations">{{ violation.message }}</li>
+          </ul>
+          <ObjectField :model="field" :violations="partOfArray ? violations :filteredViolations"
+                       :value="value == null ? {} : value"
                        @input="handleInput"/>
 
         </div>
@@ -200,36 +205,38 @@ export default {
     },
     formattedViolations() {
       return !this.violations ? [] : this.violations.filter(violation => {
-        if (this.trueFieldType === 'OBJECT') {
-          return this.field.properties
-        }
-        return violation === '' || violation.propertyPath === this.field.name;
+        return (violation.propertyPath === '' && this.trueFieldType === 'OBJECT') || violation.propertyPath === this.field.name;
       })
     },
     trueFieldType() {
       return this.fieldType || this.field.type;
     },
+
     objectName: function () {
       if (this.field.type === 'ARRAY') {
         let featuredProperty = this.field.featuredProperty;
         return this.value[featuredProperty] || 'One of the ' + this.field.label;
-
       }
-
       return this.field.label
-    }
-  },
-  methods: {
-    passOnViolations() {
+    },
+
+    filteredViolations() {
       return this.violations
-          .filter(violation => violation.propertyPath.startsWith(this.field.name))
+          .filter(violation => {
+            const beginPropertyPath = violation.propertyPath.split('.')[0];
+
+            const beginPropertyPathWithoutArray = beginPropertyPath.replaceAll(/\[.*]/, '');
+            return beginPropertyPathWithoutArray === this.field.name;
+          })
           .map(violation => {
             return {
               ...violation,
               propertyPath: violation.propertyPath.replace(`${this.field.name}`, '').replace(/^\./, "")
             }
           })
-    },
+    }
+  },
+  methods: {
     handleInput(e) {
       this.$emit("input", e);
     }

@@ -59,6 +59,7 @@ public class ElepyDriver implements WebDriver {
     public void closeNotifications() {
         final By by = By.cssSelector(".uk-notification");
 
+
         waitTillCanSee(by);
         findElements(by).forEach(WebElement::click);
     }

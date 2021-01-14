@@ -25,7 +25,6 @@ public class LoginScenario extends GenericScenario {
 
         driver.findElement(By.id("login-button")).click();
 
-        driver.closeNotifications();
         await().atMost(20, TimeUnit.SECONDS).until(() -> {
             try {
                 return driver.findElement(By.cssSelector(".uk-notification")) != null;
