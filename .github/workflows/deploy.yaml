@@ -1,5 +1,7 @@
 name: Maven Publish
-on: [ release ]
+on:
+  release:
+    types: [ published ]
 jobs:
   build:
     runs-on: ubuntu-latest
