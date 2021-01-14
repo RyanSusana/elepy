@@ -88,8 +88,7 @@ export default {
     register() {
       if (this.confirmPassword === this.user.password) {
         return axios.post("/users", this.user)
-            .then(() => this.$store.dispatch('init'))
-            .catch((error) => Utils.displayError(error));
+            .then(() => this.$store.dispatch('init'));
       } else {
         Utils.displayError("Passwords do not match!");
       }

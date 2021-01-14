@@ -241,9 +241,6 @@ export default {
                       } else {
                         return this.getRecord();
                       }
-                    }).catch(error => {
-                      this.violations = error.response.data.properties.violations
-                      Utils.displayError(error);
                     });
               },
               () => {
