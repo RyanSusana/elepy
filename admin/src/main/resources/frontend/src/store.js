@@ -82,11 +82,11 @@ export default new Vuex.Store({
             const lang = await loadLanguage(newLocale)
             commit('SET_LOCALE', lang)
 
-            // try {
-            //     dispatch('getModels');
-            // } catch (e) {
-            //     console.warn(e);
-            // }
+            try {
+                dispatch('getModels');
+            } catch (e) {
+                console.warn(e);
+            }
         },
         async init({dispatch, commit, state}) {
             console.debug('initializing store')
