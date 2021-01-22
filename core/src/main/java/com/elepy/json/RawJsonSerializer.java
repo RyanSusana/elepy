@@ -10,9 +10,14 @@ import java.io.IOException;
 public class RawJsonSerializer extends JsonSerializer<String> {
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        final var objectMapper = (ObjectMapper) serializers.getConfig().getAttributes().getAttribute("objectMapper");
+        if (value == null) {
+            gen.writeNull();
+        } else {
 
-        gen.setCodec(objectMapper);
-        gen.writeTree(objectMapper.readTree(value));
+            final var objectMapper = new ObjectMapper();
+
+            gen.setCodec(objectMapper);
+            gen.writeTree(objectMapper.readTree(value));
+        }
     }
 }

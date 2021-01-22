@@ -24,7 +24,7 @@ public class DefaultHttpContext implements HttpContext {
         copy.setLocale(locale);
         copy.setConfig(copy.getDeserializationConfig().withAttribute(HttpContext.class, this));
         copy.setConfig(copy.getSerializationConfig().withAttribute(HttpContext.class, this));
-        copy.setConfig(copy.getSerializationConfig().withAttribute("resourceBundleLocator", resources));
+        copy.setConfig(copy.getSerializationConfig().withAttribute("resourceBundleLocator", resources).withAttribute("objectMapper", copy));
         final var validatorContext = elepy.getDependency(ValidatorFactory.class)
                 .usingContext()
                 .messageInterpolator(new ElepyInterpolator(locale, resources));

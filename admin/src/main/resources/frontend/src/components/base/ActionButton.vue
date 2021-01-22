@@ -1,36 +1,37 @@
 <template>
-    <button @click="doAction"
-            :action="actionName"
-            class="uk-button"><span
-            v-if="!busy"><slot></slot></span><span uk-spinner v-else></span></button>
+  <button @click="doAction"
+          :action="actionName"
+          class="uk-button"><span
+      v-if="!busy"><slot></slot></span><span uk-spinner v-else></span></button>
 </template>
 
 <script>
-    export default {
-        name: "ActionButton",
-        props: ['action', 'actionName'],
+export default {
+  name: "ActionButton",
+  props: ['action', 'actionName'],
 
-        data() {
-            return {busy: false}
-        },
+  data() {
+    return {busy: false}
+  },
 
-        methods: {
-            async doAction() {
+  methods: {
+    async doAction() {
 
-                if (this.busy) {
-                    return;
-                }
-                this.busy = true;
+      if (this.busy) {
+        return;
+      }
+      this.busy = true;
 
-                try{
-                    await this.action();
-                }finally {
-                    this.busy = false;
-                }
+      try {
+        await this.action();
+        this.$store.commit('CLEAR_NAVIGATION_WARNING')
+      } finally {
+        this.busy = false;
+      }
 
-            }
-        }
     }
+  }
+}
 </script>
 
 <style scoped>

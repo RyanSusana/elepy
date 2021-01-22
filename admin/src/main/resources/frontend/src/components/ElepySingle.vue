@@ -229,6 +229,7 @@ export default {
                       (this.isCreating ? "" : "/" + this.item[this.model.idProperty])
                 })
                     .then(response => {
+                      this.$store.commit('CLEAR_NAVIGATION_WARNING')
                       Utils.displayResponse(response);
                       if (this.isCreating) {
                         let createdRecord = response.data.properties.createdRecords[0];
@@ -241,7 +242,13 @@ export default {
                       } else {
                         return this.getRecord();
                       }
-                    });
+                    }).catch(
+                        error => {
+                          if (error.response.status && error.response.status === 400 && error.response.data.properties.violations) {
+                            this.violations = error.response.data.properties.violations
+                          }
+                        }
+                    );
               },
               () => {
               }
