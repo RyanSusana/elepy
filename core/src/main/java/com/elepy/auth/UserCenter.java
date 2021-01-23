@@ -2,6 +2,7 @@ package com.elepy.auth;
 
 import com.elepy.annotations.Inject;
 import com.elepy.dao.Crud;
+import com.elepy.utils.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
@@ -43,6 +44,10 @@ public class UserCenter {
     public Optional<User> login(String usernameOrEmail, String password) {
         Optional<User> user = getUserByUsername(usernameOrEmail);
 
+        if (StringUtils.isEmpty(password)) {
+            return Optional.empty();
+        }
+        
         if (user.isPresent() && BCrypt.checkpw(password, user.get().getPassword())) {
             return user;
         }
