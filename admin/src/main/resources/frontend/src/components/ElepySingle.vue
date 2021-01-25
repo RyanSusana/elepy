@@ -231,6 +231,7 @@ export default {
                 })
                     .then(response => {
                       this.$store.commit('CLEAR_NAVIGATION_WARNING')
+                      this.violations = [];
                       Utils.displayResponse(response);
                       if (this.isCreating) {
                         let createdRecord = response.data.properties.createdRecords[0];
