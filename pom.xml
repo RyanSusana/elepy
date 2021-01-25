@@ -60,6 +60,7 @@
         <module>jwt</module>
         <module>swagger</module>
         <module>gcp</module>
+        <module>graphql</module>
     </modules>
 
     <distributionManagement>

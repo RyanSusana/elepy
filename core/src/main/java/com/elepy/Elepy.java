@@ -21,6 +21,7 @@ import com.elepy.i18n.Resources;
 import com.elepy.i18n.TranslationsExtension;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.ModelChange;
+import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
 import com.elepy.revisions.Revision;
 import com.elepy.uploads.DefaultFileService;
@@ -499,6 +500,10 @@ public class Elepy implements ElepyContext {
      */
     public List<Schema<?>> modelSchemas() {
         return modelEngine.getSchemas();
+    }
+
+    public List<ModelContext<?>> models(){
+        return modelEngine.getModels();
     }
 
 

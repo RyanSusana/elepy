@@ -4,6 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;
 import com.elepy.models.ModelChange;
+import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration2.Configuration;
@@ -169,6 +170,10 @@ public class ElepyPostConfiguration {
      */
     public List<Schema<?>> modelSchemas() {
         return elepy.modelSchemas();
+    }
+
+    public List<ModelContext<?>> models() {
+        return elepy.models();
     }
 
 

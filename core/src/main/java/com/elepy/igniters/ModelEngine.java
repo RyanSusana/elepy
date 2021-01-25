@@ -8,6 +8,7 @@ import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
 import com.elepy.models.ModelChange;
+import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
 import com.elepy.utils.ModelUtils;
 
@@ -31,7 +32,7 @@ public class ModelEngine {
         this.elepy = elepy;
         this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
-        setupDescriptors( elepy.http());
+        setupDescriptors(elepy.http());
     }
 
     public void start() {
@@ -62,7 +63,7 @@ public class ModelEngine {
                 .changeModel(modelChange));
     }
 
-    public void setupDescriptors( HttpService http) {
+    public void setupDescriptors(HttpService http) {
 
         final Route build = anElepyRoute()
                 .path("/elepy/schemas")
@@ -94,5 +95,9 @@ public class ModelEngine {
 
     public List<Schema<?>> getSchemas() {
         return pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList());
+    }
+
+    public List<ModelContext<?>> getModels() {
+        return pistons.stream().map(ModelPiston::getModelContext).collect(Collectors.toList());
     }
 }
