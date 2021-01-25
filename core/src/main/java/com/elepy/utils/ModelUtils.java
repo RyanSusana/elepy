@@ -127,6 +127,7 @@ public class ModelUtils {
 
         property.setName(ReflectionUtils.getPropertyName(accessibleObject));
         property.setDescription(Optional.ofNullable(description).map(Description::value).orElse(null));
+        property.setShowIf(Optional.ofNullable(accessibleObject.getAnnotation(ShowIf.class)).map(ShowIf::value).orElse("true"));
         property.setJavaName(ReflectionUtils.getJavaName(accessibleObject));
         property.setLabel(ReflectionUtils.getLabel(accessibleObject));
         property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));

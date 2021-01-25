@@ -1,11 +1,9 @@
 <template>
-  <div :property="field.name">
+  <div :property="field.name" v-if="showField">
     <div
         v-if="!partOfArray">
 
-      <h3 class="uk-text-emphasis uk-text-bold label" :class="{'uk-text-danger': hasErrors}">
-
-        {{ field.label }}<span
+      <h3 class="uk-text-emphasis uk-text-bold label" :class="{'uk-text-danger': hasErrors}">{{ field.label }}<span
           v-if="hasErrors"
           uk-icon="warning" class="uk-margin-small-left"></span></h3>
       <p v-if="field.description" class="description uk-text-muted">{{ field.description }}</p>
@@ -21,6 +19,8 @@
         :value="value"
         @input="handleInput"
         v-if="trueFieldType === 'DATE'"
+        :root="root"
+        :parent="parent"
     />
 
     <CustomField
@@ -29,23 +29,29 @@
         @input="handleInput"
         :violations="filteredViolations"
         v-if="trueFieldType === 'CUSTOM'"
+        :root="root"
+        :parent="parent"
     />
 
     <ReferenceField
         :field="field"
         :value="value"
+        :root="root"
+        :parent="parent"
         @input="handleInput"
         v-if="trueFieldType === 'REFERENCE' "
     />
     <NumberField
         :field="field"
         :value="value"
+        :root="root"
         @input="handleInput"
         v-if="trueFieldType === 'NUMBER'"
     />
 
     <TextField
         :field="field"
+        :root="root"
         :value="value"
         @input="handleInput"
         :violations="filteredViolations"
@@ -55,12 +61,14 @@
     <EnumPicker
         :field="field"
         :value="value"
+        :root="root"
         @input="handleInput"
         v-if="trueFieldType === 'ENUM'"/>
 
     <BooleanPicker
         :field="field"
         :value="value"
+        :root="root"
         @input="handleInput"
         v-if="trueFieldType === 'BOOLEAN'"
     />
@@ -68,6 +76,7 @@
     <TextArea
         :field="field"
         :value="value"
+        :root="root"
         @input="handleInput"
         v-if="trueFieldType === 'TEXTAREA'"
     />
@@ -75,6 +84,7 @@
     <MarkdownEditor
         :field="field"
         :value="value"
+        :root="root"
         @input="handleInput"
         v-if="trueFieldType === 'MARKDOWN'"
     />
@@ -83,12 +93,15 @@
         :field="field"
         :value="value"
         @input="handleInput"
+        :root="root"
         v-if="trueFieldType === 'HTML'"
     />
 
     <ArrayField
         :field="field"
         :value="value || []"
+        :root="root"
+        :parent="parent"
         @input="handleInput"
         v-if="trueFieldType === 'ARRAY'"
         :violations="filteredViolations"
@@ -97,6 +110,8 @@
     <FileField
         :field="field"
         :value="value || ''"
+
+        :root="root"
         @input="handleInput"
         v-if="trueFieldType === 'FILE_REFERENCE'"
     />
@@ -113,6 +128,7 @@
           </ul>
           <ObjectField :model="field" :violations="partOfArray ? violations :filteredViolations"
                        :value="value == null ? {} : value"
+                       :root="root"
                        @input="handleInput"/>
 
         </div>
@@ -174,9 +190,12 @@ import ArrayField from "./ArrayField.vue";
 import FileField from "./FileField.vue";
 import ReferenceField from "./ReferenceField";
 import CustomField from "./CustomField";
+import jexl from 'jexl'
+import eventBus from "./eventBus"
 
 export default {
-  props: ["value", "fieldType", "field", "violations", "partOfArray"],
+  props: ["value", "fieldType", "field", "violations", "partOfArray", "parent", "root"],
+
   name: "GenericField",
   components: {
     CustomField,
@@ -193,8 +212,8 @@ export default {
     FileField,
     ObjectField: () => import("./ObjectField.vue")
   },
-
   computed: {
+
     belongsInArray() {
       return this.field.arrayType && this.field.arrayType !== this.trueFieldType;
     },
@@ -236,9 +255,32 @@ export default {
           })
     }
   },
+  data() {
+    return {
+      showField: true,
+      notifyChange: true
+    }
+  },
+  mounted() {
+    this.setShowField();
+    eventBus.$on('change', (e) => {
+      this.setShowField();
+    });
+  },
   methods: {
+    setShowField() {
+      let context = {value: this.value, parent: this.parent, root: this.root}
+      try {
+        this.showField = !!jexl.evalSync(this.field.showIf, context)
+      } catch (e) {
+        console.error(e);
+        this.showField = true
+      }
+    },
     handleInput(e) {
       this.$emit("input", e);
+      eventBus.$emit('change')
+
     }
   }
 };

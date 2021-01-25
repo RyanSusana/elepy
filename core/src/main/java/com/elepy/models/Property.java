@@ -19,6 +19,7 @@ public class Property implements Comparable<Property> {
 
     @Localized
     private String label;
+    private String showIf = "true";
     private boolean editable;
     private boolean required;
     private boolean unique;
@@ -34,6 +35,13 @@ public class Property implements Comparable<Property> {
     private Set<Map<String, Object>> availableFilters;
     private FieldType type;
 
+    public String getShowIf() {
+        return showIf;
+    }
+
+    public void setShowIf(String showIf) {
+        this.showIf = showIf;
+    }
 
     public Set<Map<String, Object>> getAvailableFilters() {
         return availableFilters;
@@ -47,6 +55,7 @@ public class Property implements Comparable<Property> {
     public <T extends Options> T getOptions() {
         return (T) options;
     }
+
 
     public void setOptions(Options options) {
         this.options = options;

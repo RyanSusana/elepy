@@ -1,6 +1,7 @@
 <template>
   <div class>
-    <div :key="field.name" class="uk-margin-bottom" v-for="field in model.properties">
+    <div :key="field.name" class="uk-margin-bottom"
+         v-for="(field, idx) in model.properties">
 
       <div class="" v-if="!root"></div>
       <GenericField
@@ -9,6 +10,8 @@
           :value="value[field.name]"
           @input="handleInput(field.name, $event)"
           :violations="violations"
+          :root="root"
+          :parent="value"
       />
     </div>
   </div>

@@ -26,12 +26,20 @@ public class Schema<T> {
     private String defaultSortField;
     private SortOption defaultSortDirection;
 
-    private int keepRevisions = 0;
+    private int keepRevisionsAmount = 0;
+    private long keepRevisionsFor = 0L;
 
-    public void setKeepRevisions(int keepRevisions) {
-        this.keepRevisions = keepRevisions;
+    public void setKeepRevisionsAmount(int keepRevisionsAmount) {
+        this.keepRevisionsAmount = keepRevisionsAmount;
     }
 
+    public long getKeepRevisionsFor() {
+        return keepRevisionsFor;
+    }
+
+    public void setKeepRevisionsFor(long keepRevisionsFor) {
+        this.keepRevisionsFor = keepRevisionsFor;
+    }
 
     private Map<String, HttpAction> defaultActions = new HashMap<>();
 
@@ -140,7 +148,7 @@ public class Schema<T> {
         this.view = view;
     }
 
-    public int getKeepRevisions() {
-        return keepRevisions;
+    public int getKeepRevisionsAmount() {
+        return keepRevisionsAmount;
     }
 }

@@ -162,7 +162,7 @@ public class RevisionCrud<T> implements Crud<T> {
     }
 
     private int keepRevisions() {
-        return crud.getSchema().getKeepRevisions();
+        return crud.getSchema().getKeepRevisionsAmount();
     }
 
     private String getUserId() {

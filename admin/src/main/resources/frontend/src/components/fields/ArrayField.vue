@@ -32,6 +32,8 @@
                          :field="field"
                          :index="index"
                          :val="val"
+                         :root="root"
+                         :parent="value"
                          :violations="getViolationsFor(index)"
                          @next="nextField(index)"
                          @remove="removeIndex(index)"
@@ -43,6 +45,8 @@
                            :field="field"
                            :index="index"
                            :val="val"
+                           :root="root"
+                           :parent="value"
                            :violations="getViolationsFor(index)"
                            @moveDown="moveDown(index)"
                            @moveUp="moveUp(index)"
@@ -81,7 +85,7 @@ import ArrayInputField from "./arrays/ArrayInputField";
 import ArrayGenericField from "./arrays/ArrayGenericField";
 
 export default {
-  props: ["field", "value", "violations"],
+  props: ["field", "value", "violations", "root", "parent"],
   name: "ArrayField",
   data() {
     return {

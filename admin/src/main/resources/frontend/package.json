@@ -19,6 +19,7 @@
     "@panter/vue-i18next": "^0.15.2",
     "axios": "^0.21.1",
     "core-js": "^3.8.1",
+    "jexl": "^2.3.0",
     "js-cookie": "^2.2.1",
     "lodash": "latest",
     "marked": "^0.7.0",

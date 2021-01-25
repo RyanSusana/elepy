@@ -34,6 +34,8 @@
               :value="val"
               :violations="violations"
               :partOfArray="true"
+              :parent="parent"
+              :root="root"
               @input="handleInput"
           />
         </div>
@@ -44,12 +46,7 @@
 <script>
 export default {
   name: 'ArrayGenericField',
-  props: {
-    field: {},
-    index: {},
-    val: {},
-    violations: {}
-  },
+  props: ["field", "index", "val", "violations", "root", "parent"],
   components: {
     GenericField: () => import("../GenericField.vue"),
   },

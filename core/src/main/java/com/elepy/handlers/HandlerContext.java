@@ -24,6 +24,10 @@ public class HandlerContext<T> {
     }
 
     public Crud<T> crud() {
-        return new RevisionCrud<>(model.getCrud(), http.elepy().getCrudFor(Revision.class), http);
+        if (model.getSchema().getKeepRevisionsAmount() > 0 || model.getSchema().getKeepRevisionsFor() > 0L) {
+            return new RevisionCrud<>(model.getCrud(), http.elepy().getCrudFor(Revision.class), http);
+        } else {
+            return model.getCrud();
+        }
     }
 }

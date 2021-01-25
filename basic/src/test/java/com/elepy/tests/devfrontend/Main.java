@@ -2,9 +2,6 @@ package com.elepy.tests.devfrontend;
 
 import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
-import com.elepy.auth.Permissions;
-import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.Translated;
 import com.elepy.mongo.MongoConfiguration;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -43,7 +40,7 @@ public class Main {
                 })
                 .addExtension(new FrontendLoader());
 
-        elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisions(10));
+        elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisionsAmount(10));
         elepyInstance.start();
 
     }
