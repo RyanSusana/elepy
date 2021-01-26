@@ -119,8 +119,8 @@
     <div class="background-darken" uk-accordion="multiple: true" v-if="trueFieldType === 'OBJECT'">
       <div>
         <a class="uk-accordion-title uk-padding-small background-darken"
-           :class="{'uk-text-danger': formattedViolations.length}" href="#"><span
-            v-if="formattedViolations.length"
+           :class="{'uk-text-danger': hasErrors}" href="#"><span
+            v-if="hasErrors"
             uk-icon="warning" class="uk-margin-small-right"></span>{{ objectName }}</a>
         <div class="uk-accordion-content uk-padding-small">
           <ul v-if="partOfArray">
@@ -213,13 +213,12 @@ export default {
     ObjectField: () => import("./ObjectField.vue")
   },
   computed: {
-
-    belongsInArray() {
-      return this.field.arrayType && this.field.arrayType !== this.trueFieldType;
-    },
     hasErrors() {
+      if (this.formattedViolations.length) {
+        return true
+      }
       return this.violations && this.violations.filter(violation => {
-        return violation === '' || violation.propertyPath.startsWith(this.field.name);
+        return violation.propertyPath.startsWith(this.field.name);
       }).length > 0
     },
     formattedViolations() {
