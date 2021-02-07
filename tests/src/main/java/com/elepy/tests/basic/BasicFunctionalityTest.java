@@ -158,7 +158,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     void can_Login_and_UpdateOtherUserRoles() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
-        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.AUTHENTICATED));
+        User userToUpdate = new User("user", "user", "password", Collections.singletonList(Permissions.AUTHENTICATED));
 
         final HttpResponse<String> unauthorizedFind = Unirest
                 .put(elepy + "/users" + "/user")
@@ -206,7 +206,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     void cant_Login_and_CreateSuperUser_afterOneHasBeenCreated() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
-        User userToUpdate = new User("user", "user", "", Collections.singletonList(Permissions.SUPER_USER));
+        User userToUpdate = new User("user", "user", "password", Collections.singletonList(Permissions.SUPER_USER));
 
         final HttpResponse<String> authorizedFind = Unirest
                 .post(elepy + "/users")
