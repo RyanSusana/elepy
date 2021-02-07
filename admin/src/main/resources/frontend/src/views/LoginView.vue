@@ -5,7 +5,7 @@
 
 
       <div id="login-app"
-           class="login-box uk-card uk-margin-large-top">
+           class="login-box uk-card uk-margin-large-top uk-margin-xlarge-bottom">
 
 
         <div class=" logo">
@@ -13,8 +13,11 @@
                alt="logo">
         </div>
 
+
         <form @submit.prevent>
+
           <div class="login-box-content uk-padding">
+
             <div class="uk-margin">
               <label class="uk-form-label">{{ $t('elepy.ui.forms.username') }}</label>
               <div class="uk-form-controls">
@@ -38,11 +41,18 @@
                             :action="login">{{ $t('elepy.ui.login') }}
               </ActionButton>
 
-            </div>
-            <div class="uk-flex uk-flex-right uk-margin-top uk-width-1-1">
 
-              <LanguageSelect class="uk-width-small uk"></LanguageSelect>
             </div>
+            <div class="uk-flex uk-flex-right uk-width-1-1 uk-margin-top">
+
+            </div>
+
+
+            <OAuthButtons/>
+            <div class="uk-flex uk-flex-center uk-margin-top uk-width-1-1">
+              <LanguageSelect class="uk-width-3-5"></LanguageSelect>
+            </div>
+
           </div>
         </form>
       </div>
@@ -54,10 +64,11 @@
 
 import ActionButton from '../components/base/ActionButton';
 import LanguageSelect from "@/components/LanguageSelect";
+import OAuthButtons from "@/components/OAuthButtons";
 
 export default {
   name: "LoginView",
-  components: {LanguageSelect, ActionButton},
+  components: {OAuthButtons, LanguageSelect, ActionButton},
   data() {
     return {
       username: "",
@@ -68,6 +79,11 @@ export default {
   },
   created: function () {
     this.initialUser = this.getQueryParams("initialUser") != null
+  },
+  computed: {
+    hasCode() {
+      return this.$route.query && this.$route.query.code;
+    }
   },
   methods: {
 

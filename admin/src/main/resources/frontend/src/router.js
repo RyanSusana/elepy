@@ -3,31 +3,27 @@ import VueRouter from 'vue-router'
 import vue from "./main"
 
 import store from './store'
+import utils from "@/utils";
 
 const requireLogin = (to, from, next) => {
-
-    function proceed() {
-        if (store.getters.loggedIn) {
-            next();
-        }
-    }
 
     store.watch(
         (state, getters) => getters.ready,
         (ready) => {
-            if (ready === true) {
-                if (!store.getters.loggedIn) {
-                    next({
-                        path: '/login',
-                        query: {
-                            redirect: to.fullPath,
-                        },
-                    });
-                } else {
-                    proceed();
-                }
+
+            if (!ready) {
+                return;
+            }
+
+            if (store.getters.loggedIn) {
+                next();
             } else {
-                proceed()
+                next({
+                    path: '/login',
+                    query: {
+                        redirect: to.fullPath,
+                    },
+                });
             }
         },
         {immediate: true}
@@ -37,17 +33,30 @@ const requireLogin = (to, from, next) => {
 };
 
 const noLogin = (to, from, next) => {
-
+    if (to.query && to.query.code) {
+        return store.dispatch("loginOAuth", to.query).then(() => {
+            return next(to.query.redirect ?? '/')
+        }).catch(
+            error => {
+                utils.displayError(error)
+                next('/login')
+            }
+        );
+    }
     store.watch(
         (state, getters) => getters.elepyInitialized,
-        (value) => {
-            if (value === true && to.path !== '/login') {
+        (initialized) => {
+
+
+            if (initialized && (to.path !== '/login')) {
                 next({
                     path: '/login',
+                    query: to.query
                 });
-            } else if (value === false && to.path !== '/initial-user') {
+            } else if (!initialized && to.path !== '/initial-user') {
                 next({
                     path: '/initial-user',
+                    query: to.query
                 });
 
             } else {

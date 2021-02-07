@@ -33,6 +33,10 @@ public interface Crud<T> {
         return find(Queries.create(expression).limit(Optional.ofNullable(limit).orElse(100)));
     }
 
+    default Optional<T> findOne(Expression expression) {
+        return findLimited(1, expression).stream().findFirst();
+    }
+
     /**
      * Queries a database in search of a model item with a specific ID
      *

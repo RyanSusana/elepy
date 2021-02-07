@@ -45,7 +45,8 @@ export default {
   methods: {
 
     logOut() {
-      this.$store.dispatch('logOut').then(() => this.$router.push('/login'))
+      this.$store.dispatch('logOut');
+      this.$store.dispatch('init').then(_ => this.$router.replace('/login'))
     }
   }
 }
@@ -77,6 +78,7 @@ export default {
 
     .sidebar-header .banner-image {
       object-fit: cover;
+      width: 100%;
     }
   }
 

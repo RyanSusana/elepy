@@ -108,6 +108,11 @@ serif;
   text-transform: none;
 }
 
+@mixin hook-button-large() {
+  text-transform: none;
+  font-weight: bold;
+}
+
 @mixin hook-button-primary() {
   background-color: var(--primary-color);
 }
@@ -184,6 +189,7 @@ serif;
 
 .uk-button-large {
   border-radius: $button-large-line-height*2;
+  font-size: 18px;
 }
 
 
@@ -238,4 +244,31 @@ html,
 body {
   width: 100%;
   height: 100%;
+}
+
+.hr-text {
+  overflow: hidden;
+  text-align: center;
+
+
+  &:before,
+  &:after {
+    background-color: #d8d8d8;
+    content: "";
+    display: inline-block;
+    height: 3px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+  }
+
+  &:before {
+    right: 0.5em;
+    margin-left: -50%;
+  }
+
+  &:after {
+    left: 0.5em;
+    margin-right: -50%;
+  }
 }

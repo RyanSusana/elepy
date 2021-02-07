@@ -5,7 +5,7 @@
 
 
       <div id="register-app"
-           class="login-box uk-card uk-margin-top uk-margin-large-bottom">
+           class="login-box uk-card uk-margin-top  uk-margin-xlarge-bottom">
 
 
         <div class="uk-background-primary">
@@ -13,12 +13,12 @@
                alt="logo">
         </div>
 
+
         <form @submit.prevent>
-          <div class="login-box-content uk-padding">
+          <div class="login-box-content uk-padding ">
 
-            <p>{{ $t('elepy.ui.forms.initialMessage') }}</p>
+            <p class="hr-text uk-text-small uk-text-muted">{{ $t('elepy.ui.forms.createOwner') }}</p>
 
-            <hr>
             <div class="uk-margin">
               <label class="uk-form-label">{{ $t('elepy.ui.forms.username') }}</label>
               <div class="uk-form-controls">
@@ -26,6 +26,7 @@
                        :placeholder="$t('elepy.ui.forms.username') ">
               </div>
             </div>
+
             <hr>
             <div class="uk-margin">
               <label class="uk-form-label">{{ $t('elepy.ui.forms.password') }}</label>
@@ -49,12 +50,14 @@
             <div class="uk-flex uk-flex-center">
               <ActionButton type="submit" id="login-button" class="uk-width-1-1 uk-button-primary"
                             :action="register">
-                {{ $t('elepy.ui.forms.createUser') }}
+                {{ $t('elepy.ui.forms.createOwner') }}
               </ActionButton>
 
             </div>
-            <div class="uk-flex uk-flex-right uk-margin-top uk-width-1-1">
-              <LanguageSelect class="uk-width-small"></LanguageSelect>
+
+            <OAuthButtons/>
+            <div class="uk-flex uk-flex-center uk-margin-top uk-width-1-1">
+              <LanguageSelect class="uk-width-3-5"></LanguageSelect>
             </div>
           </div>
         </form>
@@ -71,10 +74,11 @@ import axios from "axios";
 import ActionButton from '../components/base/ActionButton';
 import Utils from '../utils';
 import LanguageSelect from "@/components/LanguageSelect";
+import OAuthButtons from "@/components/OAuthButtons";
 
 export default {
   name: "InitialUserView",
-  components: {LanguageSelect, ActionButton},
+  components: {OAuthButtons, LanguageSelect, ActionButton},
   data() {
     return {
       confirmPassword: "",

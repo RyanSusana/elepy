@@ -1,5 +1,6 @@
 package com.elepy.http;
 
+import com.elepy.auth.AuthenticationService;
 import com.elepy.auth.User;
 import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.di.ElepyContext;
@@ -47,7 +48,7 @@ public interface HttpContext {
         request().validate(o, groups);
     }
 
-    default UserAuthenticationExtension authService() {
+    default AuthenticationService authService() {
         return request().authService();
     }
 

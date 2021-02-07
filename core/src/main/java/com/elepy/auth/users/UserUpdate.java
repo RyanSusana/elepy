@@ -1,6 +1,7 @@
 package com.elepy.auth.users;
 
 import com.elepy.annotations.Inject;
+import com.elepy.auth.PasswordCheck;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
@@ -49,9 +50,13 @@ public class UserUpdate extends DefaultUpdate<User> {
 
         //Encrypt password if changed
         if (!userToUpdateAfter.getPassword().equals(userToUpdateBefore.getPassword())) {
+            context.validate(userToUpdateAfter, PasswordCheck.class, javax.validation.groups.Default.class);
             userToUpdateAfter.setPassword(BCrypt.hashpw(userToUpdateAfter.getPassword(), BCrypt.gensalt()));
+        } else {
+            context.validate(userToUpdateAfter);
         }
 
+        userToUpdateAfter.cleanUsername();
         // Finalize update and respond
         crud.update(userToUpdateAfter);
 
@@ -73,15 +78,15 @@ public class UserUpdate extends DefaultUpdate<User> {
 
     private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {
         if (loggedInUser.equals(userToUpdate) &&
-                !rolesAreTheSame(loggedInUser, userToUpdate)) {
+            !rolesAreTheSame(loggedInUser, userToUpdate)) {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.cantUpdateSelf}");
         }
 
         boolean updatedPermissionsContainsSuperUser = (policy.userHasRole(userBeforeUpdate, "owner") ||
-                policy.userHasRole(userToUpdate, "owner"));
+                                                       policy.userHasRole(userToUpdate, "owner"));
 
         if (updatedPermissionsContainsSuperUser &&
-                !rolesAreTheSame(userToUpdate, userBeforeUpdate)) {
+            !rolesAreTheSame(userToUpdate, userBeforeUpdate)) {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
         }
     }

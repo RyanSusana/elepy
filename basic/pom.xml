@@ -33,6 +33,11 @@
             <artifactId>elepy-jwt</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
+            <artifactId>elepy-oauth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
         <dependency>
@@ -41,7 +46,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
 
 
         <dependency>
@@ -112,8 +116,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
-
 
 
     </dependencies>

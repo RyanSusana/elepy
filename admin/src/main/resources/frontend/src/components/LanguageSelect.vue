@@ -11,13 +11,15 @@
   color: #777;
   border-radius: 3px;
   width: 100%;
-  height: 3em;
+  min-height: 48px;
   font-size: 12px;
 
+  border-width: 3px;
+  border-color: rgba(#000, 0.15);
 
   &:active, &:focus {
     user-select: none;
-    border: var(--primary-color) solid 1px;
+    border-color: var(--primary-color);
     outline: 0;
   }
 

@@ -56,11 +56,11 @@ public class ElepyException extends RuntimeException {
     }
 
     public static ElepyException notFound(String s) {
-        return translated(404, "{elepy.messages.exceptions.notFound}", s);
+        return of(Translated.of("{elepy.messages.exceptions.notFound}", s), 404);
     }
 
     public static ElepyException internalServerError(Throwable e) {
-        return of(Translated.of("{elepy.messages.exceptions.internal}"), 500, e);
+        return of("{elepy.messages.exceptions.internal}", 500, e);
     }
 
     public static ElepyException of(Object message, int status, Throwable cause) {

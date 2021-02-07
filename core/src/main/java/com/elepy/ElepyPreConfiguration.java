@@ -2,6 +2,7 @@ package com.elepy;
 
 import com.elepy.annotations.Model;
 import com.elepy.auth.AuthenticationMethod;
+import com.elepy.auth.AuthenticationService;
 import com.elepy.auth.TokenGenerator;
 import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.CrudFactory;
@@ -230,7 +231,7 @@ public class ElepyPreConfiguration {
         return elepy.schemas();
     }
 
-    public UserAuthenticationExtension authenticationService() {
+    public AuthenticationService authenticationService() {
         return elepy.authenticationService();
     }
 
@@ -247,7 +248,7 @@ public class ElepyPreConfiguration {
         elepy.setTokenGenerator(method);
     }
 
-    public Configuration getPropertyConfig(){
+    public Configuration getPropertyConfig() {
         return elepy.getPropertyConfig();
     }
 }

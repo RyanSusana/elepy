@@ -73,9 +73,14 @@ export default new Vuex.Store({
 
     },
     actions: {
-        async getModels({commit}) {
-            return axios.get("/elepy/schemas", {exceptionHandled: true})
-                .then(response => commit('SET_MODELS', response.data.filter(m => m.viewableOnCMS)));
+        async getModels({commit, getters}) {
+            if (!getters.loggedIn) {
+                return;
+            }
+            const {data} = await axios.get("/elepy/schemas", {exceptionHandled: true});
+            commit('SET_MODELS', data.filter(m => m.viewableOnCMS))
+
+
         },
         async changeLocale({dispatch, commit}, newLocale) {
 
@@ -115,23 +120,34 @@ export default new Vuex.Store({
                 return commit("READY");
             }
         },
-        async logInWithToken({commit, dispatch}, loginResponseToken) {
+        async logInWithToken({commit, dispatch}, loginResponseToken, oauth) {
+            delete axios.defaults.headers["authorization"];
             let userResponse = (await axios({
                 url: "/elepy/logged-in-user",
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + loginResponseToken},
-                exceptionHandled: loginResponseToken !== null
+                exceptionHandled: !oauth && loginResponseToken !== null
             })).data;
 
             axios.defaults.headers.authorization = 'Bearer ' + loginResponseToken;
-            await dispatch('getModels');
 
 
             commit("SET_USER", userResponse);
+
+            await dispatch('getModels');
             commit("SET_TOKEN", loginResponseToken)
         },
+        async loginOAuth({dispatch}, query) {
+            let loginResponseToken = (await axios({
+                url: "/elepy/token-login",
+                method: 'post',
+                params: query
+            })).data;
+            return dispatch('logInWithToken', loginResponseToken, true)
+
+        },
         async logIn({dispatch}, loginAttempt) {
-            delete axios.defaults.headers["authorization"];
+
             let loginResponseToken = (await axios({
                 url: "/elepy/token-login",
                 method: 'post',
@@ -143,12 +159,12 @@ export default new Vuex.Store({
             return dispatch('logInWithToken', loginResponseToken)
         },
 
-        logOut({commit}) {
+        logOut({commit, getters}) {
             document.cookie = "ELEPY_TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.localStorage.removeItem('token');
             delete axios.defaults.headers["authorization"];
             commit("SET_USER", null);
-            commit("SET_TOKEN", null)
+            commit("SET_TOKEN", null);
         }
     },
     getters: {

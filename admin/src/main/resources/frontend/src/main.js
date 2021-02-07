@@ -57,7 +57,7 @@ axios.interceptors.response.use((response) => {
         store.commit("REMOVE_LOAD_ITEM", error.response.config.requestInfo.id);
         logResponse(error.response)
         Utils.displayError(error);
-    } else {
+    } else if (!error.response) {
         console.error(error)
     }
     return Promise.reject(error);

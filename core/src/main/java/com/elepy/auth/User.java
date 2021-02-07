@@ -4,10 +4,8 @@ import com.elepy.annotations.*;
 import com.elepy.auth.users.*;
 import com.elepy.dao.SortOption;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -37,6 +35,7 @@ import java.util.Objects;
 // Required permission is handled in UserUpdate.class
 @Update(handler = UserUpdate.class)
 @Delete(handler = UserDelete.class, requiredPermissions = "users.delete")
+@UserPasswordValidator
 public class User {
 
     @Identifier
@@ -52,7 +51,7 @@ public class User {
     @Label("{elepy.models.users.fields.username.label}")
     @Importance(1)
     @Size(max = 30, min = 4)
-//    @Pattern(regexp = "[a-z0-9@.]", message = "{elepy.models.users.exceptions.username}")
+    @Pattern(regexp = "(^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$)|([a-zA-Z0-9\\.\\-]+)", message = "{elepy.models.users.exceptions.username}")
     private String username;
 
 
@@ -60,8 +59,6 @@ public class User {
     @JsonProperty("password")
     @Importance(-1)
     @Input(type = "password")
-    @NotBlank(groups = PasswordCheck.class)
-    @Length(min = 4, groups = PasswordCheck.class)
     private String password;
 
     @ElementCollection
@@ -131,5 +128,14 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    /**
+     * Method to make sure that all email addresses are lowercase
+     */
+    public void cleanUsername() {
+        if (username.contains("@")) {
+            username = username.toLowerCase();
+        }
     }
 }

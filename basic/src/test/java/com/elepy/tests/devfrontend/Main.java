@@ -3,6 +3,12 @@ package com.elepy.tests.devfrontend;
 import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
 import com.elepy.mongo.MongoConfiguration;
+import com.elepy.oauth.facebook.FacebookAuthScheme;
+import com.elepy.oauth.github.GitHubAuthScheme;
+import com.elepy.oauth.google.GoogleAuthScheme;
+import com.elepy.oauth.OAuthConfiguration;
+import com.elepy.oauth.AuthSchemes;
+import com.elepy.oauth.microsoft.MicrosoftADAuthScheme;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
@@ -25,6 +31,12 @@ public class Main {
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
                 .addLocale(new Locale("nl"), "Nederlands")
+                .addConfiguration(OAuthConfiguration.of(
+                        new GoogleAuthScheme(env("GOOGLE_KEY"), env("GOOGLE_SECRET")),
+                        new GitHubAuthScheme(env("GH_KEY"), env("GH_SECRET")),
+                        new MicrosoftADAuthScheme(env("MS_TENANT"), env("MS_KEY"), env("MS_SECRET")),
+                        new FacebookAuthScheme(env("FB_KEY"), env("FB_SECRET")))
+                )
                 .addExtension((http, elepy) -> {
                     http.get("/doggo", ctx -> {
                         final var dog = new Dog();
@@ -43,5 +55,9 @@ public class Main {
         elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisionsAmount(10));
         elepyInstance.start();
 
+    }
+
+    private static String env(String s) {
+        return System.getenv(s);
     }
 } 

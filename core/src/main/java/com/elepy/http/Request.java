@@ -184,12 +184,12 @@ public interface Request {
         }
     }
 
-    default UserAuthenticationExtension authService() {
+    default AuthenticationService authService() {
         final var elepy = elepy();
         if (elepy == null) {
             return null;
         }
-        return elepy.getDependency(UserAuthenticationExtension.class);
+        return elepy.getDependency(AuthenticationService.class);
     }
 
     default Optional<User> loggedInUser() {

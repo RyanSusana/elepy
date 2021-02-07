@@ -9,10 +9,8 @@
 }
 
 #login-button {
-  margin-top: 2em;
-  min-width: 96px;
-  padding: 4px 20px;
-  text-transform: none;
+  height: 48px;
+  font-weight: bold;
   font-size: 16px;
 }
 
@@ -26,13 +24,13 @@
   box-shadow: 0 10px 50px #CCC;
 
   img {
-    max-height: 192px;
+    height: 164px;
     width: 100%;
     object-fit: cover;
   }
 
   hr {
-    border-top: 1px solid #aaa;
+    border-top: 3px solid #d8d8d8;;
   }
 }
 
@@ -44,7 +42,8 @@
 }
 
 .uk-form-label {
-  color: #777;
+  color: #bbb;
+  //font-size: 12px;
 }
 
 .uk-form-controls {

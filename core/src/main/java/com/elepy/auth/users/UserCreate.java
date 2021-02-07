@@ -1,6 +1,7 @@
 package com.elepy.auth.users;
 
 import com.elepy.annotations.Inject;
+import com.elepy.auth.PasswordCheck;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
@@ -33,7 +34,7 @@ public class UserCreate implements ActionHandler<User> {
         final var crud = ctx.crud();
         User user = context.elepy().objectMapper().readValue(body, crud.getType());
 
-        context.validate(user);
+        context.validate(user, PasswordCheck.class, javax.validation.groups.Default.class);
 
         if (crud.count() > 0) {
             createAdditionalUser(modelContext, context, crud, user);
@@ -67,6 +68,7 @@ public class UserCreate implements ActionHandler<User> {
     }
 
     private void createUser(Crud<User> crud, User user) {
+        user.cleanUsername();
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 
         //This line didn't exist before for some reason it got deleted

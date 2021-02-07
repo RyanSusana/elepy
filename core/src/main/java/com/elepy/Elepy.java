@@ -3,6 +3,7 @@ package com.elepy;
 import com.elepy.annotations.Model;
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.*;
+import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.PersistedTokenGenerator;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ContextKey;
@@ -70,7 +71,6 @@ public class Elepy implements ElepyContext {
     private CrudFactory defaultCrudFactoryImplementation;
     private List<Class<?>> routingClasses = new ArrayList<>();
     private ModelEngine modelEngine = new ModelEngine(this);
-    private UserAuthenticationExtension userAuthenticationExtension = new UserAuthenticationExtension();
     private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
     private List<Configuration> configurations = new ArrayList<>();
     private List<EventHandler> stopEventHandlers = new ArrayList<>();
@@ -173,8 +173,8 @@ public class Elepy implements ElepyContext {
         return http;
     }
 
-    public UserAuthenticationExtension authenticationService() {
-        return userAuthenticationExtension;
+    public AuthenticationService authenticationService() {
+        return this.getDependency(AuthenticationService.class);
     }
 
 
@@ -616,7 +616,7 @@ public class Elepy implements ElepyContext {
         addExtension(new FileUploadExtension());
         addExtension(new TranslationsExtension());
         addExtension(config);
-        registerDependency(userAuthenticationExtension);
+        registerDependency(new UserAuthenticationExtension());
 
         setupLoggingAndExceptions();
         if (!http.hasImplementation()) {
@@ -654,11 +654,13 @@ public class Elepy implements ElepyContext {
                 .flatMap(Collection::stream)
                 .forEach(policy::registerPredefinedRole);
 
-        addExtension(userAuthenticationExtension);
+        final var authenticationService = this.authenticationService();
+        addExtension(new UserAuthenticationExtension());
         registerDependency(initialize(UserCenter.class));
 
-        if (!userAuthenticationExtension.hasTokenGenerator()) {
-            userAuthenticationExtension.setTokenGenerator(initialize(PersistedTokenGenerator.class));
+        authenticationService.addLoginMethod(initialize(BasicAuthenticationMethod.class));
+        if (!authenticationService.hasTokenGenerator()) {
+            authenticationService.setTokenGenerator(initialize(PersistedTokenGenerator.class));
         }
     }
 
@@ -710,10 +712,8 @@ public class Elepy implements ElepyContext {
             if (exception instanceof ElepyException) {
                 elepyException = (ElepyException) exception;
             } else {
-                elepyException = ErrorMessageBuilder
-                        .anElepyException()
-                        .withMessage(exception.getMessage())
-                        .withStatus(500).build();
+                exception.printStackTrace();
+                elepyException = ElepyException.internalServerError(exception);
             }
 
             if (elepyException.getStatus() == 500) {

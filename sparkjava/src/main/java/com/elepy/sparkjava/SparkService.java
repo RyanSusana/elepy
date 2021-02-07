@@ -1,6 +1,5 @@
 package com.elepy.sparkjava;
 
-import com.elepy.auth.UserPermissionFilter;
 import com.elepy.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

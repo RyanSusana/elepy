@@ -7,7 +7,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
-import static com.elepy.dao.Filters.eq;
+import static com.elepy.dao.Filters.*;
 
 public class UserCenter {
 
@@ -47,7 +47,7 @@ public class UserCenter {
         if (StringUtils.isEmpty(password)) {
             return Optional.empty();
         }
-        
+
         if (user.isPresent() && BCrypt.checkpw(password, user.get().getPassword())) {
             return user;
         }
@@ -56,8 +56,15 @@ public class UserCenter {
     }
 
 
-    private Optional<User> getUserByUsername(String usernameOrEmail) {
-        return users.findLimited(1, eq("username", usernameOrEmail)).stream().findFirst();
+    public boolean hasUsers() {
+        return users.findOne(any()).isPresent();
+    }
+
+    public Optional<User> getUserByUsername(String usernameOrEmail) {
+        if (usernameOrEmail.contains("@")) {
+            usernameOrEmail = usernameOrEmail.toLowerCase();
+        }
+        return users.findOne(eq("username", usernameOrEmail));
     }
 
 
