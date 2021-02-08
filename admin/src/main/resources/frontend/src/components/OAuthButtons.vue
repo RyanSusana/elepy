@@ -31,8 +31,10 @@ export default {
   methods: {
     getUrl(scheme) {
       const loc = window.location;
-      const redirectUri = `${loc.protocol}//${loc.host}/elepy/admin/login`
-      return axios.defaults.baseURL + `/elepy/auth-url?scheme=${scheme.scheme}&redirect_uri=${redirectUri}`
+
+      const currentHost = loc.protocol + "//" + loc.host;
+      const redirectUri = `${currentHost}/elepy/admin/login`;
+      return (axios.defaults.baseURL || currentHost) + `/elepy/auth-url?scheme=${scheme.scheme}&redirect_uri=${redirectUri}`;
     },
     async loadSchemes() {
       try {
