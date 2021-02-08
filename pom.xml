@@ -61,7 +61,6 @@
         <module>swagger</module>
         <module>gcp</module>
         <module>oauth</module>
-        <module>cloud</module>
     </modules>
 
     <distributionManagement>
