@@ -50,7 +50,7 @@ public class User {
     @JsonProperty("username")
     @Label("{elepy.models.users.fields.username.label}")
     @Importance(1)
-    @Size(max = 30, min = 4)
+    @Size(max = 300, min = 4)
     @Pattern(regexp = "(^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$)|([a-zA-Z0-9\\.\\-]+)", message = "{elepy.models.users.exceptions.username}")
     private String username;
 
