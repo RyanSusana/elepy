@@ -4,6 +4,8 @@ import store from "./store";
 import Utils from "./utils"
 import router from './router'
 import axios from "axios"
+
+const moment = require('moment');
 import * as Vibrant from 'node-vibrant'
 import {i18n} from "./i18nSetup";
 
@@ -30,6 +32,13 @@ Vue.filter("t", value => {
 
 
     return i18next.t(value);
+});
+
+Vue.filter("relativeTime", value => {
+    if (!value) return "";
+
+    return moment(value).fromNow();
+
 });
 axios.interceptors.request.use(function (config) {
 

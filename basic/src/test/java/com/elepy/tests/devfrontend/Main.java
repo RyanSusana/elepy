@@ -31,12 +31,12 @@ public class Main {
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
                 .addLocale(new Locale("nl"), "Nederlands")
-                .addConfiguration(OAuthConfiguration.of(
-                        new GoogleAuthScheme(env("GOOGLE_KEY"), env("GOOGLE_SECRET")),
-                        new GitHubAuthScheme(env("GH_KEY"), env("GH_SECRET")),
-                        new MicrosoftADAuthScheme(env("MS_TENANT"), env("MS_KEY"), env("MS_SECRET")),
-                        new FacebookAuthScheme(env("FB_KEY"), env("FB_SECRET")))
-                )
+//                .addConfiguration(OAuthConfiguration.of(
+//                        new GoogleAuthScheme(env("GOOGLE_KEY"), env("GOOGLE_SECRET")),
+//                        new GitHubAuthScheme(env("GH_KEY"), env("GH_SECRET")),
+//                        new MicrosoftADAuthScheme(env("MS_TENANT"), env("MS_KEY"), env("MS_SECRET")),
+//                        new FacebookAuthScheme(env("FB_KEY"), env("FB_SECRET")))
+//                )
                 .addExtension((http, elepy) -> {
                     http.get("/doggo", ctx -> {
                         final var dog = new Dog();

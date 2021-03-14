@@ -4,12 +4,12 @@
 
 
       <h3><a class="close-button" uk-icon="icon: arrow-left; ratio: 1.5;" uk-toggle="target: #revisions"
-             type="button"></a> {{$t('elepy.ui.revisions')}}
+             type="button"></a> {{ $t('elepy.ui.revisions') }}
       </h3>
       <div class="">
 
         <ul>
-          <li v-for="record in records">{{ record.newSnapshot[model.idField] }}</li>
+          <li v-for="record in records">{{ record.newSnapshot[model.idProperty]  }} -- {{ record.timestamp | relativeTime}}</li>
         </ul>
       </div>
     </div>
@@ -19,14 +19,12 @@
 <script>
 
 const axios = require("axios/index");
-
 export default {
   name: "RevisionHistory",
   props: ["model"],
-
   data() {
     return {
-      records: []
+      records: [],
     };
   },
   methods: {
@@ -38,9 +36,9 @@ export default {
       });
 
       this.records = response.data.map(record => {
-        return {...record, oldSnapshot: JSON.parse(record.oldSnapshot), newSnapshot: JSON.parse(record.newSnapshot)}
+        return {...record, oldSnapshot: record.oldSnapshot, newSnapshot: record.newSnapshot}
       })
-    }
+    },
   },
   mounted() {
     this.getHistory();

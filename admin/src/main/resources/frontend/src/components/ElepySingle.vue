@@ -34,7 +34,7 @@
 
          uk-toggle="target: #revisions"
          class="uk-button uk-button uk-margin-small-right"
-         v-if="false && itemIsLoaded && canSave"
+         v-if="revisionsEnabled"
       >{{ $t('elepy.ui.revisions') }}</a>
 
     </template>
@@ -51,6 +51,7 @@
       </div>
       <RevisionHistory
           :model="model"
+          v-if="revisionsEnabled"
       ></RevisionHistory>
     </template>
   </BaseLayout>
@@ -134,6 +135,9 @@ export default {
   computed: {
     ...mapGetters(['canExecute']),
 
+    revisionsEnabled() {
+      return (this.model.keepRevisionsFor || this.model.keepRevisionsAmount) && this.itemIsLoaded && this.canSave;
+    },
     canSave() {
       if (this.isCreating) {
         return this.canExecute(this.model.defaultActions.create)
