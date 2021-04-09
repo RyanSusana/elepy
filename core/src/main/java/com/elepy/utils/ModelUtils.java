@@ -237,6 +237,8 @@ public class ModelUtils {
                 return ReferenceOptions.of(field);
             case CUSTOM:
                 return CustomOptions.of(field);
+            case DYNAMIC:
+                return DynamicOptions.of(field);
             default:
                 return null;
 

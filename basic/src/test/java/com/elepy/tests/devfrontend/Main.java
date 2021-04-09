@@ -45,6 +45,10 @@ public class Main {
                         dog.setNicknames(List.of("Roberto"));
                         ctx.validate(dog);
                     });
+                    http.get("/dynamic", ctx -> {
+
+                        ctx.response().json(List.of("Ayee", "Bee", "See"));
+                    });
                     http.before(context -> {
                         context.response().header("Access-Control-Allow-Headers", "*");
 //                        context.request().addPermissions(Permissions.SUPER_USER);

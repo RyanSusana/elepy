@@ -89,6 +89,14 @@
         v-if="trueFieldType === 'MARKDOWN'"
     />
 
+    <MarkdownEditor
+        :field="field"
+        :value="value"
+        :root="root"
+        @input="handleInput"
+        v-if="trueFieldType === 'DYNAMIC'"
+    />
+
     <HtmlEditor
         :field="field"
         :value="value"

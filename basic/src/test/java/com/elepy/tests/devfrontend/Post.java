@@ -19,6 +19,9 @@ public class Post {
     @Featured
     private String content;
 
+    @Dynamic(path = "'/dynamic?id=' + root.id")
+    private String dynamic;
+
 
     private int rating;
 

@@ -31,7 +31,8 @@ public enum FieldType {
     MARKDOWN,
     HTML,
     REFERENCE,
-    CUSTOM;
+    CUSTOM,
+    DYNAMIC;
 
     private final Class<?> baseClass;
 
@@ -44,7 +45,8 @@ public enum FieldType {
                     com.elepy.annotations.FileReference.class, FILE_REFERENCE,
                     Number.class, NUMBER,
                     Reference.class, REFERENCE,
-                    Custom.class, CUSTOM
+                    Custom.class, CUSTOM,
+                    Dynamic.class, DYNAMIC
             );
 
     FieldType() {
