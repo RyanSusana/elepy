@@ -23,6 +23,8 @@
         <tika.version>1.22</tika.version>
         <guava.version>28.0-jre</guava.version>
         <assertj.version>3.14.0</assertj.version>
+        <h2.version>2.1.210</h2.version>
+        <mongo-java-server.version>1.25.0</mongo-java-server.version>
         <headlessMode>false</headlessMode>
         <revision>3.0.0-alpha-28</revision>
     </properties>

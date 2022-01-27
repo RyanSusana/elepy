@@ -24,7 +24,7 @@
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
-            <version>1.16.0</version>
+            <version>${mongo-java-server.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.0.206</version>
+            <version>${h2.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
