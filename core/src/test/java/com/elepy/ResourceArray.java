@@ -6,8 +6,8 @@ import com.elepy.annotations.Model;
 import com.elepy.annotations.Number;
 import com.elepy.models.FieldType;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;

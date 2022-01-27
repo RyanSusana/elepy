@@ -29,12 +29,12 @@ public class JavalinService implements HttpService {
     @Override
     public void addRoute(Route route) {
         javalin.addHandler(HandlerType.valueOf(route.getMethod().name()),
-                route.getPath(), context -> route.getHttpContextHandler().handle(new JavalinContext(context)));
+                route.getPath().replaceAll(":([a-zA-Z0-9-_~!$&'()*+,;=:@.]+)", "{$1}"), context -> route.getHttpContextHandler().handle(new JavalinContext(context)));
     }
 
     @Override
     public void ignite() {
-        javalin.config.showJavalinBanner = false;
+        javalin._conf.showJavalinBanner = false;
         javalin.start(port);
     }
 
@@ -45,7 +45,7 @@ public class JavalinService implements HttpService {
 
     @Override
     public void staticFiles(String path, StaticFileLocation location) {
-        javalin.config.addStaticFiles(path, Location.valueOf(location.name()));
+        javalin._conf.addStaticFiles(path, Location.valueOf(location.name()));
     }
 
     @Override

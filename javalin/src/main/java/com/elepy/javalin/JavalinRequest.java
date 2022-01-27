@@ -7,10 +7,7 @@ import com.elepy.uploads.FileUpload;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JavalinRequest implements Request {
@@ -73,7 +70,7 @@ public class JavalinRequest implements Request {
 
     @Override
     public String queryParamOrDefault(String queryParam, String defaultValue) {
-        return context.queryParam(queryParam, defaultValue);
+        return Optional.ofNullable(context.queryParam(queryParam)).orElse(defaultValue);
     }
 
     @Override
@@ -152,7 +149,7 @@ public class JavalinRequest implements Request {
     }
 
     private FileUpload toElepyFile(UploadedFile uploadedFile) {
-        return FileUpload.of(uploadedFile.getFilename(), uploadedFile.getContentType(), uploadedFile.getContent(), uploadedFile.getContentLength());
+        return FileUpload.of(uploadedFile.getFilename(), uploadedFile.getContentType(), uploadedFile.getContent(), uploadedFile.getSize());
     }
 
 

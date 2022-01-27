@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
-            <version>3.12.7</version>
+            <version>3.12.10</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -60,10 +60,9 @@
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
-            <version>1.36.0</version>
+            <version>${mongo-java-server.version}</version>
             <optional>true</optional>
         </dependency>
-
 
 
     </dependencies>

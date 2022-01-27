@@ -34,7 +34,7 @@ public class UserCreate implements ActionHandler<User> {
         final var crud = ctx.crud();
         User user = context.elepy().objectMapper().readValue(body, crud.getType());
 
-        context.validate(user, PasswordCheck.class, javax.validation.groups.Default.class);
+        context.validate(user, PasswordCheck.class, jakarta.validation.groups.Default.class);
 
         if (crud.count() > 0) {
             createAdditionalUser(modelContext, context, crud, user);

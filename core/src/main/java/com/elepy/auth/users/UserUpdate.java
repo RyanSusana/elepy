@@ -50,7 +50,7 @@ public class UserUpdate extends DefaultUpdate<User> {
 
         //Encrypt password if changed
         if (!userToUpdateAfter.getPassword().equals(userToUpdateBefore.getPassword())) {
-            context.validate(userToUpdateAfter, PasswordCheck.class, javax.validation.groups.Default.class);
+            context.validate(userToUpdateAfter, PasswordCheck.class, jakarta.validation.groups.Default.class);
             userToUpdateAfter.setPassword(BCrypt.hashpw(userToUpdateAfter.getPassword(), BCrypt.gensalt()));
         } else {
             context.validate(userToUpdateAfter);

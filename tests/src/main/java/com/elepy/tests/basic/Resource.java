@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Model(name = "Test Resource", path = "/resources")

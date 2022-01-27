@@ -1,6 +1,6 @@
 package com.elepy.i18n;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 public class FormattedViolation {
     private final String propertyPath;

@@ -6,9 +6,7 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.i18n.Resources;
-
-import javax.validation.ValidatorFactory;
-import java.util.Locale;
+import jakarta.validation.ValidatorFactory;
 
 public class DefaultHttpContext implements HttpContext {
 

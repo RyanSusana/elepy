@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.github.scribejava</groupId>
             <artifactId>scribejava-apis</artifactId>
-            <version>8.1.0</version>
+            <version>8.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.elepy</groupId>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.8.3</version>
+            <version>${java-jwt.version}</version>
         </dependency>
     </dependencies>
 </project>

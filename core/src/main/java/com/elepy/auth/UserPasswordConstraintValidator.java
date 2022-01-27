@@ -2,8 +2,8 @@ package com.elepy.auth;
 
 import com.elepy.utils.StringUtils;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class UserPasswordConstraintValidator implements ConstraintValidator<UserPasswordValidator, User> {
     public void initialize(UserPasswordValidator constraint) {

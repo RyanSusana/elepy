@@ -3,7 +3,7 @@ package com.elepy;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
-import javax.validation.MessageInterpolator;
+import jakarta.validation.MessageInterpolator;
 import java.util.Locale;
 
 public class ElepyInterpolator implements MessageInterpolator {

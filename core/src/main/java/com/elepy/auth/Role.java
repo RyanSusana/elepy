@@ -7,7 +7,7 @@ import com.elepy.id.SlugIdentityProvider;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 

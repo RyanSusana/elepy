@@ -14,19 +14,21 @@
     <url>https://elepy.com</url>
 
     <properties>
+        <commons-io.version>2.11.0</commons-io.version>
         <exclude.tests>nothing-to-exclude</exclude.tests>
         <exclude.groups>nothing</exclude.groups>
-        <junit.version>5.3.1</junit.version>
-        <awaitility.version>3.1.2</awaitility.version>
+        <junit.version>5.8.2</junit.version>
+        <awaitility.version>4.1.1</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
-        <jackson.version>2.12.0</jackson.version>
-        <tika.version>1.22</tika.version>
-        <guava.version>28.0-jre</guava.version>
-        <assertj.version>3.14.0</assertj.version>
+        <jackson.version>2.13.1</jackson.version>
+        <tika.version>2.2.1</tika.version>
+        <guava.version>31.0.1-jre</guava.version>
+        <assertj.version>3.22.0</assertj.version>
         <h2.version>2.1.210</h2.version>
-        <mongo-java-server.version>1.25.0</mongo-java-server.version>
+        <mongo-java-server.version>1.39.0</mongo-java-server.version>
         <headlessMode>false</headlessMode>
-        <revision>3.0.0-alpha-28</revision>
+        <revision>3.0.0-alpha-29</revision>
+        <java-jwt.version>3.18.3</java-jwt.version>
     </properties>
 
     <licenses>
@@ -80,7 +82,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.35</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -103,14 +105,20 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>2.18.0</version>
+            <version>4.3.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.35</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -240,7 +248,7 @@
                     <dependency>
                         <groupId>org.pitest</groupId>
                         <artifactId>pitest-junit5-plugin</artifactId>
-                        <version>0.10</version>
+                        <version>0.15</version>
                     </dependency>
                 </dependencies>
             </plugin>
