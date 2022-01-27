@@ -14,13 +14,9 @@ import com.elepy.http.HttpMethod;
 public class Post {
     private String id;
 
-    @EditorJs
     @Searchable
     @Featured
     private String content;
-
-    @Dynamic(path = "'/dynamic?id=' + root.id")
-    private String dynamic;
 
 
     private int rating;

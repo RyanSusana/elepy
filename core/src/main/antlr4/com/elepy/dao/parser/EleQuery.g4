@@ -45,13 +45,13 @@ LIMIT: L I M I T | P A G E [ ]* S I Z E;
 
 PAGE_NUMBER: P A G E [ ]* N U M B E R;
 GREATER_THAN_OR_EQUALS: '>=' |  G T E;
-GREATER_THAN: '>' | G T;
+GREATER_THAN: '>' | G T | G R E A T E R T H A N | M O R E T H A N;
 
-LESSER_THAN_OR_EQUALS: '<=' | L T E;
+LESSER_THAN_OR_EQUALS: '<=' | L T E | (L E S S | S M A L L E R) (E R)? T H A N;
 LESSER_THAN: '<' |  L T;
 
 NOT_EQUALS: '!=' | '<>' | N E (Q)? | N O T [ ]* E Q U A L (S)? ([ ]* T O)? ;
-EQUALS: '=' | E Q (U A L S?)?;
+EQUALS: ':' | '=' | '==' | E Q (U A L S?)?;
 
 CONTAINS: C O N T A I N S | I N;
 STARTS_WITH: S T A R T S [ ]* W I T H | S W;

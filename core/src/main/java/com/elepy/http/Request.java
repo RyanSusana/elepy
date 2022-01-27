@@ -200,7 +200,7 @@ public interface Request {
 
         final var userCenter = elepy().getDependency(UserCenter.class);
         final var user = grant().flatMap(userCenter::getUserFromGrant);
-        user.ifPresent(u -> attribute("user", user));
+        user.ifPresent(u -> attribute("user", user.orElse(null)));
 
         return user;
     }

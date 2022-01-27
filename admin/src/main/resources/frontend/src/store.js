@@ -136,6 +136,14 @@ export default new Vuex.Store({
 
             await dispatch('getModels');
             commit("SET_TOKEN", loginResponseToken)
+
+            // auto-logout
+            const timeout = userResponse.maxDate - Date.now();
+            setTimeout(() => {
+                dispatch('logOut');
+
+                window.location.reload();
+            }, timeout)
         },
         async loginOAuth({dispatch}, query) {
             let loginResponseToken = (await axios({
@@ -189,8 +197,8 @@ export default new Vuex.Store({
 
         isModerator: (state, getters) =>
             getters.loggedIn && (
-            state.loggedInUser.permissions.includes("moderator")
-            || state.loggedInUser.permissions.includes("owner")),
+                state.loggedInUser.permissions.includes("moderator")
+                || state.loggedInUser.permissions.includes("owner")),
 
         loggedIn: state => state.loggedInUser != null,
 

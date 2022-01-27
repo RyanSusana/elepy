@@ -14,7 +14,7 @@ import static com.elepy.models.FieldType.*;
 
 public enum FilterType {
 
-    EQUALS("Equals", "equals", Set.of("=", "eq"), FieldType.values()),
+    EQUALS("Equals", "equals", Set.of("=", "eq", "==", ":"), FieldType.values()),
 
     NOT_EQUALS("Not Equals", "notEquals", Set.of("!=", "<>", "ne", "neq", "not equal to", "not equals", "not equals to"), FieldType.values()),
     CONTAINS("Contains", "contains", Set.of("in"),

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -146,6 +147,7 @@ public class ModelScenario<T> extends LoggedInScenario {
     public ModelScenario<T> nextPage() {
 
         final var initialTable = getTable().getAttribute("innerHTML");
+        scrollToPagination();
         driver.findElement(By.cssSelector("#pagination .uk-pagination-next")).click();
 
 
@@ -157,6 +159,13 @@ public class ModelScenario<T> extends LoggedInScenario {
         return this;
     }
 
+    private void scrollToPagination() {
+        final var actions = new Actions(driver);
+
+        actions.moveToElement(driver.findElement(By.cssSelector("#pagination")));
+        actions.perform();
+    }
+
     public ModelScenario<T> previousPage(int amountOfTimes) {
         for (int i = 0; i < amountOfTimes; i++) {
             previousPage();
@@ -166,6 +175,7 @@ public class ModelScenario<T> extends LoggedInScenario {
 
     public ModelScenario<T> previousPage() {
 
+        scrollToPagination();
         final var initialTable = getTable().getAttribute("innerHTML");
         driver.findElement(By.cssSelector("#pagination .uk-pagination-previous")).click();
 
@@ -180,16 +190,6 @@ public class ModelScenario<T> extends LoggedInScenario {
         driver.navToUrl("/elepy/admin" + schema.getPath());
         return this;
     }
-
-//    public ModelScenario<T> changeMaxRowSize(int i) {
-//        final var select = new Select(driver.findElement(By.className("pagination-select")));
-//
-//        final var tableHtml = getTableHtml();
-//        select.selectByValue(String.valueOf(i));
-//
-//        waitUntilChange(tableHtml);
-//        return this;
-//    }
 
     public ModelScenario<T> create(T item) {
         Map<String, Object> map = new ObjectMapper().convertValue(item, Map.class);
