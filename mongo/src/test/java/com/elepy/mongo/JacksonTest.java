@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JacksonTest {
 
     @Test
-    void theTest() throws IOException {
+    void testIdentifierHasCorrectJacksonAlias() throws IOException {
         // Without MongoJack
         final var mapper = CustomJacksonModule.configure(new ObjectMapper());
 
@@ -20,13 +20,14 @@ public class JacksonTest {
 
         final var testPojo = mapper.readValue(test, TestPojo.class);
 
-        mapper.reader().forType(TestPojo.class);
+        final var theId = testPojo.theId;
+        System.out.println(theId);
         assertEquals("arbitrary data", testPojo.theId);
     }
 
     public static class TestPojo {
         @Identifier
-        private final String theId = "test";
+        private String theId = "test";
 
     }
 } 
