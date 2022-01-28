@@ -27,7 +27,7 @@ public class JacksonTest {
 
     public static class TestPojo {
         @Identifier
-        private String theId = "test";
+        protected String theId = "test";
 
     }
 } 
