@@ -11,7 +11,7 @@ import com.elepy.http.Response;
 
 public class ResourceExtraRoutes {
 
-    private Crud<Resource> resourceCrud;
+    private final Crud<Resource> resourceCrud;
 
     @ElepyConstructor
     public ResourceExtraRoutes(Crud<Resource> resourceCrud) {

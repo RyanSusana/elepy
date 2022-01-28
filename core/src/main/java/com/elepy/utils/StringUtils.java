@@ -7,7 +7,7 @@ import java.util.Random;
 public class StringUtils {
 
     private static final Slugify slugify = new Slugify();
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     private StringUtils() {
 
@@ -43,7 +43,7 @@ public class StringUtils {
         while (sb.length() < numchars) {
             sb.append(Integer.toHexString(random.nextInt()));
         }
-        return sb.toString().substring(0, numchars);
+        return sb.substring(0, numchars);
     }
 
     public static boolean isInteger(String s) {

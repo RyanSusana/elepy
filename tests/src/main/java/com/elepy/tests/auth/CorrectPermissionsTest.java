@@ -35,7 +35,7 @@ public abstract class CorrectPermissionsTest implements ElepyConfigHelper {
     private Crud<Password> passwords;
 
 
-    private List<User> userBase = new ArrayList<>();
+    private final List<User> userBase = new ArrayList<>();
     private static final String NO_USER = "unauthenticated user";
     private static final String USER_CORRECT_ROLE = "user with correct role";
     private static final String USER_INCORRECT_ROLE = "user with incorrect role";

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class EnumOptions implements Options {
 
-    private List<Map<String, Object>> availableValues;
+    private final List<Map<String, Object>> availableValues;
 
     private EnumOptions(List<Map<String, Object>> availableValues) {
         this.availableValues = availableValues;

@@ -79,7 +79,7 @@ public class ModelScenario<T> extends LoggedInScenario {
     public ModelScenario<T> selectRowsById(Iterable<? extends Serializable> ids) {
 
         for (Serializable id : ids) {
-            getTable().findElement(By.cssSelector(String.format("*[row='%s'] input[type=checkbox]", String.valueOf(id)))).sendKeys(Keys.SPACE);
+            getTable().findElement(By.cssSelector(String.format("*[row='%s'] input[type=checkbox]", id))).sendKeys(Keys.SPACE);
         }
         return this;
     }

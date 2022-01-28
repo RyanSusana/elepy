@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import java.util.Map;
 
 public class OAuthParamNamingStrategy extends PropertyNamingStrategies.SnakeCaseStrategy {
-    private static Map<String, String> subs = Map.of(
+    private static final Map<String, String> subs = Map.of(
             "open_id_token", "id_token"
     );
 

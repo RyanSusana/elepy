@@ -8,9 +8,9 @@ import com.elepy.utils.ReflectionUtils;
 import java.lang.reflect.AnnotatedElement;
 
 public class NumberOptions implements Options {
-    private float minimum;
-    private float maximum;
-    private NumberType numberType;
+    private final float minimum;
+    private final float maximum;
+    private final NumberType numberType;
 
     public NumberOptions(float minimum, float maximum, NumberType numberType) {
         this.minimum = minimum;

@@ -18,7 +18,7 @@ public class ElepyCodecRegistry extends JacksonCodecRegistry {
 
     private final ObjectMapper objectMapper;
     private final Class<?> view;
-    private ConcurrentHashMap<Class<?>, Codec<?>> codecCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<?>, Codec<?>> codecCache = new ConcurrentHashMap<>();
 
     public ElepyCodecRegistry(ObjectMapper objectMapper, Class<?> view) {
         super(objectMapper, view);

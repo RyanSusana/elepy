@@ -37,7 +37,7 @@ public abstract class HttpServiceTest {
 
 
     private HttpService service;
-    private HttpClient httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
+    private final HttpClient httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
 
     @BeforeEach
     void setUp() {

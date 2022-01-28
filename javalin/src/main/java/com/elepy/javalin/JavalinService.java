@@ -8,7 +8,7 @@ import io.javalin.http.staticfiles.Location;
 public class JavalinService implements HttpService {
 
     private int port;
-    private Javalin javalin;
+    private final Javalin javalin;
 
     public JavalinService() {
         this.javalin = Javalin.create();

@@ -13,7 +13,7 @@ public class DefaultElepyContext implements ElepyContext {
     private final Map<ContextKey, Object> dependencies;
     private final Map<ContextKey, Supplier> dependencySuppliers;
 
-    private List<ContextKey> preInitialisedDependencies;
+    private final List<ContextKey> preInitialisedDependencies;
     private boolean strictMode = false;
 
     private final Resolver resolver;

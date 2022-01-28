@@ -64,17 +64,17 @@ public class Elepy implements ElepyContext {
     private final List<ElepyExtension> modules = new ArrayList<>();
     private final List<String> packages = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
-    private HttpServiceConfiguration http = new HttpServiceConfiguration(this);
+    private final HttpServiceConfiguration http = new HttpServiceConfiguration(this);
     private ObjectEvaluator<Object> baseObjectEvaluator;
-    private List<Route> routes = new ArrayList<>();
+    private final List<Route> routes = new ArrayList<>();
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass = null;
     private CrudFactory defaultCrudFactoryImplementation;
-    private List<Class<?>> routingClasses = new ArrayList<>();
-    private ModelEngine modelEngine = new ModelEngine(this);
+    private final List<Class<?>> routingClasses = new ArrayList<>();
+    private final ModelEngine modelEngine = new ModelEngine(this);
     private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
-    private List<Configuration> configurations = new ArrayList<>();
-    private List<EventHandler> stopEventHandlers = new ArrayList<>();
+    private final List<Configuration> configurations = new ArrayList<>();
+    private final List<EventHandler> stopEventHandlers = new ArrayList<>();
     private final ElepyConfig config = new ElepyConfig();
 
 

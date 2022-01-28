@@ -328,7 +328,7 @@ public abstract class FiltersTest implements ElepyConfigHelper {
             }
             final var mapper = new ObjectMapper();
             JavaType type = mapper.getTypeFactory().constructParametricType(List.class, Product.class);
-            return ((List<Product>) mapper.readValue(response.getBody().toString(), type));
+            return mapper.readValue(response.getBody().toString(), type);
         } catch (JsonProcessingException | UnirestException e) {
             throw new RuntimeException(e);
         }

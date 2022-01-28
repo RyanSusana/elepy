@@ -20,7 +20,7 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
     private final String url;
     private final int port;
 
-    private List<ElepyConfigHelper> elepyConfigHelpers = new ArrayList<>();
+    private final List<ElepyConfigHelper> elepyConfigHelpers = new ArrayList<>();
 
     private static int counter = 3117;
 

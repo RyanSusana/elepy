@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public abstract class MappedFind<T, R extends T> extends MappedFindOne<T, R> implements ActionHandler<T> {
 
-    private MappedFindMany<T, R> mappedFindMany = new DefaultMappedFindMany();
+    private final MappedFindMany<T, R> mappedFindMany = new DefaultMappedFindMany();
 
     public abstract R map(T object, Request request, Crud<T> crud);
 

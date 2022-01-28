@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ImageProcessor {
 
-    private Cache<ImageKey, BufferedImage> cachedImages = CacheBuilder.newBuilder()
+    private final Cache<ImageKey, BufferedImage> cachedImages = CacheBuilder.newBuilder()
             .maximumSize(10_000)
             .expireAfterWrite(100, TimeUnit.MINUTES)
             .build();

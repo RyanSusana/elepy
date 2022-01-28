@@ -11,7 +11,7 @@ public enum NumberType {
     INTEGER(new Class[]{long.class, int.class, short.class, byte.class, BigInteger.class, Byte.class, Integer.class, Long.class, Short.class}),
     DECIMAL(new Class[]{float.class, double.class, Double.class, BigDecimal.class, Float.class});
 
-    private List<Class<? extends Number>> availableClasses;
+    private final List<Class<? extends Number>> availableClasses;
 
     NumberType(Class<? extends Number>[] availableClasses) {
         this.availableClasses = Arrays.asList(availableClasses);

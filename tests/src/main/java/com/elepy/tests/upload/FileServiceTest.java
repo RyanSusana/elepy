@@ -39,7 +39,7 @@ public abstract class FileServiceTest {
     private FileService fileService;
     private String url;
 
-    private Tika tika = new Tika();
+    private final Tika tika = new Tika();
 
     public FileServiceTest(Configuration... configurations) {
         this.configurations = configurations;

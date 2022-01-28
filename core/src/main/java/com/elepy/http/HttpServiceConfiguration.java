@@ -17,7 +17,7 @@ public class HttpServiceConfiguration implements HttpService {
     private boolean started = false;
 
 
-    private List<Consumer<HttpService>> actions = new ArrayList<>();
+    private final List<Consumer<HttpService>> actions = new ArrayList<>();
 
 
     private int port;

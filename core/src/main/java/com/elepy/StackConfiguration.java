@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class StackConfiguration {
-    private static Map<String, String> shortcuts =
+    private static final Map<String, String> shortcuts =
             Map.of(
                     "mongo", "com.elepy.mongo.MongoConfiguration",
                     "hibernate", "com.elepy.hibernate.HibernateConfiguration",

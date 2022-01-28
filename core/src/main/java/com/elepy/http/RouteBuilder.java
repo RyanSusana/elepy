@@ -9,7 +9,7 @@ public final class RouteBuilder {
     private HttpMethod method;
     private String path;
     private String acceptType = "*/*";
-    private Set<String> permissions = new TreeSet<>();
+    private final Set<String> permissions = new TreeSet<>();
 
     private RouteBuilder() {
     }

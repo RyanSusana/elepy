@@ -15,7 +15,7 @@ public class SparkService implements HttpService {
 
     private static final Logger logger = LoggerFactory.getLogger(SparkService.class);
     private final Service http;
-    private Map<RouteKey, Route> routes;
+    private final Map<RouteKey, Route> routes;
     private int counter;
     private boolean ignitedOnce = false;
 

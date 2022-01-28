@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class TranslatableDeserializer extends JsonDeserializer<Map<Locale, ?>> {
     @Override
-    public Map<Locale, ?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Map<Locale, ?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
         return null;
     }

@@ -28,7 +28,7 @@ public class FileUploadExtension implements ElepyExtension {
     @Inject
     private Crud<FileReference> fileCrud;
 
-    private ImageProcessor imageProcessor = new ImageProcessor();
+    private final ImageProcessor imageProcessor = new ImageProcessor();
 
     @Override
     public void setup(HttpService httpService, ElepyPostConfiguration elepy) {

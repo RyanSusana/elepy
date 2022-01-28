@@ -15,14 +15,14 @@ import static com.elepy.models.FieldType.guessFieldType;
 
 public class ArrayOptions<T extends Options> implements Options {
 
-    private boolean sortable;
-    private int maximumArrayLength;
-    private int minimumArrayLength;
+    private final boolean sortable;
+    private final int maximumArrayLength;
+    private final int minimumArrayLength;
 
-    private FieldType arrayType;
+    private final FieldType arrayType;
 
     @JsonUnwrapped
-    private T genericOptions;
+    private final T genericOptions;
 
     public ArrayOptions(boolean sortable, int maximumArrayLength, int minimumArrayLength, FieldType arrayType, T genericOptions) {
         this.sortable = sortable;

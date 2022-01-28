@@ -15,7 +15,7 @@ public class AuthSchemeFactory<T extends OAuthService> {
 //    private T service;
 //    private EmailExtractor<T> emailExtractor;
 
-    private ServiceBuilder serviceBuilder;
+    private final ServiceBuilder serviceBuilder;
     private final String appId;
     private DefaultApi20 api20;
     private EmailExtractor emailExtractor;

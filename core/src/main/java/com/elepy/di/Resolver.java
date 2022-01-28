@@ -46,13 +46,13 @@ class Resolver {
     }
 
     private Stream<? extends ContextKey<?>> findDependenciesInFields(Class<?> root) {
-        return (Stream<? extends ContextKey<?>>) ReflectionUtils.searchForFieldsWithAnnotation(root, Inject.class)
+        return ReflectionUtils.searchForFieldsWithAnnotation(root, Inject.class)
                 .stream()
                 .map(ContextKey::forAnnotatedElement);
     }
 
     private Stream<? extends ContextKey<?>> findDependenciesInConstructor(Class<?> root) {
-        return (Stream<? extends ContextKey<?>>) ReflectionUtils.getElepyConstructor(root)
+        return ReflectionUtils.getElepyConstructor(root)
                 .map(constructor ->
                         Arrays.stream(constructor.getParameters())
                                 .map(ContextKey::forAnnotatedElement))

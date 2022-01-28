@@ -37,7 +37,7 @@ public class Tokens {
 
     @Inject
     private UserCenter users;
-    private Map<Token, Grant> cached = new HashMap<>();
+    private final Map<Token, Grant> cached = new HashMap<>();
 
     private Optional<Grant> getGrantFromCache(String token) {
         removeOverdueTokensCache();

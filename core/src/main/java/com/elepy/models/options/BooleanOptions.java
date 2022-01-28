@@ -8,10 +8,10 @@ import java.lang.reflect.AnnotatedElement;
 public class BooleanOptions implements Options {
 
     @Localized
-    private String trueValue;
+    private final String trueValue;
 
     @Localized
-    private String falseValue;
+    private final String falseValue;
 
     private BooleanOptions(String trueValue, String falseValue) {
         this.trueValue = trueValue;

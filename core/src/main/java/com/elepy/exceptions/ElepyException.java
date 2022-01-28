@@ -10,7 +10,7 @@ public class ElepyException extends RuntimeException {
 
     private final Object detail;
     @Localized
-    private Object message;
+    private final Object message;
 
     @JsonProperty
     private final int status;

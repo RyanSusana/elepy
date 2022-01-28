@@ -20,7 +20,7 @@ public class Stacks {
     public static final ElepyConfigHelper MONGO = new MongoStack();
     public static final ElepyConfigHelper HIBERNATE = elepy -> elepy.addConfiguration(HibernateConfiguration.inMemory());
 
-    private static Map<String, ElepyConfigHelper> stackMap;
+    private static final Map<String, ElepyConfigHelper> stackMap;
     public static Map<String, ElepyConfigHelper> dataAccessMap;
     public static Map<String, ElepyConfigHelper> routingMap;
 

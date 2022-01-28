@@ -6,6 +6,7 @@ import com.elepy.dao.Crud;
 import com.elepy.http.Request;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -48,7 +49,7 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
 
     private String[] readBasicUsernamePassword(String base64) {
         String credentials = new String(Base64.getDecoder().decode(base64),
-                Charset.forName("UTF-8"));
+                StandardCharsets.UTF_8);
         return credentials.split(":", 2);
     }
 

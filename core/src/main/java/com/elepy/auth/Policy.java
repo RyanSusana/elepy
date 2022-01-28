@@ -18,8 +18,8 @@ public class Policy {
     @Inject
     private Crud<Role> customRoles;
 
-    private List<Role> predefinedRoles = new ArrayList<>();
-    private Set<String> availablePermissions = new TreeSet<>();
+    private final List<Role> predefinedRoles = new ArrayList<>();
+    private final Set<String> availablePermissions = new TreeSet<>();
 
 
     public void registerPredefinedRole(PredefinedRole predefinedRole) {

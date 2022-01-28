@@ -6,8 +6,8 @@ import com.elepy.uploads.FileUploadEvaluator;
 import java.lang.reflect.AnnotatedElement;
 
 public class FileReferenceOptions implements Options {
-    private String allowedMimeType;
-    private long maximumFileSize;
+    private final String allowedMimeType;
+    private final long maximumFileSize;
 
     public FileReferenceOptions(String allowedMimeType, long maximumFileSize) {
         this.allowedMimeType = allowedMimeType;

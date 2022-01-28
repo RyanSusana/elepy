@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MultiFilter implements Filter, Iterable<Filter> {
 
-    private List<Filter> filters = new ArrayList<>();
+    private final List<Filter> filters = new ArrayList<>();
 
     @Override
     public void authenticate(HttpContext context) throws Exception {

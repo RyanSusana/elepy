@@ -22,10 +22,10 @@ import static com.elepy.http.RouteBuilder.anElepyRoute;
 public class ModelEngine {
 
 
-    private Elepy elepy;
-    private List<ModelPiston<?>> pistons;
+    private final Elepy elepy;
+    private final List<ModelPiston<?>> pistons;
 
-    private Map<Class<?>, ModelChange> changesToImplement;
+    private final Map<Class<?>, ModelChange> changesToImplement;
 
     public ModelEngine(Elepy elepy) {
         this.elepy = elepy;

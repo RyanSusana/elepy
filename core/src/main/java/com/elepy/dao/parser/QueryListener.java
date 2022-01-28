@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import static com.elepy.dao.parser.EleQueryParser.*;
 
 public class QueryListener extends EleQueryBaseListener {
-    private Query query = new Query();
+    private final Query query = new Query();
 
     public Query getQuery() {
         return query;
