@@ -5,7 +5,7 @@ This an explanation guide of how I implemented the old https://docs.elepy.com (n
 ## How I implemented it
 It uses this custom RestModel:
 ```kotlin
-@RestModel(name = "Pages", path = "/api/pages", defaultSortField = "title")
+@Model(name = "Pages", path = "/api/pages", defaultSortField = "title")
 @View(MarkdownPageView::class)
 data class MarkdownPage @JsonCreator constructor(
         @JsonProperty("id") val id: String?,

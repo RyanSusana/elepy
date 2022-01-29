@@ -4,7 +4,7 @@ _Gif displaying creation users with permissions_
 
 ![Users & Permissions](../images/user-permissions.gif)
 # Users
-Users are just special `@RestModel`s. By default when you spin up Elepy on a clean database, it triggers you to create an initial user.
+Users are just special `@Model`s. By default when you spin up Elepy on a clean database, it triggers you to create an initial user.
 This user is granted the 'owner' permission and can later be used to login. You can read more about permissions in the following chapter.
 User's passwords are encrypted by the BCrypt algorithm before being saved into the database.
 

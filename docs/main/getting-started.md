@@ -6,7 +6,7 @@ ___or if you prefer videos...___
 
 Feel free to subscribe!
 # Step Zero: Basic Terminology
-Elepy knows the concept of RestModels. These are regular POJO(or Data Classes, for Kotlin users) annotated with the [@RestModel](annotations/important?id=restmodel) annotation. This is the domain objects of your CMS.
+Elepy knows the concept of RestModels. These are regular POJO(or Data Classes, for Kotlin users) annotated with the [@Model](annotations/important?id=restmodel) annotation. This is the domain objects of your CMS.
 And that leads us to the next term, CMS. CMS means [(Headless) Content Management System](https://en.wikipedia.org/wiki/Headless_content_management_system) in the context of Elepy.
 [More about the core concepts of Elepy can be found here](main/core-concepts.md).    
 
@@ -38,9 +38,9 @@ The latest version of Elepy is:
 ```
 
 # Step Two: Create and annotate your POJO's
-Create your Rest Model. The only mandatory annotation is `@RestModel`. This annotation is where you describe the name and `/path ` of your model. 
+Create your Rest Model. The only mandatory annotation is `@Model`. This annotation is where you describe the name and `/path ` of your model. 
 ``` java
-@RestModel(name = "Products", path = "/products")
+@Model(name = "Products", path = "/products")
 public class Product {
 
     @Identifier

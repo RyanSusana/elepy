@@ -639,7 +639,7 @@ public class Elepy implements ElepyContext {
             annotatedModels.removeAll(Defaults.MODELS);
 
             if (annotatedModels.isEmpty()) {
-                logger.warn("No @RestModel(s) were found in the added package(s)! Check the package names for misspelling.");
+                logger.warn("No @Model(s) were found in the added package(s)! Check the package names for misspelling.");
             }
 
             annotatedModels.forEach(this::addModel);

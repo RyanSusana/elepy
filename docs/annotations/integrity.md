@@ -8,20 +8,8 @@ This annotation signifies that a field is required in all circumstances. If no v
 @Required
 private String lastName;
 ```
-# @Unique
-This annotation signifies that a field is unique. It uses `IntegrityEvaluator` and the `Crud` method `#searchInField(Field, String)` to test the uniqueness of a field.
 
-```java
-@Unique
-private String email;
-```
-# @Uneditable
-This annotation signifies that a field can only be set once. If you try to update the field, an error should be thrown. This error gets thrown by the `ObjectUpdateEvaluator` and gets shown in the Restful Response.
 
-```java
-@Uneditable
-private String username;
-```
 # @Evaluators
 An evaluator, or `ObjectEvaluator`, is a way of checking if a RestModel item is valid. Whenever you create/update a RestModel item, it gets run through a list of ObjectEvaluators associated with that particular RestModel. The evaluator evaluates an item by not throwing an exception whenever an item gets through it with the `#evaluate(Object, Class)`. By default, the list contains one evaluator, Elepy's default ObjectEvaluator. This default ObjectEvaluator handles things like the `@Number`, `@Text`, `@Required` and `@DateTime`annotations. It makes sure an object doesn't violate the constraints set by those annotations.
 
@@ -31,7 +19,7 @@ You can use the `@Evaluators` to point to a PersonEvaluator(and maybe more, like
 
 _Example_
 ```java
-@RestModel(name = "Persons", path = "/persons")
+@Model(name = "Persons", path = "/persons")
 @Evaluators(PersonEvaluator.class)
 public class Person {
     private String id, firstName, lastName, email;
@@ -57,13 +45,3 @@ public class PersonEvaluator implements ObjectEvaluator<Person> {
 }
 ```
 
-# @Searchable
-This annotation signifies that a field is searchable and be considered when you query the Rest API.
-By default, all @Searchable fields can be queried for by specifying a 'q' query parameter in a GET request.
-
-```java
-@Searchable
-private String firstName;
-```
-
-__*Only works on String fields__

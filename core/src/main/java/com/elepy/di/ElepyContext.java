@@ -43,7 +43,7 @@ public interface ElepyContext {
         final Model annotation = Annotations.get(cls, Model.class);
 
         if (annotation == null) {
-            throw new ElepyConfigException("Resources must have the @RestModel Annotation");
+            throw new ElepyConfigException("Resources must have the @Model Annotation");
         }
 
         return (Crud<T>) getDependency(Crud.class, annotation.path());

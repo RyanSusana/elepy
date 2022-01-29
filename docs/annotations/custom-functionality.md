@@ -14,7 +14,7 @@ You can define a handler and a required permission read more about that here:
 )
 @Update(handler = UserUpdate.class,
             requiredPermissions = "authenticated")
-@RestModel(...)
+@Model(...)
 public class User {
     private long id;
 }
@@ -38,7 +38,7 @@ Let's say you want to query for your article on Google, it's as simple as:
         requiredPermissions = Permissions.AUTHENTICATED,
         method = HttpMethod.GET,
         path = "/find-on-google")
-@RestModel(...)
+@Model(...)
 class Article{
     private String id;
     private String title;
@@ -91,7 +91,7 @@ Typical IdentityProviders:
 
 ```java
 @IdProvider(PathIdentityProvider.clss)
-@RestModel(...)
+@Model(...)
 class Article{
     private String id;
 }
