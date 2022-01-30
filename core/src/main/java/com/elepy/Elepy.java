@@ -129,7 +129,6 @@ public class Elepy implements ElepyContext {
 
         setupDefaults();
 
-        StackConfiguration.configureStack(this);
         configurations.forEach(this::injectFields);
         configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
