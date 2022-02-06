@@ -1,6 +1,6 @@
 package com.elepy.di.tree;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 
 public class Node3 {
     @Inject

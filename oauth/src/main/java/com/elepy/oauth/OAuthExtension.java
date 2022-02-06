@@ -2,7 +2,7 @@ package com.elepy.oauth;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.http.HttpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.oauth.OAuth20Service;

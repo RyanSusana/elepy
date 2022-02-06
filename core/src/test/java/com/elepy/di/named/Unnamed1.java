@@ -1,6 +1,6 @@
 package com.elepy.di.named;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 
 public class Unnamed1 {
 

@@ -1,6 +1,6 @@
 package com.elepy.uploads;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;

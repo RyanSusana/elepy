@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 /**
  * Names an {@link com.elepy.di.ElepyContext} object, can be backtracked for tags
  *
- * @see Inject
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

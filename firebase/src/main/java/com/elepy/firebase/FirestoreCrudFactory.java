@@ -1,6 +1,6 @@
 package com.elepy.firebase;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;

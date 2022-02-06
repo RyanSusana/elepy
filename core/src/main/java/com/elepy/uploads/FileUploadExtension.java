@@ -2,7 +2,7 @@ package com.elepy.uploads;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;

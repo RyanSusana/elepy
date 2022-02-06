@@ -2,7 +2,7 @@ package com.elepy.tests.basic;
 
 
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.annotations.Route;
 import com.elepy.dao.Crud;
 import com.elepy.http.HttpMethod;

@@ -33,6 +33,7 @@ import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.ConfigurationConverter;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -77,6 +78,9 @@ public class Elepy implements ElepyContext {
     private final List<EventHandler> stopEventHandlers = new ArrayList<>();
     private final ElepyConfig config = new ElepyConfig();
 
+    public void abd (AfterBeanDiscovery afterBeanDiscovery){
+        afterBeanDiscovery.addBean();
+    }
 
     public Elepy() {
         init();

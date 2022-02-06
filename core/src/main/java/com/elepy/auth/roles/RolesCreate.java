@@ -1,6 +1,6 @@
 package com.elepy.auth.roles;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.auth.Role;
 import com.elepy.auth.Policy;
 import com.elepy.dao.Crud;

@@ -2,7 +2,7 @@ package com.elepy.di;
 
 import com.elepy.Resource;
 import com.elepy.annotations.ElepyConstructor;
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 
 public class MockCrudService {
 
@@ -12,7 +12,8 @@ public class MockCrudService {
     private final MockCrudResource crudResource;
 
     @ElepyConstructor
-    public MockCrudService(@Inject MockCrudResource crudResource) {
+    @Inject
+    public MockCrudService( MockCrudResource crudResource) {
         this.crudResource = crudResource;
     }
 

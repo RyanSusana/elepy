@@ -1,6 +1,6 @@
 package com.elepy.auth;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.dao.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;

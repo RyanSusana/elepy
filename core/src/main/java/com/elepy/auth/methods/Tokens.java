@@ -1,6 +1,6 @@
 package com.elepy.auth.methods;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.auth.Grant;
 import com.elepy.auth.Token;
 import com.elepy.auth.UserCenter;

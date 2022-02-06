@@ -1,6 +1,6 @@
 package com.elepy.di;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
 import org.slf4j.Logger;

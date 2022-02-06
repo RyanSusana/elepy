@@ -1,6 +1,6 @@
 package com.elepy.auth.methods;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.auth.*;
 import com.elepy.dao.Crud;
 import com.elepy.http.Request;

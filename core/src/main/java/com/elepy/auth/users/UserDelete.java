@@ -1,6 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;

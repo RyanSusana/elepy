@@ -1,6 +1,6 @@
 package com.elepy.di.circular;
 
-import com.elepy.annotations.Inject;
+import jakarta.inject.Inject;
 
 public class Circular3 {
     @Inject
