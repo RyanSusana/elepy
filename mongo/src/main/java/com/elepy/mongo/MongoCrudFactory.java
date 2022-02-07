@@ -1,5 +1,6 @@
 package com.elepy.mongo;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
@@ -7,6 +8,7 @@ import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoDatabase;
 
+@ApplicationScoped
 public class MongoCrudFactory implements CrudFactory {
 
     @Inject

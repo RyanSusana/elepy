@@ -56,7 +56,7 @@ public class Main {
                 })
                 .addExtension(new FrontendLoader());
 
-        elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisionsAmount(10));
+//        elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisionsAmount(10));
         elepyInstance.start();
 
     }

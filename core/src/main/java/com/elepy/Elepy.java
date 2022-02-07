@@ -5,6 +5,7 @@ import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.*;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.PersistedTokenGenerator;
+import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
@@ -30,10 +31,19 @@ import com.elepy.uploads.FileService;
 import com.elepy.uploads.FileUploadExtension;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.LogUtils;
+import com.elepy.utils.ModelUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.ConfigurationConverter;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -42,6 +52,7 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.hibernate.validator.HibernateValidator;
+import org.jboss.weld.environment.se.Weld;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +60,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
@@ -58,9 +69,13 @@ import java.util.function.Supplier;
  * The base Elepy class. Call {@link #start()} to start the configuration and execution of
  * the Elepy instance.
  */
+@ApplicationScoped
 public class Elepy implements ElepyContext {
 
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
+
+
+    private Weld weld;
 
     private final List<ElepyExtension> modules = new ArrayList<>();
     private final List<String> packages = new ArrayList<>();
@@ -78,11 +93,12 @@ public class Elepy implements ElepyContext {
     private final List<EventHandler> stopEventHandlers = new ArrayList<>();
     private final ElepyConfig config = new ElepyConfig();
 
-    public void abd (AfterBeanDiscovery afterBeanDiscovery){
-        afterBeanDiscovery.addBean();
-    }
 
     public Elepy() {
+
+        weld = new Weld();
+
+
         init();
     }
 
@@ -109,6 +125,7 @@ public class Elepy implements ElepyContext {
     }
 
 
+    @Produces
     private ObjectMapper createObjectMapper() {
 
         ObjectMapper objectMapper = new ObjectMapper()
@@ -130,7 +147,6 @@ public class Elepy implements ElepyContext {
      * @see #stop()
      */
     public void start() {
-
         setupDefaults();
 
         configurations.forEach(this::injectFields);
@@ -139,8 +155,9 @@ public class Elepy implements ElepyContext {
 
         configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
-        modelEngine.start();
 
+        weld.initialize();
+        modelEngine.start();
         setupAuth();
         context.resolveDependencies();
 
@@ -200,7 +217,7 @@ public class Elepy implements ElepyContext {
 
     @Override
     public <T> T getDependency(Class<T> cls, String tag) {
-        return context.getDependency(cls, tag);
+        return CDI.current().select(cls).get();
     }
 
     @Override
@@ -533,15 +550,6 @@ public class Elepy implements ElepyContext {
         return addConfiguration(initialize(conf));
     }
 
-    /**
-     * @param tClass      the class of the model
-     * @param modelChange the change to execute to the model
-     * @return the Elepy instance
-     */
-    public Elepy alterModel(Class<?> tClass, ModelChange modelChange) {
-        modelEngine.alterModel(tClass, modelChange);
-        return this;
-    }
 
     public Elepy setTokenGenerator(TokenGenerator authenticationMethod) {
         authenticationService().setTokenGenerator(authenticationMethod);

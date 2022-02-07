@@ -1,10 +1,9 @@
 package com.elepy.auth;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.dao.Crud;
-import com.elepy.evaluators.DefaultIntegrityEvaluator;
-import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 
 import java.util.*;
@@ -12,8 +11,8 @@ import java.util.stream.Collectors;
 
 import static com.elepy.dao.Filters.search;
 
+@ApplicationScoped
 public class Policy {
-
 
     @Inject
     private Crud<Role> customRoles;

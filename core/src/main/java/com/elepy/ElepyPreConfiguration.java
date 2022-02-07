@@ -240,9 +240,9 @@ public class ElepyPreConfiguration {
      * @param tClass      the class of the model
      * @param modelChange the change to execute to the model
      */
-    public void alterModel(Class<?> tClass, ModelChange modelChange) {
-        elepy.alterModel(tClass, modelChange);
-    }
+//    public void alterModel(Class<?> tClass, ModelChange modelChange) {
+//        elepy.alterModel(tClass, modelChange);
+//    }
 
     public void setTokenGenerator(TokenGenerator method) {
         elepy.setTokenGenerator(method);

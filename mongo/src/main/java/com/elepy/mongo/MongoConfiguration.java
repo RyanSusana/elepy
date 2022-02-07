@@ -8,7 +8,9 @@ import com.elepy.annotations.Property;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import lombok.Getter;
 
+@Getter
 public class MongoConfiguration implements Configuration {
 
     private final MongoClient mongoClient;

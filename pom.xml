@@ -29,6 +29,7 @@
         <headlessMode>false</headlessMode>
         <revision>3.0.0-alpha-29</revision>
         <java-jwt.version>3.18.3</java-jwt.version>
+        <lombok.version>1.18.22</lombok.version>
     </properties>
 
     <licenses>
@@ -110,6 +111,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>4.3.1</version>
@@ -165,6 +172,13 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
 
             </plugin>

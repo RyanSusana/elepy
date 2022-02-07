@@ -154,9 +154,15 @@
             <version>4.9.3</version>
         </dependency>
         <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se-core</artifactId>
+            <version>4.0.2.Final</version>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core-impl</artifactId>
             <version>4.0.2.Final</version>
         </dependency>
+
     </dependencies>
 </project>

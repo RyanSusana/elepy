@@ -172,14 +172,6 @@ public class ElepyPostConfiguration {
     }
 
 
-    /**
-     * @param tClass      the class of the model
-     * @param modelChange the change to execute to the model
-     */
-    public void alterModel(Class<?> tClass, ModelChange modelChange) {
-        elepy.alterModel(tClass, modelChange);
-    }
-
 
     public void injectFields(Object o) {
         elepy.injectFields(o);
