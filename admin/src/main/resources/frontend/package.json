@@ -25,7 +25,7 @@
     "marked": "^4.0.10",
     "messageformat": "^2.3.0",
     "misbehave": "^0.3.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "node-vibrant": "^3.1.5",
     "prismjs": "^1.24.0",
     "uikit": "3.3.6",
