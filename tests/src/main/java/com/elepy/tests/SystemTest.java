@@ -1,7 +1,7 @@
 package com.elepy.tests;
 
 import com.elepy.Elepy;
-import com.elepy.admin.AdminPanel;
+import com.elepy.admin.AdminPanelConfiguration;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.tests.selenium.ElepyDriver;
 import com.elepy.tests.selenium.ModelScenario;
@@ -57,7 +57,7 @@ public abstract class SystemTest implements ElepyConfigHelper {
 
         this.configureElepy(elepySystemUnderTest);
 
-        elepySystemUnderTest.addConfiguration(AdminPanel.local())
+        elepySystemUnderTest.addConfiguration(AdminPanelConfiguration.local())
                 .withPort(counter++)
                 .addModel(Settings.class)
                 .addModel(CantSeeThis.class)

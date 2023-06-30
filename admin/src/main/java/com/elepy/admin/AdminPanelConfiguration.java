@@ -4,24 +4,24 @@ import com.elepy.Configuration;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.ElepyPreConfiguration;
 
-public class AdminPanel implements Configuration {
+public class AdminPanelConfiguration implements Configuration {
 
     @Deprecated(forRemoval = true)
-    public static AdminPanel newAdminPanel() {
+    public static AdminPanelConfiguration newAdminPanel() {
         return newBuilder().build();
     }
 
     @Deprecated(forRemoval = true)
-    public static AdminPanel cdn() {
+    public static AdminPanelConfiguration cdn() {
         return newBuilder().build();
     }
 
     @Deprecated(forRemoval = true)
-    public static AdminPanel cdn(String version) {
+    public static AdminPanelConfiguration cdn(String version) {
         return newBuilder().withCDNVersion(version).build();
     }
 
-    public static AdminPanel local() {
+    public static AdminPanelConfiguration local() {
         return newBuilder().withLocal().build();
     }
 

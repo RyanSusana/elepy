@@ -1,6 +1,6 @@
 package com.elepy.tests.compatibility;
 
-import com.elepy.admin.AdminPanel;
+import com.elepy.admin.AdminPanelConfiguration;
 import com.elepy.tests.ElepySystemUnderTest;
 import com.elepy.tests.selenium.ElepyDriver;
 import org.junit.jupiter.api.*;
@@ -51,7 +51,7 @@ public class SystemCompatibilityTests extends Stacks {
     public void setup() {
         elepySystemUnderTest = ElepySystemUnderTest.create();
 
-        elepySystemUnderTest.addConfiguration(AdminPanel.local());
+        elepySystemUnderTest.addConfiguration(AdminPanelConfiguration.local());
 
         driver = new ElepyDriver(elepySystemUnderTest, chromeDriver);
     }

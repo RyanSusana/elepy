@@ -12,7 +12,7 @@ public class AdminPanelBuilder {
 
     private List<String> requiredPermissions;
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminPanelConfiguration.class);
 
 
     public AdminPanelBuilder withLocal() {
@@ -40,8 +40,8 @@ public class AdminPanelBuilder {
     }
 
 
-    public AdminPanel build() {
-        return new AdminPanel();
+    public AdminPanelConfiguration build() {
+        return new AdminPanelConfiguration();
     }
 
 
