@@ -1,10 +1,12 @@
 # Elepy Query Language
 
-Elepy Query Language is a query language designed to interact with the Elepy Query Language model for data retrieval and filtering. It provides
+Elepy Query Language is a query language designed to interact with the Elepy Query Language model for data retrieval and
+filtering. It provides
 a flexible and intuitive way to construct queries that allow users to extract specific data based on various conditions
 and criteria.
 
-With Elepy Query Language, users can compose powerful queries to retrieve, filter, and manipulate data stored in a compatible system
+With Elepy Query Language, users can compose powerful queries to retrieve, filter, and manipulate data stored in a
+compatible system
 or database. The language supports a wide range of operations, including logical operations, filtering based on
 different data types, and search capabilities.
 
@@ -102,7 +104,7 @@ Expressions can be grouped by wrapping them in parentheses:
 
 - `(name = bob and age = 12) or name = marley`
 
-### Escaping Filters and Search Queries
+### Escaping Expression
 
 In cases where your search query or filter uses a reserved keyword, you can escape it by wrapping it in single/double
 quotes.
@@ -112,6 +114,3 @@ Example:
 - `name = "bob equals marley"`
 - `"a sample search query"`
 - `name = 'bob equals marley' and "a sample and search query"`
-
-
-
