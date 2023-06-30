@@ -78,10 +78,6 @@ public class Elepy implements ElepyContext {
     private final List<EventHandler> stopEventHandlers = new ArrayList<>();
     private final ElepyConfig config = new ElepyConfig();
 
-    public void abd (AfterBeanDiscovery afterBeanDiscovery){
-        afterBeanDiscovery.addBean();
-    }
-
     public Elepy() {
         init();
     }
@@ -133,31 +129,37 @@ public class Elepy implements ElepyContext {
 
         setupDefaults();
 
-        configurations.forEach(this::injectFields);
-        configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
+        try{
+
+            configurations.forEach(this::injectFields);
+            configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
 
 
-        configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
+            configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
-        modelEngine.start();
+            modelEngine.start();
 
-        setupAuth();
-        context.resolveDependencies();
+            setupAuth();
+            context.resolveDependencies();
 
-        setupExtraRoutes();
-        igniteAllRoutes();
-        injectExtensions();
-        initialized = true;
+            setupExtraRoutes();
+            igniteAllRoutes();
+            injectExtensions();
+            initialized = true;
 
-        afterElepyConstruction();
+            afterElepyConstruction();
 
-        http.ignite();
+            http.ignite();
 
-        context.strictMode(true);
+            context.strictMode(true);
 
-        modelEngine.executeChanges();
+            modelEngine.executeChanges();
 
-        logger.info(String.format(LogUtils.banner, http.port()));
+            logger.info(String.format(LogUtils.banner, http.port()));
+        } catch (Exception e) {
+            logger.error("Something went wrong while setting up Elepy", e);
+            System.exit(1);
+        }
     }
 
     /**
@@ -554,8 +556,9 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    public void addResources(String... bundleNames) {
+    public Elepy withResourceBundles(String... bundleNames) {
         getDependency(Resources.class).addResourceBundles(bundleNames);
+        return this;
     }
 
     public Elepy withProperties(URL url) {
@@ -704,7 +707,7 @@ public class Elepy implements ElepyContext {
             ctx.response().header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin, Accept-Language");
 
             if (!ctx.request().method().equalsIgnoreCase("OPTIONS") && ctx.response().status() != 404)
-                logger.debug(String.format("%s\t['%s']: %dms", ctx.request().method(), ctx.request().uri(), System.currentTimeMillis() - ((Long) ctx.attribute("start"))));
+                logger.info(String.format("%s\t['%s']: %dms", ctx.request().method(), ctx.request().uri(), System.currentTimeMillis() - ((Long) ctx.attribute("start"))));
         });
         http.options("/*", ctx -> ctx.result(""));
 
@@ -716,7 +719,7 @@ public class Elepy implements ElepyContext {
             if (exception instanceof ElepyException) {
                 elepyException = (ElepyException) exception;
             } else {
-                exception.printStackTrace();
+                logger.error(exception.getMessage(), exception);
                 elepyException = ElepyException.internalServerError(exception);
             }
 
