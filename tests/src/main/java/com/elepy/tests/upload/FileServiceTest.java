@@ -33,11 +33,11 @@ public abstract class FileServiceTest {
 
     private static int portCounter = 8700;
     private final Configuration[] configurations;
-    private final int port;
+    protected final int port;
 
-    private Elepy elepy;
-    private FileService fileService;
-    private String url;
+    protected Elepy elepy;
+    protected FileService fileService;
+    protected String url;
 
     private final Tika tika = new Tika();
 
@@ -47,15 +47,19 @@ public abstract class FileServiceTest {
         port = ++portCounter;
     }
 
-    public abstract Configuration databaseConfiguration();
+    public Configuration databaseConfiguration() {
+        throw new UnsupportedOperationException("You need to implement this method");
+    }
 
-    public abstract FileService fileService();
+    public FileService fileService() {
+        throw new UnsupportedOperationException("You need to implement this method");
+    }
 
 
     @BeforeAll
     public void setUp() {
         this.fileService = fileService();
-        url = String.format("http://localhost:%d", port);
+        this.url = String.format("http://localhost:%d", port);
         elepy = new Elepy()
                 .addModel(Resource.class)
                 .addConfiguration(databaseConfiguration())

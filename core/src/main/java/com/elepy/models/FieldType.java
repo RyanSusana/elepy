@@ -45,8 +45,7 @@ public enum FieldType {
                     com.elepy.annotations.FileReference.class, FILE_REFERENCE,
                     Number.class, NUMBER,
                     Reference.class, REFERENCE,
-                    Custom.class, CUSTOM,
-                    Dynamic.class, DYNAMIC
+                    Custom.class, CUSTOM
             );
 
     FieldType() {
