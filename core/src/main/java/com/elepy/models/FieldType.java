@@ -100,12 +100,10 @@ public enum FieldType {
 
 
     private static boolean isCollection(Class<?> type) {
-        for (Class<?> aClass : type.getInterfaces()) {
-            if (aClass.equals(Collection.class)) {
-                return true;
-            }
+       if (type.isArray()) {
+            return true;
         }
-        return false;
+       return Collection.class.isAssignableFrom(type);
     }
 
     private static Optional<FieldType> getByAnnotation(AnnotatedElement property) {
