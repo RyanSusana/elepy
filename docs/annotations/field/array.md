@@ -6,7 +6,7 @@ Arrays also inherit the details of it's generic type. If you want an array of `@
 
 _Example_
 ```java
-@Array(minimumArrayLength = 1, maximumArrayLength = 10, sortable = true)
+@Array(sortable = true)
 private List<Translation> translations;
 ```
 

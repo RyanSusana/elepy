@@ -6,7 +6,7 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
 import com.elepy.models.FieldType;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.SchemaFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -123,7 +123,7 @@ public class FiltersTest {
 
     private HttpContext mockedContextWithQueryMap(Map<String, String> map) {
         HttpContext mockedContext = mockedContext();
-        when(mockedContext.request().attribute(any())).thenReturn(List.of(ModelUtils.createDeepSchema(Resource.class)));
+        when(mockedContext.request().attribute(any())).thenReturn(List.of(new SchemaFactory().createDeepSchema(Resource.class)));
         when(mockedContext.request().queryParams()).thenReturn(map.keySet());
 
         when(mockedContext.request().queryParams(anyString())).thenAnswer(invocationOnMock -> map.get(invocationOnMock.getArgument(0)));

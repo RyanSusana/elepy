@@ -3,10 +3,9 @@ package com.elepy.igniters;
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
 import com.elepy.handlers.*;
+import com.elepy.models.ActionFactory;
 import com.elepy.models.Schema;
-import com.elepy.utils.Annotations;
-import com.elepy.utils.DefaultActions;
-import com.elepy.utils.ModelUtils;
+import com.elepy.utils.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,12 +18,13 @@ import java.util.stream.Collectors;
 public class ModelHandlers<T> {
 
 
+    private final ActionFactory actionFactory ;
     private final Map<Default, ModelAction<T>> defaultActions;
     private final List<ModelAction<T>> extraActions;
 
     @SuppressWarnings("unchecked")
     private ModelHandlers(Elepy elepy, Schema<T> schema) {
-
+        actionFactory = new ActionFactory();
         this.defaultActions = Arrays.stream(Default.values())
                 .collect(Collectors.toMap(value -> value,
                         value -> value.schemaToHttpAction.apply(elepy, schema)
@@ -32,7 +32,7 @@ public class ModelHandlers<T> {
 
         this.extraActions = Arrays.stream(schema.getJavaClass().getAnnotationsByType(Action.class))
                 .map(action -> new ModelAction<>(
-                        ModelUtils.actionToHttpAction(schema.getPath(), action),
+                        actionFactory.actionToHttpAction(schema.getPath(), action),
                         (ActionHandler<T>) elepy.initialize(action.handler()))).collect(Collectors.toList()
                 );
     }

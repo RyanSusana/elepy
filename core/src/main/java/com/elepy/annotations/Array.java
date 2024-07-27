@@ -8,18 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE_USE})
 public @interface Array {
-
-    /**
-     * @deprecated use Java Bean Validation instead
-     */
-    @Deprecated(forRemoval = true)
-    int maximumArrayLength() default 10_000;
-
-    /**
-     * @deprecated use Java Bean Validation instead
-     */
-    @Deprecated(forRemoval = true)
-    int minimumArrayLength() default 0;
-
     boolean sortable() default true;
 } 

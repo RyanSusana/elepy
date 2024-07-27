@@ -10,7 +10,8 @@ import com.elepy.models.Property;
 import com.elepy.models.Schema;
 import com.elepy.models.options.*;
 import com.elepy.uploads.FileUploadEvaluator;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.SchemaFactory;
+import com.elepy.models.PropertyFactory;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
@@ -29,7 +30,7 @@ public class SchemaUtilsTest {
     @Test
     void testHiddenField() {
 
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         assertThatExceptionOfType(ElepyConfigException.class)
                 .isThrownBy(() -> schemaFromClass.getProperty("hidden"))
@@ -39,7 +40,7 @@ public class SchemaUtilsTest {
     @Test
     void testCorrectOrderingAndPropertySizeOfModel() {
 
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         //Keep in mind that there is one hidden field
         assertThat(schemaFromClass.getProperties().size()).isEqualTo(Resource.class.getDeclaredFields().length);
@@ -50,7 +51,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectDate() throws ParseException {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
         final Property property = schemaFromClass.getProperty("date");
         final DateOptions of = property.getOptions();
 
@@ -62,7 +63,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectText() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("minLen10MaxLen50");
         assertThat(property.getType())
@@ -71,7 +72,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectEnum() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("textType");
         final EnumOptions of = property.getOptions();
@@ -83,7 +84,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectObject() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("resourceCustomObject");
         final ObjectOptions of = property.getOptions();
@@ -101,7 +102,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectNumber() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("numberMin10Max50");
         final NumberOptions of = property.getOptions();
@@ -114,7 +115,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectUnique() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         assertThat(schemaFromClass.getProperty("unique").isUnique()).isTrue();
 
@@ -122,7 +123,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectFileReference() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("fileReference");
         final FileReferenceOptions fileReference = property.getOptions();
@@ -138,7 +139,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectReference_viaCustomAnnotation() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
         final var property = schemaFromClass.getProperty("customAnnotation");
         final ReferenceOptions options = property.getOptions();
 
@@ -152,28 +153,28 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectUneditable() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         assertThat(schemaFromClass.getProperty("nonEditable").isEditable()).isFalse();
     }
 
     @Test
     void testCorrectIdProperty() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         assertThat(schemaFromClass.getIdProperty()).isEqualTo("id");
     }
 
     @Test
     void testCorrectFeaturedProperty() {
-        final Schema<Resource> schemaFromClass = ModelUtils.createDeepSchema(Resource.class);
+        final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         assertThat(schemaFromClass.getFeaturedProperty()).isEqualTo("featuredProperty");
     }
 
     @Test
     void testCorrectArray() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final Property arrayEnum = schema.getProperty("arrayEnum");
 
@@ -182,7 +183,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_ENUM() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayEnum = schema.getProperty("arrayEnum").getOptions();
 
@@ -191,7 +192,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_TEXT() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayString = schema.getProperty("arrayString").getOptions();
 
@@ -200,7 +201,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_FILE_REFERENCE() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayString = schema.getProperty("arrayFileReference").getOptions();
 
@@ -211,7 +212,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_NUMBER() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayNumber = schema.getProperty("arrayNumber").getOptions();
 
@@ -220,7 +221,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_DATE() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayDate = schema.getProperty("arrayDate").getOptions();
 
@@ -229,7 +230,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_OBJECT() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayObject = schema.getProperty("arrayObject").getOptions();
 
@@ -239,7 +240,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testCorrectArray_BOOLEAN() {
-        final Schema<ResourceArray> schema = ModelUtils.createDeepSchema(ResourceArray.class);
+        final Schema<ResourceArray> schema = new SchemaFactory().createDeepSchema(ResourceArray.class);
 
         final ArrayOptions arrayBoolean = schema.getProperty("arrayBoolean").getOptions();
 
@@ -250,7 +251,7 @@ public class SchemaUtilsTest {
     @Test
     void testStrongRecursiveObject() {
         final int MAX_RECURSION_DEPTH = 8;
-        final List<Property> properties = ModelUtils.describeClass(StrongRecursiveModel.class);
+        final List<Property> properties = new PropertyFactory().describeClass(StrongRecursiveModel.class);
         List<Property> currentProperties = properties;
 
         for (int i = 0; i < MAX_RECURSION_DEPTH; i++) {
@@ -263,7 +264,7 @@ public class SchemaUtilsTest {
 
     @Test
     void testReferences() {
-        final var schemaFromClass = ModelUtils.createDeepSchema(Product.class);
+        final var schemaFromClass = new SchemaFactory().createDeepSchema(Product.class);
 
         final var categoryId = schemaFromClass.getProperty("categoryId");
 
@@ -281,7 +282,7 @@ public class SchemaUtilsTest {
     @Test
     void testStrongRecursiveArray() {
         final int MAX_RECURSION_DEPTH = 20;
-        final List<Property> properties = ModelUtils.describeClass(NavigationMenu.class);
+        final List<Property> properties = new PropertyFactory().describeClass(NavigationMenu.class);
         List<Property> currentProperties = properties;
 
         for (int i = 0; i < MAX_RECURSION_DEPTH; i++) {

@@ -5,8 +5,7 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.ModelContext;
 import com.elepy.mongo.MongoDao;
-import com.elepy.utils.ModelUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.elepy.models.SchemaFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -18,8 +17,9 @@ public class ObjectIntegrityTest extends BaseFongo {
     @Test
     public void testIntegrityUnique() throws Exception {
         super.setUp();
-        MongoDao<Resource> defaultMongoDao = new MongoDao<>(getDb(), "resources", ModelUtils.createDeepSchema(Resource.class));
-        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(ModelUtils.createDeepSchema(Resource.class), defaultMongoDao, null, null));
+        var modelFactory = new SchemaFactory();
+        MongoDao<Resource> defaultMongoDao = new MongoDao<>(getDb(), "resources", modelFactory.createDeepSchema(Resource.class));
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(modelFactory.createDeepSchema(Resource.class), defaultMongoDao, null, null));
         defaultMongoDao.create(validObject());
 
 

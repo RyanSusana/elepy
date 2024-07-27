@@ -5,7 +5,7 @@ import com.elepy.mongo.CustomJacksonModule;
 import com.elepy.mongo.ElepyCodecRegistry;
 import com.elepy.mongo.MongoCrudFactory;
 import com.elepy.mongo.MongoDao;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.SchemaFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -40,7 +40,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultElepyContext.registerDependency(MongoDatabase.class, db);
         defaultElepyContext.registerDependency(new ObjectMapper());
 
-        defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(ModelUtils.createDeepSchema(Resource.class));
+        defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
 
         final var objectMapper = new ObjectMapper();
 

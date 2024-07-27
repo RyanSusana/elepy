@@ -3,7 +3,7 @@ package com.elepy.models.options;
 import com.elepy.annotations.Reference;
 import com.elepy.models.Schema;
 import com.elepy.utils.Annotations;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.SchemaFactory;
 
 import java.lang.reflect.AnnotatedElement;
 
@@ -18,7 +18,7 @@ public class ReferenceOptions implements Options {
 
     public static ReferenceOptions of(AnnotatedElement element) {
         final var reference = Annotations.get(element, Reference.class);
-        return new ReferenceOptions(ModelUtils.createShallowSchema(reference.to()));
+        return new ReferenceOptions(new SchemaFactory().createShallowSchema(reference.to()));
     }
 
     public Schema<?> getReferenceSchema() {

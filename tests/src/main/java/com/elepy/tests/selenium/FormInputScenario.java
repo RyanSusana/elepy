@@ -49,9 +49,6 @@ public class FormInputScenario<T> extends LoggedInScenario {
     private FillIn getActionFor(Property property) {
         switch (property.getType()) {
             case INPUT:
-            case HTML:
-            case MARKDOWN:
-            case TEXTAREA:
                 return new FillInText(driver, property);
             case BOOLEAN:
                 return new FillInBoolean(driver, property);

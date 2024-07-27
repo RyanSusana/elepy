@@ -1,18 +1,21 @@
 package com.elepy.models.options;
 
-import com.elepy.annotations.Featured;
-import com.elepy.annotations.InnerObject;
-import com.elepy.annotations.Localized;
+import com.elepy.annotations.*;
 import com.elepy.models.FieldType;
 import com.elepy.models.Property;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.PropertyFactory;
+import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Column;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ObjectOptions implements Options {
 
@@ -21,62 +24,31 @@ public class ObjectOptions implements Options {
     private String featuredProperty;
     private List<Property> properties;
 
-    private ObjectOptions(String objectName, String featuredProperty, List<Property> properties) {
-        this.objectName = objectName;
-        this.featuredProperty = featuredProperty;
-        this.properties = properties;
+    @JsonIgnore
+    private final PropertyFactory propertyFactory;
+    private ObjectOptions(Class<?> objectType,InnerObject annotation) {
+        this();
+        featuredProperty = getFeaturedProperty(objectType);
+
+        objectName = getObjectName(objectType, annotation);
+
+        this.properties = describeProperties(objectType, getRecursionDepth(annotation));
     }
 
-    private ObjectOptions() {
 
+    public ObjectOptions() {
+        this.propertyFactory = new PropertyFactory();
     }
 
     public static ObjectOptions of(AnnotatedElement field) {
         Class<?> objectType = ReflectionUtils.returnTypeOf(field);
-        final InnerObject annotation = com.elepy.utils.Annotations.get(field,InnerObject.class);
-        return of(objectType, annotation);
+        final InnerObject annotation = Annotations.get(field, InnerObject.class);
+        return new ObjectOptions(objectType, annotation);
     }
-
-    public static ObjectOptions of(Class<?> objectType, InnerObject annotation) {
-        final String featuredProperty = getFeaturedProperty(objectType);
-
-        final String objectName = getObjectName(objectType, annotation);
-
-        return new ObjectOptions(objectName, featuredProperty, describeProperties(objectType, getRecursionDepth(annotation)));
-    }
-
-    private static String getObjectName(Class<?> objectType, InnerObject annotation) {
-        return (annotation == null || annotation.name().isBlank()) ? objectType.getSimpleName() : annotation.name();
-    }
-
-    private static int getRecursionDepth(InnerObject annotation) {
-        return annotation == null ? 3 : annotation.maxRecursionDepth();
-    }
-
-    private static String getFeaturedProperty(Class<?> objectType) {
-        return ReflectionUtils.searchForFieldWithAnnotation(objectType, Featured.class)
-                .map(ReflectionUtils::getPropertyName).orElse(null);
-    }
-
-    private static List<Property> describeProperties(Class cls, int recursionDepth) {
-        return ModelUtils.getAccessibleObjects(cls).stream()
-                .map(accessibleObject -> {
-                    if (isRecursive(cls, accessibleObject)) {
-                        return createRecursiveObjectOptionsTree(accessibleObject, recursionDepth, 1);
-                    } else {
-                        return ModelUtils.describeAccessibleObject(accessibleObject);
-                    }
-                })
-                .filter(Objects::nonNull)
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-
     // This method takes over the infinite recursion that would otherwise happen during ModelUtils.describeFieldOrMethod
     // It is meant to limit the amount of times the recursion  can happen, with a user-definable maxRecursionDepth property
     // If the max depth is met, this property is  set to null
-    private static Property createRecursiveObjectOptionsTree(AccessibleObject field, int maxDepth, int currentDepth) {
+    private Property createRecursiveObjectOptionsTree(AccessibleObject field, int maxDepth, int currentDepth) {
         if (maxDepth == currentDepth) {
             return null;
         } else {
@@ -85,29 +57,43 @@ public class ObjectOptions implements Options {
             final Class<?> objectType = isArray ? ReflectionUtils.getGenericType(field, 0) : fieldType;
             final Property property = new Property();
 
-            ModelUtils.setupPropertyBasics(field, false, property);
-
+            setupPropertyBasics(field, false, property);
 
             final var options = new ObjectOptions();
 
             setOptions(field, property, options);
 
+            options.setProperties(getAccessibleObjects(objectType).stream().map(accessibleObject -> {
+                        if (isRecursive(objectType, accessibleObject)) {
+                            return createRecursiveObjectOptionsTree(field, maxDepth, currentDepth + 1);
+                        } else {
+                            return propertyFactory.describeAccessibleObject(accessibleObject);
+                        }
 
-            options.properties = ModelUtils.getAccessibleObjects(objectType).stream().map(accessibleObject -> {
-                if (isRecursive(objectType, accessibleObject)) {
-                    return createRecursiveObjectOptionsTree(field, maxDepth, currentDepth + 1);
-                } else {
-                    return ModelUtils.describeAccessibleObject(accessibleObject);
-                }
-
-            }).filter(Objects::nonNull)
+                    }).filter(Objects::nonNull)
                     .sorted()
-                    .collect(Collectors.toList());
-
+                    .collect(Collectors.toList()));
             return property;
         }
     }
 
+
+    public void setupPropertyBasics(AccessibleObject accessibleObject, boolean idProperty, Property property) {
+        final Column column = Annotations.get(accessibleObject, Column.class);
+        final Importance importance = Annotations.get(accessibleObject, Importance.class);
+        final Description description = Annotations.get(accessibleObject, Description.class);
+        property.setHiddenFromCMS(accessibleObject.isAnnotationPresent(Hidden.class));
+
+        property.setName(ReflectionUtils.getPropertyName(accessibleObject));
+        property.setDescription(Optional.ofNullable(description).map(Description::value).orElse(null));
+        property.setShowIf(Optional.ofNullable(accessibleObject.getAnnotation(ShowIf.class)).map(ShowIf::value).orElse("true"));
+        property.setJavaName(ReflectionUtils.getJavaName(accessibleObject));
+        property.setLabel(ReflectionUtils.getLabel(accessibleObject));
+        property.setEditable(!idProperty && (!accessibleObject.isAnnotationPresent(Uneditable.class) || (column != null && !column.updatable())));
+        property.setImportance(importance == null ? 0 : importance.value());
+        property.setUnique(idProperty || accessibleObject.isAnnotationPresent(Unique.class) || (column != null && column.unique()));
+        property.setGenerated(accessibleObject.isAnnotationPresent(Generated.class) || (idProperty && !accessibleObject.isAnnotationPresent(Identifier.class)) || (idProperty && accessibleObject.isAnnotationPresent(Identifier.class) && Annotations.get(accessibleObject, Identifier.class).generated()));
+    }
     private static void setOptions(AccessibleObject field, Property property, ObjectOptions options) {
 
         final var fieldType = FieldType.guessFieldType(field);
@@ -135,6 +121,52 @@ public class ObjectOptions implements Options {
 
             return fieldType.equals(recursionTypeToCheck);
         }
+    }
+
+
+    private List<Property> describeProperties(Class cls, int recursionDepth) {
+        return getAccessibleObjects(cls).stream()
+                .map(accessibleObject -> {
+                    if (isRecursive(cls, accessibleObject)) {
+                        return createRecursiveObjectOptionsTree(accessibleObject, recursionDepth, 1);
+                    } else {
+                        return propertyFactory.describeAccessibleObject(accessibleObject);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * TODO: refactor away
+     * Gets all fields that are not marked as hidden and all methods annotated with @Generated
+     */
+    public static List<AccessibleObject> getAccessibleObjects(Class<?> cls) {
+        return Stream.concat(
+                ReflectionUtils.getAllFields(cls).stream()
+                        .filter(field -> !field.isAnnotationPresent(Hidden.class)),
+                Stream.of(cls.getDeclaredMethods())
+                        .filter(method -> method.isAnnotationPresent(Generated.class))
+        ).collect(Collectors.toList());
+    }
+
+    private static String getObjectName(Class<?> objectType, InnerObject annotation) {
+        return (annotation == null || annotation.name().isBlank()) ? objectType.getSimpleName() : annotation.name();
+    }
+
+    private static int getRecursionDepth(InnerObject annotation) {
+        return annotation == null ? 3 : annotation.maxRecursionDepth();
+    }
+
+    private static String getFeaturedProperty(Class<?> objectType) {
+        return ReflectionUtils.searchForFieldWithAnnotation(objectType, Featured.class)
+                .map(ReflectionUtils::getPropertyName).orElse(null);
+    }
+
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
     }
 
     public String getObjectName() {

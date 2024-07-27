@@ -9,7 +9,7 @@ import com.elepy.http.HttpService;
 import com.elepy.http.Route;
 import com.elepy.models.ModelChange;
 import com.elepy.models.Schema;
-import com.elepy.utils.ModelUtils;
+import com.elepy.models.SchemaFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +21,10 @@ import static com.elepy.http.RouteBuilder.anElepyRoute;
 
 public class ModelEngine {
 
-
     private final Elepy elepy;
     private final List<ModelPiston<?>> pistons;
 
+    private final SchemaFactory schemaFactory;
     private final Map<Class<?>, ModelChange> changesToImplement;
 
     public ModelEngine(Elepy elepy) {
@@ -32,6 +32,7 @@ public class ModelEngine {
         this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
         setupDescriptors( elepy.http());
+        schemaFactory = new SchemaFactory();
     }
 
     public void start() {
@@ -43,7 +44,7 @@ public class ModelEngine {
 
 
     public void addModel(Class<?> modelType) {
-        final Schema<?> schemaFromClass = ModelUtils.createDeepSchema(modelType);
+        final Schema<?> schemaFromClass = schemaFactory.createDeepSchema(modelType);
         final ModelPiston<?> piston = new ModelPiston<>(schemaFromClass, elepy);
         pistons.add(piston);
     }
