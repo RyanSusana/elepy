@@ -26,14 +26,14 @@
 </style>
 <script>
 
-    import ObjectField from "../fields/ObjectField"
-    import ActionButton from "../base/ActionButton";
-    import Utils from "../../utils";
-    import EventBus from "../../event-bus";
-    import axios from "axios";
-    import UIkit from "uikit";
+import ObjectField from "../fields/ObjectField"
+import ActionButton from "../base/ActionButton";
+import Utils from "../../utils";
+import EventBus from "../../event-bus";
+import axios from "axios";
+import UIkit from "uikit";
 
-    export default {
+export default {
         name: 'ActionModal',
         components: {ActionButton, ObjectField},
         props: ["action", "recordIds", "merge", "modalId"],

@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
 public class AuthScheme {
 
     @JsonProperty("scheme")

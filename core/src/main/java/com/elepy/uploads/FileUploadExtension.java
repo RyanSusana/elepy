@@ -2,7 +2,6 @@ package com.elepy.uploads;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
@@ -11,6 +10,7 @@ import com.elepy.http.HttpContext;
 import com.elepy.http.HttpService;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
+import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 

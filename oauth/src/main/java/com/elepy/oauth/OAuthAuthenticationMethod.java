@@ -6,21 +6,15 @@ import com.elepy.auth.User;
 import com.elepy.auth.UserCenter;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.scribejava.core.builder.api.DefaultApi20;
-import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
-import com.github.scribejava.core.model.Response;
-import com.github.scribejava.core.oauth.AccessTokenRequestParams;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class OAuthAuthenticationMethod implements AuthenticationMethod {

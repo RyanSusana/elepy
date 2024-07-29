@@ -4,12 +4,10 @@ import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.elepy.http.HttpMethod;
 import com.elepy.mongo.annotations.MongoIndex;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.Id;
 import jakarta.validation.constraints.Size;
+
 import java.math.BigDecimal;
 
 @Model(name = "Test Resource", path = "/resources")

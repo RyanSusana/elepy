@@ -1,7 +1,9 @@
 package com.elepy.annotations;
 
 
-import com.elepy.handlers.*;
+import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.DefaultFindMany;
+import com.elepy.handlers.DefaultFindOne;
 
 import java.lang.annotation.*;
 

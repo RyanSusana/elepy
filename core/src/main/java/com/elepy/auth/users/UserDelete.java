@@ -1,12 +1,12 @@
 package com.elepy.auth.users;
 
-import jakarta.inject.Inject;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
+import jakarta.inject.Inject;
 
 public class UserDelete implements ActionHandler<User> {
 

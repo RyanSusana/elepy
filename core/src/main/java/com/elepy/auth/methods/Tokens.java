@@ -1,6 +1,5 @@
 package com.elepy.auth.methods;
 
-import jakarta.inject.Inject;
 import com.elepy.auth.Grant;
 import com.elepy.auth.Token;
 import com.elepy.auth.UserCenter;
@@ -8,6 +7,7 @@ import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.dao.Queries;
 import com.elepy.dao.Query;
+import jakarta.inject.Inject;
 
 import java.util.HashMap;
 import java.util.Map;

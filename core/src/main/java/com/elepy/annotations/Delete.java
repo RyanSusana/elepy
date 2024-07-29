@@ -1,8 +1,8 @@
 package com.elepy.annotations;
 
 import com.elepy.auth.permissions.DefaultPermissions;
-import com.elepy.handlers.DefaultDelete;
 import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.DefaultDelete;
 
 import java.lang.annotation.*;
 

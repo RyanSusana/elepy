@@ -2,7 +2,9 @@ package com.elepy;
 
 import com.elepy.http.HttpService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class ElepyConfig implements ElepyExtension {
     private final Map<Locale, String> availableLocales = new HashMap<>();

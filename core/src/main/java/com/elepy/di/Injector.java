@@ -1,10 +1,10 @@
 package com.elepy.di;
 
-import jakarta.inject.Inject;
 import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
+import jakarta.inject.Inject;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.converters.StringConverter;
 import org.apache.commons.configuration2.Configuration;

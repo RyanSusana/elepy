@@ -1,7 +1,5 @@
 package com.elepy.oauth;
 
-import com.elepy.oauth.github.GitHubEmailExtractor;
-import com.github.scribejava.apis.GitHubApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.oauth.OAuthService;

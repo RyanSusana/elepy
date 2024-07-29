@@ -1,7 +1,6 @@
 package com.elepy.oauth.facebook;
 
 import com.elepy.oauth.AuthScheme;
-import com.elepy.oauth.github.GitHubEmailExtractor;
 import com.github.scribejava.apis.FacebookApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 

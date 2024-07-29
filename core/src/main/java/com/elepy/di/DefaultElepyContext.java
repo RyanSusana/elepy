@@ -1,8 +1,8 @@
 package com.elepy.di;
 
-import jakarta.inject.Inject;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.ReflectionUtils;
+import jakarta.inject.Inject;
 
 import java.util.*;
 import java.util.function.Supplier;

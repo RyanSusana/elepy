@@ -1,10 +1,8 @@
 package com.elepy.tests.devfrontend;
 
 import com.elepy.utils.StringUtils;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.util.Random;
 
 public class ValidDogBreedValidator implements ConstraintValidator<ValidDogBreed, BreedDetail> {
 

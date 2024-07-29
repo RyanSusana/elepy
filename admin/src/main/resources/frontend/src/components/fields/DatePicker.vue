@@ -25,10 +25,10 @@
 </style>
 
 <script>
-    import VueCtkDateTimePicker from "vue-ctk-date-time-picker";
-    import "vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css";
+import VueCtkDateTimePicker from "vue-ctk-date-time-picker";
+import "vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css";
 
-    export default {
+export default {
         props: ["field", "value"],
 
         watch: {

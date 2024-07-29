@@ -1,6 +1,5 @@
 package com.elepy.auth.users;
 
-import jakarta.inject.Inject;
 import com.elepy.auth.PasswordCheck;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
@@ -14,6 +13,7 @@ import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
 import com.elepy.id.HexIdentityProvider;
 import com.elepy.models.ModelContext;
+import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;

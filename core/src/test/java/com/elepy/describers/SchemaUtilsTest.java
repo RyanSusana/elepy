@@ -5,13 +5,9 @@ import com.elepy.Product;
 import com.elepy.Resource;
 import com.elepy.ResourceArray;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.models.FieldType;
-import com.elepy.models.Property;
-import com.elepy.models.Schema;
+import com.elepy.models.*;
 import com.elepy.models.options.*;
 import com.elepy.uploads.FileUploadEvaluator;
-import com.elepy.models.SchemaFactory;
-import com.elepy.models.PropertyFactory;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;

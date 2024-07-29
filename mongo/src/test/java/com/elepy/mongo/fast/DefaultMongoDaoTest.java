@@ -1,11 +1,11 @@
 package com.elepy.mongo.fast;
 
 import com.elepy.di.DefaultElepyContext;
+import com.elepy.models.SchemaFactory;
 import com.elepy.mongo.CustomJacksonModule;
 import com.elepy.mongo.ElepyCodecRegistry;
 import com.elepy.mongo.MongoCrudFactory;
 import com.elepy.mongo.MongoDao;
-import com.elepy.models.SchemaFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;

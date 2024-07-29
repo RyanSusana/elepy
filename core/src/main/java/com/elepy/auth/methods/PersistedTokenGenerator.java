@@ -1,8 +1,8 @@
 package com.elepy.auth.methods;
 
-import jakarta.inject.Inject;
 import com.elepy.auth.Grant;
 import com.elepy.auth.TokenGenerator;
+import jakarta.inject.Inject;
 
 
 public class PersistedTokenGenerator extends TokenGenerator {

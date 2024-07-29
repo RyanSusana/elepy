@@ -1,16 +1,11 @@
 package com.elepy.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBObject;
-import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.conversions.Bson;
 import org.mongojack.JacksonCodecRegistry;
-import org.mongojack.internal.stream.JacksonCodec;
 import org.mongojack.internal.stream.JacksonDecoder;
 import org.mongojack.internal.stream.JacksonEncoder;
-import org.mongojack.internal.util.DocumentSerializationUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 

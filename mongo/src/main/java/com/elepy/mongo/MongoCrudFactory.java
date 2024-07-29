@@ -1,11 +1,11 @@
 package com.elepy.mongo;
 
-import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
 import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoDatabase;
+import jakarta.inject.Inject;
 
 public class MongoCrudFactory implements CrudFactory {
 

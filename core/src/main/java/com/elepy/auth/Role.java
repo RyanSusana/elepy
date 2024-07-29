@@ -5,9 +5,9 @@ import com.elepy.auth.roles.*;
 import com.elepy.dao.SortOption;
 import com.elepy.id.SlugIdentityProvider;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Size;
 
 import javax.persistence.*;
-import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 

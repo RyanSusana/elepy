@@ -2,7 +2,6 @@ package com.elepy.oauth.openid;
 
 import com.elepy.oauth.AuthScheme;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.oauth.OAuth20Service;
 
 public class OpenIDScheme extends AuthScheme {
 

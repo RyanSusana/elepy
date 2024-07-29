@@ -7,7 +7,10 @@ import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import java.lang.reflect.*;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.AnnotatedParameterizedType;
+import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static com.elepy.models.FieldType.ARRAY;

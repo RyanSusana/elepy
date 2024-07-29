@@ -1,11 +1,10 @@
 package com.elepy.auth;
 
-import com.elepy.auth.permissions.DefaultPermissions;
-import com.elepy.auth.permissions.Permissions;
-import jakarta.inject.Inject;
 import com.elepy.annotations.PredefinedRole;
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
+import jakarta.inject.Inject;
 
 import java.util.*;
 import java.util.stream.Collectors;

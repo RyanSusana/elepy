@@ -1,8 +1,6 @@
 package com.elepy.tests.devfrontend;
 
 import com.elepy.annotations.ShowIf;
-
-import javax.annotation.RegEx;
 import jakarta.validation.constraints.Pattern;
 
 @ValidDogBreed

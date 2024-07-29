@@ -19,9 +19,9 @@
 
 <script>
 
-    import SideBar from "./components/SideBar";
+import SideBar from "./components/SideBar";
 
-    export default {
+export default {
         components: {SideBar},
         data() {
             return {};

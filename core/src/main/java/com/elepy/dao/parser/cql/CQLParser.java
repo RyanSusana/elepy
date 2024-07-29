@@ -1,10 +1,11 @@
 package com.elepy.dao.parser.cql;
 
 import com.elepy.dao.*;
-import com.elepy.dao.BooleanGroup;
-import com.elepy.dao.Query;
 import com.elepy.exceptions.ElepyException;
-import org.xbib.cql.*;
+import org.xbib.cql.Comparitor;
+import org.xbib.cql.Modifier;
+import org.xbib.cql.ScopedClause;
+import org.xbib.cql.SearchClause;
 
 import java.util.stream.Collectors;
 

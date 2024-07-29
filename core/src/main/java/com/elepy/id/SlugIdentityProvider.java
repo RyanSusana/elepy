@@ -3,7 +3,6 @@ package com.elepy.id;
 import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.Translated;
 import com.elepy.utils.ReflectionUtils;
 import com.github.slugify.Slugify;
 import org.slf4j.Logger;

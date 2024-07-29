@@ -2,8 +2,8 @@ package com.elepy.annotations;
 
 
 import com.elepy.auth.permissions.DefaultPermissions;
-import com.elepy.handlers.DefaultUpdate;
 import com.elepy.handlers.ActionHandler;
+import com.elepy.handlers.DefaultUpdate;
 
 import java.lang.annotation.*;
 

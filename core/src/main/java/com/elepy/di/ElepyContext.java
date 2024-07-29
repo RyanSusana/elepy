@@ -6,7 +6,6 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.Annotations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.validation.Validator;
 import java.util.Set;
 
 public interface ElepyContext {

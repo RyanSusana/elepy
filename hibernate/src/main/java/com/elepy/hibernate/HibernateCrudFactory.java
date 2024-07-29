@@ -1,10 +1,10 @@
 package com.elepy.hibernate;
 
-import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.models.Schema;
+import jakarta.inject.Inject;
 import org.hibernate.SessionFactory;
 
 public class HibernateCrudFactory implements CrudFactory {

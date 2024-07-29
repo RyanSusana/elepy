@@ -1,9 +1,9 @@
 package com.elepy.annotations;
 
-import com.elepy.json.RawJsonDeserializer;
 import com.elepy.annotations.editorjs.EditorJsProcessor;
-import com.elepy.json.RawJsonSerializer;
 import com.elepy.annotations.editorjs.Embed;
+import com.elepy.json.RawJsonDeserializer;
+import com.elepy.json.RawJsonSerializer;
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

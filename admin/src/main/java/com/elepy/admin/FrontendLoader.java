@@ -2,7 +2,6 @@ package com.elepy.admin;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpService;
 import org.apache.commons.io.IOUtils;
 
@@ -11,8 +10,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;

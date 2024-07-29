@@ -4,10 +4,11 @@
 </template>
 
 <script>
-    import Elepy from "../components/ElepySingle";
+import Elepy from "../components/ElepySingle";
 
-    import {mapGetters} from "vuex";
-    export default {
+import {mapGetters} from "vuex";
+
+export default {
         name: "EditRecordView",
 
         computed: {

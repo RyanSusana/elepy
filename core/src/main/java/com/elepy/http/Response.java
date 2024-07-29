@@ -2,7 +2,6 @@ package com.elepy.http;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
-import com.elepy.exceptions.Translated;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;

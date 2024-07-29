@@ -4,7 +4,6 @@ import com.elepy.oauth.AuthScheme;
 import com.elepy.oauth.openid.OpenIDEmailExtractor;
 import com.github.scribejava.apis.GoogleApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.oauth.OAuth20Service;
 
 public class GoogleAuthScheme extends AuthScheme {
 

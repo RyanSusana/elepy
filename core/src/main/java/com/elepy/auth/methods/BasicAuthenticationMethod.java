@@ -1,11 +1,11 @@
 package com.elepy.auth.methods;
 
-import jakarta.inject.Inject;
-import com.elepy.auth.*;
-import com.elepy.dao.Crud;
+import com.elepy.auth.AuthenticationMethod;
+import com.elepy.auth.Grant;
+import com.elepy.auth.UserCenter;
 import com.elepy.http.Request;
+import jakarta.inject.Inject;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;

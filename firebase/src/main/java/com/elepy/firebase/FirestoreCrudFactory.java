@@ -1,11 +1,11 @@
 package com.elepy.firebase;
 
-import jakarta.inject.Inject;
 import com.elepy.dao.Crud;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.models.Schema;
 import com.google.cloud.firestore.Firestore;
+import jakarta.inject.Inject;
 
 public class FirestoreCrudFactory implements CrudFactory {
 

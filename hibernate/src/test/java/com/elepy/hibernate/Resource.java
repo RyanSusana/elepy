@@ -3,11 +3,11 @@ package com.elepy.hibernate;
 import com.elepy.annotations.Number;
 import com.elepy.annotations.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Size;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 

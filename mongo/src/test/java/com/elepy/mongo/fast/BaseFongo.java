@@ -1,6 +1,5 @@
 package com.elepy.mongo.fast;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;

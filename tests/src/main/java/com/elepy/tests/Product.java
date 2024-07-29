@@ -1,9 +1,6 @@
 package com.elepy.tests;
 
 import com.elepy.annotations.*;
-import com.elepy.annotations.HTML;
-import com.elepy.annotations.Markdown;
-import com.elepy.annotations.TextArea;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

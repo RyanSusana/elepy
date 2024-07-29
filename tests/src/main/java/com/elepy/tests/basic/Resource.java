@@ -6,11 +6,11 @@ import com.elepy.annotations.*;
 import com.elepy.http.HttpMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Size;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Model(name = "Test Resource", path = "/resources")

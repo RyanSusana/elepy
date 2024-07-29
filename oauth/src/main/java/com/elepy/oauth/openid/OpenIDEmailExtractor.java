@@ -4,12 +4,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.oauth.EmailExtractor;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class OpenIDEmailExtractor implements EmailExtractor {
     private final ObjectMapper objectMapper = new ObjectMapper();

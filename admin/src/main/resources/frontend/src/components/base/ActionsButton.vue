@@ -36,13 +36,14 @@
 </template>
 
 <script>
-    import Utils from "../../utils";
-    import EventBus from "../../event-bus";
-    import * as UIkit from "uikit";
-    import ActionModal from "../modals/ActionModal";
+import Utils from "../../utils";
+import EventBus from "../../event-bus";
+import * as UIkit from "uikit";
+import ActionModal from "../modals/ActionModal";
 
-    import axios from "axios";
-    export default {
+import axios from "axios";
+
+export default {
         name: "ActionsButton",
         components: {ActionModal},
         props: ["actions", "ids", "disabled"],

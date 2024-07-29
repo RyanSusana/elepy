@@ -3,7 +3,6 @@ package com.elepy.mongo;
 import com.elepy.annotations.Identifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mongojack.internal.MongoJackModule;
 
 import java.io.IOException;
 

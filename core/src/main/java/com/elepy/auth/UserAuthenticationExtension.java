@@ -3,12 +3,11 @@ package com.elepy.auth;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
-import jakarta.inject.Inject;
-import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Inject;
 
 public class UserAuthenticationExtension implements ElepyExtension {
 

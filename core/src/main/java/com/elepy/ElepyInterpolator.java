@@ -1,9 +1,9 @@
 package com.elepy;
 
+import jakarta.validation.MessageInterpolator;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
-import jakarta.validation.MessageInterpolator;
 import java.util.Locale;
 
 public class ElepyInterpolator implements MessageInterpolator {

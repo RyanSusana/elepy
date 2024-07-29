@@ -1,10 +1,8 @@
 package com.elepy;
 
 import com.elepy.annotations.Model;
-import com.elepy.auth.AuthenticationMethod;
 import com.elepy.auth.AuthenticationService;
 import com.elepy.auth.TokenGenerator;
-import com.elepy.auth.UserAuthenticationExtension;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;

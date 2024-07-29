@@ -2,8 +2,8 @@ package com.elepy.models.options;
 
 import com.elepy.annotations.Reference;
 import com.elepy.models.Schema;
-import com.elepy.utils.Annotations;
 import com.elepy.models.SchemaFactory;
+import com.elepy.utils.Annotations;
 
 import java.lang.reflect.AnnotatedElement;
 
