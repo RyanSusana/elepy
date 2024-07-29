@@ -1,7 +1,7 @@
 package com.elepy.igniters;
 
 import com.elepy.Elepy;
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpMethod;

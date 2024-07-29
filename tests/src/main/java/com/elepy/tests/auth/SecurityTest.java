@@ -1,6 +1,6 @@
 package com.elepy.tests.auth;
 
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.auth.User;
 import com.elepy.exceptions.Message;
 import com.elepy.tests.CustomUser;

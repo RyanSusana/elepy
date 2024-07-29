@@ -2,7 +2,7 @@ package com.elepy.tests.upload;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.tests.basic.Resource;

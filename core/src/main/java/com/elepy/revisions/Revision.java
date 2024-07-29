@@ -3,7 +3,7 @@ package com.elepy.revisions;
 import com.elepy.annotations.*;
 import com.elepy.json.RawJsonDeserializer;
 import com.elepy.json.RawJsonSerializer;
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.handlers.DisabledHandler;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

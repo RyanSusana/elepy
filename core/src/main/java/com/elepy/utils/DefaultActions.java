@@ -4,7 +4,7 @@ import com.elepy.annotations.Create;
 import com.elepy.annotations.Delete;
 import com.elepy.annotations.Find;
 import com.elepy.annotations.Update;
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
 import com.elepy.models.Schema;
@@ -21,7 +21,7 @@ public class DefaultActions {
     public static HttpAction getUpdateFromSchema(Schema<?> schema, boolean whole) {
         final var permissions = Optional.ofNullable(Annotations.get(schema.getJavaClass(), Update.class))
                 .map(Update::requiredPermissions)
-                .orElse(Permissions.DEFAULT);
+                .orElse(DefaultPermissions.DEFAULT);
 
         return new HttpAction(
                 "Update",
@@ -39,7 +39,7 @@ public class DefaultActions {
 
         final var permissions = Optional.ofNullable(Annotations.get(schema.getJavaClass(), Create.class))
                 .map(Create::requiredPermissions)
-                .orElse(Permissions.DEFAULT);
+                .orElse(DefaultPermissions.DEFAULT);
         return new HttpAction("Create", schema.getPath(),
                 permissions, HttpMethod.POST, true, true, "", "", null);
     }
@@ -75,7 +75,7 @@ public class DefaultActions {
         if (!many) path += "/:id";
         final var permissions = Optional.ofNullable(Annotations.get(schema.getJavaClass(), Delete.class))
                 .map(Delete::requiredPermissions)
-                .orElse(Permissions.DEFAULT);
+                .orElse(DefaultPermissions.DEFAULT);
 
         return new HttpAction(
                 "Delete",
@@ -93,6 +93,6 @@ public class DefaultActions {
         return Optional
                 .ofNullable(Annotations.get(schema.getJavaClass(), Find.class))
                 .map(Find::requiredPermissions)
-                .orElse(Permissions.NONE);
+                .orElse(DefaultPermissions.NONE);
     }
 } 

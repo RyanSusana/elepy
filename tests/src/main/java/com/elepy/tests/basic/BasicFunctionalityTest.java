@@ -1,6 +1,6 @@
 package com.elepy.tests.basic;
 
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
 import com.elepy.dao.SortOption;

@@ -5,10 +5,7 @@ import com.elepy.annotations.ExtraRoutes;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
-import com.elepy.http.HttpAction;
-import com.elepy.http.HttpContext;
-import com.elepy.http.Route;
-import com.elepy.http.RouteBuilder;
+import com.elepy.http.*;
 import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
 import com.elepy.utils.Annotations;
@@ -75,8 +72,9 @@ public class ModelPiston<T> {
         if (extraRoutesAnnotation == null) {
             return Stream.empty();
         } else {
+            final var routeScanner = new RouteScanner();
             return Arrays.stream(extraRoutesAnnotation.value())
-                    .map(aClass -> ReflectionUtils.scanForRoutes(elepy.initialize(aClass)))
+                    .map(aClass -> routeScanner.scanForRoutes(elepy.initialize(aClass)))
                     .flatMap(List::stream);
         }
 

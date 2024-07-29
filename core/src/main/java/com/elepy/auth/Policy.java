@@ -1,10 +1,9 @@
 package com.elepy.auth;
 
+import com.elepy.auth.permissions.Permissions;
 import jakarta.inject.Inject;
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.dao.Crud;
-import com.elepy.evaluators.DefaultIntegrityEvaluator;
-import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 
 import java.util.*;

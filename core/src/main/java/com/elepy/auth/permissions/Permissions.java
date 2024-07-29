@@ -1,17 +1,14 @@
-package com.elepy.auth;
+package com.elepy.auth.permissions;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Permissions {
-    public static final String SUPER_USER = "owner";
-    public static final String AUTHENTICATED = "authenticated";
-    public static final String DISABLED = "disabled";
-    public static final String[] NONE = new String[]{};
-    public static final String[] DEFAULT = new String[]{AUTHENTICATED};
+import static com.elepy.auth.permissions.DefaultPermissions.DISABLED;
+import static com.elepy.auth.permissions.DefaultPermissions.SUPER_USER;
 
+public class Permissions {
     private final Set<String> grantedPermissions = new TreeSet<>();
 
     public void grantPermission(String... permissions) {

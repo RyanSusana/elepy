@@ -2,6 +2,8 @@ package com.elepy.http;
 
 import com.elepy.ElepyInterpolator;
 import com.elepy.auth.*;
+import com.elepy.auth.permissions.DefaultPermissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.dao.Filter;
 import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
@@ -220,7 +222,7 @@ public interface Request {
         Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
 
         grant().ifPresent(user -> {
-            permissions.grantPermission(Permissions.AUTHENTICATED);
+            permissions.grantPermission(DefaultPermissions.AUTHENTICATED);
             permissions.grantPermission(user.getPermissions());
         });
 

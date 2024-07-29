@@ -1,12 +1,12 @@
-package com.elepy.i18n;
+package com.elepy.i18n.extension;
 
 import com.elepy.ElepyExtension;
 import com.elepy.ElepyPostConfiguration;
 import com.elepy.http.HttpService;
+import com.elepy.i18n.Resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 
-import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.function.Function;

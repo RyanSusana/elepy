@@ -1,6 +1,6 @@
 package com.elepy.igniters;
 
-import com.elepy.auth.Permissions;
+import com.elepy.auth.permissions.Permissions;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.DisabledHandler;
 import com.elepy.http.HttpAction;

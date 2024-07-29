@@ -13,13 +13,13 @@ import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.evaluators.JsonNodeNameProvider;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.ErrorMessageBuilder;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
+import com.elepy.http.RouteScanner;
 import com.elepy.i18n.Resources;
-import com.elepy.i18n.TranslationsExtension;
+import com.elepy.i18n.extension.TranslationsExtension;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.models.ModelChange;
 import com.elepy.models.Schema;
@@ -33,7 +33,6 @@ import com.elepy.utils.LogUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.ConfigurationConverter;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -683,7 +682,7 @@ public class Elepy implements ElepyContext {
 
     private void setupExtraRoutes() {
         for (Class<?> routingClass : routingClasses) {
-            addRouting(ReflectionUtils.scanForRoutes(initialize(routingClass)));
+            addRouting(new RouteScanner().scanForRoutes(initialize(routingClass)));
         }
 
     }
