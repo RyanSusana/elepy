@@ -1,4 +1,4 @@
-package com.elepy;
+package com.elepy.i18n;
 
 import jakarta.validation.MessageInterpolator;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;

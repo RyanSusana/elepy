@@ -1,6 +1,6 @@
 package com.elepy.http;
 
-import com.elepy.ElepyInterpolator;
+import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.auth.*;
 import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;

@@ -1,6 +1,6 @@
 package com.elepy.handlers;
 
-import com.elepy.ElepyInterpolator;
+import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
