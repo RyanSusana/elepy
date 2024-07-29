@@ -3,6 +3,7 @@ package com.elepy.aws.s3;
 import com.adobe.testing.s3mock.junit5.S3MockExtension;
 import com.elepy.Configuration;
 import com.elepy.Elepy;
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;
 import com.elepy.hibernate.HibernateConfiguration;
 import com.elepy.tests.basic.Resource;
@@ -53,7 +54,7 @@ public class S3FileServiceTest extends FileServiceTest {
                 .withFileService(this.fileService)
                 .withPort(port);
 
-        this.elepy.http().before(ctx -> ctx.request().addPermissions(Permissions.AUTHENTICATED, "files.*"));
+        this.elepy.http().before(ctx -> ctx.request().addPermissions(DefaultPermissions.AUTHENTICATED, "files.*"));
         this.elepy.start();
     }
 

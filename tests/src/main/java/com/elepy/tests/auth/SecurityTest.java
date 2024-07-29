@@ -1,5 +1,6 @@
 package com.elepy.tests.auth;
 
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;
 import com.elepy.auth.User;
 import com.elepy.exceptions.Message;
@@ -41,7 +42,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         var reference = new AtomicReference<User>();
 
         elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(Permissions.AUTHENTICATED);
+            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
 
             reference.set(context.loggedInUserOrThrow());
             context.result(Message.of("Perfect!", 200));
@@ -84,7 +85,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         var reference = new AtomicReference<User>();
 
         elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(Permissions.AUTHENTICATED);
+            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
 
             reference.set(context.loggedInUserOrThrow());
             context.result(Message.of("Perfect!", 200));
@@ -102,7 +103,7 @@ public abstract class SecurityTest implements ElepyConfigHelper {
         var reference = new AtomicReference<User>();
 
         elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(Permissions.AUTHENTICATED);
+            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
 
             reference.set(context.loggedInUserOrThrow());
             context.result(Message.of("Perfect!", 200));

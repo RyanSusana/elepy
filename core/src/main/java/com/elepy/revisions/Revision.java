@@ -1,6 +1,7 @@
 package com.elepy.revisions;
 
 import com.elepy.annotations.*;
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.json.RawJsonDeserializer;
 import com.elepy.json.RawJsonSerializer;
 import com.elepy.auth.permissions.Permissions;
@@ -16,7 +17,7 @@ import java.util.Date;
 @Update(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Delete(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Create(handler = DisabledHandler.class, requiredPermissions = "disabled")
-@Find(requiredPermissions = Permissions.AUTHENTICATED, findManyHandler = RevisionFind.class, findOneHandler = RevisionFind.class)
+@Find(requiredPermissions = DefaultPermissions.AUTHENTICATED, findManyHandler = RevisionFind.class, findOneHandler = RevisionFind.class)
 @Entity(name = "elepy_revision")
 @Table(name = "elepy_revisions")
 public class Revision {

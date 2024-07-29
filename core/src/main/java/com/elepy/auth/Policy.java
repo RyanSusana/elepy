@@ -1,5 +1,6 @@
 package com.elepy.auth;
 
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;
 import jakarta.inject.Inject;
 import com.elepy.annotations.PredefinedRole;
@@ -69,7 +70,7 @@ public class Policy {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        collect.add(Permissions.AUTHENTICATED);
+        collect.add(DefaultPermissions.AUTHENTICATED);
         return collect;
 
     }

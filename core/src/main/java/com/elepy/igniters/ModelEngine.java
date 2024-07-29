@@ -1,6 +1,7 @@
 package com.elepy.igniters;
 
 import com.elepy.Elepy;
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
@@ -67,13 +68,13 @@ public class ModelEngine {
 
         final Route build = anElepyRoute()
                 .path("/elepy/schemas")
-                .addPermissions(Permissions.AUTHENTICATED)
+                .addPermissions(DefaultPermissions.AUTHENTICATED)
                 .method(HttpMethod.GET)
 
                 .route(ctx -> {
                     ctx.type("application/json");
 
-                    ctx.requirePermissions(Permissions.AUTHENTICATED);
+                    ctx.requirePermissions(DefaultPermissions.AUTHENTICATED);
 
                     ctx.response().json(pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList()));
 

@@ -2,7 +2,7 @@ package com.elepy.tests.upload;
 
 import com.elepy.Configuration;
 import com.elepy.Elepy;
-import com.elepy.auth.permissions.Permissions;
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.tests.basic.Resource;
@@ -68,7 +68,7 @@ public abstract class FileServiceTest {
 
         List.of(configurations).forEach(elepy::addConfiguration);
 
-        elepy.http().before(ctx -> ctx.request().addPermissions(Permissions.AUTHENTICATED, "files.*"));
+        elepy.http().before(ctx -> ctx.request().addPermissions(DefaultPermissions.AUTHENTICATED, "files.*"));
         elepy.start();
     }
 

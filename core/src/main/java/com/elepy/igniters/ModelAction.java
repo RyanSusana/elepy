@@ -1,5 +1,6 @@
 package com.elepy.igniters;
 
+import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.DisabledHandler;
@@ -20,7 +21,7 @@ public class ModelAction<T> {
         this.action = action;
 
         if (this.actionHandler instanceof DisabledHandler) {
-            this.action.setRequiredPermissions(new String[]{Permissions.DISABLED});
+            this.action.setRequiredPermissions(new String[]{DefaultPermissions.DISABLED});
         }
     }
 
