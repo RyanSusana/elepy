@@ -108,29 +108,6 @@ public class DefaultMongoDaoTest extends BaseFongo {
     }
 
     @Test
-    void testUpdateWithPrototype() {
-        final Resource resource = validObject();
-        final Resource resource2 = validObject();
-
-        resource2.setUnique("Unique2");
-
-        defaultMongoDao.create(Arrays.asList(resource, resource2));
-
-        final Map<String, Object> prototype = new HashMap<>();
-
-        prototype.put("textField", "NEW_VALUE");
-        prototype.put("unique", "NEW_UNIQUE_VAL");
-        defaultMongoDao.updateWithPrototype(prototype, resource.getId(), resource2.getId());
-
-        final List<Resource> updatedTextFieldResources = defaultMongoDao.find(eq("textField", "NEW_VALUE"));
-        final List<Resource> updatedUniqueResources = defaultMongoDao.find(eq("unique", "NEW_UNIQUE_VAL"));
-
-        assertThat(updatedTextFieldResources.size()).isEqualTo(2);
-        assertThat(updatedUniqueResources.size()).isEqualTo(0);
-
-    }
-
-    @Test
     public void testIndexCreation() {
 
         var indexes = StreamSupport.stream(defaultMongoDao.getMongoCollection().listIndexes().spliterator(), false)

@@ -1,4 +1,4 @@
-package com.elepy.utils;
+package com.elepy.models;
 
 import com.elepy.annotations.Create;
 import com.elepy.annotations.Delete;
@@ -7,7 +7,7 @@ import com.elepy.annotations.Update;
 import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.http.HttpAction;
 import com.elepy.http.HttpMethod;
-import com.elepy.models.Schema;
+import com.elepy.utils.Annotations;
 
 import java.util.Optional;
 

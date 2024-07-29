@@ -5,9 +5,9 @@ import com.elepy.dao.Expression;
 import com.elepy.dao.Filter;
 import com.elepy.dao.SearchQuery;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.models.FieldMapper;
 import com.elepy.models.Property;
 import com.elepy.models.Schema;
-import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
@@ -73,7 +73,7 @@ public class QueryBuilder<T> {
     }
 
     private static Serializable value(Field field, Property property, String value) {
-        return MapperUtils.toValueFromString(field, property.getType(), value);
+        return new FieldMapper().toValueFromString(field, property.getType(), value);
     }
 
     private Bson filter(Filter filter) {

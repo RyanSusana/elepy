@@ -6,7 +6,7 @@ import com.elepy.handlers.*;
 import com.elepy.models.ActionFactory;
 import com.elepy.models.Schema;
 import com.elepy.utils.Annotations;
-import com.elepy.utils.DefaultActions;
+import com.elepy.models.DefaultActions;
 
 import java.util.Arrays;
 import java.util.List;

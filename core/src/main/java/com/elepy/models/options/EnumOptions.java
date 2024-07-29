@@ -1,6 +1,6 @@
 package com.elepy.models.options;
 
-import com.elepy.utils.MapperUtils;
+import com.elepy.models.FieldMapper;
 import com.elepy.utils.ReflectionUtils;
 
 import java.lang.reflect.AnnotatedElement;
@@ -16,7 +16,7 @@ public class EnumOptions implements Options {
     }
 
     public static EnumOptions of(Class<? extends Enum<?>> returnType) {
-        return new EnumOptions(MapperUtils.getEnumMapValues(returnType));
+        return new EnumOptions(new FieldMapper().getEnumMapValues(returnType));
     }
 
     public static EnumOptions of(AnnotatedElement field) {

@@ -7,10 +7,7 @@ import com.elepy.dao.Filter;
 import com.elepy.dao.SearchQuery;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.FieldType;
-import com.elepy.models.Property;
-import com.elepy.models.Schema;
-import com.elepy.utils.MapperUtils;
+import com.elepy.models.*;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.persistence.Column;
@@ -132,7 +129,7 @@ public class HibernateQueryFactory<T> {
     }
 
     private static Serializable value(Field field, Property property, String value) {
-        return MapperUtils.toValueFromString(field, property.getType(), value);
+        return new FieldMapper().toValueFromString(field, property.getType(), value);
     }
 
     private String getJPAFieldName(Field field) {

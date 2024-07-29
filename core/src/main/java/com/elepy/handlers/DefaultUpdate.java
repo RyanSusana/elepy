@@ -1,18 +1,23 @@
 package com.elepy.handlers;
 
+import com.elepy.annotations.Uneditable;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.Request;
+import com.elepy.models.FieldType;
 import com.elepy.models.Schema;
-import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultUpdate<T> implements ActionHandler<T> {
@@ -29,7 +34,7 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
                 final Map<String, Object> beforeMap = objectMapper.convertValue(before, Map.class);
                 final Map<String, Object> changesMap = objectMapper.readValue(request.body(), Map.class);
                 ReflectionUtils.getId(before).ifPresent(id -> changesMap.put("id", id));
-                return MapperUtils.objectFromMaps(objectMapper, beforeMap, changesMap, schema.getJavaClass());
+                return combineMapsIntoNewObject(objectMapper, beforeMap, changesMap, schema.getJavaClass());
             } else {
                 return setParamsOnObject(request, objectMapper, before, schema.getJavaClass());
             }
@@ -77,9 +82,44 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
         Map<String, Object> params = new HashMap<>();
         request.queryParams().forEach(queryParam -> params.put(queryParam, request.queryParams(queryParam)));
 
-        return MapperUtils.objectFromMaps(objectMapper, map, params, modelClass);
+        return combineMapsIntoNewObject(objectMapper, map, params, modelClass);
     }
 
+
+    /**
+     * This method combines two maps into a new object. It will only add fields that are not marked as uneditable.
+     *
+     * @param objectMapper the Jackson ObjectMapper
+     * @param objectAsMap the object as a map
+     * @param fieldsToAdd the fields to add to the object
+     * @param cls the class of the object
+     * @return the new object
+     * @param <T> the type of the object
+     */
+    public static <T> T combineMapsIntoNewObject(ObjectMapper objectMapper, Map<String, Object> objectAsMap, Map<String, Object> fieldsToAdd, Class<T> cls) {
+        final Field idProperty = ReflectionUtils.getIdField(cls).orElseThrow(ElepyException::internalServerError);
+        fieldsToAdd.forEach((fieldName, fieldObject) -> {
+            final Field field = ReflectionUtils.findFieldWithName(cls, fieldName).orElseThrow(() -> ElepyException.translated("{elepy.messages.exceptions.unknownProperty}", fieldName));
+            FieldType fieldType = FieldType.guessFieldType(field);
+            if (fieldType.isPrimitive() && !idProperty.getName().equals(field.getName()) && shouldEdit(field)) {
+                objectAsMap.put(fieldName, fieldObject);
+            }
+
+        });
+        return objectMapper.convertValue(objectAsMap, cls);
+    }
+
+
+    private static boolean shouldEdit(Field field) {
+        final List<Class<? extends Annotation>> dontEdit = Collections.singletonList(Uneditable.class);
+
+        for (Annotation annotation : field.getAnnotations()) {
+            if (dontEdit.contains(annotation.annotationType())) {
+                return false;
+            }
+        }
+        return true;
+    }
     @Override
     public void handle(HandlerContext<T> ctx) throws Exception {
         final var context = ctx.http();

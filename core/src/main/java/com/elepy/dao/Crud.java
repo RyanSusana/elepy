@@ -1,12 +1,9 @@
 package com.elepy.dao;
 
 import com.elepy.annotations.Model;
-import com.elepy.annotations.Unique;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.Schema;
-import com.elepy.utils.MapperUtils;
 import com.elepy.utils.ReflectionUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
@@ -94,32 +91,6 @@ public interface Crud<T> {
         for (T item : items) {
             update(item);
         }
-    }
-
-    // TODO remove
-    @Deprecated
-    default void updateWithPrototype(Map<String, Object> prototype, Serializable... ids) {
-        List<T> toUpdate = new ArrayList<>();
-
-        // remove unique keys from prototype
-        ReflectionUtils
-                .searchForFieldsWithAnnotation(getType(), Unique.class)
-                .stream()
-                .map(ReflectionUtils::getPropertyName)
-                .forEach(prototype::remove);
-
-        for (Serializable id : ids) {
-            getById(id).ifPresent(item -> {
-                final Map<String, Object> beforeMap = getObjectMapper().convertValue(item, new TypeReference<Map<String, Object>>() {
-                });
-
-                final T t = MapperUtils.objectFromMaps(getObjectMapper(), beforeMap, prototype, getType());
-
-                toUpdate.add(t);
-            });
-        }
-
-        update(toUpdate);
     }
 
     /**
