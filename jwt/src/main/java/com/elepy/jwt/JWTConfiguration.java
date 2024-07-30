@@ -1,9 +1,9 @@
 package com.elepy.jwt;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.elepy.Configuration;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
+import com.elepy.configuration.Configuration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Property;
 import com.elepy.exceptions.ElepyConfigException;

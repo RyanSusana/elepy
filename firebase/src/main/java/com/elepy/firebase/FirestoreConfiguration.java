@@ -1,8 +1,8 @@
 package com.elepy.firebase;
 
-import com.elepy.Configuration;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
+import com.elepy.configuration.Configuration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.FirestoreClient;

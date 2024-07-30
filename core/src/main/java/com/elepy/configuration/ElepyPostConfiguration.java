@@ -1,5 +1,6 @@
-package com.elepy;
+package com.elepy.configuration;
 
+import com.elepy.Elepy;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;
@@ -14,7 +15,7 @@ import java.util.List;
 public class ElepyPostConfiguration {
     private final Elepy elepy;
 
-    ElepyPostConfiguration(Elepy elepy) {
+    public ElepyPostConfiguration(Elepy elepy) {
         this.elepy = elepy;
     }
 

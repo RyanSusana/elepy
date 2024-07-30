@@ -1,13 +1,13 @@
 package com.elepy.hibernate;
 
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.util.Properties;
 
-public class HibernateConfiguration implements com.elepy.Configuration {
+public class HibernateConfiguration implements com.elepy.configuration.Configuration {
 
     private final Configuration hibernateConfiguration;
 

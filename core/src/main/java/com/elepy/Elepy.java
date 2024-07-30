@@ -5,6 +5,7 @@ import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.*;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.PersistedTokenGenerator;
+import com.elepy.configuration.*;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
@@ -57,6 +58,10 @@ import java.util.function.Supplier;
  */
 public class Elepy implements ElepyContext {
 
+
+    public static final String DEFAULT_HTTP_SERVICE = "com.elepy.sparkjava.SparkService";
+
+    public static final Set<Class<?>> DEFAULT_MODELS = Set.of(User.class, FileReference.class, Token.class);
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
 
     private final List<ElepyExtension> modules = new ArrayList<>();
@@ -624,7 +629,7 @@ public class Elepy implements ElepyContext {
 
         setupLoggingAndExceptions();
         if (!http.hasImplementation()) {
-            http.setImplementation(initialize(Defaults.HTTP_SERVICE));
+            http.setImplementation(initialize(DEFAULT_HTTP_SERVICE));
         }
     }
 
@@ -632,14 +637,14 @@ public class Elepy implements ElepyContext {
 
         if (!packages.isEmpty()) {
             // Adds packages and Default models to classpath scanning
-            final var reflections = new Reflections(packages, Defaults.MODELS);
+            final var reflections = new Reflections(packages, DEFAULT_MODELS);
 
             Set<Class<?>> annotatedModels = reflections.getTypesAnnotatedWith(Model.class, false);
 
             // Removes defaults from the scanned classes
             // This is done so that you can extend and override Elepy's defaults models.
             // The Reflections library depends on this behaviour.
-            annotatedModels.removeAll(Defaults.MODELS);
+            annotatedModels.removeAll(DEFAULT_MODELS);
 
             if (annotatedModels.isEmpty()) {
                 logger.warn("No @Model(s) were found in the added package(s)! Check the package names for misspelling.");
@@ -733,7 +738,7 @@ public class Elepy implements ElepyContext {
         });
     }
 
-    List<Schema<?>> schemas() {
+    public List<Schema<?>> schemas() {
         return modelEngine.getSchemas();
     }
 

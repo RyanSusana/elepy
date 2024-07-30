@@ -1,7 +1,7 @@
 package com.elepy.admin;
 
-import com.elepy.ElepyExtension;
-import com.elepy.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyExtension;
+import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.http.HttpService;
 import org.apache.commons.io.IOUtils;
 

@@ -1,6 +1,6 @@
 package com.elepy.uploads;
 
-import com.elepy.Configuration;
+import com.elepy.configuration.Configuration;
 import com.elepy.hibernate.HibernateConfiguration;
 import com.elepy.tests.upload.FileServiceTest;
 

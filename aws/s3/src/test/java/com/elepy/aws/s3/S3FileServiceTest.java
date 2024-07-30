@@ -1,7 +1,7 @@
 package com.elepy.aws.s3;
 
 import com.adobe.testing.s3mock.junit5.S3MockExtension;
-import com.elepy.Configuration;
+import com.elepy.configuration.Configuration;
 import com.elepy.Elepy;
 import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.hibernate.HibernateConfiguration;

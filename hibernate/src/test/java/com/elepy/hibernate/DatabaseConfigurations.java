@@ -2,7 +2,7 @@ package com.elepy.hibernate;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
-import com.elepy.Configuration;
+import com.elepy.configuration.Configuration;
 import com.elepy.exceptions.ElepyConfigException;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;

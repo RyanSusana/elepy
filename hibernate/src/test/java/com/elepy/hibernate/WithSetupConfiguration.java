@@ -1,10 +1,10 @@
 package com.elepy.hibernate;
 
 
-import com.elepy.Configuration;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
-import com.elepy.EventHandler;
+import com.elepy.configuration.Configuration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
+import com.elepy.configuration.EventHandler;
 
 public class WithSetupConfiguration implements Configuration {
     private final EventHandler configPre;

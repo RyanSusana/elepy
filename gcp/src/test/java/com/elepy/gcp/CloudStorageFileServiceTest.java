@@ -1,6 +1,6 @@
 package com.elepy.gcp;
 
-import com.elepy.Configuration;
+import com.elepy.configuration.Configuration;
 import com.elepy.mongo.MongoConfiguration;
 import com.elepy.tests.upload.FileServiceTest;
 import com.elepy.uploads.FileService;

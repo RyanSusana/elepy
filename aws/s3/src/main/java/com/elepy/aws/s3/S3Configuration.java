@@ -1,8 +1,8 @@
 package com.elepy.aws.s3;
 
-import com.elepy.Configuration;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
+import com.elepy.configuration.Configuration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
 
 public class S3Configuration implements Configuration {

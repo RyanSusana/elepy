@@ -1,5 +1,6 @@
-package com.elepy;
+package com.elepy.configuration;
 
+import com.elepy.Elepy;
 import com.elepy.annotations.Model;
 import com.elepy.auth.AuthenticationService;
 import com.elepy.auth.TokenGenerator;
@@ -21,7 +22,7 @@ public class ElepyPreConfiguration {
 
     private final Elepy elepy;
 
-    ElepyPreConfiguration(Elepy elepy) {
+    public ElepyPreConfiguration(Elepy elepy) {
 
         this.elepy = elepy;
     }

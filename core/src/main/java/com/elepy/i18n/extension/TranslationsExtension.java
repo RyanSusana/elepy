@@ -1,7 +1,7 @@
 package com.elepy.i18n.extension;
 
-import com.elepy.ElepyExtension;
-import com.elepy.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyExtension;
+import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.http.HttpService;
 import com.elepy.i18n.Resources;
 import com.fasterxml.jackson.databind.JsonNode;

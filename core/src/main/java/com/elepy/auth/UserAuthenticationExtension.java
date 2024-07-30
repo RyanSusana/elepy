@@ -1,8 +1,8 @@
 package com.elepy.auth;
 
 
-import com.elepy.ElepyExtension;
-import com.elepy.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyExtension;
+import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;

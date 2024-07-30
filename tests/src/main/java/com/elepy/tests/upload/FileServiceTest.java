@@ -1,6 +1,6 @@
 package com.elepy.tests.upload;
 
-import com.elepy.Configuration;
+import com.elepy.configuration.Configuration;
 import com.elepy.Elepy;
 import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.dao.Crud;

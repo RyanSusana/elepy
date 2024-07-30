@@ -1,7 +1,7 @@
 package com.elepy.uploads;
 
-import com.elepy.ElepyExtension;
-import com.elepy.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyExtension;
+import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;

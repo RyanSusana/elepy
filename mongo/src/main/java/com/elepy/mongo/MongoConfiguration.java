@@ -1,8 +1,8 @@
 package com.elepy.mongo;
 
-import com.elepy.Configuration;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
+import com.elepy.configuration.Configuration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Property;
 import com.mongodb.MongoClient;

@@ -1,4 +1,4 @@
-package com.elepy;
+package com.elepy.configuration;
 
 import com.elepy.http.HttpService;
 

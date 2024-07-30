@@ -1,8 +1,8 @@
 package com.elepy.admin;
 
-import com.elepy.Configuration;
-import com.elepy.ElepyPostConfiguration;
-import com.elepy.ElepyPreConfiguration;
+import com.elepy.configuration.Configuration;
+import com.elepy.configuration.ElepyPostConfiguration;
+import com.elepy.configuration.ElepyPreConfiguration;
 
 public class AdminPanelConfiguration implements Configuration {
 
