@@ -2,7 +2,7 @@ package com.elepy.mongo;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.RawFile;
+import com.elepy.http.RawFile;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;

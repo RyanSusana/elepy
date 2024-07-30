@@ -1,6 +1,7 @@
 package com.elepy.uploads;
 
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.RawFile;
 import com.elepy.http.Request;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

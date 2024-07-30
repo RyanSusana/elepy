@@ -1,4 +1,4 @@
-package com.elepy.uploads;
+package com.elepy.http;
 
 import java.io.InputStream;
 import java.util.regex.Matcher;

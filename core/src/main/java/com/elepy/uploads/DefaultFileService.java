@@ -1,6 +1,7 @@
 package com.elepy.uploads;
 
 import com.elepy.exceptions.ElepyConfigException;
+import com.elepy.http.RawFile;
 
 import java.util.ArrayList;
 import java.util.List;

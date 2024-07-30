@@ -2,7 +2,7 @@ package com.elepy.aws.s3;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.RawFile;
+import com.elepy.http.RawFile;
 import org.slf4j.Logger;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;

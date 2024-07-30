@@ -3,7 +3,7 @@ package com.elepy.tests.http;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
-import com.elepy.uploads.RawFile;
+import com.elepy.http.RawFile;
 import com.google.common.net.HttpHeaders;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;

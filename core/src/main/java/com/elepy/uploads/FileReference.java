@@ -3,6 +3,7 @@ package com.elepy.uploads;
 import com.elepy.annotations.*;
 import com.elepy.dao.SortOption;
 import com.elepy.handlers.DisabledHandler;
+import com.elepy.http.RawFile;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

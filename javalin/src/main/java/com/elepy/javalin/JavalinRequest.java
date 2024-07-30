@@ -3,7 +3,7 @@ package com.elepy.javalin;
 
 import com.elepy.http.Request;
 import com.elepy.http.Session;
-import com.elepy.uploads.RawFile;
+import com.elepy.http.RawFile;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 

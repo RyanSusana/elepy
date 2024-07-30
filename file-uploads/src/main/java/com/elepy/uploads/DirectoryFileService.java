@@ -2,6 +2,7 @@ package com.elepy.uploads;
 
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.http.RawFile;
 import org.apache.tika.Tika;
 
 import java.io.File;

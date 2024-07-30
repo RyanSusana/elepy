@@ -3,7 +3,7 @@ package com.elepy.sparkjava;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Session;
-import com.elepy.uploads.RawFile;
+import com.elepy.http.RawFile;
 import spark.QueryParamsMap;
 
 import javax.servlet.MultipartConfigElement;

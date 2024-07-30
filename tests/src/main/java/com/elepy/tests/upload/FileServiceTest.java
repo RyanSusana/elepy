@@ -8,7 +8,7 @@ import com.elepy.dao.Filters;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.RawFile;
+import com.elepy.http.RawFile;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;

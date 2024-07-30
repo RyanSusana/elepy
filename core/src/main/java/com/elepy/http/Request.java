@@ -11,7 +11,6 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
 import com.elepy.models.Schema;
-import com.elepy.uploads.RawFile;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
