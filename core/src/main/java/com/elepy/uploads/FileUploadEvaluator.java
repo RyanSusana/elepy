@@ -26,7 +26,7 @@ public class FileUploadEvaluator {
         }
     }
 
-    public FileReference evaluate(FileUpload file) {
+    public FileReference evaluate(RawFile file) {
         if (!file.contentTypeMatches(allowedMimeType)) {
             throw ElepyException.translated("{elepy.messages.exceptions.invalidMimeType}", allowedMimeType, file.getContentType());
         }

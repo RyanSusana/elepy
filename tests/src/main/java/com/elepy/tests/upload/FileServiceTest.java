@@ -8,7 +8,7 @@ import com.elepy.dao.Filters;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.FileUpload;
+import com.elepy.uploads.RawFile;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -124,7 +124,7 @@ public abstract class FileServiceTest {
         testCanUploadAndRead("nature.mp4", "video/mp4");
     }
 
-    private FileUpload testCanUploadAndRead(String originalFileName, String contentType) throws UnirestException, IOException {
+    private RawFile testCanUploadAndRead(String originalFileName, String contentType) throws UnirestException, IOException {
         final int fileCountBeforeUpload = countFiles();
 
         final Crud<FileReference> references = elepy.getCrudFor(FileReference.class);
@@ -139,7 +139,7 @@ public abstract class FileServiceTest {
                 .getJSONArray("files")
                 .getJSONObject(0).getString("uploadName");
 
-        final FileUpload fileUpload = fileService.readFile(uploadedFileName).orElseThrow(() ->
+        final RawFile rawFile = fileService.readFile(uploadedFileName).orElseThrow(() ->
                 new AssertionFailedError("FileService did not recognize file: " + uploadedFileName));
 
         final var s = uploadedFileName.split("_");
@@ -154,20 +154,20 @@ public abstract class FileServiceTest {
 
         assertThat(inputStream(originalFileName).readAllBytes().length)
                 .as("File  size of uploaded file not equal to the actual file")
-                .isEqualTo(fileUpload.getSize());
+                .isEqualTo(rawFile.getSize());
 
         assertThat(countFiles()).as("File upload did not increase the count of Files")
                 .isEqualTo(fileCountBeforeUpload + 1);
 
-        assertThat(fileUpload.contentTypeMatches(contentType))
-                .as(String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, fileUpload.getContentType()))
+        assertThat(rawFile.contentTypeMatches(contentType))
+                .as(String.format("Content types don't match between the uploaded version and read version of '%s'. [Expected: %s, Actual: %s]", uploadedFileName, contentType, rawFile.getContentType()))
                 .isTrue();
 
 
-        assertThat(IOUtils.contentEquals(inputStream(originalFileName), fileUpload.getContent())).as(String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName)).isTrue();
+        assertThat(IOUtils.contentEquals(inputStream(originalFileName), rawFile.getContent())).as(String.format("Content doesn't match between the uploaded version and read version of '%s'", uploadedFileName)).isTrue();
 
 
-        return fileUpload;
+        return rawFile;
     }
 
 

@@ -3,7 +3,7 @@ package com.elepy.tests.http;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
-import com.elepy.uploads.FileUpload;
+import com.elepy.uploads.RawFile;
 import com.google.common.net.HttpHeaders;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -550,7 +550,7 @@ public abstract class HttpServiceTest {
     @Test
     void requests_haveProper_FileUploads() throws IOException, UnirestException {
 
-        AtomicReference<List<FileUpload>> atomicReference = new AtomicReference<>();
+        AtomicReference<List<RawFile>> atomicReference = new AtomicReference<>();
 
         service.post("/elepy/uploads", ctx -> atomicReference.set(ctx.request().uploadedFiles("files")));
 
@@ -565,10 +565,10 @@ public abstract class HttpServiceTest {
 
         await().atMost(5, TimeUnit.SECONDS).untilAtomic(atomicReference, hasSize(1));
 
-        final List<FileUpload> fileUploads = atomicReference.get();
-        final FileUpload fileUpload1 = fileUploads.get(0);
+        final List<RawFile> rawFiles = atomicReference.get();
+        final RawFile rawFile1 = rawFiles.get(0);
 
-        assertThat(IOUtils.contentEquals(fileUpload1.getContent(), inputStream("cv.pdf"))).isTrue();
+        assertThat(IOUtils.contentEquals(rawFile1.getContent(), inputStream("cv.pdf"))).isTrue();
     }
 
     @Test

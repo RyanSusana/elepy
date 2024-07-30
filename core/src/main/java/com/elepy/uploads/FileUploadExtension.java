@@ -52,7 +52,7 @@ public class FileUploadExtension implements ElepyExtension {
     private void handleFileGet(HttpContext httpContext) throws IOException, ExecutionException {
         Request request = httpContext.request();
         Response response = httpContext.response();
-        final FileUpload file = fileService.readFile(request.params("fileName")).orElseThrow(() -> ElepyException.notFound("File"));
+        final RawFile file = fileService.readFile(request.params("fileName")).orElseThrow(() -> ElepyException.notFound("File"));
 
         response.type(file.getContentType());
 
@@ -74,7 +74,7 @@ public class FileUploadExtension implements ElepyExtension {
         Response response = httpContext.response();
         request.requirePermissions("files.upload");
 
-        final List<FileUpload> files = request.uploadedFiles("files");
+        final List<RawFile> files = request.uploadedFiles("files");
         final List<FileReference> references = files.stream().map(uploadedFile -> {
 
             final String originalName = uploadedFile.getName();

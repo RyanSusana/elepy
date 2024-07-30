@@ -9,12 +9,12 @@ import java.util.Optional;
 public class DefaultFileService implements FileService {
 
     @Override
-    public void uploadFile(FileUpload file) {
+    public void uploadFile(RawFile file) {
         error();
     }
 
     @Override
-    public Optional<FileUpload> readFile(String path) {
+    public Optional<RawFile> readFile(String path) {
         error();
         return Optional.empty();
     }

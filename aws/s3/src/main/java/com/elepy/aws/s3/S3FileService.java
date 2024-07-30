@@ -2,7 +2,7 @@ package com.elepy.aws.s3;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.FileUpload;
+import com.elepy.uploads.RawFile;
 import org.slf4j.Logger;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -28,7 +28,7 @@ public class S3FileService implements FileService {
 
 
     @Override
-    public void uploadFile(FileUpload file) {
+    public void uploadFile(RawFile file) {
         try {
             var metadata = new HashMap<String, String>();
             var putOb = PutObjectRequest.builder()
@@ -47,7 +47,7 @@ public class S3FileService implements FileService {
     }
 
     @Override
-    public Optional<FileUpload> readFile(String path) {
+    public Optional<RawFile> readFile(String path) {
         try {
             var key = prefix(path);
             var fileRequest = GetObjectRequest.builder()
@@ -58,7 +58,7 @@ public class S3FileService implements FileService {
 
             var fileResponse = s3.getObject(fileRequest);
 
-            return Optional.of(FileUpload.of(path,
+            return Optional.of(RawFile.of(path,
                     fileResponse.response().contentType(),
                     fileResponse,
                     fileResponse.response().contentLength()

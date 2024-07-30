@@ -86,7 +86,7 @@ public class FileReference {
         this.mimeSubType = mime[1].split(";")[0];
     }
 
-    public static FileReference newFileReference(FileUpload file) {
+    public static FileReference newFileReference(RawFile file) {
         return new FileReference(file.getName(), file.getName(), file.getContentType(), file.getSize(), Calendar.getInstance().getTime());
     }
 

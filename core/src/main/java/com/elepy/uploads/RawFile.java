@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FileUpload {
+public class RawFile {
 
     private String contentType;
 
@@ -14,15 +14,15 @@ public class FileUpload {
 
     private long size;
 
-    private FileUpload(String contentType, InputStream content, String name, long size) {
+    private RawFile(String contentType, InputStream content, String name, long size) {
         this.contentType = contentType;
         this.content = content;
         this.name = name;
         this.size = size;
     }
 
-    public static FileUpload of(String name, String contentType, InputStream content, long size) {
-        return new FileUpload(contentType, content, name, size);
+    public static RawFile of(String name, String contentType, InputStream content, long size) {
+        return new RawFile(contentType, content, name, size);
     }
 
     public String getContentType() {

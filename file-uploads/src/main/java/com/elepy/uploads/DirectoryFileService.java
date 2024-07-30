@@ -49,7 +49,7 @@ public class DirectoryFileService implements FileService {
     }
 
     @Override
-    public synchronized void uploadFile(FileUpload file) {
+    public synchronized void uploadFile(RawFile file) {
         final Path path = Paths.get(rootFolderLocation + File.separator + decodeFileName(file.getName()));
         try {
             Files.createDirectories(path.getParent() == null ? path : path.getParent());
@@ -62,12 +62,12 @@ public class DirectoryFileService implements FileService {
     }
 
     @Override
-    public synchronized Optional<FileUpload> readFile(String name) {
+    public synchronized Optional<RawFile> readFile(String name) {
         final Path path = Paths.get(rootFolderLocation + File.separator + decodeFileName(name));
         try {
-            final FileUpload fileUpload = FileUpload.of(name, tika.detect(path), Files.newInputStream(path), Files.size(path));
+            final RawFile rawFile = RawFile.of(name, tika.detect(path), Files.newInputStream(path), Files.size(path));
 
-            return Optional.of(fileUpload);
+            return Optional.of(rawFile);
         } catch (NoSuchFileException e) {
             return Optional.empty();
         } catch (IOException e) {

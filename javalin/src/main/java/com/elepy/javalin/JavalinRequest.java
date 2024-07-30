@@ -3,7 +3,7 @@ package com.elepy.javalin;
 
 import com.elepy.http.Request;
 import com.elepy.http.Session;
-import com.elepy.uploads.FileUpload;
+import com.elepy.uploads.RawFile;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 
@@ -139,17 +139,17 @@ public class JavalinRequest implements Request {
     }
 
     @Override
-    public List<FileUpload> uploadedFiles(String key) {
+    public List<RawFile> uploadedFiles(String key) {
         return context.uploadedFiles(key).stream().map(this::toElepyFile).collect(Collectors.toList());
     }
 
     @Override
-    public FileUpload uploadedFile(String key) {
+    public RawFile uploadedFile(String key) {
         return toElepyFile(Objects.requireNonNull(context.uploadedFile(key)));
     }
 
-    private FileUpload toElepyFile(UploadedFile uploadedFile) {
-        return FileUpload.of(uploadedFile.getFilename(), uploadedFile.getContentType(), uploadedFile.getContent(), uploadedFile.getSize());
+    private RawFile toElepyFile(UploadedFile uploadedFile) {
+        return RawFile.of(uploadedFile.getFilename(), uploadedFile.getContentType(), uploadedFile.getContent(), uploadedFile.getSize());
     }
 
 

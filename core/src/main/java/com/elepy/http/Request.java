@@ -11,7 +11,7 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
 import com.elepy.models.Schema;
-import com.elepy.uploads.FileUpload;
+import com.elepy.uploads.RawFile;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -75,7 +75,7 @@ public interface Request {
 
     String[] queryParamValues(String key);
 
-    List<FileUpload> uploadedFiles(String key);
+    List<RawFile> uploadedFiles(String key);
 
     default Locale locale() {
         return Locale.LanguageRange.parse(Optional.ofNullable(headers("Accept-Language")).orElse("en-US"))
@@ -84,11 +84,11 @@ public interface Request {
                 .findFirst().orElse(Locale.US);
     }
 
-    default FileUpload uploadedFile(String key) {
+    default RawFile uploadedFile(String key) {
 
-        final List<FileUpload> fileUploads = uploadedFiles(key);
+        final List<RawFile> rawFiles = uploadedFiles(key);
 
-        return fileUploads.isEmpty() ? null : fileUploads.get(0);
+        return rawFiles.isEmpty() ? null : rawFiles.get(0);
     }
 
     default String token() {

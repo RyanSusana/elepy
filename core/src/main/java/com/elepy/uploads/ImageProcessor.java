@@ -22,7 +22,7 @@ public class ImageProcessor {
             .build();
 
 
-    public byte[] processImage(Request request, FileUpload file) throws ExecutionException {
+    public byte[] processImage(Request request, RawFile file) throws ExecutionException {
 
         final var size = intParam("size", request);
         final var width = intParam("width", request);

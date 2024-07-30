@@ -3,7 +3,7 @@ package com.elepy.sparkjava;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Session;
-import com.elepy.uploads.FileUpload;
+import com.elepy.uploads.RawFile;
 import spark.QueryParamsMap;
 
 import javax.servlet.MultipartConfigElement;
@@ -191,7 +191,7 @@ public class SparkRequest implements Request {
 
 
     @Override
-    public List<FileUpload> uploadedFiles(String key) {
+    public List<RawFile> uploadedFiles(String key) {
         final String contentType = headers("Content-Type");
 
         if (contentType != null && contentType.toLowerCase().contains("multipart/form-data")) {
@@ -204,7 +204,7 @@ public class SparkRequest implements Request {
             try {
                 return servletRequest.getParts().stream().filter(part -> part.getSubmittedFileName() != null && part.getName().equals(key)).map(part -> {
                             try {
-                                return FileUpload.of(part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize());
+                                return RawFile.of(part.getSubmittedFileName(), part.getContentType(), part.getInputStream(), part.getSize());
                             } catch (IOException e) {
                                 throw ElepyException.internalServerError(e);
                             }
