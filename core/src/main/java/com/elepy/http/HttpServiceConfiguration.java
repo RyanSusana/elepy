@@ -2,7 +2,6 @@ package com.elepy.http;
 
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.handlers.DefaultHttpContext;
 
 import java.util.ArrayList;
 import java.util.List;

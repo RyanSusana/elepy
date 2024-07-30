@@ -1,10 +1,7 @@
-package com.elepy.handlers;
+package com.elepy.http;
 
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.di.ElepyContext;
-import com.elepy.http.HttpContext;
-import com.elepy.http.Request;
-import com.elepy.http.Response;
 import com.elepy.i18n.Resources;
 import jakarta.validation.ValidatorFactory;
 
