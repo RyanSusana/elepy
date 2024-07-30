@@ -47,16 +47,13 @@ public class FormInputScenario<T> extends LoggedInScenario {
     }
 
     private FillIn getActionFor(Property property) {
-        switch (property.getType()) {
-            case INPUT:
-                return new FillInText(driver, property);
-            case BOOLEAN:
-                return new FillInBoolean(driver, property);
-            case NUMBER:
-                return new FillInNumber(driver, property);
-            default:
-                throw new IllegalArgumentException(String.format("The property '%s' is not supported", property.getName()));
-        }
+        return switch (property.getType()) {
+            case INPUT, HTML, MARKDOWN, TEXTAREA -> new FillInText(driver, property);
+            case BOOLEAN -> new FillInBoolean(driver, property);
+            case NUMBER -> new FillInNumber(driver, property);
+            default ->
+                    throw new IllegalArgumentException(String.format("The property '%s' with type '%s' is not supported", property.getName(), property.getType()));
+        };
     }
 
     public FormInputScenario<T> custom(Consumer<FormInputScenario<T>> consumer) {

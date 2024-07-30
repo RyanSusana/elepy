@@ -5,20 +5,23 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
-public class ElepyDriver implements WebDriver {
+public class ElepyDriver implements WebDriver, org.openqa.selenium.interactions.Interactive {
 
-    private final WebDriver driver;
+    private final RemoteWebDriver driver;
 
     private final Elepy elepy;
 
-    public ElepyDriver(Elepy elepy, WebDriver driver) {
+    public ElepyDriver(Elepy elepy, RemoteWebDriver driver) {
         this.driver = driver;
         this.elepy = elepy;
     }
@@ -135,4 +138,13 @@ public class ElepyDriver implements WebDriver {
     }
 
 
+    @Override
+    public void perform(Collection<Sequence> actions) {
+        driver.perform(actions);
+    }
+
+    @Override
+    public void resetInputState() {
+        driver.resetInputState();
+    }
 }
