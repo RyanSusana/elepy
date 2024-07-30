@@ -1,6 +1,6 @@
 package com.elepy.http;
 
-import com.elepy.Elepy;
+import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.handlers.DefaultHttpContext;
 
@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public class HttpServiceConfiguration implements HttpService {
 
-    private final Elepy elepy;
+    private final ElepyContext elepy;
     private HttpService implementation;
 
 
@@ -22,11 +22,11 @@ public class HttpServiceConfiguration implements HttpService {
 
     private int port;
 
-    public HttpServiceConfiguration(Elepy elepy) {
+    public HttpServiceConfiguration(ElepyContext elepy) {
         this(elepy, null);
     }
 
-    public HttpServiceConfiguration(Elepy elepy, HttpService implementation) {
+    public HttpServiceConfiguration(ElepyContext elepy, HttpService implementation) {
         this.implementation = implementation;
         this.elepy = elepy;
         port(1337);
