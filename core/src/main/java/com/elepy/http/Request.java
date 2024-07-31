@@ -1,11 +1,11 @@
 package com.elepy.http;
 
+import com.elepy.dao.querymodel.*;
+import com.elepy.dao.querymodel.Filter;
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.auth.*;
 import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.auth.permissions.Permissions;
-import com.elepy.dao.Filter;
-import com.elepy.dao.*;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.i18n.FormattedViolation;
@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.Filters.*;
-import static com.elepy.dao.Queries.create;
+import static com.elepy.dao.querymodel.Filters.*;
+import static com.elepy.dao.querymodel.Queries.create;
 
 public interface Request {
 

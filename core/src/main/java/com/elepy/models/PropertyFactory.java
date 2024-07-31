@@ -1,7 +1,7 @@
 package com.elepy.models;
 
 import com.elepy.annotations.*;
-import com.elepy.dao.FilterType;
+import com.elepy.dao.querymodel.FilterType;
 import com.elepy.models.options.OptionFactory;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;

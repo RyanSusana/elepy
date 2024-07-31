@@ -1,4 +1,4 @@
-package com.elepy.dao;
+package com.elepy.dao.querymodel;
 
 public enum SortOption {
     ASCENDING(1), DESCENDING(-1);

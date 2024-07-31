@@ -3,7 +3,7 @@ package com.elepy.uploads;
 import com.elepy.configuration.ElepyExtension;
 import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Filters;
+import com.elepy.dao.querymodel.Filters;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;

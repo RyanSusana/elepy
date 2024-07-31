@@ -2,7 +2,7 @@ package com.elepy.tests.auth;
 
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Filters;
+import com.elepy.dao.querymodel.Filters;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,6 +1,6 @@
 package com.elepy.firebase;
 
-import com.elepy.dao.Filter;
+import com.elepy.dao.querymodel.Filter;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldType;
 import com.elepy.models.Schema;

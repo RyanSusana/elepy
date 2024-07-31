@@ -1,7 +1,7 @@
 package com.elepy.models;
 
 import com.elepy.annotations.Localized;
-import com.elepy.dao.SortOption;
+import com.elepy.dao.querymodel.SortOption;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.HttpAction;
 

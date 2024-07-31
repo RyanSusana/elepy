@@ -1,5 +1,6 @@
 package com.elepy.dao;
 
+import com.elepy.dao.querymodel.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.ObjectAssert;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import org.xbib.cql.CQLParser;
 
 import java.io.Serializable;
 
-import static com.elepy.dao.Queries.parse;
+import static com.elepy.dao.querymodel.Queries.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 

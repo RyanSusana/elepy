@@ -1,6 +1,6 @@
 package com.elepy.dao.parser;
 
-import com.elepy.dao.*;
+import com.elepy.dao.querymodel.*;
 import com.elepy.exceptions.ElepyException;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;

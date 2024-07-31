@@ -1,6 +1,8 @@
 package com.elepy.dao;
 
 import com.elepy.Resource;
+import com.elepy.dao.querymodel.Filter;
+import com.elepy.dao.querymodel.FilterType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;

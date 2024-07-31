@@ -2,8 +2,8 @@ package com.elepy.revisions;
 
 import com.elepy.auth.User;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Expression;
-import com.elepy.dao.Query;
+import com.elepy.dao.querymodel.Expression;
+import com.elepy.dao.querymodel.Query;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.models.Schema;

@@ -1,6 +1,6 @@
 package com.elepy.dao.parser.cql;
 
-import com.elepy.dao.*;
+import com.elepy.dao.querymodel.*;
 import com.elepy.exceptions.ElepyException;
 import org.xbib.cql.Comparitor;
 import org.xbib.cql.Modifier;

@@ -4,7 +4,7 @@ import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
 
-import static com.elepy.dao.Filters.any;
+import static com.elepy.dao.querymodel.Filters.any;
 
 public class DeleteAllPasswords implements ActionHandler<Password> {
     @Override

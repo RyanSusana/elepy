@@ -19,7 +19,7 @@ public class ObjectIntegrityTest extends BaseFongo {
         super.setUp();
         var modelFactory = new SchemaFactory();
         MongoDao<Resource> defaultMongoDao = new MongoDao<>(getDb(), "resources", modelFactory.createDeepSchema(Resource.class));
-        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(modelFactory.createDeepSchema(Resource.class), defaultMongoDao, null, null));
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(modelFactory.createDeepSchema(Resource.class), defaultMongoDao, null));
         defaultMongoDao.create(validObject());
 
 

@@ -1,9 +1,9 @@
 package com.elepy.mongo;
 
 import com.elepy.dao.Crud;
-import com.elepy.dao.Expression;
-import com.elepy.dao.Query;
-import com.elepy.dao.SortOption;
+import com.elepy.dao.querymodel.Expression;
+import com.elepy.dao.querymodel.Query;
+import com.elepy.dao.querymodel.SortOption;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Property;

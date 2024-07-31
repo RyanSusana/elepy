@@ -1,4 +1,4 @@
-package com.elepy.dao;
+package com.elepy.dao.querymodel;
 
 import com.elepy.dao.parser.EleQueryLexer;
 import com.elepy.dao.parser.EleQueryParser;

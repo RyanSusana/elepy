@@ -5,7 +5,7 @@ import com.elepy.auth.users.UserCreate;
 import com.elepy.auth.users.UserDelete;
 import com.elepy.auth.users.UserFind;
 import com.elepy.auth.users.UserUpdate;
-import com.elepy.dao.SortOption;
+import com.elepy.dao.querymodel.SortOption;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

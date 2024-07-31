@@ -4,9 +4,9 @@ import com.elepy.auth.Grant;
 import com.elepy.auth.Token;
 import com.elepy.auth.UserCenter;
 import com.elepy.dao.Crud;
-import com.elepy.dao.Filters;
-import com.elepy.dao.Queries;
-import com.elepy.dao.Query;
+import com.elepy.dao.querymodel.Filters;
+import com.elepy.dao.querymodel.Queries;
+import com.elepy.dao.querymodel.Query;
 import jakarta.inject.Inject;
 
 import java.util.HashMap;

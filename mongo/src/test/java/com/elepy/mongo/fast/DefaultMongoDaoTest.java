@@ -16,14 +16,11 @@ import org.junit.jupiter.api.TestInstance;
 import org.mongojack.internal.MongoJackModule;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.elepy.dao.Filters.eq;
-import static com.elepy.dao.Filters.search;
+import static com.elepy.dao.querymodel.Filters.search;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

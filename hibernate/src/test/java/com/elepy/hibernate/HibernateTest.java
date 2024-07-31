@@ -1,8 +1,8 @@
 package com.elepy.hibernate;
 
 import com.elepy.dao.Crud;
-import com.elepy.dao.Filters;
-import com.elepy.dao.Queries;
+import com.elepy.dao.querymodel.Filters;
+import com.elepy.dao.querymodel.Queries;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static com.elepy.dao.Filters.eq;
+import static com.elepy.dao.querymodel.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -85,7 +85,7 @@ public class HibernateTest {
         Request request = mockedContextWithQueryMap(map).request();
 
         List<Resource> resourceResult = resourceCrud.find(
-                new com.elepy.dao.Query(Filters.and(request.filtersForModel(Resource.class)))
+                new com.elepy.dao.querymodel.Query(Filters.and(request.filtersForModel(Resource.class)))
         );
 
         assertThat(resourceResult.size()).isEqualTo(1);
