@@ -1,2 +1,17 @@
+**/node_modules/**
 **/test/**
 **/tests/**
+**/.git/**
+*.db
+*.jpg
+*.png
+*.svg
+*.ico
+*.gif
+*.eot
+*.ttf
+*.woff
+*.woff2
+*.otf
+*.zip
+*.rar
