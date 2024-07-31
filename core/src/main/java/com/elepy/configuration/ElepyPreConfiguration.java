@@ -7,7 +7,7 @@ import com.elepy.auth.TokenGenerator;
 import com.elepy.dao.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;
-import com.elepy.models.ModelChange;
+import com.elepy.igniters.ModelChange;
 import com.elepy.models.Schema;
 import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;

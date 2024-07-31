@@ -7,7 +7,6 @@ import com.elepy.annotations.IdProvider;
 import com.elepy.dao.Crud;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.ModelContext;
 import com.elepy.models.Schema;
 import com.elepy.utils.Annotations;
 

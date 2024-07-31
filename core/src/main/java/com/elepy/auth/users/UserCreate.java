@@ -12,7 +12,7 @@ import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
 import com.elepy.id.HexIdentityProvider;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 

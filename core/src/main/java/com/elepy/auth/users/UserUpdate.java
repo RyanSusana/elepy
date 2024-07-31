@@ -12,7 +12,7 @@ import com.elepy.exceptions.Message;
 import com.elepy.handlers.DefaultUpdate;
 import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;

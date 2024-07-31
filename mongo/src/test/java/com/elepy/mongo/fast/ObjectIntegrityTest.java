@@ -3,7 +3,7 @@ package com.elepy.mongo.fast;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 import com.elepy.models.SchemaFactory;
 import com.elepy.mongo.MongoDao;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
 import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;

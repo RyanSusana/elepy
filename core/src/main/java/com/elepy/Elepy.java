@@ -21,7 +21,7 @@ import com.elepy.http.RouteScanner;
 import com.elepy.i18n.Resources;
 import com.elepy.i18n.extension.TranslationsExtension;
 import com.elepy.igniters.ModelEngine;
-import com.elepy.models.ModelChange;
+import com.elepy.igniters.ModelChange;
 import com.elepy.models.Schema;
 import com.elepy.revisions.Revision;
 import com.elepy.uploads.DefaultFileService;

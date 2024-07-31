@@ -6,7 +6,7 @@ import com.elepy.dao.Crud;
 import com.elepy.handlers.DefaultFindOne;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 import jakarta.inject.Inject;
 
 public class RolesFindOne extends DefaultFindOne<Role> {

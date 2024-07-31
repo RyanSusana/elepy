@@ -4,7 +4,7 @@ import com.elepy.dao.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 
 import java.io.Serializable;
 import java.util.Set;

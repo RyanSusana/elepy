@@ -2,7 +2,7 @@ package com.elepy.handlers;
 
 import com.elepy.dao.Crud;
 import com.elepy.http.HttpContext;
-import com.elepy.models.ModelContext;
+import com.elepy.igniters.ModelContext;
 import com.elepy.revisions.Revision;
 import com.elepy.revisions.RevisionCrud;
 

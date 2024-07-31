@@ -4,7 +4,7 @@ import com.elepy.Elepy;
 import com.elepy.dao.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;
-import com.elepy.models.ModelChange;
+import com.elepy.igniters.ModelChange;
 import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration2.Configuration;
