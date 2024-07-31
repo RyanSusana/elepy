@@ -7,7 +7,6 @@ import com.elepy.dao.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
 import com.elepy.evaluators.EvaluationType;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.DefaultUpdate;
@@ -70,9 +69,6 @@ public class UserUpdate extends DefaultUpdate<User> {
         //Elepy evaluation
         new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
 
-        for (ObjectEvaluator<User> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(userToUpdateAfter);
-        }
         new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
     }
 

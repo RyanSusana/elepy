@@ -11,7 +11,6 @@ import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
 import com.elepy.evaluators.JsonNodeNameProvider;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
@@ -68,7 +67,6 @@ public class Elepy implements ElepyContext {
     private final List<String> packages = new ArrayList<>();
     private final DefaultElepyContext context = new DefaultElepyContext();
     private final HttpServiceConfiguration http = new HttpServiceConfiguration(this);
-    private ObjectEvaluator<Object> baseObjectEvaluator;
     private final List<Route> routes = new ArrayList<>();
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass = null;

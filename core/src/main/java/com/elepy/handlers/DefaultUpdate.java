@@ -3,7 +3,6 @@ package com.elepy.handlers;
 import com.elepy.annotations.Uneditable;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.Request;
@@ -60,12 +59,6 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
     }
 
     public T evaluateAndUpdate(HandlerContext<T> ctx, T update) throws Exception {
-        for (ObjectEvaluator<T> objectEvaluator : ctx.model().getObjectEvaluators()) {
-            if (update != null) {
-                objectEvaluator.evaluate(update);
-            }
-        }
-
         ctx.http().validate(update);
 
         new DefaultIntegrityEvaluator<>(ctx.model()).evaluate(update, EvaluationType.UPDATE);

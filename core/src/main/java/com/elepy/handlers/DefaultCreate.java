@@ -4,7 +4,6 @@ import com.elepy.dao.Crud;
 import com.elepy.evaluators.AtomicIntegrityEvaluator;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
 import com.elepy.models.ModelContext;
@@ -58,10 +57,6 @@ public class DefaultCreate<T> implements ActionHandler<T> {
     }
 
     private void evaluate(T item, ModelContext<T> modelContext, HttpContext context, Crud<T> dao) throws Exception {
-        for (ObjectEvaluator<T> objectEvaluator : modelContext.getObjectEvaluators()) {
-            objectEvaluator.evaluate(item);
-        }
-
         context.validate(item);
 
         modelContext.getIdentityProvider().provideId(item, dao);

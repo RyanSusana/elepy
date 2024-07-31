@@ -1,26 +1,21 @@
 package com.elepy.models;
 
 import com.elepy.dao.Crud;
-import com.elepy.evaluators.ObjectEvaluator;
 import com.elepy.id.IdentityProvider;
-
-import java.util.List;
 
 public class ModelContext<T> {
     private final Schema<T> schema;
 
     private Crud<T> crud;
     private IdentityProvider<T> identityProvider;
-    private List<ObjectEvaluator<T>> objectEvaluators;
 
     public ModelContext(Schema<T> schema,
                         Crud<T> crud,
-                        IdentityProvider<T> identityProvider,
-                        List<ObjectEvaluator<T>> objectEvaluators) {
+                        IdentityProvider<T> identityProvider
+                        ) {
         this.schema = schema;
         this.crud = crud;
         this.identityProvider = identityProvider;
-        this.objectEvaluators = objectEvaluators;
     }
 
     public <C extends Crud<T>> C getCrud() {
@@ -45,14 +40,6 @@ public class ModelContext<T> {
 
     public void setIdentityProvider(IdentityProvider<T> identityProvider) {
         this.identityProvider = identityProvider;
-    }
-
-    public List<ObjectEvaluator<T>> getObjectEvaluators() {
-        return objectEvaluators;
-    }
-
-    public void setObjectEvaluators(List<ObjectEvaluator<T>> objectEvaluators) {
-        this.objectEvaluators = objectEvaluators;
     }
 
     public String getName() {
