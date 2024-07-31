@@ -57,10 +57,12 @@ public class Product {
     @Unique
     private String name;
 
-    @Number(minimum = 0)
+    @Number
+@Min(0)
     private BigDecimal price;
 
-    @Number(minimum = 0)
+    @Number
+@Min(0)
     private int stockLeft;
 
     //Getters and Setters. I like to use Lombok to automate this :D

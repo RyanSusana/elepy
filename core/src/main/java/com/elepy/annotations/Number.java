@@ -14,15 +14,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE_USE})
 public @interface Number {
-    /**
-     * @deprecated use Java Bean Validation instead
-     */
-    @Deprecated(forRemoval = true)
-    float minimum() default Integer.MIN_VALUE;
-
-    /**
-     * @deprecated use Java Bean Validation instead
-     */
-    @Deprecated(forRemoval = true)
-    float maximum() default Integer.MAX_VALUE;
 }

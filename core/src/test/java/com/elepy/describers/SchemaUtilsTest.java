@@ -101,10 +101,7 @@ public class SchemaUtilsTest {
         final Schema<Resource> schemaFromClass = new SchemaFactory().createDeepSchema(Resource.class);
 
         final Property property = schemaFromClass.getProperty("numberMin10Max50");
-        final NumberOptions of = property.getOptions();
 
-        assertThat(of.getMinimum()).isEqualTo(10);
-        assertThat(of.getMaximum()).isEqualTo(50);
         assertThat(property.getType())
                 .isEqualTo(NUMBER);
     }

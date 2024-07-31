@@ -34,15 +34,17 @@ public class Product {
     private String name;
 
     @Label("Product Price")
-    @Number(minimum = 0)
+    @Number
     private BigDecimal price;
 
     @Label("Amount of stock left")
-    @Number(minimum = 0)
+    @Number
+@Min(0)
     private int stockLeft;
 
     @Label("Amount sold")
-    @Number(minimum = 0)
+    @Number
+@Min(0)
     private int amountSold;
 
   // Getters and Setters

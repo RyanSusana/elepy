@@ -29,7 +29,7 @@ public class ResourceArray {
     @Size(max = 2, min = 1)
     private List<@Size(min = 10) String> arrayStringMax2Min1TextWithMinimumLengthOf10;
 
-    private List<@Number(minimum = 10) Integer> arrayNumberMax2Min1NumberWithMinimumOf10;
+    private List<@Number Integer> arrayNumberMax2Min1NumberWithMinimumOf10;
 
 
     public List<String> getArrayFileReference() {

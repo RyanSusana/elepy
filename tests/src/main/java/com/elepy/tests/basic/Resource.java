@@ -6,6 +6,8 @@ import com.elepy.annotations.*;
 import com.elepy.http.HttpMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
 import javax.persistence.Entity;
@@ -52,13 +54,17 @@ public class Resource {
     @Size(min = 10, max = 50)
     private String minLen10MaxLen50;
 
-    @Number(minimum = 20)
+    @Number
+    @Min(20)
     private BigDecimal numberMin20;
 
-    @Number(maximum = 40)
+    @Number
+    @Max(40)
     private BigDecimal numberMax40;
 
-    @Number(minimum = 10, maximum = 50)
+    @Number()
+    @Min(10)
+    @Max(50)
     private BigDecimal numberMin10Max50;
 
     @Searchable
