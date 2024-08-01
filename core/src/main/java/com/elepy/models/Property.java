@@ -1,11 +1,11 @@
 package com.elepy.models;
 
 import com.elepy.annotations.Localized;
+import com.elepy.dao.FilterTypeDescription;
 import com.elepy.models.options.Options;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import java.util.Map;
 import java.util.Set;
 
 
@@ -32,7 +32,7 @@ public class Property implements Comparable<Property> {
     private Options options;
 
 
-    private Set<Map<String, Object>> availableFilters;
+    private Set<FilterTypeDescription> availableFilters;
     private FieldType type;
 
     public String getShowIf() {
@@ -43,11 +43,11 @@ public class Property implements Comparable<Property> {
         this.showIf = showIf;
     }
 
-    public Set<Map<String, Object>> getAvailableFilters() {
+    public Set<FilterTypeDescription> getAvailableFilters() {
         return availableFilters;
     }
 
-    public void setAvailableFilters(Set<Map<String, Object>> availableFilters) {
+    public void setAvailableFilters(Set<FilterTypeDescription> availableFilters) {
         this.availableFilters = availableFilters;
     }
 

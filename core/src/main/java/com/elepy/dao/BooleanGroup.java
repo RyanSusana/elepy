@@ -1,4 +1,4 @@
-package com.elepy.dao.querymodel;
+package com.elepy.dao;
 
 import java.util.List;
 import java.util.stream.Collectors;

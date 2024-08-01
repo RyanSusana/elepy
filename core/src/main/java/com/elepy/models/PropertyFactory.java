@@ -1,7 +1,8 @@
 package com.elepy.models;
 
 import com.elepy.annotations.*;
-import com.elepy.dao.querymodel.FilterType;
+import com.elepy.dao.FilterType;
+import com.elepy.dao.FilterTypeDescription;
 import com.elepy.models.options.OptionFactory;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
@@ -12,6 +13,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.elepy.dao.FilterType.*;
 
 public class PropertyFactory {
 
@@ -34,7 +37,7 @@ public class PropertyFactory {
     /**
      * Gets all fields that are not marked as hidden and all methods annotated with @Generated
      */
-    public List<AccessibleObject> getAccessibleObjects(Class<?> cls) {
+    private List<AccessibleObject> getAccessibleObjects(Class<?> cls) {
         return Stream.concat(
                 ReflectionUtils.getAllFields(cls).stream()
                         .filter(field -> !field.isAnnotationPresent(Hidden.class)),
@@ -69,7 +72,7 @@ public class PropertyFactory {
     }
 
 
-    public void setupPropertyBasics(AccessibleObject accessibleObject, boolean idProperty, Property property) {
+    private void setupPropertyBasics(AccessibleObject accessibleObject, boolean idProperty, Property property) {
         final Column column = Annotations.get(accessibleObject, Column.class);
         final Importance importance = Annotations.get(accessibleObject, Importance.class);
         final Description description = Annotations.get(accessibleObject, Description.class);
@@ -88,11 +91,23 @@ public class PropertyFactory {
 
     private void setupSearch(AccessibleObject accessibleObject, Property property, boolean idProperty) {
         property.setSearchable(accessibleObject.isAnnotationPresent(Searchable.class) || idProperty);
-        Set<Map<String, Object>> availableFilters = FilterType.getForFieldType(property.getType()).stream().map(FilterType::toMap).collect(Collectors.toSet());
+        Set<FilterTypeDescription> availableFilters = getFilterTypesForFieldType(property.getType()).stream().map(FilterType::toDescription).collect(Collectors.toSet());
 
         property.setAvailableFilters(availableFilters);
     }
 
+    private Set<FilterType> getFilterTypesForFieldType(FieldType fieldType) {
+        return switch (fieldType) {
+            case ARRAY:
+                yield Set.of(EQUALS, NOT_EQUALS, CONTAINS);
+            case INPUT, FILE_REFERENCE, TEXTAREA, MARKDOWN, HTML:
+                yield Set.of(EQUALS, NOT_EQUALS, CONTAINS, STARTS_WITH);
+            case NUMBER, DATE:
+                yield Set.of(EQUALS, NOT_EQUALS, GREATER_THAN, GREATER_THAN_OR_EQUALS, LESSER_THAN, LESSER_THAN_OR_EQUALS);
+            case ENUM, OBJECT, REFERENCE, CUSTOM, DYNAMIC, BOOLEAN:
+                yield Set.of(EQUALS, NOT_EQUALS);
+        };
+    }
 
     private Property createTypedProperty(AccessibleObject field) {
         Property property = new Property();

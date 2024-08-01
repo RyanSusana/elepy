@@ -1,9 +1,9 @@
 package com.elepy.mongo;
 
-import com.elepy.dao.querymodel.BooleanGroup;
-import com.elepy.dao.querymodel.Expression;
-import com.elepy.dao.querymodel.Filter;
-import com.elepy.dao.querymodel.SearchQuery;
+import com.elepy.dao.BooleanGroup;
+import com.elepy.dao.Expression;
+import com.elepy.dao.Filter;
+import com.elepy.dao.SearchQuery;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.FieldMapper;
 import com.elepy.models.Property;

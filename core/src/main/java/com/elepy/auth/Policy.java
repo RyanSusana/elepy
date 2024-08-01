@@ -9,7 +9,7 @@ import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.querymodel.Filters.search;
+import static com.elepy.dao.Filters.search;
 
 public class Policy {
 

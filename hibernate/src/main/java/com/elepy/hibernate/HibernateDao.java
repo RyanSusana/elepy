@@ -1,8 +1,8 @@
 package com.elepy.hibernate;
 
 import com.elepy.dao.Crud;
-import com.elepy.dao.querymodel.Expression;
-import com.elepy.dao.querymodel.SortOption;
+import com.elepy.dao.Expression;
+import com.elepy.dao.SortOption;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.models.Schema;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +37,7 @@ public class HibernateDao<T> implements Crud<T> {
         return sessionFactory;
     }
 
-    private List<Order> generateOrderBy(CriteriaBuilder cb, Root<T> root, com.elepy.dao.querymodel.Query settings) {
+    private List<Order> generateOrderBy(CriteriaBuilder cb, Root<T> root, com.elepy.dao.Query settings) {
         return settings.getSortingSpecification().getMap().entrySet().stream().map(sortEntry -> {
             if (sortEntry.getValue().equals(SortOption.ASCENDING)) {
                 return cb.asc(root.get(sortEntry.getKey()));
@@ -49,7 +49,7 @@ public class HibernateDao<T> implements Crud<T> {
 
 
     @Override
-    public List<T> find(com.elepy.dao.querymodel.Query query) {
+    public List<T> find(com.elepy.dao.Query query) {
         try (Session session = sessionFactory.openSession()) {
 
 
@@ -156,7 +156,7 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
-    public long count(com.elepy.dao.querymodel.Query query) {
+    public long count(com.elepy.dao.Query query) {
 
         try (Session session = sessionFactory.openSession()) {
 

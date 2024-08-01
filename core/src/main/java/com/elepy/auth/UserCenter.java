@@ -7,8 +7,8 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
-import static com.elepy.dao.querymodel.Filters.any;
-import static com.elepy.dao.querymodel.Filters.eq;
+import static com.elepy.dao.Filters.any;
+import static com.elepy.dao.Filters.eq;
 
 public class UserCenter {
 

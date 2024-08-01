@@ -1,4 +1,4 @@
-package com.elepy.describers;
+package com.elepy.models;
 
 public class DirectRecursiveObject {
 

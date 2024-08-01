@@ -4,7 +4,7 @@ import com.elepy.configuration.Configuration;
 import com.elepy.Elepy;
 import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.dao.Crud;
-import com.elepy.dao.querymodel.Filters;
+import com.elepy.dao.Filters;
 import com.elepy.tests.basic.Resource;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;

@@ -1,7 +1,7 @@
 package com.elepy.http;
 
-import com.elepy.dao.querymodel.*;
-import com.elepy.dao.querymodel.Filter;
+import com.elepy.dao.*;
+import com.elepy.dao.Filter;
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.auth.*;
 import com.elepy.auth.permissions.DefaultPermissions;
@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.querymodel.Filters.*;
-import static com.elepy.dao.querymodel.Queries.create;
+import static com.elepy.dao.Filters.*;
+import static com.elepy.dao.Queries.create;
 
 public interface Request {
 
@@ -345,7 +345,9 @@ public interface Request {
 
                     schema.ifPresent(schema1 -> {
                         final var property = schema1.getProperty(propertyName);
-                        if (!filterType1.canBeUsedBy(property)) {
+                        final var isCompatible = property.getAvailableFilters().stream().map(FilterTypeDescription::filterType)
+                                .anyMatch(filterType1::equals);
+                        if (!isCompatible) {
                             throw
                                     ElepyException.translated("{elepy.messages.exceptions.badFilter}", filterType1.getPrettyName(), property.getLabel());
                         }

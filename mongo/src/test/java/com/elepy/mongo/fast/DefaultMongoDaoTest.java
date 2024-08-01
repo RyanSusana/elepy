@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.elepy.dao.querymodel.Filters.search;
+import static com.elepy.dao.Filters.search;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

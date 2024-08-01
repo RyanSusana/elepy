@@ -2,7 +2,7 @@ package com.elepy.evaluators;
 
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.dao.Crud;
-import com.elepy.dao.querymodel.Filters;
+import com.elepy.dao.Filters;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.igniters.ModelContext;
 import com.elepy.utils.ReflectionUtils;

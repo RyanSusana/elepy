@@ -1,4 +1,4 @@
-package com.elepy.dao.querymodel;
+package com.elepy.dao;
 
 import com.elepy.utils.StringUtils;
 

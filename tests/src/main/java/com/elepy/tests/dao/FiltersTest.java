@@ -1,6 +1,6 @@
 package com.elepy.tests.dao;
 
-import com.elepy.dao.querymodel.FilterType;
+import com.elepy.dao.FilterType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.elepy.dao.querymodel.FilterType.*;
+import static com.elepy.dao.FilterType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class FiltersTest implements ElepyConfigHelper {

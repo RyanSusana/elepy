@@ -1,13 +1,10 @@
 package com.elepy.dao;
 
 import com.elepy.Resource;
-import com.elepy.dao.querymodel.Filter;
-import com.elepy.dao.querymodel.FilterType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.models.FieldType;
 import com.elepy.models.SchemaFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,26 +31,6 @@ public class FiltersTest {
         Request request = mockedContextWithQueryMap(map).request();
         assertThat(request.queryParams("hi")).isEqualTo("ryan");
     }
-
-    @Test
-    void testCanFindProperFilter() {
-        assertThat(FilterType.getForFieldType(FieldType.NUMBER))
-                .containsExactlyInAnyOrder(
-                        FilterType.GREATER_THAN,
-                        FilterType.GREATER_THAN_OR_EQUALS,
-                        FilterType.LESSER_THAN,
-                        FilterType.LESSER_THAN_OR_EQUALS,
-                        FilterType.EQUALS,
-                        FilterType.NOT_EQUALS);
-
-        assertThat(FilterType.getForFieldType(FieldType.INPUT))
-                .containsExactlyInAnyOrder(
-                        FilterType.CONTAINS,
-                        FilterType.EQUALS,
-                        FilterType.STARTS_WITH,
-                        FilterType.NOT_EQUALS);
-    }
-
 
     @Test
     void testCreateProperFilter() {

@@ -1,11 +1,10 @@
-package com.elepy.describers;
+package com.elepy.models;
 
 import com.elepy.Category;
 import com.elepy.Product;
 import com.elepy.Resource;
 import com.elepy.ResourceArray;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.models.*;
 import com.elepy.models.options.*;
 import com.elepy.uploads.FileUploadEvaluator;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import static com.elepy.models.FieldType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class SchemaUtilsTest {
+public class SchemaFactoryTest {
 
     @Test
     void testHiddenField() {

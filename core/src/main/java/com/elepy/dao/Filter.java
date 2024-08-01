@@ -1,5 +1,4 @@
-package com.elepy.dao.querymodel;
-
+package com.elepy.dao;
 
 import java.io.Serializable;
 

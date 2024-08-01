@@ -1,10 +1,6 @@
 package com.elepy.dao;
 
 import com.elepy.annotations.Model;
-import com.elepy.dao.querymodel.Expression;
-import com.elepy.dao.querymodel.Filters;
-import com.elepy.dao.querymodel.Queries;
-import com.elepy.dao.querymodel.Query;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.models.Schema;
 import com.elepy.utils.ReflectionUtils;

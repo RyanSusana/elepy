@@ -1,8 +1,8 @@
 package com.elepy.di;
 
 import com.elepy.dao.Crud;
-import com.elepy.dao.querymodel.Expression;
-import com.elepy.dao.querymodel.Query;
+import com.elepy.dao.Expression;
+import com.elepy.dao.Query;
 import com.elepy.models.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
