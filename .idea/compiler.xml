@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="elepy-basic" />
+        <module name="elepy-uploads" />
+        <module name="elepy-hibernate" />
+        <module name="elepy-mongo" />
+        <module name="elepy-core" />
+        <module name="elepy-oauth" />
+        <module name="elepy-sparkjava" />
+        <module name="elepy-admin" />
+        <module name="elepy-jwt" />
+        <module name="elepy-tests" />
+        <module name="elepy-swagger" />
+        <module name="elepy-firebase" />
+        <module name="elepy-javalin" />
+        <module name="elepy-aws-s3" />
+        <module name="elepy-gcp" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
