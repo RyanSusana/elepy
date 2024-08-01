@@ -20,7 +20,6 @@
 
 *.iml
 
-.idea/
 target/
 */target/*
 */sass-cache/*
