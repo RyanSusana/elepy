@@ -3,10 +3,10 @@ package com.elepy.igniters;
 import com.elepy.Elepy;
 import com.elepy.annotations.*;
 import com.elepy.handlers.*;
-import com.elepy.models.ActionFactory;
-import com.elepy.models.Schema;
+import com.elepy.schemas.ActionFactory;
+import com.elepy.schemas.Schema;
 import com.elepy.utils.Annotations;
-import com.elepy.models.DefaultActions;
+import com.elepy.schemas.DefaultActions;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,13 +1,13 @@
 package com.elepy.hibernate;
 
 import com.elepy.annotations.Searchable;
-import com.elepy.dao.BooleanGroup;
-import com.elepy.dao.Expression;
-import com.elepy.dao.Filter;
-import com.elepy.dao.SearchQuery;
+import com.elepy.query.BooleanGroup;
+import com.elepy.query.Expression;
+import com.elepy.query.Filter;
+import com.elepy.query.SearchQuery;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.*;
+import com.elepy.schemas.*;
 import com.elepy.utils.ReflectionUtils;
 
 import javax.persistence.Column;

@@ -2,7 +2,7 @@ package com.elepy.auth.roles;
 
 import com.elepy.auth.Policy;
 import com.elepy.auth.Role;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.handlers.SimpleCreate;
 import com.elepy.http.Request;
 import jakarta.inject.Inject;

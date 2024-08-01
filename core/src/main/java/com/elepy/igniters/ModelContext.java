@@ -1,8 +1,8 @@
 package com.elepy.igniters;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 
 public class ModelContext<T> {
     private final Schema<T> schema;

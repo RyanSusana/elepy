@@ -1,9 +1,9 @@
 package com.elepy.di;
 
-import com.elepy.dao.Crud;
-import com.elepy.dao.Expression;
-import com.elepy.dao.Query;
-import com.elepy.models.Schema;
+import com.elepy.crud.Crud;
+import com.elepy.query.Expression;
+import com.elepy.query.Query;
+import com.elepy.schemas.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;

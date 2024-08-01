@@ -1,13 +1,13 @@
 package com.elepy.mongo;
 
-import com.elepy.dao.Crud;
-import com.elepy.dao.Expression;
-import com.elepy.dao.Query;
-import com.elepy.dao.SortOption;
+import com.elepy.crud.Crud;
+import com.elepy.query.Expression;
+import com.elepy.query.Query;
+import com.elepy.query.SortOption;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Property;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Property;
+import com.elepy.schemas.Schema;
 import com.elepy.mongo.annotations.MongoIndex;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;

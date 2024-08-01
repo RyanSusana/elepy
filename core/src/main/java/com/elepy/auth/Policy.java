@@ -2,14 +2,14 @@ package com.elepy.auth;
 
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.permissions.DefaultPermissions;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.exceptions.ElepyException;
 import jakarta.inject.Inject;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.Filters.search;
+import static com.elepy.query.Filters.search;
 
 public class Policy {
 

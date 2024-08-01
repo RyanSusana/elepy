@@ -1,7 +1,7 @@
 package com.elepy.auth.users;
 
 import com.elepy.auth.User;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.handlers.MappedFind;
 import com.elepy.http.Request;
 

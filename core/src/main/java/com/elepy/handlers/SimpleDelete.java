@@ -1,6 +1,6 @@
 package com.elepy.handlers;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.exceptions.Message;
 
 public abstract class SimpleDelete<T> implements ActionHandler<T> {

@@ -2,8 +2,8 @@ package com.elepy.tests.basic;
 
 import com.elepy.auth.User;
 import com.elepy.auth.permissions.DefaultPermissions;
-import com.elepy.dao.Crud;
-import com.elepy.dao.SortOption;
+import com.elepy.crud.Crud;
+import com.elepy.query.SortOption;
 import com.elepy.exceptions.Message;
 import com.elepy.tests.CustomUser;
 import com.elepy.tests.ElepyConfigHelper;
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.Filters.search;
-import static com.elepy.dao.Queries.create;
+import static com.elepy.query.Filters.search;
+import static com.elepy.query.Queries.create;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

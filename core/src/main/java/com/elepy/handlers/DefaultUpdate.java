@@ -6,8 +6,8 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.Request;
-import com.elepy.models.FieldType;
-import com.elepy.models.Schema;
+import com.elepy.schemas.FieldType;
+import com.elepy.schemas.Schema;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

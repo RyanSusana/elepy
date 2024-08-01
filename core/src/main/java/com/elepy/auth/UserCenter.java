@@ -1,14 +1,14 @@
 package com.elepy.auth;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.utils.StringUtils;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
-import static com.elepy.dao.Filters.any;
-import static com.elepy.dao.Filters.eq;
+import static com.elepy.query.Filters.any;
+import static com.elepy.query.Filters.eq;
 
 public class UserCenter {
 

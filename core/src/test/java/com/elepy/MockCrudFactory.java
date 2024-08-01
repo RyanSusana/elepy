@@ -1,8 +1,8 @@
 package com.elepy;
 
-import com.elepy.dao.Crud;
-import com.elepy.dao.CrudFactory;
-import com.elepy.models.Schema;
+import com.elepy.crud.Crud;
+import com.elepy.crud.CrudFactory;
+import com.elepy.schemas.Schema;
 
 import static org.mockito.Mockito.mock;
 

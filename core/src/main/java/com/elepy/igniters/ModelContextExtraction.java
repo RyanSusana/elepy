@@ -4,10 +4,10 @@ import com.elepy.Elepy;
 import com.elepy.annotations.Dao;
 import com.elepy.annotations.DaoFactory;
 import com.elepy.annotations.IdProvider;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.id.DefaultIdentityProvider;
 import com.elepy.id.IdentityProvider;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import com.elepy.utils.Annotations;
 
 public class ModelContextExtraction {

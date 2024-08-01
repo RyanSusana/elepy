@@ -1,6 +1,6 @@
 package com.elepy.di;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.di.props.Props;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;

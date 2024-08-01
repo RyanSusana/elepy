@@ -1,7 +1,6 @@
 package com.elepy.http;
 
-import com.elepy.dao.*;
-import com.elepy.dao.Filter;
+import com.elepy.query.*;
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.auth.*;
 import com.elepy.auth.permissions.DefaultPermissions;
@@ -10,7 +9,8 @@ import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
+import com.elepy.query.Filter;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.elepy.dao.Filters.*;
-import static com.elepy.dao.Queries.create;
+import static com.elepy.query.Filters.*;
+import static com.elepy.query.Queries.create;
 
 public interface Request {
 

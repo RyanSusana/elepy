@@ -1,8 +1,8 @@
 package com.elepy.evaluators;
 
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.Property;
-import com.elepy.models.PropertyFactory;
+import com.elepy.schemas.Property;
+import com.elepy.schemas.PropertyFactory;
 
 import java.lang.reflect.Field;
 

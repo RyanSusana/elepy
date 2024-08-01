@@ -1,9 +1,9 @@
 package com.elepy.firebase;
 
-import com.elepy.dao.Crud;
-import com.elepy.dao.CrudFactory;
+import com.elepy.crud.Crud;
+import com.elepy.crud.CrudFactory;
 import com.elepy.di.ElepyContext;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import com.google.cloud.firestore.Firestore;
 import jakarta.inject.Inject;
 

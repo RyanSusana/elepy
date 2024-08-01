@@ -1,6 +1,6 @@
 package com.elepy.handlers;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.evaluators.AtomicIntegrityEvaluator;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;

@@ -1,7 +1,7 @@
 package com.elepy.tests.selenium.actions;
 
-import com.elepy.models.FieldType;
-import com.elepy.models.Property;
+import com.elepy.schemas.FieldType;
+import com.elepy.schemas.Property;
 import com.elepy.tests.selenium.ElepyDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

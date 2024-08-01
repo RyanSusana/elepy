@@ -1,8 +1,8 @@
 package com.elepy.mongo;
 
-import com.elepy.dao.Crud;
-import com.elepy.dao.CrudFactory;
-import com.elepy.models.Schema;
+import com.elepy.crud.Crud;
+import com.elepy.crud.CrudFactory;
+import com.elepy.schemas.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoDatabase;
 import jakarta.inject.Inject;

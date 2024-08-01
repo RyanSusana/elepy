@@ -1,19 +1,19 @@
 package com.elepy.revisions;
 
-import com.elepy.dao.Filter;
-import com.elepy.dao.Queries;
-import com.elepy.dao.Query;
-import com.elepy.dao.SortOption;
+import com.elepy.query.Filter;
+import com.elepy.query.Queries;
+import com.elepy.query.Query;
+import com.elepy.query.SortOption;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static com.elepy.dao.Filters.and;
-import static com.elepy.dao.Filters.eq;
+import static com.elepy.query.Filters.and;
+import static com.elepy.query.Filters.eq;
 
 public class RevisionFind implements ActionHandler<Revision> {
 

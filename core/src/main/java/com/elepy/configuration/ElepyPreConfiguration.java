@@ -4,11 +4,12 @@ import com.elepy.Elepy;
 import com.elepy.annotations.Model;
 import com.elepy.auth.AuthenticationService;
 import com.elepy.auth.TokenGenerator;
-import com.elepy.dao.CrudFactory;
+import com.elepy.crud.CrudFactory;
+import com.elepy.crud.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;
 import com.elepy.igniters.ModelChange;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import com.elepy.uploads.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration2.Configuration;
@@ -188,11 +189,11 @@ public class ElepyPreConfiguration {
 
     /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     * used to construct {@link Crud} implementations. For MongoDB you should consider
      *
      * @param defaultCrudProvider the default crud provider
      * @see CrudFactory
-     * @see com.elepy.dao.Crud
+     * @see Crud
      */
     public void withDefaultCrudFactory(Class<? extends CrudFactory> defaultCrudProvider) {
         elepy.withDefaultCrudFactory(defaultCrudProvider);
@@ -200,11 +201,11 @@ public class ElepyPreConfiguration {
 
     /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     * used to construct {@link Crud} implementations. For MongoDB you should consider
      *
      * @param defaultCrudProvider the default crud provider
      * @see CrudFactory
-     * @see com.elepy.dao.Crud
+     * @see Crud
      */
     public void withDefaultCrudFactory(CrudFactory defaultCrudProvider) {
         elepy.withDefaultCrudFactory(defaultCrudProvider);

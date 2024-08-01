@@ -3,7 +3,7 @@ package com.elepy.tests.basic;
 
 import com.elepy.annotations.ElepyConstructor;
 import com.elepy.annotations.Route;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.Request;
 import com.elepy.http.Response;

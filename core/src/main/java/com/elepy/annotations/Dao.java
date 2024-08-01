@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 
 import java.lang.annotation.*;
 

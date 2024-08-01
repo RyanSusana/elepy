@@ -1,7 +1,7 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Model;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
 import com.googlecode.gentyref.GenericTypeReflector;

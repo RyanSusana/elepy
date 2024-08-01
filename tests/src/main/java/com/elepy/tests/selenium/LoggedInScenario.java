@@ -1,6 +1,6 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import org.openqa.selenium.By;
 
 public abstract class LoggedInScenario extends GenericScenario {

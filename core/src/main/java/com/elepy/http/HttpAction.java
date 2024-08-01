@@ -1,6 +1,6 @@
 package com.elepy.http;
 
-import com.elepy.models.InputModel;
+import com.elepy.schemas.InputModel;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

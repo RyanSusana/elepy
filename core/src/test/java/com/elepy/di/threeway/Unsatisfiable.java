@@ -1,6 +1,6 @@
 package com.elepy.di.threeway;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import jakarta.inject.Inject;
 
 public class Unsatisfiable {

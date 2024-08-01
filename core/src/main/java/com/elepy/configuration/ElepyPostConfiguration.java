@@ -1,11 +1,11 @@
 package com.elepy.configuration;
 
 import com.elepy.Elepy;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.di.ElepyContext;
 import com.elepy.http.Route;
 import com.elepy.igniters.ModelChange;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration2.Configuration;
 

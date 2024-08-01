@@ -21,7 +21,11 @@
                 <configuration>
                     <sourceDirectory>src/main/antlr4</sourceDirectory>
                 </configuration>
+
                 <executions>
+                    <execution>
+
+                    </execution>
                     <execution>
                         <id>antlr</id>
                         <goals>

@@ -1,6 +1,6 @@
 package com.elepy.annotations;
 
-import com.elepy.models.options.CustomOptions;
+import com.elepy.schemas.options.CustomOptions;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

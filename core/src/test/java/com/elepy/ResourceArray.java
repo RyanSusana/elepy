@@ -3,7 +3,7 @@ package com.elepy;
 import com.elepy.annotations.FileReference;
 import com.elepy.annotations.Model;
 import com.elepy.annotations.Number;
-import com.elepy.models.FieldType;
+import com.elepy.schemas.FieldType;
 import jakarta.validation.constraints.Size;
 
 import java.util.Date;

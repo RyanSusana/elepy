@@ -1,7 +1,7 @@
 package com.elepy.uploads;
 
 import com.elepy.annotations.*;
-import com.elepy.dao.SortOption;
+import com.elepy.query.SortOption;
 import com.elepy.handlers.DisabledHandler;
 import com.elepy.http.RawFile;
 

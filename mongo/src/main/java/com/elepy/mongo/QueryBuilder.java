@@ -1,13 +1,13 @@
 package com.elepy.mongo;
 
-import com.elepy.dao.BooleanGroup;
-import com.elepy.dao.Expression;
-import com.elepy.dao.Filter;
-import com.elepy.dao.SearchQuery;
+import com.elepy.query.BooleanGroup;
+import com.elepy.query.Expression;
+import com.elepy.query.Filter;
+import com.elepy.query.SearchQuery;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.FieldMapper;
-import com.elepy.models.Property;
-import com.elepy.models.Schema;
+import com.elepy.schemas.FieldMapper;
+import com.elepy.schemas.Property;
+import com.elepy.schemas.Schema;
 import com.elepy.utils.ReflectionUtils;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;

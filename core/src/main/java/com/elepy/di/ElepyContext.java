@@ -1,7 +1,7 @@
 package com.elepy.di;
 
 import com.elepy.annotations.Model;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.Annotations;
 import com.fasterxml.jackson.databind.ObjectMapper;

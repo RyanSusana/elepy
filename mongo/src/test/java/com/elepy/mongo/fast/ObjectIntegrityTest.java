@@ -4,7 +4,7 @@ import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.igniters.ModelContext;
-import com.elepy.models.SchemaFactory;
+import com.elepy.schemas.SchemaFactory;
 import com.elepy.mongo.MongoDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

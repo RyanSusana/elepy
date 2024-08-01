@@ -1,7 +1,7 @@
 package com.elepy.annotations.editorjs;
 
 import com.elepy.annotations.EditorJs;
-import com.elepy.models.options.CustomOptions;
+import com.elepy.schemas.options.CustomOptions;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

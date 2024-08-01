@@ -1,7 +1,7 @@
 package com.elepy.mongo.fast;
 
 import com.elepy.di.DefaultElepyContext;
-import com.elepy.models.SchemaFactory;
+import com.elepy.schemas.SchemaFactory;
 import com.elepy.mongo.CustomJacksonModule;
 import com.elepy.mongo.ElepyCodecRegistry;
 import com.elepy.mongo.MongoCrudFactory;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.elepy.dao.Filters.search;
+import static com.elepy.query.Filters.search;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

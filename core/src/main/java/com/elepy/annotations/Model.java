@@ -1,7 +1,7 @@
 package com.elepy.annotations;
 
 
-import com.elepy.dao.SortOption;
+import com.elepy.query.SortOption;
 
 import java.lang.annotation.*;
 

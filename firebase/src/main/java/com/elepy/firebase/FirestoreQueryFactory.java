@@ -1,9 +1,9 @@
 package com.elepy.firebase;
 
-import com.elepy.dao.Filter;
+import com.elepy.query.Filter;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.models.FieldType;
-import com.elepy.models.Schema;
+import com.elepy.schemas.FieldType;
+import com.elepy.schemas.Schema;
 import com.google.cloud.firestore.Query;
 
 public class FirestoreQueryFactory {

@@ -3,10 +3,10 @@ package com.elepy.auth.methods;
 import com.elepy.auth.Grant;
 import com.elepy.auth.Token;
 import com.elepy.auth.UserCenter;
-import com.elepy.dao.Crud;
-import com.elepy.dao.Filters;
-import com.elepy.dao.Queries;
-import com.elepy.dao.Query;
+import com.elepy.crud.Crud;
+import com.elepy.query.Filters;
+import com.elepy.query.Queries;
+import com.elepy.query.Query;
 import jakarta.inject.Inject;
 
 import java.util.HashMap;

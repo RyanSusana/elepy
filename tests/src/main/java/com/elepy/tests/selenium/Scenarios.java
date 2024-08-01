@@ -1,8 +1,8 @@
 package com.elepy.tests.selenium;
 
 import com.elepy.auth.User;
-import com.elepy.dao.Crud;
-import com.elepy.models.Schema;
+import com.elepy.crud.Crud;
+import com.elepy.schemas.Schema;
 import org.mindrot.jbcrypt.BCrypt;
 import org.openqa.selenium.By;
 

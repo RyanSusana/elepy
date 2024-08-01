@@ -1,6 +1,6 @@
 package com.elepy.handlers;
 
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Response;

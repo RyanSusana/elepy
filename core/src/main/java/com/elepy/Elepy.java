@@ -6,7 +6,8 @@ import com.elepy.auth.*;
 import com.elepy.auth.methods.BasicAuthenticationMethod;
 import com.elepy.auth.methods.PersistedTokenGenerator;
 import com.elepy.configuration.*;
-import com.elepy.dao.CrudFactory;
+import com.elepy.crud.CrudFactory;
+import com.elepy.crud.Crud;
 import com.elepy.di.ContextKey;
 import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
@@ -22,7 +23,7 @@ import com.elepy.i18n.Resources;
 import com.elepy.i18n.extension.TranslationsExtension;
 import com.elepy.igniters.ModelEngine;
 import com.elepy.igniters.ModelChange;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import com.elepy.revisions.Revision;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
@@ -414,12 +415,12 @@ public class Elepy implements ElepyContext {
 
     /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     * used to construct {@link Crud} implementations. For MongoDB you should consider
      *
      * @param defaultCrudProvider the default crud provider
      * @return The {@link com.elepy.Elepy} instance
      * @see CrudFactory
-     * @see com.elepy.dao.Crud
+     * @see Crud
      */
     public Elepy withDefaultCrudFactory(Class<? extends CrudFactory> defaultCrudProvider) {
         this.defaultCrudFactoryClass = defaultCrudProvider;
@@ -428,12 +429,12 @@ public class Elepy implements ElepyContext {
 
     /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link com.elepy.dao.Crud} implementations. For MongoDB you should consider
+     * used to construct {@link Crud} implementations. For MongoDB you should consider
      *
      * @param defaultCrudProvider the default crud provider
      * @return The {@link com.elepy.Elepy} instance
      * @see CrudFactory
-     * @see com.elepy.dao.Crud
+     * @see Crud
      */
     public Elepy withDefaultCrudFactory(CrudFactory defaultCrudProvider) {
         this.defaultCrudFactoryImplementation = defaultCrudProvider;

@@ -1,6 +1,6 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Schema;
+import com.elepy.schemas.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;

@@ -1,7 +1,7 @@
 package com.elepy.tests.selenium;
 
-import com.elepy.models.Property;
-import com.elepy.models.Schema;
+import com.elepy.schemas.Property;
+import com.elepy.schemas.Schema;
 import com.elepy.tests.selenium.actions.FillIn;
 import com.elepy.tests.selenium.actions.FillInBoolean;
 import com.elepy.tests.selenium.actions.FillInNumber;

@@ -7,8 +7,8 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpMethod;
 import com.elepy.http.HttpService;
 import com.elepy.http.Route;
-import com.elepy.models.Schema;
-import com.elepy.models.SchemaFactory;
+import com.elepy.schemas.Schema;
+import com.elepy.schemas.SchemaFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

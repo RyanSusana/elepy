@@ -3,7 +3,7 @@ package com.elepy.auth.users;
 import com.elepy.auth.PasswordCheck;
 import com.elepy.auth.Policy;
 import com.elepy.auth.User;
-import com.elepy.dao.Crud;
+import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
