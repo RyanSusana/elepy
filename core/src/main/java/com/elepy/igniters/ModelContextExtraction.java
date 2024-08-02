@@ -2,7 +2,7 @@ package com.elepy.igniters;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.Dao;
-import com.elepy.annotations.DaoFactory;
+import com.elepy.annotations.CrudFactory;
 import com.elepy.annotations.IdProvider;
 import com.elepy.crud.Crud;
 import com.elepy.id.DefaultIdentityProvider;
@@ -33,7 +33,7 @@ public class ModelContextExtraction {
      */
     private static <T> Crud<T> extractCrud(Schema<T> schema, Elepy elepy) {
         var modelType = schema.getJavaClass();
-        var annotation = Annotations.get(modelType, DaoFactory.class);
+        var annotation = Annotations.get(modelType, CrudFactory.class);
 
         var crudProvider = annotation == null ?
                 elepy.defaultCrudFactory()
