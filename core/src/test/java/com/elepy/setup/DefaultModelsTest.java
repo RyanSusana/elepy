@@ -2,7 +2,7 @@ package com.elepy.setup;
 
 import com.elepy.Elepy;
 import com.elepy.MockCrudFactory;
-import com.elepy.auth.User;
+import com.elepy.auth.users.User;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.schemas.FieldType;

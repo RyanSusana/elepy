@@ -1,6 +1,6 @@
 package com.elepy.auth.roles;
 
-import com.elepy.auth.Policy;
+import com.elepy.auth.RolesService;
 import com.elepy.auth.Role;
 import com.elepy.crud.Crud;
 import com.elepy.handlers.SimpleCreate;
@@ -9,7 +9,7 @@ import jakarta.inject.Inject;
 
 public class RolesCreate extends SimpleCreate<Role> {
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public void beforeCreate(Role objectForCreation, Request httpRequest, Crud<Role> crud) throws Exception {

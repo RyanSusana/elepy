@@ -1,7 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.Policy;
-import com.elepy.auth.User;
+import com.elepy.auth.RolesService;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
@@ -11,7 +10,7 @@ import jakarta.inject.Inject;
 public class UserDelete implements ActionHandler<User> {
 
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public void handle(HandlerContext<User> ctx) {
@@ -24,7 +23,7 @@ public class UserDelete implements ActionHandler<User> {
         if (loggedInUser.equals(toDelete)) {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.cantDeleteSelf}");
         }
-        if (policy.userHasRole(toDelete, "owner")) {
+        if (policy.userIsOwner(toDelete)) {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
         }
         ctx.crud().deleteById(toDelete.getId());

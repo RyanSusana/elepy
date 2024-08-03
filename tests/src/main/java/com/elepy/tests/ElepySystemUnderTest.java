@@ -1,7 +1,7 @@
 package com.elepy.tests;
 
 import com.elepy.Elepy;
-import com.elepy.auth.User;
+import com.elepy.auth.users.User;
 import com.elepy.http.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

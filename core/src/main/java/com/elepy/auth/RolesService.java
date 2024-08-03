@@ -2,6 +2,7 @@ package com.elepy.auth;
 
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.permissions.DefaultPermissions;
+import com.elepy.auth.users.User;
 import com.elepy.crud.Crud;
 import com.elepy.exceptions.ElepyException;
 import jakarta.inject.Inject;
@@ -9,16 +10,13 @@ import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.elepy.query.Filters.search;
-
-public class Policy {
+public class RolesService {
 
 
     @Inject
     private Crud<Role> customRoles;
 
     private final List<Role> predefinedRoles = new ArrayList<>();
-    private final Set<String> availablePermissions = new TreeSet<>();
 
 
     public void registerPredefinedRole(PredefinedRole predefinedRole) {
@@ -48,15 +46,10 @@ public class Policy {
     }
 
 
-    public List<Role> getAllRoles() {
-        final var roles = new ArrayList<>(predefinedRoles);
-
-        roles.addAll(this.customRoles.find(search("")));
-        return roles;
+    public boolean userIsOwner(User user) {
+        return userHasRole(user, "owner");
     }
-
-
-    public boolean userHasRole(User user, String role) {
+    private boolean userHasRole(User user, String role) {
         return user.getRoles().contains(role);
     }
 

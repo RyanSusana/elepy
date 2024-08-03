@@ -1,5 +1,6 @@
 package com.elepy.auth;
 
+import com.elepy.auth.methods.tokens.TokenAuthority;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 
@@ -13,7 +14,7 @@ public class AuthenticationService {
     private final List<AuthenticationMethod> authenticationMethods = new ArrayList<>();
     private final List<AuthenticationMethod> loginMethods = new ArrayList<>();
 
-    private TokenGenerator tokenGenerator;
+    private TokenAuthority tokenGenerator;
 
     public void addAuthenticationMethod(AuthenticationMethod authenticationMethod) {
         loginMethods.add(authenticationMethod);
@@ -27,10 +28,10 @@ public class AuthenticationService {
         return tokenGenerator != null;
     }
 
-    public Optional<Grant> getGrant(Request request) {
-        final Grant grantFromRequest = request.attribute("grant");
-        if (grantFromRequest != null) {
-            return Optional.of(grantFromRequest);
+    public Optional<AuthenticatedCredentials> getGrant(Request request) {
+        final AuthenticatedCredentials authenticatedCredentialsFromRequest = request.attribute("grant");
+        if (authenticatedCredentialsFromRequest != null) {
+            return Optional.of(authenticatedCredentialsFromRequest);
         } else {
             final List<AuthenticationMethod> methods = Stream.of(loginMethods.stream(), authenticationMethods.stream(), Stream.of(tokenGenerator))
                     .flatMap(o -> (Stream<AuthenticationMethod>) o)
@@ -44,12 +45,12 @@ public class AuthenticationService {
 
 
     public String generateToken(Request request) {
-        final Optional<Grant> grant = authenticate(request, loginMethods);
+        final Optional<AuthenticatedCredentials> grant = authenticate(request, loginMethods);
         return generateToken(grant.orElse(null));
     }
 
-    public String generateToken(Grant grant) {
-        return Optional.ofNullable(grant)
+    public String generateToken(AuthenticatedCredentials authenticatedCredentials) {
+        return Optional.ofNullable(authenticatedCredentials)
                 .map(grant1 -> {
                     grant1.setMaxDate(System.currentTimeMillis() + (1000 * 60 * 60));
                     return grant1;
@@ -58,7 +59,7 @@ public class AuthenticationService {
                 .orElseThrow(ElepyException::notAuthorized);
     }
 
-    private Optional<Grant> authenticate(Request request, List<AuthenticationMethod> authenticationMethods) {
+    private Optional<AuthenticatedCredentials> authenticate(Request request, List<AuthenticationMethod> authenticationMethods) {
         for (AuthenticationMethod authenticationMethod : authenticationMethods) {
             final var user = authenticationMethod.getGrant(request);
 
@@ -69,7 +70,7 @@ public class AuthenticationService {
         return Optional.empty();
     }
 
-    public void setTokenGenerator(TokenGenerator authenticationMethod) {
+    public void setTokenGenerator(TokenAuthority authenticationMethod) {
         this.tokenGenerator = authenticationMethod;
     }
 }

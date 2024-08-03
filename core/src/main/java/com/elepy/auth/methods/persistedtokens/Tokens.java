@@ -1,8 +1,7 @@
-package com.elepy.auth.methods;
+package com.elepy.auth.methods.persistedtokens;
 
-import com.elepy.auth.Grant;
-import com.elepy.auth.Token;
-import com.elepy.auth.UserCenter;
+import com.elepy.auth.AuthenticatedCredentials;
+import com.elepy.auth.users.UserCenter;
 import com.elepy.crud.Crud;
 import com.elepy.query.Filters;
 import com.elepy.query.Queries;
@@ -17,18 +16,18 @@ import java.util.stream.Collectors;
 
 public class Tokens {
 
-    public Grant getGrant(String elepyToken) {
+    public AuthenticatedCredentials getGrant(String elepyToken) {
         return getGrantFromCache(elepyToken)
                 .or(() -> getUserFromDB(elepyToken)).orElse(null);
     }
-    public String createAccessToken(Grant grant) {
+    public String createAccessToken(AuthenticatedCredentials authenticatedCredentials) {
         removeOverdueTokensDB();
         final Token token = new Token().setId(UUID.randomUUID().toString())
-                .setUserId(grant.getUserId()).setMaxDate((1000 * 60 * 60) + System.currentTimeMillis());
+                .setUserId(authenticatedCredentials.getUserId()).setMaxDate((1000 * 60 * 60) + System.currentTimeMillis());
 
 
         tokens.create(token);
-        cached.put(token, grant);
+        cached.put(token, authenticatedCredentials);
         return token.getId();
     }
 
@@ -37,9 +36,9 @@ public class Tokens {
 
     @Inject
     private UserCenter users;
-    private final Map<Token, Grant> cached = new HashMap<>();
+    private final Map<Token, AuthenticatedCredentials> cached = new HashMap<>();
 
-    private Optional<Grant> getGrantFromCache(String token) {
+    private Optional<AuthenticatedCredentials> getGrantFromCache(String token) {
         removeOverdueTokensCache();
         return cached.entrySet().stream()
                 .filter(tokenUserEntry -> tokenUserEntry.getKey().getId().endsWith(token))
@@ -47,7 +46,7 @@ public class Tokens {
     }
 
 
-    private Optional<Grant> getUserFromDB(String elepyToken) {
+    private Optional<AuthenticatedCredentials> getUserFromDB(String elepyToken) {
         final Optional<Token> validToken = getValidToken(elepyToken);
 
         if (validToken.isEmpty()) {

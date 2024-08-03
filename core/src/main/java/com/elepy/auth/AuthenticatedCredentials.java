@@ -2,7 +2,7 @@ package com.elepy.auth;
 
 import java.util.List;
 
-public class Grant {
+public class AuthenticatedCredentials {
     private String userId;
     private String username;
     private long maxDate;

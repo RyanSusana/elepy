@@ -1,8 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.PasswordCheck;
-import com.elepy.auth.Policy;
-import com.elepy.auth.User;
+import com.elepy.auth.RolesService;
 import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
@@ -22,7 +20,7 @@ import java.util.HashSet;
 public class UserUpdate extends DefaultUpdate<User> {
 
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public User handleUpdate(HandlerContext<User> ctx, ObjectMapper objectMapper) throws Exception {

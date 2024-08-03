@@ -1,4 +1,4 @@
-package com.elepy.auth;
+package com.elepy.auth.methods.persistedtokens;
 
 
 import com.elepy.annotations.*;
@@ -24,8 +24,6 @@ public class Token implements Comparable<Token> {
 
     @Column
     private String userId;
-
-    private TokenType tokenType;
 
     @Column
     private long maxDate;
@@ -79,11 +77,4 @@ public class Token implements Comparable<Token> {
         return Long.compare(this.maxDate, o.maxDate);
     }
 
-    public TokenType getTokenType() {
-        return tokenType;
-    }
-
-    public void setTokenType(TokenType tokenType) {
-        this.tokenType = tokenType;
-    }
 }

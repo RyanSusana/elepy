@@ -1,7 +1,7 @@
 package com.elepy.http;
 
 import com.elepy.auth.AuthenticationService;
-import com.elepy.auth.User;
+import com.elepy.auth.users.User;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.Message;
 

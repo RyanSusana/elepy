@@ -1,10 +1,7 @@
-package com.elepy.auth;
+package com.elepy.auth.users;
 
 import com.elepy.annotations.*;
-import com.elepy.auth.users.UserCreate;
-import com.elepy.auth.users.UserDelete;
-import com.elepy.auth.users.UserFind;
-import com.elepy.auth.users.UserUpdate;
+import com.elepy.auth.Role;
 import com.elepy.query.SortOption;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Pattern;

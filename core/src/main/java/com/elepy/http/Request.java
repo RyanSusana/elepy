@@ -1,5 +1,8 @@
 package com.elepy.http;
 
+import com.elepy.auth.extension.UserAuthenticationExtension;
+import com.elepy.auth.users.User;
+import com.elepy.auth.users.UserCenter;
 import com.elepy.query.*;
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.auth.*;
@@ -206,7 +209,7 @@ public interface Request {
         return user;
     }
 
-    default Optional<Grant> grant() {
+    default Optional<AuthenticatedCredentials> grant() {
         if (authService() == null) {
             return Optional.empty();
         }

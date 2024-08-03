@@ -1,6 +1,6 @@
 package com.elepy.auth.roles;
 
-import com.elepy.auth.Policy;
+import com.elepy.auth.RolesService;
 import com.elepy.auth.Role;
 import com.elepy.handlers.DefaultDelete;
 import com.elepy.handlers.HandlerContext;
@@ -11,7 +11,7 @@ import java.util.Objects;
 public class RolesDelete extends DefaultDelete<Role> {
 
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public void handle(HandlerContext<Role> ctx) throws Exception {

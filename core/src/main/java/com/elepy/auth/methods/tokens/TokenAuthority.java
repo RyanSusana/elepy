@@ -1,13 +1,15 @@
-package com.elepy.auth;
+package com.elepy.auth.methods.tokens;
 
+import com.elepy.auth.AuthenticationMethod;
+import com.elepy.auth.AuthenticatedCredentials;
 import com.elepy.http.Request;
 
 import java.util.Optional;
 
-public abstract class TokenGenerator implements AuthenticationMethod {
+public abstract class TokenAuthority implements AuthenticationMethod {
 
     @Override
-    public final Optional<Grant> getGrant(Request request) {
+    public final Optional<AuthenticatedCredentials> getGrant(Request request) {
         final var token = request.token();
 
         if (token == null) {
@@ -24,14 +26,14 @@ public abstract class TokenGenerator implements AuthenticationMethod {
      *
      * @param rawToken a non-null token that must be validated against.
      */
-    public abstract Grant validateToken(String rawToken);
+    public abstract AuthenticatedCredentials validateToken(String rawToken);
 
 
     /**
      * Translates a grant into a String. This grant can be stored in the return String via JWT, or in a database/in-memory.
      *
-     * @param grant a grant. This grant assures that the user is who
+     * @param authenticatedCredentials a grant. This grant assures that the user is who
      */
-    public abstract String createToken(Grant grant);
+    public abstract String createToken(AuthenticatedCredentials authenticatedCredentials);
 
 }

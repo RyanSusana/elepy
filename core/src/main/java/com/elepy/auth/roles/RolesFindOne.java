@@ -1,6 +1,6 @@
 package com.elepy.auth.roles;
 
-import com.elepy.auth.Policy;
+import com.elepy.auth.RolesService;
 import com.elepy.auth.Role;
 import com.elepy.crud.Crud;
 import com.elepy.handlers.DefaultFindOne;
@@ -11,7 +11,7 @@ import jakarta.inject.Inject;
 
 public class RolesFindOne extends DefaultFindOne<Role> {
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public Role findOne(Request request, Response response, Crud<Role> dao, ModelContext<Role> modelContext) {

@@ -1,8 +1,8 @@
-package com.elepy.auth.methods;
+package com.elepy.auth.methods.basic;
 
+import com.elepy.auth.AuthenticatedCredentials;
 import com.elepy.auth.AuthenticationMethod;
-import com.elepy.auth.Grant;
-import com.elepy.auth.UserCenter;
+import com.elepy.auth.users.UserCenter;
 import com.elepy.http.Request;
 import jakarta.inject.Inject;
 
@@ -16,7 +16,7 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
     private UserCenter userCenter;
 
     @Override
-    public Optional<Grant> getGrant(Request request) {
+    public Optional<AuthenticatedCredentials> getGrant(Request request) {
 
         final Optional<String[]> authorizationOpt = this.basicCredentials(request);
         if (authorizationOpt.isEmpty()) {

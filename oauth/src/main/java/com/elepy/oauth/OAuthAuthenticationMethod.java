@@ -1,9 +1,9 @@
 package com.elepy.oauth;
 
 import com.elepy.auth.AuthenticationMethod;
-import com.elepy.auth.Grant;
-import com.elepy.auth.User;
-import com.elepy.auth.UserCenter;
+import com.elepy.auth.AuthenticatedCredentials;
+import com.elepy.auth.users.User;
+import com.elepy.auth.users.UserCenter;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -22,7 +22,7 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod {
     private final ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(new OAuthParamNamingStrategy());
 
     @Override
-    public Optional<Grant> getGrant(Request request) {
+    public Optional<AuthenticatedCredentials> getGrant(Request request) {
         try {
             final var userCenter = request.elepy().getDependency(UserCenter.class);
             final var code = request.queryParams("code");

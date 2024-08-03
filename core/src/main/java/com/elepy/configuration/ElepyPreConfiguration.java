@@ -3,7 +3,7 @@ package com.elepy.configuration;
 import com.elepy.Elepy;
 import com.elepy.annotations.Model;
 import com.elepy.auth.AuthenticationService;
-import com.elepy.auth.TokenGenerator;
+import com.elepy.auth.methods.tokens.TokenAuthority;
 import com.elepy.crud.CrudFactory;
 import com.elepy.crud.Crud;
 import com.elepy.di.ElepyContext;
@@ -244,7 +244,7 @@ public class ElepyPreConfiguration {
         elepy.alterModel(tClass, modelChange);
     }
 
-    public void setTokenGenerator(TokenGenerator method) {
+    public void setTokenGenerator(TokenAuthority method) {
         elepy.setTokenGenerator(method);
     }
 

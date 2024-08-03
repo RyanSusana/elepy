@@ -1,6 +1,6 @@
 package com.elepy.tests;
 
-import com.elepy.auth.User;
+import com.elepy.auth.users.User;
 
 import javax.persistence.Entity;
 

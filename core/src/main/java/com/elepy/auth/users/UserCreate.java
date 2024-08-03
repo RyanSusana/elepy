@@ -1,8 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.PasswordCheck;
-import com.elepy.auth.Policy;
-import com.elepy.auth.User;
+import com.elepy.auth.RolesService;
 import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
@@ -22,7 +20,7 @@ import java.util.List;
 public class UserCreate implements ActionHandler<User> {
 
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public void handle(HandlerContext<User> ctx) throws Exception {
@@ -54,7 +52,7 @@ public class UserCreate implements ActionHandler<User> {
         context.loggedInUserOrThrow();
         context.requirePermissions("users.create");
 
-        if (policy.userHasRole(user, "owner")) {
+        if (policy.userIsOwner(user)) {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
         }
         evaluateIntegrity(modelContext, user);

@@ -1,6 +1,6 @@
 package com.elepy.auth.roles;
 
-import com.elepy.auth.Policy;
+import com.elepy.auth.RolesService;
 import com.elepy.auth.Role;
 import com.elepy.crud.Crud;
 import com.elepy.handlers.DefaultFindMany;
@@ -13,7 +13,7 @@ import java.util.List;
 public class RolesFind extends DefaultFindMany<Role> {
 
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
     @Override
     public List<Role> find(HttpContext context, Crud<Role> dao) {

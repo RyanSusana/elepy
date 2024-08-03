@@ -1,4 +1,4 @@
-package com.elepy.auth;
+package com.elepy.auth.users;
 
 import com.elepy.utils.StringUtils;
 import jakarta.validation.ConstraintValidator;

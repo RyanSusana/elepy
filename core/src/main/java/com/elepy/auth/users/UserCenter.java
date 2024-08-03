@@ -1,5 +1,7 @@
-package com.elepy.auth;
+package com.elepy.auth.users;
 
+import com.elepy.auth.AuthenticatedCredentials;
+import com.elepy.auth.RolesService;
 import com.elepy.crud.Crud;
 import com.elepy.utils.StringUtils;
 import jakarta.inject.Inject;
@@ -16,20 +18,20 @@ public class UserCenter {
     private Crud<User> users;
 
     @Inject
-    private Policy policy;
+    private RolesService policy;
 
-    public Optional<User> getUserFromGrant(Grant grant) {
-        return users.getById(grant.getUserId());
+    public Optional<User> getUserFromGrant(AuthenticatedCredentials authenticatedCredentials) {
+        return users.getById(authenticatedCredentials.getUserId());
     }
 
-    public Grant getGrantForUser(String userId) {
+    public AuthenticatedCredentials getGrantForUser(String userId) {
         final var user = users.getById(userId).orElseThrow();
         return getGrantForUser(user);
     }
 
-    public Grant getGrantForUser(User user) {
+    public AuthenticatedCredentials getGrantForUser(User user) {
 
-        final var grant = new Grant();
+        final var grant = new AuthenticatedCredentials();
 
         grant.setUserId(user.getId());
         grant.setPermissions(policy.getPermissionsForUser(user));

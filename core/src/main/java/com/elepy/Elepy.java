@@ -3,8 +3,13 @@ package com.elepy;
 import com.elepy.annotations.Model;
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.*;
-import com.elepy.auth.methods.BasicAuthenticationMethod;
-import com.elepy.auth.methods.PersistedTokenGenerator;
+import com.elepy.auth.extension.UserAuthenticationExtension;
+import com.elepy.auth.methods.basic.BasicAuthenticationMethod;
+import com.elepy.auth.methods.persistedtokens.PersistedTokenGenerator;
+import com.elepy.auth.methods.persistedtokens.Token;
+import com.elepy.auth.methods.tokens.TokenAuthority;
+import com.elepy.auth.users.User;
+import com.elepy.auth.users.UserCenter;
 import com.elepy.configuration.*;
 import com.elepy.crud.CrudFactory;
 import com.elepy.crud.Crud;
@@ -546,7 +551,7 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    public Elepy setTokenGenerator(TokenGenerator authenticationMethod) {
+    public Elepy setTokenGenerator(TokenAuthority authenticationMethod) {
         authenticationService().setTokenGenerator(authenticationMethod);
         return this;
     }
@@ -655,7 +660,7 @@ public class Elepy implements ElepyContext {
 
     private void setupAuth() {
 
-        final var policy = getDependency(Policy.class);
+        final var policy = getDependency(RolesService.class);
 
         modelEngine.getSchemas().stream().map(Schema::getJavaClass)
                 .map(c -> List.of(c.getAnnotationsByType(PredefinedRole.class)))
