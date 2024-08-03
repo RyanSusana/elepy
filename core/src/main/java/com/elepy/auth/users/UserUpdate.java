@@ -76,8 +76,8 @@ public class UserUpdate extends DefaultUpdate<User> {
             throw ElepyException.translated(403, "{elepy.models.users.exceptions.cantUpdateSelf}");
         }
 
-        boolean updatedPermissionsContainsSuperUser = (policy.userHasRole(userBeforeUpdate, "owner") ||
-                                                       policy.userHasRole(userToUpdate, "owner"));
+        boolean updatedPermissionsContainsSuperUser = (policy.userIsOwner(userBeforeUpdate) ||
+                                                       policy.userIsOwner(userToUpdate));
 
         if (updatedPermissionsContainsSuperUser &&
             !rolesAreTheSame(userToUpdate, userBeforeUpdate)) {
