@@ -13,10 +13,7 @@ public class ModelAction<T> {
     private final ActionHandler<T> actionHandler;
 
     public ModelAction(HttpAction action, ActionHandler<T> actionHandler) {
-
         this.actionHandler = actionHandler;
-
-
         this.action = action;
 
         if (this.actionHandler instanceof DisabledHandler) {
