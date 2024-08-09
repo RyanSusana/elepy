@@ -1,6 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.RolesService;
+import com.elepy.auth.roles.RolesService;
 import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;

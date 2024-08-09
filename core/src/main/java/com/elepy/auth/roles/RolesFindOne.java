@@ -1,7 +1,5 @@
 package com.elepy.auth.roles;
 
-import com.elepy.auth.RolesService;
-import com.elepy.auth.Role;
 import com.elepy.crud.Crud;
 import com.elepy.handlers.DefaultFindOne;
 import com.elepy.http.Request;

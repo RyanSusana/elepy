@@ -1,6 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.RolesService;
+import com.elepy.auth.roles.RolesService;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;

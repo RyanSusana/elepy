@@ -8,6 +8,8 @@ import com.elepy.auth.methods.basic.BasicAuthenticationMethod;
 import com.elepy.auth.methods.persistedtokens.PersistedTokenGenerator;
 import com.elepy.auth.methods.persistedtokens.Token;
 import com.elepy.auth.methods.tokens.TokenAuthority;
+import com.elepy.auth.roles.Role;
+import com.elepy.auth.roles.RolesService;
 import com.elepy.auth.users.User;
 import com.elepy.auth.users.UserCenter;
 import com.elepy.configuration.*;

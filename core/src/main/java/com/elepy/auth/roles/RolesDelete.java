@@ -1,7 +1,5 @@
 package com.elepy.auth.roles;
 
-import com.elepy.auth.RolesService;
-import com.elepy.auth.Role;
 import com.elepy.handlers.DefaultDelete;
 import com.elepy.handlers.HandlerContext;
 import jakarta.inject.Inject;

@@ -1,4 +1,4 @@
-package com.elepy.auth;
+package com.elepy.auth.roles;
 
 import com.elepy.annotations.PredefinedRole;
 import com.elepy.auth.permissions.DefaultPermissions;

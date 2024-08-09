@@ -1,7 +1,6 @@
-package com.elepy.auth;
+package com.elepy.auth.roles;
 
 import com.elepy.annotations.*;
-import com.elepy.auth.roles.*;
 import com.elepy.query.SortOption;
 import com.elepy.id.SlugIdentityProvider;
 import com.fasterxml.jackson.annotation.JsonProperty;
