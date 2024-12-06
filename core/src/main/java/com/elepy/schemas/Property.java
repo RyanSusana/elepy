@@ -20,6 +20,7 @@ public class Property implements Comparable<Property> {
     @Localized
     private String label;
     private String showIf = "true";
+    private Class<?> javaType;
     private boolean editable;
     private boolean required;
     private boolean unique;
@@ -31,6 +32,13 @@ public class Property implements Comparable<Property> {
     @JsonUnwrapped
     private Options options;
 
+    public Class<?> getJavaType() {
+        return javaType;
+    }
+
+    public void setJavaType(Class<?> javaType) {
+        this.javaType = javaType;
+    }
 
     private Set<FilterTypeDescription> availableFilters;
     private FieldType type;

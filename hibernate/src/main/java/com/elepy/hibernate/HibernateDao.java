@@ -151,24 +151,15 @@ public class HibernateDao<T> implements Crud<T> {
     }
 
     @Override
-    public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
-
-    @Override
-    public long count(com.elepy.query.Query query) {
-
+    public long count(Expression query) {
         try (Session session = sessionFactory.openSession()) {
-
-
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
-
 
             final Root<T> root = criteriaQuery.from(getType());
 
             criteriaQuery.select(cb.count(root));
-            Predicate predicate = new HibernateQueryFactory<>(schema, root, cb).generatePredicate(query.getExpression());
+            Predicate predicate = new HibernateQueryFactory<>(schema, root, cb).generatePredicate(query);
 
             criteriaQuery.where(predicate);
 

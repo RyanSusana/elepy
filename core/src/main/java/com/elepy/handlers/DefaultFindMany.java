@@ -21,7 +21,7 @@ public class DefaultFindMany<T> implements ActionHandler<T> {
     }
 
     public long count(HttpContext context, Crud<T> dao) {
-        return dao.count(context.request().parseQuery());
+        return dao.count(context.request().parseQuery().getExpression());
     }
 
 

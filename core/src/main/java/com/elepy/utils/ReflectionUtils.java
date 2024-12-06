@@ -14,10 +14,8 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -130,6 +128,8 @@ public class ReflectionUtils {
         if (Long.class == clazz || long.class == clazz) return Long.valueOf(value);
         if (Float.class == clazz || float.class == clazz) return Float.valueOf(value);
         if (Double.class == clazz || double.class == clazz) return Double.valueOf(value);
+        if(BigDecimal.class == clazz) return new BigDecimal(value);
+        if (Date.class == clazz) return DateUtils.guessDate(value, null);
         return value;
     }
 

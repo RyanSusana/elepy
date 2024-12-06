@@ -1,5 +1,6 @@
 package com.elepy.tests.dao;
 
+import com.elepy.crud.Crud;
 import com.elepy.query.FilterType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.tests.ElepyConfigHelper;
@@ -26,10 +27,12 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.elepy.query.FilterType.*;
+import static com.elepy.query.Filters.search;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class FiltersTest implements ElepyConfigHelper {
     private ElepySystemUnderTest elepy;
+    private Crud<Product> productCrud;
 
     @BeforeEach
     void before() {
@@ -40,11 +43,20 @@ public abstract class FiltersTest implements ElepyConfigHelper {
 
         elepy.start();
 
+        productCrud = elepy.getCrudFor(Product.class);
         Unirest.setHttpClient(HttpClients.custom().disableCookieManagement().build());
     }
 
     @Test
-    void canSearch() {
+    public void canCount() {
+        seedWithProducts(
+                Product.withDescription("Ryan's ball"),
+                Product.withDescription("Pablo's ball"));
+        assertThat(productCrud.count()).isEqualTo(2);
+    }
+
+    @Test
+    public void canSearch() {
 
         seedWithProducts(
                 Product.withDescription("Ryan's ball"),
@@ -56,7 +68,7 @@ public abstract class FiltersTest implements ElepyConfigHelper {
 
     @Test
     @Disabled("Should be tested via Crud Filter")
-    void canSearch_withSingleQuote() {
+    public void canSearch_withSingleQuote() {
 
         seedWithProducts(
                 Product.withDescription("Ryan's phone"),

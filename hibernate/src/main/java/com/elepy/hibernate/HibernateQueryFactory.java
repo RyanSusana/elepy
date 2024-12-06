@@ -50,13 +50,11 @@ public class HibernateQueryFactory<T> {
 
     public Predicate generatePredicate(Expression qry) {
 
-        if (qry instanceof Filter) {
-            return filter((Filter) qry);
-        } else if (qry instanceof SearchQuery) {
-            return search((SearchQuery) qry);
-        } else {
-            return booleanGroup((BooleanGroup) qry);
-        }
+        return switch (qry) {
+            case Filter filter -> filter(filter);
+            case SearchQuery searchQuery -> search(searchQuery);
+            case null, default -> booleanGroup((BooleanGroup) qry);
+        };
     }
 
 

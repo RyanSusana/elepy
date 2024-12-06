@@ -113,7 +113,7 @@ public class PropertyFactory {
         Property property = new Property();
         FieldType fieldType = FieldType.guessFieldType(field);
 
-
+        property.setJavaType(ReflectionUtils.returnTypeOf(field));
         property.setType(fieldType);
         property.setOptions(optionFactory.getOptions(field, fieldType));
 

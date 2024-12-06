@@ -18,7 +18,40 @@
         <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
-            <version>8.1.0</version>
+            <version>9.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-properties</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.20.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.20.1</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -34,27 +67,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-nio</artifactId>
-            <version>0.123.18</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.elepy</groupId>
             <artifactId>elepy-tests</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.elepy</groupId>
-            <artifactId>elepy-mongo</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.bwaldvogel</groupId>
-            <artifactId>mongo-java-server</artifactId>
-            <version>${mongo-java-server.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

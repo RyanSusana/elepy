@@ -9,4 +9,8 @@ public abstract class Expression {
     public void purge(){
 
     }
+
+    public static Expression empty() {
+        return new SearchQuery("");
+    }
 } 

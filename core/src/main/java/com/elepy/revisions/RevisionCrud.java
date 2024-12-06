@@ -209,7 +209,7 @@ public class RevisionCrud<T> implements Crud<T> {
     }
 
     @Override
-    public long count(Query query) {
+    public long count(Expression query) {
         return crud.count(query);
     }
 
@@ -226,10 +226,5 @@ public class RevisionCrud<T> implements Crud<T> {
     @Override
     public Schema<T> getSchema() {
         return crud.getSchema();
-    }
-
-    @Override
-    public ObjectMapper getObjectMapper() {
-        return crud.getObjectMapper();
     }
 }

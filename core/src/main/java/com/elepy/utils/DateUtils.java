@@ -45,7 +45,7 @@ public class DateUtils {
     public static Date guessDate(String string, String format) {
 
         final SimpleDateFormat dateFormat;
-        if (format.isBlank()) {
+        if (format == null || format.isBlank()) {
             dateFormat = guessDateFormat(string);
         } else {
             dateFormat = new SimpleDateFormat(format);

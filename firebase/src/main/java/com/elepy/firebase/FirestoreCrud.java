@@ -6,11 +6,8 @@ import com.elepy.query.Query;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.schemas.Schema;
 import com.elepy.utils.ReflectionUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,63 +18,40 @@ public class FirestoreCrud<T> implements Crud<T> {
 
     private final Firestore db;
 
-    private final ObjectMapper objectMapper;
     private final String collection;
 
     private final Schema<T> schema;
+    private final FirestoreFilterFactory<T> filterFactory;
 
     public FirestoreCrud(Firestore db, Schema<T> schema) {
         this.db = db;
-        this.objectMapper = new ObjectMapper();
-        this.collection = schema.getPath();
+        this.collection = normalizeCollection(schema.getPath());
         this.schema = schema;
+        this.filterFactory = new FirestoreFilterFactory<>(schema);
     }
 
+
+    /**
+    * If the collection name starts with a "/", it will be removed.
+     * Non-leading "/" characters will be replaced with "_".
+    * */
+    private String normalizeCollection(String collection) {
+        if (collection.startsWith("/")) {
+            collection = collection.substring(1);
+        }
+        return collection.replace("/", "_");
+    }
     @Override
 
-    // TODO
     public List<T> find(Query query) {
+        com.google.cloud.firestore.Query q = db.collection(collection);
 
-//        if (!StringUtils.isEmpty(query.)) {
-//            throw new ElepyException("Firestore does not support table scans");
-//        }
-//
-//
-//        com.google.cloud.firestore.Query q = db.collection(collection);
-//
-//        for (Filter filter : query.getFilters()) {
-//            q = FirestoreQueryFactory.getQuery(q, filter, schema);
-//        }
-//
-//        long amountOfResultsWithThatQuery = count(q);
-//
-//        // Add pagination settings
-//        q = q.offset(Math.toIntExact(settings.getPageSize() * settings.getPageNumber())).limit(settings.getPageSize());
-//
-//        final long remainder = amountOfResultsWithThatQuery % settings.getPageSize();
-//        long amountOfPages = amountOfResultsWithThatQuery / settings.getPageSize();
-//        if (remainder > 0) amountOfPages++;
-//
-//        return toList(q);
-        return
-                null;
-
+        q = q.where(filterFactory.createFilterFromExpression(query.getExpression()));
+        q = q.offset(query.getSkip());
+        q = q.limit(query.getLimit());
+        return toList(q);
     }
 
-
-    private long count(com.google.cloud.firestore.Query query) {
-
-        query.select(ReflectionUtils.getIdField(getType()).orElseThrow().getName());
-
-        try {
-            return query.get().get().size();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw ElepyException.internalServerError(e);
-        } catch (ExecutionException e) {
-            throw ElepyException.internalServerError(e);
-        }
-    }
 
     @Override
     public Optional<T> getById(Serializable id) {
@@ -130,7 +104,8 @@ public class FirestoreCrud<T> implements Crud<T> {
         try {
             var docs = query.get().get();
 
-            return docs.toObjects(getType());
+            var objects = docs.toObjects(getType());
+            return objects;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
@@ -152,14 +127,29 @@ public class FirestoreCrud<T> implements Crud<T> {
 
     @Override
     public void delete(Expression expression) {
-        // TODO
-        
+        try {
+            var documents = db.collection(collection).where(filterFactory.createFilterFromExpression(expression)).get().get().getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                document.getReference().delete();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            throw ElepyException.internalServerError(e);
+        }
     }
 
     @Override
-    //TODO
-    public long count(Query query) {
-        return 0;
+    public long count(Expression query) {
+        try {
+            AggregateQuery count = db.collection(collection).where(filterFactory.createFilterFromExpression(query)).count();
+            return count.get().get().getCount();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return 0;
+        } catch (ExecutionException e) {
+            throw ElepyException.internalServerError(e);
+        }
     }
 
 
@@ -168,14 +158,11 @@ public class FirestoreCrud<T> implements Crud<T> {
         return schema;
     }
 
-    @Override
-    public ObjectMapper getObjectMapper() {
-        return null;
-    }
 
     private String id(T t) {
         return ReflectionUtils.getId(t).orElseThrow(() -> ElepyException.notFound("ID of record")).toString();
     }
+
 
     private DocumentReference document(String id) {
         return db.collection(collection).document(id);

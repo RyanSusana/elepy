@@ -23,7 +23,7 @@ public class OpenIDEmailExtractor implements EmailExtractor {
 
     private String getEmail(DecodedJWT jwt) {
         if (jwt.getClaims().get("email_verified") != null && !jwt.getClaim("email_verified").asBoolean()) {
-            throw new ElepyException(ElepyException.notAuthorized());
+            throw ElepyException.translated("{elepy.messages.exceptions.emailNotVerified}", 401);
         }
         return jwt.getClaim("email").asString();
     }

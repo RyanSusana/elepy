@@ -23,6 +23,6 @@ public class MongoCrudFactory implements CrudFactory {
         final String[] split = path.split("/");
 
 
-        return new MongoDao<>(database, split[split.length - 1], schema);
+        return new MongoCrud<>(database, split[split.length - 1], schema);
     }
 }

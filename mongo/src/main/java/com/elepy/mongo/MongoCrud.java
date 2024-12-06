@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class MongoDao<T> implements Crud<T> {
+public class MongoCrud<T> implements Crud<T> {
 
     private final Schema<T> schema;
     private final ObjectMapper objectMapper;
@@ -45,7 +45,7 @@ public class MongoDao<T> implements Crud<T> {
     private final MongoDatabase database;
 
 
-    public MongoDao(MongoDatabase database, final String collectionName, final Schema<T> schema) {
+    public MongoCrud(MongoDatabase database, final String collectionName, final Schema<T> schema) {
         this.database = database;
         this.schema = schema;
         this.objectMapper = MongoJackModule.configure(CustomJacksonModule.configure(new ObjectMapper()));
@@ -159,21 +159,15 @@ public class MongoDao<T> implements Crud<T> {
     }
 
     @Override
-    public long count(Query query) {
+    public long count(Expression query) {
         query.purge();
-        return mongoCollection.countDocuments(queryBuilder.expression(query.getExpression()));
+        return mongoCollection.countDocuments(queryBuilder.expression(query));
     }
 
     @Override
     public Schema<T> getSchema() {
         return schema;
     }
-
-    @Override
-    public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
-
 
     private void createIndex(MongoIndex annotation) {
 

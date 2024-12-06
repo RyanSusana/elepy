@@ -36,7 +36,7 @@ public class RevisionFind implements ActionHandler<Revision> {
                 context.queryParams("limit"));
 
         if ("true".equalsIgnoreCase(context.queryParams("count"))) {
-            context.response().json(revisions.count(query));
+            context.response().json(revisions.count(query.getExpression()));
         } else {
             context.response().json(revisions.find(query));
         }

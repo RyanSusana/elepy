@@ -48,7 +48,7 @@ public class MockCrudGeneric<T> implements Crud<T> {
     }
 
     @Override
-    public long count(Query query) {
+    public long count(Expression query) {
         return 0;
     }
 
@@ -57,8 +57,4 @@ public class MockCrudGeneric<T> implements Crud<T> {
         return null;
     }
 
-    @Override
-    public ObjectMapper getObjectMapper() {
-        return null;
-    }
 }

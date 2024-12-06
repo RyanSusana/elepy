@@ -725,6 +725,7 @@ public class Elepy implements ElepyContext {
                 exception = (ElepyException) ((InvocationTargetException) exception).getTargetException();
             }
             if (exception instanceof ElepyException) {
+                logger.debug("ElepyException", exception);
                 elepyException = (ElepyException) exception;
             } else {
                 logger.error(exception.getMessage(), exception);

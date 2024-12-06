@@ -5,7 +5,7 @@ import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.igniters.ModelContext;
 import com.elepy.schemas.SchemaFactory;
-import com.elepy.mongo.MongoDao;
+import com.elepy.mongo.MongoCrud;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -18,12 +18,12 @@ public class ObjectIntegrityTest extends BaseFongo {
     public void testIntegrityUnique() throws Exception {
         super.setUp();
         var modelFactory = new SchemaFactory();
-        MongoDao<Resource> defaultMongoDao = new MongoDao<>(getDb(), "resources", modelFactory.createDeepSchema(Resource.class));
-        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(modelFactory.createDeepSchema(Resource.class), defaultMongoDao, null));
-        defaultMongoDao.create(validObject());
+        MongoCrud<Resource> defaultMongoCrud = new MongoCrud<>(getDb(), "resources", modelFactory.createDeepSchema(Resource.class));
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(modelFactory.createDeepSchema(Resource.class), defaultMongoCrud, null));
+        defaultMongoCrud.create(validObject());
 
 
-        defaultMongoDao.create(validObject());
+        defaultMongoCrud.create(validObject());
         try {
             evaluator.evaluate(validObject(), EvaluationType.UPDATE);
             fail("Was supposed to throw an ElepyException");

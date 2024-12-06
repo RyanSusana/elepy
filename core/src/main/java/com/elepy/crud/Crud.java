@@ -137,10 +137,10 @@ public interface Crud<T> {
         delete(Arrays.asList(ids));
     }
 
-    long count(Query query);
+    long count(Expression query);
 
     default long count() {
-        return count(new Query(Filters.search("")));
+        return count(Expression.empty());
     }
 
     /**
@@ -152,6 +152,4 @@ public interface Crud<T> {
 
     Schema<T> getSchema();
 
-
-    ObjectMapper getObjectMapper();
 }

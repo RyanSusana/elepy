@@ -5,7 +5,7 @@ import com.elepy.schemas.SchemaFactory;
 import com.elepy.mongo.CustomJacksonModule;
 import com.elepy.mongo.ElepyCodecRegistry;
 import com.elepy.mongo.MongoCrudFactory;
-import com.elepy.mongo.MongoDao;
+import com.elepy.mongo.MongoCrud;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DefaultMongoDaoTest extends BaseFongo {
 
-    private MongoDao<Resource> defaultMongoDao;
+    private MongoCrud<Resource> defaultMongoCrud;
     private MongoCollection<Resource> collection;
 
     @BeforeEach
@@ -37,7 +37,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
         defaultElepyContext.registerDependency(MongoDatabase.class, db);
         defaultElepyContext.registerDependency(new ObjectMapper());
 
-        defaultMongoDao = (MongoDao<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
+        defaultMongoCrud = (MongoCrud<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
 
         final var objectMapper = new ObjectMapper();
 
@@ -56,8 +56,8 @@ public class DefaultMongoDaoTest extends BaseFongo {
         final Resource resource1 = validObject();
         resource1.setTextField("create");
         final Resource resource2 = validObject();
-        defaultMongoDao.create(resource1);
-        defaultMongoDao.create(resource2);
+        defaultMongoCrud.create(resource1);
+        defaultMongoCrud.create(resource2);
 
         final long resources = collection.count();
 
@@ -72,8 +72,8 @@ public class DefaultMongoDaoTest extends BaseFongo {
     @Test
     public void testDelete() {
         final Resource resource = validObject();
-        defaultMongoDao.create(resource);
-        defaultMongoDao.deleteById(resource.getId());
+        defaultMongoCrud.create(resource);
+        defaultMongoCrud.deleteById(resource.getId());
         assertThat(count()).isEqualTo(0);
     }
 
@@ -82,10 +82,10 @@ public class DefaultMongoDaoTest extends BaseFongo {
     public void testSearch() {
 
         final Resource resource = validObject();
-        defaultMongoDao.create(resource);
+        defaultMongoCrud.create(resource);
 
 
-        final List<Resource> searchable = defaultMongoDao.findLimited(1, search("sear"));
+        final List<Resource> searchable = defaultMongoCrud.findLimited(1, search("sear"));
         assertThat(searchable.size()).isEqualTo(1);
 
     }
@@ -97,7 +97,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
 
         resource2.setUnique("Unique2");
 
-        defaultMongoDao.create(Arrays.asList(resource, resource2));
+        defaultMongoCrud.create(Arrays.asList(resource, resource2));
 
         assertThat(count()).isEqualTo(2);
 
@@ -107,7 +107,7 @@ public class DefaultMongoDaoTest extends BaseFongo {
     @Test
     public void testIndexCreation() {
 
-        var indexes = StreamSupport.stream(defaultMongoDao.getMongoCollection().listIndexes().spliterator(), false)
+        var indexes = StreamSupport.stream(defaultMongoCrud.getMongoCollection().listIndexes().spliterator(), false)
                 .collect(Collectors.toList());
 
 

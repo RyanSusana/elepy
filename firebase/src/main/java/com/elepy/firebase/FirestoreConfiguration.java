@@ -8,20 +8,19 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.FirestoreClient;
 
 public class FirestoreConfiguration implements Configuration {
+    private final Firestore firestore;
 
-    private final FirebaseApp app;
-
-    FirestoreConfiguration(FirebaseApp app) {
-        this.app = app;
+    FirestoreConfiguration(Firestore firestore) {
+        this.firestore = firestore;
     }
 
-    public static FirestoreConfiguration of(FirebaseApp app) {
-        return new FirestoreConfiguration(app);
+    public static FirestoreConfiguration of(Firestore firestore) {
+        return new FirestoreConfiguration(firestore);
     }
 
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
-        elepy.registerDependency(Firestore.class, FirestoreClient.getFirestore(app));
+        elepy.registerDependency(Firestore.class, firestore);
         elepy.withDefaultCrudFactory(FirestoreCrudFactory.class);
     }
 

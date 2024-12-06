@@ -15,6 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>com.elepy</groupId>
+            <artifactId>elepy-firebase</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.elepy</groupId>
             <artifactId>elepy-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -94,6 +99,12 @@
             <groupId>com.elepy</groupId>
             <artifactId>elepy-uploads</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>4.23.0</version>
             <scope>test</scope>
         </dependency>
 
