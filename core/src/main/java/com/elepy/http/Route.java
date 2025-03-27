@@ -13,6 +13,7 @@ public class Route {
     private final HttpMethod method;
     private final String path;
     private final String acceptType;
+    // TODO Make a "Secured Route" class to decouple HTTP from Auth
     private final Set<String> permissions;
 
     /**
@@ -20,12 +21,11 @@ public class Route {
      * @param method             The HTTP method
      * @param httpContextHandler The Spark httpContextHandler interface
      * @param acceptType         The accept type of the httpContextHandler
-     * @param permissions        The required permissions of the route.
      */
     public Route(String path, HttpMethod method, HttpContextHandler httpContextHandler, String acceptType, Set<String> permissions) {
 
         this.acceptType = acceptType == null ? "*/*" : acceptType;
-        this.permissions = permissions;
+        this.permissions = permissions == null ? Set.of() : permissions;
         if (httpContextHandler == null || path == null || method == null) {
             throw new ElepyConfigException("An elepy httpContextHandler must have a path, method and httpContextHandler");
         }
@@ -35,16 +35,9 @@ public class Route {
     }
 
 
-    public Set<String> getPermissions() {
-        return permissions;
-    }
 
     public HttpContextHandler getHttpContextHandler() {
-        return (ctx) -> {
-            if (permissions != null && !permissions.isEmpty())
-                ctx.requirePermissions(permissions);
-            httpContextHandler.handle(ctx);
-        };
+        return httpContextHandler;
     }
 
     public HttpMethod getMethod() {
@@ -71,5 +64,9 @@ public class Route {
 
     public String getAcceptType() {
         return acceptType;
+    }
+
+    public Set<String> getPermissions() {
+        return permissions;
     }
 }

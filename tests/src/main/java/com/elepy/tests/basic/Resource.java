@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Model(name = "Test Resource", path = "/resources")
-@ExtraRoutes({ResourceExtraRoutes.class})
 @Delete(requiredPermissions = {})
 @Create(requiredPermissions = {})
 @Update(requiredPermissions = {})

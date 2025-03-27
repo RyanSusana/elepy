@@ -1,6 +1,5 @@
 package com.elepy.annotations;
 
-import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.http.HttpMethod;
 
@@ -33,7 +32,7 @@ public @interface Action {
     /**
      * A list of required permissions to execute this Action
      */
-    String[] requiredPermissions() default DefaultPermissions.AUTHENTICATED;
+    String[] requiredPermissions() default {};
 
 
     @Retention(RetentionPolicy.RUNTIME)

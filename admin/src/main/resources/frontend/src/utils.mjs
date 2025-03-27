@@ -2,7 +2,7 @@ import UIkit from "uikit";
 import marked from 'marked';
 
 export default {
-    url: "",
+    url: "/",
     displayResponse(response) {
         this.display(response);
     },

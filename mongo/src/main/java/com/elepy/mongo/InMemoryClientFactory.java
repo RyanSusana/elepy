@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 
 public class InMemoryClientFactory {
 
+
     private InMemoryClientFactory() {
     }
 
@@ -17,6 +18,7 @@ public class InMemoryClientFactory {
         MongoServer mongoServer = new MongoServer(new MemoryBackend());
 
         InetSocketAddress serverAddress = mongoServer.bind();
+        System.out.println("Mongo started on " + serverAddress);
         return new MongoClient(new ServerAddress(serverAddress));
 
     }

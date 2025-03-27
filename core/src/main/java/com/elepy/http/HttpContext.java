@@ -1,6 +1,6 @@
 package com.elepy.http;
 
-import com.elepy.auth.AuthenticationService;
+import com.elepy.auth.authentication.AuthenticationService;
 import com.elepy.auth.users.User;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.Message;
@@ -117,10 +117,6 @@ public interface HttpContext {
         return request().uri();
     }
 
-    default Session session() {
-        return request().session();
-    }
-
     default Set<String> queryParams() {
         return request().queryParams();
     }
@@ -143,18 +139,6 @@ public interface HttpContext {
 
     default Set<String> attributes() {
         return request().attributes();
-    }
-
-    default boolean hasPermissions(Collection<String> requiredPermissions) {
-        return request().hasPermissions(requiredPermissions);
-    }
-
-    default void requirePermissions(String... requiredPermissions) {
-        request().requirePermissions(requiredPermissions);
-    }
-
-    default void requirePermissions(Collection<String> requiredPermissions) {
-        request().requirePermissions(requiredPermissions);
     }
 
     default Optional<User> loggedInUser() {

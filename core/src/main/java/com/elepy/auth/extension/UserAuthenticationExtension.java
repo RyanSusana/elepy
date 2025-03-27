@@ -1,7 +1,7 @@
 package com.elepy.auth.extension;
 
 
-import com.elepy.auth.AuthenticationService;
+import com.elepy.auth.authentication.AuthenticationService;
 import com.elepy.auth.users.UserCenter;
 import com.elepy.configuration.ElepyExtension;
 import com.elepy.configuration.ElepyPostConfiguration;
@@ -16,10 +16,8 @@ public class UserAuthenticationExtension implements ElepyExtension {
     @Inject
     private UserCenter userCrud;
 
-
     @Inject
     private AuthenticationService authenticationService;
-
 
     @Inject
     private ObjectMapper objectMapper;
@@ -42,7 +40,7 @@ public class UserAuthenticationExtension implements ElepyExtension {
 
         http.get("/elepy/logged-in-user", ctx -> {
 
-            final var grant = ctx.request().grant().orElseThrow(ElepyException::notAuthorized);
+            final var grant = ctx.request().loggedInCredentials().orElseThrow(ElepyException::notAuthorized);
             final var user = ctx.request().loggedInUser().orElseThrow(ElepyException::notAuthorized);
 
             final var grantTree = objectMapper.valueToTree(grant);

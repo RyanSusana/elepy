@@ -106,33 +106,6 @@ public class ElepyPostConfiguration {
         elepy.registerDependency(cls);
     }
 
-    /**
-     * Adds a route to be late initialized by Elepy.
-     *
-     * @param elepyRoute the route to add
-     */
-    public void addRouting(Route elepyRoute) {
-        elepy.addRouting(elepyRoute);
-    }
-
-    /**
-     * Adds after to be late initialized by Elepy.
-     *
-     * @param elepyRoutes the after to add
-     */
-    public void addRouting(Iterable<Route> elepyRoutes) {
-        elepy.addRouting(elepyRoutes);
-    }
-
-    /**
-     * This method adds routing of multiple classes to Elepy.
-     *
-     * @param classesWithRoutes Classes with {@link com.elepy.annotations.Route} annotations in them.
-     */
-    public void addRouting(Class<?>... classesWithRoutes) {
-        elepy.addRouting(classesWithRoutes);
-    }
-
     public <T> T getDependency(Class<T> cls) {
         return elepy.getDependency(cls);
     }

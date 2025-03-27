@@ -2,6 +2,8 @@ package com.elepy.tests.devfrontend;
 
 import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
+import com.elepy.auth.authentication.AuthenticationService;
+import com.elepy.auth.authorization.*;
 import com.elepy.mongo.MongoConfiguration;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -9,8 +11,10 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) {
@@ -45,6 +49,7 @@ public class Main {
                     });
                     http.before(context -> {
                         context.response().header("Access-Control-Allow-Headers", "*");
+                        // TODO
 //                        context.request().addPermissions(Permissions.SUPER_USER);
                     });
                 })
@@ -53,6 +58,17 @@ public class Main {
         elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisionsAmount(10));
         elepyInstance.start();
 
+        var roles = elepyInstance.getDependency(RoleLookup.class);
+
+        var authorization = elepyInstance.getDependency(AuthorizationService.class);
+        var authentication = elepyInstance.getDependency(AuthenticationService.class);
+
+        var policies = elepyInstance.getCrudFor(PolicyBinding.class);
+
+
+        var authorizationResult = authorization.testPermissions("ryan", URI.create("/hello/bello"), "resources.create");
+
+        System.out.println(policies);
     }
 
     private static String env(String s) {

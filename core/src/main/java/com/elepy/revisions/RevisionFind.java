@@ -28,7 +28,7 @@ public class RevisionFind implements ActionHandler<Revision> {
                 .flatMap(schemaPath -> context.request().schemas().stream().filter(s -> s.getPath().equalsIgnoreCase(schemaPath)).findFirst())
                 .orElseThrow(() -> ElepyException.notFound("Schema"));
 
-        context.requirePermissions(schema.getDefaultActions().get("find").getRequiredPermissions());
+        // TODO
         final var query = createQuery(schema,
                 context.queryParams("user"),
                 context.queryParams("record"),

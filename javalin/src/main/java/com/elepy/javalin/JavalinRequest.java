@@ -2,7 +2,6 @@ package com.elepy.javalin;
 
 
 import com.elepy.http.Request;
-import com.elepy.http.Session;
 import com.elepy.http.RawFile;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
@@ -91,11 +90,6 @@ public class JavalinRequest implements Request {
     @Override
     public String uri() {
         return context.path();
-    }
-
-    @Override
-    public Session session() {
-        return new JavalinSession(context);
     }
 
     @Override

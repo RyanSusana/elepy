@@ -29,13 +29,19 @@ public class FileUploadExtension implements ElepyExtension {
 
     @Override
     public void setup(HttpService httpService, ElepyPostConfiguration elepy) {
-        httpService.post("/elepy/uploads", this::handleUpload);
+        httpService.addRoute(RouteBuilder.anElepyRoute()
+                        .method(HttpMethod.POST)
+                        .path("/elepy/uploads")
+                        .permissions("files.upload")
+                        .route(this::handleUpload)
+                .build());
+        httpService.addRoute(RouteBuilder.anElepyRoute()
+                .method(HttpMethod.DELETE)
+                .path("/elepy/uploads/:fileName")
+                .permissions("files.delete")
+                .route(this::handleFileDelete)
+                .build());
         httpService.get("/elepy/uploads/:fileName", this::handleFileGet);
-        httpService.delete("/elepy/uploads/:fileName", this::handleFileDelete);
-
-
-        // backwards compatibility
-        httpService.get("/uploads/:fileName", this::handleFileGet);
     }
 
     private void handleFileDelete(HttpContext httpContext) {
@@ -69,7 +75,6 @@ public class FileUploadExtension implements ElepyExtension {
     private void handleUpload(HttpContext httpContext) {
         Request request = httpContext.request();
         Response response = httpContext.response();
-        request.requirePermissions("files.upload");
 
         final List<RawFile> files = request.uploadedFiles("files");
         final List<FileReference> references = files.stream().map(uploadedFile -> {

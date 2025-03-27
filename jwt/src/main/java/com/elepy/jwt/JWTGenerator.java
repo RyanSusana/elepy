@@ -3,8 +3,8 @@ package com.elepy.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.elepy.auth.AuthenticatedCredentials;
-import com.elepy.auth.methods.tokens.TokenAuthority;
+import com.elepy.auth.authentication.Credentials;
+import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 
 import java.util.Calendar;
 
@@ -19,19 +19,17 @@ public class JWTGenerator extends TokenAuthority {
     }
 
     @Override
-    public AuthenticatedCredentials validateToken(String rawToken) {
+    public Credentials validateToken(String rawToken) {
         try {
             final var decodedToken = JWT.require(algorithm).build().verify(rawToken);
 
-            final var userId = decodedToken.getClaim("userId").asString();
-            final var username = decodedToken.getClaim("username").asString();
-            final var permissions = decodedToken.getClaim("permissions").asList(String.class);
+            final var userId = decodedToken.getClaim("sub").asString();
+            final var username = decodedToken.getClaim("displayName").asString();
 
-            final var grant = new AuthenticatedCredentials();
+            final var grant = new Credentials();
 
-            grant.setPermissions(permissions);
-            grant.setUserId(userId);
-            grant.setUsername(username);
+            grant.setPrincipal(userId);
+            grant.setDisplayName(username);
             return grant;
         } catch (JWTVerificationException e) {
             return null;
@@ -39,16 +37,15 @@ public class JWTGenerator extends TokenAuthority {
     }
 
     @Override
-    public String createToken(AuthenticatedCredentials authenticatedCredentials) {
+    public String createToken(Credentials credentials) {
 
         final var expirationDate = Calendar.getInstance();
         expirationDate.add(Calendar.MILLISECOND, MAXIMUM_TOKEN_DURATION);
 
         return JWT.create()
                 .withExpiresAt(expirationDate.getTime())
-                .withClaim("userId", authenticatedCredentials.getUserId())
-                .withClaim("username", authenticatedCredentials.getUsername())
-                .withArrayClaim("permissions", authenticatedCredentials.getPermissions().toArray(new String[0]))
+                .withClaim("sub", credentials.getPrincipal())
+                .withClaim("displayName", credentials.getDisplayName())
                 .sign(algorithm);
     }
 }

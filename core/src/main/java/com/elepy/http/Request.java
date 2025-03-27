@@ -1,13 +1,12 @@
 package com.elepy.http;
 
+import com.elepy.auth.authentication.Credentials;
+import com.elepy.auth.authentication.AuthenticationService;
 import com.elepy.auth.extension.UserAuthenticationExtension;
 import com.elepy.auth.users.User;
 import com.elepy.auth.users.UserCenter;
 import com.elepy.query.*;
 import com.elepy.i18n.ElepyInterpolator;
-import com.elepy.auth.*;
-import com.elepy.auth.permissions.DefaultPermissions;
-import com.elepy.auth.permissions.Permissions;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.i18n.FormattedViolation;
@@ -64,8 +63,6 @@ public interface Request {
     String cookie(String name);
 
     String uri();
-
-    Session session();
 
     Set<String> queryParams();
 
@@ -203,55 +200,22 @@ public interface Request {
         }
 
         final var userCenter = elepy().getDependency(UserCenter.class);
-        final var user = grant().flatMap(userCenter::getUserFromGrant);
+        final var user = loggedInCredentials().flatMap(userCenter::getUserFromCredentials);
         user.ifPresent(u -> attribute("user", user.orElse(null)));
 
         return user;
     }
 
-    default Optional<AuthenticatedCredentials> grant() {
+    default Optional<Credentials> loggedInCredentials() {
         if (authService() == null) {
             return Optional.empty();
         }
-        return authService().getGrant(this);
+        return authService().getCredentials(this);
     }
 
     default User loggedInUserOrThrow() {
         return loggedInUser().orElseThrow(() -> ElepyException.notAuthorized());
     }
-
-    default Permissions permissions() {
-        Permissions permissions = Optional.ofNullable((Permissions) attribute("permissions")).orElse(new Permissions());
-
-        grant().ifPresent(user -> {
-            permissions.grantPermission(DefaultPermissions.AUTHENTICATED);
-            permissions.grantPermission(user.getPermissions());
-        });
-
-        attribute("permissions", permissions);
-
-        return permissions;
-    }
-
-    default void addPermissions(String... permissions) {
-        permissions().grantPermission(permissions);
-    }
-
-
-    default boolean hasPermissions(Collection<String> requiredPermissions) {
-        return permissions().hasPermissions(requiredPermissions);
-    }
-
-    default void requirePermissions(String... requiredPermissions) {
-        requirePermissions(Arrays.asList(requiredPermissions));
-    }
-
-    default void requirePermissions(Collection<String> requiredPermissions) {
-        if (!hasPermissions(requiredPermissions)) {
-            throw ElepyException.notAuthorized();
-        }
-    }
-
 
     /**
      * @return The ID of the model a.k.a request.params("id)

@@ -1,7 +1,7 @@
 package com.elepy.oauth;
 
-import com.elepy.auth.AuthenticationMethod;
-import com.elepy.auth.AuthenticatedCredentials;
+import com.elepy.auth.authentication.AuthenticationMethod;
+import com.elepy.auth.authentication.Credentials;
 import com.elepy.auth.users.User;
 import com.elepy.auth.users.UserCenter;
 import com.elepy.exceptions.ElepyException;
@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.OAuthRequest;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +21,7 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod {
     private final ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(new OAuthParamNamingStrategy());
 
     @Override
-    public Optional<AuthenticatedCredentials> getGrant(Request request) {
+    public Optional<Credentials> getCredentials(Request request) {
         try {
             final var userCenter = request.elepy().getDependency(UserCenter.class);
             final var code = request.queryParams("code");
@@ -54,7 +53,7 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod {
                 user = userCenter.getUserByUsername(email).orElseThrow(ElepyException::notAuthorized);
             }
 
-            return Optional.ofNullable(userCenter.getGrantForUser(user));
+            return Optional.ofNullable(userCenter.getCredentialsForUser(user));
         } catch (InterruptedException | ExecutionException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -82,7 +81,6 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod {
         user.setUsername(email);
         user.setId(UUID.randomUUID().toString());
         user.setPassword(null);
-        user.setRoles(List.of("owner"));
 
         user.cleanUsername();
         return user;

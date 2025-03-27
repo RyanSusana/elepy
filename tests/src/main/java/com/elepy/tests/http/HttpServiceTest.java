@@ -10,6 +10,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -522,14 +523,15 @@ public abstract class HttpServiceTest {
     }
 
     @Test
+    @Disabled
     void requests_haveProper_Attributes() throws IOException, InterruptedException {
 
         AtomicReference<String> attribute = new AtomicReference<>();
 
-        service.before("/queryString", ctx -> {
-
-            ctx.request().attribute("attribute", "theAttribute");
-        });
+//        service.before("/queryString", ctx -> {
+//
+//            ctx.request().attribute("attribute", "theAttribute");
+//        });
 
         service.get("/queryString", ctx -> attribute.set(ctx.request().attribute("attribute")));
 

@@ -1,6 +1,5 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.roles.RolesService;
 import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.DefaultObjectUpdateEvaluator;
@@ -19,8 +18,6 @@ import java.util.HashSet;
 
 public class UserUpdate extends DefaultUpdate<User> {
 
-    @Inject
-    private RolesService policy;
 
     @Override
     public User handleUpdate(HandlerContext<User> ctx, ObjectMapper objectMapper) throws Exception {
@@ -32,11 +29,10 @@ public class UserUpdate extends DefaultUpdate<User> {
 
         User userToUpdateAfter = updatedObjectFromRequest(userToUpdateBefore, context.request(), objectMapper, ctx.model().getSchema());
 
+// TODO
         // You can only execute this if the updating user is yourself, or you can administrate users
         if (!userToUpdateAfter.equals(loggedInUser)) {
-            context.requirePermissions("users.update");
         }
-        checkPermissionIntegrity(loggedInUser, userToUpdateAfter, userToUpdateBefore);
 
         validateUpdate(context, ctx.model(), userToUpdateBefore, userToUpdateAfter);
 
@@ -70,22 +66,5 @@ public class UserUpdate extends DefaultUpdate<User> {
         new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
     }
 
-    private void checkPermissionIntegrity(User loggedInUser, User userToUpdate, User userBeforeUpdate) {
-        if (loggedInUser.equals(userToUpdate) &&
-            !rolesAreTheSame(loggedInUser, userToUpdate)) {
-            throw ElepyException.translated(403, "{elepy.models.users.exceptions.cantUpdateSelf}");
-        }
 
-        boolean updatedPermissionsContainsSuperUser = (policy.userIsOwner(userBeforeUpdate) ||
-                                                       policy.userIsOwner(userToUpdate));
-
-        if (updatedPermissionsContainsSuperUser &&
-            !rolesAreTheSame(userToUpdate, userBeforeUpdate)) {
-            throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
-        }
-    }
-
-    private boolean rolesAreTheSame(User user1, User user2) {
-        return new HashSet<>(user1.getRoles()).equals(new HashSet<>(user2.getRoles()));
-    }
 }

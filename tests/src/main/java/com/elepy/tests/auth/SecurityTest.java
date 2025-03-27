@@ -1,8 +1,9 @@
 package com.elepy.tests.auth;
 
 import com.elepy.auth.users.User;
-import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.exceptions.Message;
+import com.elepy.http.HttpMethod;
+import com.elepy.http.RouteBuilder;
 import com.elepy.tests.CustomUser;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
@@ -40,13 +41,16 @@ public abstract class SecurityTest implements ElepyConfigHelper {
 
         var reference = new AtomicReference<User>();
 
-        elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
-
-            reference.set(context.loggedInUserOrThrow());
-            context.result(Message.of("Perfect!", 200));
-        });
-
+        elepy.addRoute(RouteBuilder.anElepyRoute()
+                .permissions("authenticated")
+                .method(HttpMethod.GET)
+                .path("/random-secured-route")
+                .route(context -> {
+                            reference.set(context.loggedInUserOrThrow());
+                            context.result(Message.of("Perfect!", 200));
+                        }
+                )
+                .build());
 
         final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
                 .basicAuth("michelle", "bowers")
@@ -83,12 +87,17 @@ public abstract class SecurityTest implements ElepyConfigHelper {
     void cannot_AccessSecuredRoute_withWrongToken() throws UnirestException {
         var reference = new AtomicReference<User>();
 
-        elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
 
-            reference.set(context.loggedInUserOrThrow());
-            context.result(Message.of("Perfect!", 200));
-        });
+        elepy.addRoute(RouteBuilder.anElepyRoute()
+                .permissions("authenticated")
+                .method(HttpMethod.GET)
+                .path("/random-secured-route")
+                .route(context -> {
+                            reference.set(context.loggedInUserOrThrow());
+                            context.result(Message.of("Perfect!", 200));
+                        }
+                )
+                .build());
 
         final var authenticationResponse = Unirest.get(elepy + "/random-secured-route")
                 .header("Authorization", "Bearer a_wrong_token").asString();
@@ -101,12 +110,17 @@ public abstract class SecurityTest implements ElepyConfigHelper {
     void cannot_AccessSecuredRoute_withoutToken() throws UnirestException {
         var reference = new AtomicReference<User>();
 
-        elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
 
-            reference.set(context.loggedInUserOrThrow());
-            context.result(Message.of("Perfect!", 200));
-        });
+        elepy.addRoute(RouteBuilder.anElepyRoute()
+                .permissions("authenticated")
+                .method(HttpMethod.GET)
+                .path("/random-secured-route")
+                .route(context -> {
+                            reference.set(context.loggedInUserOrThrow());
+                            context.result(Message.of("Perfect!", 200));
+                        }
+                )
+                .build());
 
         final var authenticationResponse = Unirest.get(elepy + "/random-secured-route")
                 .asString();

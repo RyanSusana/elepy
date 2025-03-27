@@ -225,13 +225,15 @@ export default {
           })
           .then(
               () => {
+                let url = this.model.path +
+                    (this.isCreating ? "" : "/" + this.item[this.model.idProperty]);
+
+                console.log(url)
                 return axios({
                   method: this.isCreating ? "POST" : "PUT",
                   data: this.item,
                   url:
-                      Utils.url +
-                      this.model.path +
-                      (this.isCreating ? "" : "/" + this.item[this.model.idProperty])
+                      url
                 })
                     .then(response => {
                       this.$store.commit('CLEAR_NAVIGATION_WARNING')

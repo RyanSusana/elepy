@@ -51,17 +51,15 @@ public interface HttpService {
                 .build());
     }
 
+
+
+
+
+
     ////////// FILTERS
 
-
+    void after(HttpContextHandler requestResponseHandler);
     void before(HttpContextHandler contextHandler);
-
-    void before(String path, HttpContextHandler contextHandler);
-
-    void after(String path, HttpContextHandler contextHandler);
-
-    void after(HttpContextHandler contextHandler);
-
 
     /////////// GET
 
@@ -98,5 +96,4 @@ public interface HttpService {
     default void options(String path, HttpContextHandler contextHandler) {
         addRoute(HttpMethod.OPTIONS, path, contextHandler);
     }
-
 }

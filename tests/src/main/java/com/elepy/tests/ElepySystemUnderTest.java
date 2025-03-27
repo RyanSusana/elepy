@@ -11,7 +11,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -95,16 +94,6 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
     }
 
     @Override
-    public void before(String path, HttpContextHandler contextHandler) {
-        this.http().before(path, contextHandler);
-    }
-
-    @Override
-    public void after(String path, HttpContextHandler contextHandler) {
-        this.http().after(path, contextHandler);
-    }
-
-    @Override
     public void after(HttpContextHandler contextHandler) {
         this.http().after(contextHandler);
     }
@@ -115,7 +104,7 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
     }
 
     public void createInitialUserViaHttp(String username, String password) throws UnirestException {
-        User user = new User("admin", username, password, Collections.emptyList());
+        User user = new User("admin", username, password);
 
         var userUrl = url + "/users";
         final HttpResponse<String> response = Unirest

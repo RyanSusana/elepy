@@ -1,15 +1,13 @@
 package com.elepy;
 
 import com.elepy.annotations.Model;
-import com.elepy.annotations.PredefinedRole;
-import com.elepy.auth.*;
+import com.elepy.auth.authentication.AuthenticationService;
+import com.elepy.auth.authorization.*;
 import com.elepy.auth.extension.UserAuthenticationExtension;
-import com.elepy.auth.methods.basic.BasicAuthenticationMethod;
-import com.elepy.auth.methods.persistedtokens.PersistedTokenGenerator;
-import com.elepy.auth.methods.persistedtokens.Token;
-import com.elepy.auth.methods.tokens.TokenAuthority;
-import com.elepy.auth.roles.Role;
-import com.elepy.auth.roles.RolesService;
+import com.elepy.auth.authentication.methods.basic.BasicAuthenticationMethod;
+import com.elepy.auth.authentication.methods.persistedtokens.PersistedTokenGenerator;
+import com.elepy.auth.authentication.methods.persistedtokens.Token;
+import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 import com.elepy.auth.users.User;
 import com.elepy.auth.users.UserCenter;
 import com.elepy.configuration.*;
@@ -25,7 +23,6 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
-import com.elepy.http.RouteScanner;
 import com.elepy.i18n.Resources;
 import com.elepy.i18n.extension.TranslationsExtension;
 import com.elepy.igniters.ModelEngine;
@@ -79,7 +76,6 @@ public class Elepy implements ElepyContext {
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass = null;
     private CrudFactory defaultCrudFactoryImplementation;
-    private final List<Class<?>> routingClasses = new ArrayList<>();
     private final ModelEngine modelEngine = new ModelEngine(this);
     private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
     private final List<Configuration> configurations = new ArrayList<>();
@@ -150,7 +146,6 @@ public class Elepy implements ElepyContext {
             setupAuth();
             context.resolveDependencies();
 
-            setupExtraRoutes();
             igniteAllRoutes();
             injectExtensions();
             initialized = true;
@@ -486,17 +481,7 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    /**
-     * This method adds routing of multiple classes to Elepy.
-     *
-     * @param classesWithRoutes Classes with {@link com.elepy.annotations.Route} annotations in them.
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy addRouting(Class<?>... classesWithRoutes) {
-        checkConfig();
-        this.routingClasses.addAll(Arrays.asList(classesWithRoutes));
-        return this;
-    }
+
 
     /**
      * @param clazz The RestModel's class
@@ -624,8 +609,8 @@ public class Elepy implements ElepyContext {
         retrievePackageModels();
 
         addDefaultModel(Token.class);
-        addDefaultModel(Role.class);
         addDefaultModel(User.class);
+        addDefaultModel(PolicyBinding.class);
         addDefaultModel(FileReference.class);
         addDefaultModel(Revision.class);
         addExtension(new FileUploadExtension());
@@ -661,15 +646,12 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupAuth() {
-
-        final var policy = getDependency(RolesService.class);
-
-        modelEngine.getSchemas().stream().map(Schema::getJavaClass)
-                .map(c -> List.of(c.getAnnotationsByType(PredefinedRole.class)))
-                .flatMap(Collection::stream)
-                .forEach(policy::registerPredefinedRole);
-
         final var authenticationService = this.authenticationService();
+        registerDependency(RoleLookup.class, initialize(DefaultRoleLookup.class));
+        registerDependency(PolicyLookup.class, initialize(DefaultPolicyLookup.class));
+        registerDependency(AuthorizationService.class);
+
+
         addExtension(new UserAuthenticationExtension());
         registerDependency(initialize(UserCenter.class));
 
@@ -687,13 +669,6 @@ public class Elepy implements ElepyContext {
         } catch (Exception e) {
             throw new ElepyConfigException("Error injecting modules: " + e.getMessage());
         }
-    }
-
-    private void setupExtraRoutes() {
-        for (Class<?> routingClass : routingClasses) {
-            addRouting(new RouteScanner().scanForRoutes(initialize(routingClass)));
-        }
-
     }
 
     private void igniteAllRoutes() {
@@ -717,7 +692,6 @@ public class Elepy implements ElepyContext {
             if (!ctx.request().method().equalsIgnoreCase("OPTIONS") && ctx.response().status() != 404)
                 logger.info(String.format("%s\t['%s']: %dms", ctx.request().method(), ctx.request().uri(), System.currentTimeMillis() - ((Long) ctx.attribute("start"))));
         });
-        http.options("/*", ctx -> ctx.result(""));
 
         http.exception(Exception.class, (exception, context) -> {
             final ElepyException elepyException;

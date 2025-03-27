@@ -2,8 +2,11 @@ package com.elepy.javalin;
 
 import com.elepy.http.*;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
 import io.javalin.http.HandlerType;
 import io.javalin.http.staticfiles.Location;
+import org.jetbrains.annotations.NotNull;
 
 public class JavalinService implements HttpService {
 
@@ -54,22 +57,12 @@ public class JavalinService implements HttpService {
     }
 
     @Override
+    public void after(HttpContextHandler requestResponseHandler) {
+        javalin.after(ctx -> requestResponseHandler.handle(new JavalinContext(ctx)));
+    }
+
+    @Override
     public void before(HttpContextHandler contextHandler) {
-        javalin.before(context -> contextHandler.handleWithExceptions(new JavalinContext(context)));
-    }
-
-    @Override
-    public void before(String path, HttpContextHandler contextHandler) {
-        javalin.before(path, context -> contextHandler.handleWithExceptions(new JavalinContext(context)));
-    }
-
-    @Override
-    public void after(String path, HttpContextHandler contextHandler) {
-        javalin.after(path, context -> contextHandler.handleWithExceptions(new JavalinContext(context)));
-    }
-
-    @Override
-    public void after(HttpContextHandler contextHandler) {
-        javalin.after(context -> contextHandler.handleWithExceptions(new JavalinContext(context)));
+        javalin.before(ctx -> contextHandler.handle(new JavalinContext(ctx)));
     }
 }

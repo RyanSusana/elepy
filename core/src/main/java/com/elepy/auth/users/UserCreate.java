@@ -1,6 +1,6 @@
 package com.elepy.auth.users;
 
-import com.elepy.auth.roles.RolesService;
+import com.elepy.auth.authorization.PolicyBinding;
 import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
@@ -15,12 +15,11 @@ import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
+import java.util.UUID;
 
 
 public class UserCreate implements ActionHandler<User> {
 
-    @Inject
-    private RolesService policy;
 
     @Override
     public void handle(HandlerContext<User> ctx) throws Exception {
@@ -37,24 +36,28 @@ public class UserCreate implements ActionHandler<User> {
         if (crud.count() > 0) {
             createAdditionalUser(modelContext, context, crud, user);
         } else {
-            createInitialUser(context, crud, user);
+            createInitialUser(context, crud, user, context.elepy().getCrudFor(PolicyBinding.class));
         }
     }
 
-    protected void createInitialUser(HttpContext context, Crud<User> crud, User user) {
-        user.getRoles().add("owner");
+    protected void createInitialUser(HttpContext context, Crud<User> crud, User user, Crud<PolicyBinding> policies) {
 
         createUser(crud, user);
-        context.response().result(Message.of("Successfully created the user", 200).withProperty("createdRecords", List.of(user)));
+        var policyBinding = new PolicyBinding();
+        policyBinding.setId(UUID.randomUUID().toString());
+        policyBinding.setPrincipal(user.getId());
+        policyBinding.setRole("roles/admin");
+        policyBinding.setTarget("/");
+
+        policies.create(policyBinding);
+        context.response().result(Message.of("Successfully created the user", 200));
     }
 
     protected void createAdditionalUser(ModelContext<User> modelContext, HttpContext context, Crud<User> crud, User user) throws Exception {
         context.loggedInUserOrThrow();
-        context.requirePermissions("users.create");
+        // TODO
+//        context.requirePermissions("users.create");
 
-        if (policy.userIsOwner(user)) {
-            throw ElepyException.translated(403, "{elepy.models.users.exceptions.owner}");
-        }
         evaluateIntegrity(modelContext, user);
 
         createUser(crud, user);

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ModelHandlers<T> {
 
 
-    private final ActionFactory actionFactory ;
+    private final ActionFactory actionFactory;
     private final Map<Default, ModelAction<T>> defaultActions;
     private final List<ModelAction<T>> extraActions;
 
@@ -34,8 +34,12 @@ public class ModelHandlers<T> {
         this.extraActions = Arrays.stream(schema.getJavaClass().getAnnotationsByType(Action.class))
                 .map(action -> new ModelAction<>(
                         actionFactory.actionToHttpAction(schema.getPath(), action),
-                        (ActionHandler<T>) elepy.initialize(action.handler()))).collect(Collectors.toList()
-                );
+                        initializeActionHandler(elepy, action))
+                ).collect(Collectors.toList());
+    }
+
+    private ActionHandler<T> initializeActionHandler(Elepy elepy, Action action) {
+        return (ActionHandler<T>) elepy.initialize(action.handler());
     }
 
     public static <T> ModelHandlers<T> createForModel(Elepy elepy, Schema<T> schema) {

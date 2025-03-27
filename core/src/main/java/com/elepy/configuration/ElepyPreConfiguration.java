@@ -2,8 +2,8 @@ package com.elepy.configuration;
 
 import com.elepy.Elepy;
 import com.elepy.annotations.Model;
-import com.elepy.auth.AuthenticationService;
-import com.elepy.auth.methods.tokens.TokenAuthority;
+import com.elepy.auth.authentication.AuthenticationService;
+import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 import com.elepy.crud.CrudFactory;
 import com.elepy.crud.Crud;
 import com.elepy.di.ElepyContext;
@@ -160,32 +160,7 @@ public class ElepyPreConfiguration {
         elepy.registerDependency(cls);
     }
 
-    /**
-     * Adds a route to be late initialized by Elepy.
-     *
-     * @param elepyRoute the route to add
-     */
-    public void addRouting(Route elepyRoute) {
-        elepy.addRouting(elepyRoute);
-    }
 
-    /**
-     * Adds after to be late initialized by Elepy.
-     *
-     * @param elepyRoutes the after to add
-     */
-    public void addRouting(Iterable<Route> elepyRoutes) {
-        elepy.addRouting(elepyRoutes);
-    }
-
-    /**
-     * This method adds routing of multiple classes to Elepy.
-     *
-     * @param classesWithRoutes Classes with {@link com.elepy.annotations.Route} annotations in them.
-     */
-    public void addRouting(Class<?>... classesWithRoutes) {
-        elepy.addRouting(classesWithRoutes);
-    }
 
     /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is

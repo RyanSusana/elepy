@@ -63,6 +63,22 @@ public class SparkService implements HttpService {
     }
 
     @Override
+    public void after(HttpContextHandler requestResponseHandler) {
+        http.after(((request, response) -> {
+            SparkContext sparkContext = new SparkContext(request, response);
+            requestResponseHandler.handle(sparkContext);
+        }));
+    }
+
+    @Override
+    public void before(HttpContextHandler contextHandler) {
+        http.before(((request, response) -> {
+            SparkContext sparkContext = new SparkContext(request, response);
+            contextHandler.handle(sparkContext);
+        }));
+    }
+
+    @Override
     public void addRoute(Route route) {
         routes.put(new RouteKey(counter++), route);
 
@@ -85,41 +101,12 @@ public class SparkService implements HttpService {
         http.awaitInitialization();
     }
 
-    @Override
-    public void before(String path, HttpContextHandler contextHandler) {
-        http.before(path, (request, response) -> contextHandler.handle(new SparkContext(request, response)));
-    }
-
-    @Override
-    public void before(HttpContextHandler contextHandler) {
-        http.before((request, response) -> contextHandler.handle(new SparkContext(request, response)));
-    }
-
-    @Override
-    public void after(String path, HttpContextHandler contextHandler) {
-        http.before(path, (request, response) -> contextHandler.handle(new SparkContext(request, response)));
-    }
-
-    @Override
-    public void after(HttpContextHandler contextHandler) {
-        http.before((request, response) -> contextHandler.handle(new SparkContext(request, response)));
-    }
-
-    public void afterAfter(spark.Filter filter) {
-        http.afterAfter(filter);
-    }
-
     private void igniteRoute(Route extraRoute) {
         logger.debug(String.format("Ignited Route: [%s] %s", extraRoute.getMethod().name(), extraRoute.getPath()));
 
-        http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), extraRoute.getAcceptType(), (request, response) -> {
-
+        http.addRoute(HttpMethod.get(extraRoute.getMethod().name().toLowerCase()), RouteImpl.create(extraRoute.getPath(), null, (request, response) -> {
             SparkContext sparkContext = new SparkContext(request, response);
-            if (!extraRoute.getPermissions().isEmpty()) {
-                sparkContext.requirePermissions(extraRoute.getPermissions());
-            }
             extraRoute.getHttpContextHandler().handle(sparkContext);
-
             return response.body();
         }));
 

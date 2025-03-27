@@ -3,7 +3,6 @@ package com.elepy.igniters;
 import com.elepy.Elepy;
 import com.elepy.annotations.CrudFactory;
 import com.elepy.annotations.Dao;
-import com.elepy.annotations.ExtraRoutes;
 import com.elepy.annotations.IdProvider;
 import com.elepy.crud.Crud;
 import com.elepy.exceptions.Message;
@@ -54,7 +53,7 @@ public class ModelPiston<T> {
     }
 
     private List<Route> getAllRoutes() {
-        return Stream.of(routesFromDefaultActions(), routesFromCustomActions(), routesFromAnnotation())
+        return Stream.of(routesFromDefaultActions(), routesFromCustomActions())
                 .flatMap(s -> s)
                 .collect(Collectors.toList());
     }
@@ -64,25 +63,13 @@ public class ModelPiston<T> {
                 getDefaultActions().values().stream()
                 .map(modelAction -> anElepyRoute()
                         .path(modelAction.getAction().getPath())
-                        .addPermissions(modelAction.getAction().getRequiredPermissions())
+                        .permissions(modelAction.getAction().getRequiredPermissions())
                         .method(modelAction.getAction().getMethod())
                         .route(ctx -> modelAction.getActionHandler().handle(new HandlerContext<>(ctx.injectModelClassInHttpContext(schema.getJavaClass()), modelContext)))
                         .build());
     }
 
-    private Stream<Route> routesFromAnnotation() {
-        final ExtraRoutes extraRoutesAnnotation = Annotations.get(schema.getJavaClass(), ExtraRoutes.class);
 
-        if (extraRoutesAnnotation == null) {
-            return Stream.empty();
-        } else {
-            final var routeScanner = new RouteScanner();
-            return Arrays.stream(extraRoutesAnnotation.value())
-                    .map(aClass -> routeScanner.scanForRoutes(elepy.initialize(aClass)))
-                    .flatMap(List::stream);
-        }
-
-    }
 
     private Stream<Route> routesFromCustomActions() {
         final List<Route> actions = new ArrayList<>();
@@ -94,7 +81,7 @@ public class ModelPiston<T> {
             final ActionHandler<T> actionHandler = extraAction.getActionHandler();
 
             final RouteBuilder route = anElepyRoute()
-                    .addPermissions(action.getRequiredPermissions())
+                    .permissions(action.getRequiredPermissions())
                     .path(action.getPath() + "/:id")
                     .method(action.getMethod())
                     .route(ctx -> {

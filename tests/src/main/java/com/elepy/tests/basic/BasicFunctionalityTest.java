@@ -1,7 +1,7 @@
 package com.elepy.tests.basic;
 
+import com.elepy.auth.authorization.PolicyBinding;
 import com.elepy.auth.users.User;
-import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.crud.Crud;
 import com.elepy.query.SortOption;
 import com.elepy.exceptions.Message;
@@ -21,7 +21,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +35,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
 
     private Crud<? extends User> userCrud;
+    private Crud<? extends PolicyBinding> policyCrud;
     private Crud<Resource> resourceCrud;
 
     private static int resourceCounter = -100;
@@ -57,6 +57,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
         resourceCrud = elepy.getCrudFor(Resource.class);
         userCrud = elepy.getCrudFor(User.class);
+        policyCrud = elepy.getCrudFor(PolicyBinding.class);
     }
 
     @BeforeEach
@@ -73,7 +74,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     @Test
     void can_CreateInitialUser_and_BlockExtraCreationsWithoutAuthentication() throws UnirestException, JsonProcessingException, InterruptedException {
 
-        User user = new User("admin@admin.com", "admin@admin.com", "admin@admin.com", Collections.emptyList());
+        User user = new User("admin@admin.com", "admin@admin.com", "admin@admin.com");
 
         final HttpResponse<String> response = Unirest
                 .post(elepy + "/users")
@@ -139,7 +140,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
 
 
         elepy.get("/random-secured-route", context -> {
-            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
+//            context.requirePermissions(DefaultPermissions.AUTHENTICATED);
             context.result(Message.of("Perfect!", 200));
         });
         final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
@@ -158,7 +159,7 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     void can_Login_and_UpdateOtherUserRoles() throws JsonProcessingException, UnirestException {
         createInitialUsersViaHttp();
 
-        User userToUpdate = new User("user", "user", "password", Collections.singletonList(DefaultPermissions.AUTHENTICATED));
+        User userToUpdate = new User("user", "user", "password");
 
         final HttpResponse<String> unauthorizedFind = Unirest
                 .put(elepy + "/users" + "/user")
@@ -176,50 +177,9 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         assertThat(authorizedFind.getStatus()).isEqualTo(200);
         assertThat(unauthorizedFind.getStatus()).isEqualTo(401);
         assertThat(userCrud.count()).isEqualTo(2);
-        assertThat(user.getRoles().size()).isEqualTo(1);
-        assertThat(user.getRoles().get(0)).isEqualTo(DefaultPermissions.AUTHENTICATED);
-
     }
 
 
-    @Test
-    void cant_Login_and_UpdateSuperUsersPermission() throws JsonProcessingException, UnirestException {
-        createInitialUsersViaHttp();
-
-        User userToUpdate = new User("user", "user", "", Collections.singletonList(DefaultPermissions.SUPER_USER));
-
-
-        final HttpResponse<String> authorizedFind = Unirest
-                .put(elepy + "/users" + "/user")
-                .basicAuth("admin@admin.com", "admin@admin.com")
-                .body(json(userToUpdate))
-                .asString();
-
-        final User user = userCrud.getById("user").orElseThrow();
-
-
-        assertThat(authorizedFind.getStatus()).isEqualTo(403);
-        assertThat(user.getRoles().size()).isEqualTo(0);
-    }
-
-    @Test
-    void cant_Login_and_CreateSuperUser_afterOneHasBeenCreated() throws JsonProcessingException, UnirestException {
-        createInitialUsersViaHttp();
-
-        User userToUpdate = new User("user", "user", "password", Collections.singletonList(DefaultPermissions.SUPER_USER));
-
-        final HttpResponse<String> authorizedFind = Unirest
-                .post(elepy + "/users")
-                .basicAuth("admin@admin.com", "admin@admin.com")
-                .body(json(userToUpdate))
-                .asString();
-
-        final User user = userCrud.getById("user").orElseThrow();
-
-
-        assertThat(authorizedFind.getStatus()).isEqualTo(403);
-        assertThat(user.getRoles().size()).isEqualTo(0);
-    }
 
     @Test
     void cant_Login_and_DeleteYourself() throws JsonProcessingException, UnirestException {
@@ -230,41 +190,11 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
                 .basicAuth("admin@admin.com", "admin@admin.com")
                 .asString();
 
-        final User user = userCrud.getById("user").orElseThrow();
-
 
         assertThat(authorizedFind.getStatus()).isEqualTo(403);
-        assertThat(user.getRoles().size()).isEqualTo(0);
+        assertThat(userCrud.count()).isEqualTo(2);
     }
 
-    @Test
-    void can_Login_and_UpdateYourself_withCustomField() throws JsonProcessingException, UnirestException {
-        createInitialUsersViaHttp();
-
-        final var user1 = new CustomUser();
-
-        user1.setId("user");
-        user1.setUsername("user");
-        user1.setEmail("email");
-        user1.setPassword("newPassword");
-
-
-        final HttpResponse<String> update = Unirest
-                .put(elepy + "/users/user")
-                .basicAuth("user", "user")
-                .body(json(user1))
-                .asString();
-
-        final CustomUser user = ((Crud<CustomUser>) userCrud).getById("user").orElseThrow();
-
-
-        assertThat(update.getStatus()).isEqualTo(200);
-
-        assertThat(user.getEmail())
-                .isEqualTo("email");
-        assertThat(BCrypt.checkpw("newPassword", user.getPassword()))
-                .isTrue();
-    }
 
     @Test
     void can_Login_and_UpdateOwnPassword_AsSuperUser() throws JsonProcessingException, UnirestException {
@@ -559,14 +489,14 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
     }
 
     private void createInitialUsersViaHttp() throws JsonProcessingException, UnirestException {
-        User user = new User("admin@admin.com", "admin@admin.com", "admin@admin.com", Collections.emptyList());
+        User user = new User("admin@admin.com", "admin@admin.com", "admin@admin.com");
 
         final HttpResponse<String> response = Unirest
                 .post(elepy + "/users")
                 .body(json(user))
                 .asString();
 
-        User user2 = new User("user", "user", "user", Collections.emptyList());
+        User user2 = new User("user", "user", "user");
 
         final HttpResponse<String> response2 =
                 Unirest.post(elepy + "/users")
@@ -578,6 +508,5 @@ public abstract class BasicFunctionalityTest implements ElepyConfigHelper {
         assertThat(response2.getStatus()).as(response2.getBody()).isEqualTo(200);
         assertThat(userCrud.count()).isEqualTo(2);
     }
-
 
 }

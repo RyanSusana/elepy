@@ -2,7 +2,6 @@ package com.elepy.uploads;
 
 import com.elepy.annotations.*;
 import com.elepy.query.SortOption;
-import com.elepy.handlers.DisabledHandler;
 import com.elepy.http.RawFile;
 
 import javax.persistence.Column;
@@ -15,9 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Model(name = "Files", path = "/files", defaultSortDirection = SortOption.DESCENDING, defaultSortField = "createdDate")
-@Update(handler = DisabledHandler.class, requiredPermissions = "disabled")
 @Delete(handler = FileReferenceDelete.class, requiredPermissions = "files.delete")
-@Create(requiredPermissions = "disabled", handler = DisabledHandler.class)
+@Create(requiredPermissions = "disabled")
 @Entity(name = "elepy_files")
 @Table(name = "elepy_files")
 public class FileReference {

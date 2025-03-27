@@ -2,7 +2,6 @@ package com.elepy.sparkjava;
 
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
-import com.elepy.http.Session;
 import com.elepy.http.RawFile;
 import spark.QueryParamsMap;
 
@@ -160,14 +159,6 @@ public class SparkRequest implements Request {
 
     public QueryParamsMap queryMap(String key) {
         return request.queryMap(key);
-    }
-
-    public Session session() {
-        return new SparkSession(request.session());
-    }
-
-    public Session session(boolean create) {
-        return new SparkSession(request.session(create));
     }
 
     @Override

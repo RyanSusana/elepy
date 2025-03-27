@@ -35,5 +35,5 @@ public @interface Find {
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default {};
+    String[] requiredPermissions() default {"resources.find"};
 }

@@ -1,7 +1,6 @@
 package com.elepy.annotations;
 
 
-import com.elepy.auth.permissions.DefaultPermissions;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.DefaultCreate;
 
@@ -26,5 +25,5 @@ public @interface Create {
     /**
      * A list of required permissions to execute this A
      */
-    String[] requiredPermissions() default DefaultPermissions.AUTHENTICATED;
+    String[] requiredPermissions() default {"resources.create"};
 }

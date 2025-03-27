@@ -9,7 +9,7 @@ public final class RouteBuilder {
     private HttpMethod method;
     private String path;
     private String acceptType = "*/*";
-    private final Set<String> permissions = new TreeSet<>();
+    private Set<String> permissions;
 
     private RouteBuilder() {
     }
@@ -20,11 +20,6 @@ public final class RouteBuilder {
 
     public RouteBuilder route(HttpContextHandler route) {
         this.route = route;
-        return this;
-    }
-
-    public RouteBuilder addPermissions(String... permissions) {
-        this.permissions.addAll(Arrays.asList(permissions));
         return this;
     }
 
@@ -45,5 +40,10 @@ public final class RouteBuilder {
 
     public Route build() {
         return new Route(path, method, route, acceptType, permissions);
+    }
+
+    public RouteBuilder permissions(String... strings) {
+        this.permissions = new TreeSet<>(Arrays.asList(strings));
+        return this;
     }
 }

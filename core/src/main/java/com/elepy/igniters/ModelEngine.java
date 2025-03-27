@@ -1,7 +1,7 @@
 package com.elepy.igniters;
 
 import com.elepy.Elepy;
-import com.elepy.auth.permissions.DefaultPermissions;
+import com.elepy.auth.authorization.DefaultPermissions;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpMethod;
@@ -30,7 +30,7 @@ public class ModelEngine {
         this.elepy = elepy;
         this.changesToImplement = new HashMap<>();
         this.pistons = new ArrayList<>();
-        setupDescriptors( elepy.http());
+        setupDescriptors(elepy.http());
         schemaFactory = new SchemaFactory();
     }
 
@@ -63,17 +63,13 @@ public class ModelEngine {
     }
 
     public void setupDescriptors( HttpService http) {
-
         final Route build = anElepyRoute()
                 .path("/elepy/schemas")
-                .addPermissions(DefaultPermissions.AUTHENTICATED)
+                .permissions(DefaultPermissions.SCHEMA_READER)
                 .method(HttpMethod.GET)
 
                 .route(ctx -> {
                     ctx.type("application/json");
-
-                    ctx.requirePermissions(DefaultPermissions.AUTHENTICATED);
-
                     ctx.response().json(pistons.stream().map(ModelPiston::getSchema).collect(Collectors.toList()));
 
                 })

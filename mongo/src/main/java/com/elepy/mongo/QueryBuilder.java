@@ -41,6 +41,9 @@ public class QueryBuilder<T> {
 
     private Bson booleanGroup(BooleanGroup expression) {
         final var groupExpressions = expression.getExpressions().stream().map(this::expression).collect(Collectors.toList());
+        if (groupExpressions.isEmpty()){
+            return Filters.eq("true", "true");
+        }
 
         if (expression.getOperator().equals(BooleanGroup.BooleanOperator.AND)) {
             return Filters.and(groupExpressions);

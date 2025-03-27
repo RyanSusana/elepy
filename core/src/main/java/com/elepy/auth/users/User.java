@@ -1,15 +1,12 @@
 package com.elepy.auth.users;
 
 import com.elepy.annotations.*;
-import com.elepy.auth.roles.Role;
 import com.elepy.query.SortOption;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -62,31 +59,16 @@ public class User {
     @Input(type = "password")
     private String password;
 
-    @ElementCollection
-    @CollectionTable(name = "elepy_user_roles", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "roles")
-    @Label("{elepy.models.users.fields.roles.label}")
-    @JsonProperty("roles")
-    private List<@Reference(to = Role.class) String> roles = new ArrayList<>();
 
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
 
     public User() {
 
     }
 
-    public User(String id, String username, String password, List<String> roles) {
+    public User(String id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.roles = roles;
     }
 
     public String getId() {
