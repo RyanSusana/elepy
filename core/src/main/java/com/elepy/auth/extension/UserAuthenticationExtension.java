@@ -9,22 +9,19 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class UserAuthenticationExtension implements ElepyExtension {
 
-    @Inject
-    private UserCenter userCrud;
-
-    @Inject
-    private AuthenticationService authenticationService;
-
-    @Inject
-    private ObjectMapper objectMapper;
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
+        var userCrud = elepy.getDependency(UserCenter.class);
 
+        var authenticationService = elepy.getDependency(AuthenticationService.class);
+        var objectMapper = elepy.getDependency(ObjectMapper.class);
         http.get("/elepy/has-users", ctx -> {
             if (userCrud.hasUsers()) {
                 ctx.result(Message.of("Users exist", 200));

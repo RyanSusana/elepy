@@ -25,8 +25,6 @@ public class RevisionCrud<T> implements Crud<T> {
     private final Crud<Revision> revisionCrud;
     private final HttpContext http;
     private final ObjectMapper objectMapper;
-
-
     public RevisionCrud(Crud<T> crud, Crud<Revision> revisionCrud, HttpContext http) {
         this.crud = crud;
         this.revisionCrud = revisionCrud;

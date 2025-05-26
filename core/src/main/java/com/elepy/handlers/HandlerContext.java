@@ -2,15 +2,15 @@ package com.elepy.handlers;
 
 import com.elepy.crud.Crud;
 import com.elepy.http.HttpContext;
-import com.elepy.igniters.ModelContext;
+import com.elepy.igniters.ModelDetails;
 import com.elepy.revisions.Revision;
 import com.elepy.revisions.RevisionCrud;
 
 public class HandlerContext<T> {
     private final HttpContext http;
-    private final ModelContext<T> model;
+    private final ModelDetails<T> model;
 
-    public HandlerContext(HttpContext http, ModelContext<T> model) {
+    public HandlerContext(HttpContext http, ModelDetails<T> model) {
         this.http = http;
         this.model = model;
     }
@@ -19,7 +19,7 @@ public class HandlerContext<T> {
         return http;
     }
 
-    public ModelContext<T> model() {
+    public ModelDetails<T> model() {
         return model;
     }
 

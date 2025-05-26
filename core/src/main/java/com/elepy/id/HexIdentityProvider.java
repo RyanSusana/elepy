@@ -11,9 +11,8 @@ import java.lang.reflect.Field;
 /**
  * This Identity provider generates a random 10 char hex String for an ID.
  *
- * @param <T> The model type
  */
-public class HexIdentityProvider<T> implements IdentityProvider<T> {
+public class HexIdentityProvider implements IdentityProvider {
 
 
     private final boolean allCaps;
@@ -30,13 +29,13 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
         this.length = length;
         this.prefix = prefix == null ? "" : prefix;
         if (length < 2) {
-            throw new ElepyConfigException("Can't singleCreate a HexIdentityProvider with a minimum length of less than 2");
+            throw new ElepyConfigException("Can't create a HexIdentityProvider with a minimum length of less than 2");
         }
     }
 
 
     @Override
-    public void provideId(T item, Crud<T> dao) {
+    public <T> void provideId(T item, Crud<T> dao) {
 
 
         String currentId = (String) ReflectionUtils.getId(item).orElse("");
@@ -58,7 +57,7 @@ public class HexIdentityProvider<T> implements IdentityProvider<T> {
 
     }
 
-    private String generateId(Crud<T> dao) {
+    private <T> String generateId(Crud<T> dao) {
         String generation = prefix + StringUtils.getRandomHexString(length);
 
         if (allCaps) {

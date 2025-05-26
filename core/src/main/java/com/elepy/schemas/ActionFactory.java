@@ -3,7 +3,10 @@ package com.elepy.schemas;
 import com.elepy.annotations.Action;
 import com.elepy.http.HttpAction;
 import com.elepy.utils.StringUtils;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 
+@ApplicationScoped
 public class ActionFactory {
     private final PropertyFactory propertyFactory = new PropertyFactory();
 

@@ -2,17 +2,13 @@ package com.elepy.http;
 
 import com.elepy.auth.authentication.Credentials;
 import com.elepy.auth.authentication.AuthenticationService;
-import com.elepy.auth.extension.UserAuthenticationExtension;
 import com.elepy.auth.users.User;
 import com.elepy.auth.users.UserCenter;
-import com.elepy.query.*;
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.i18n.FormattedViolation;
 import com.elepy.i18n.Resources;
-import com.elepy.schemas.Schema;
-import com.elepy.query.Filter;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,9 +20,6 @@ import jakarta.validation.ValidatorFactory;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.elepy.query.Filters.*;
-import static com.elepy.query.Queries.create;
 
 public interface Request {
 
@@ -162,10 +155,6 @@ public interface Request {
         return new HashSet<>(Collections.singletonList(recordId()));
     }
 
-    default UserAuthenticationExtension userAuthenticationCenter() {
-        return attribute("authCenter");
-    }
-
     default ElepyContext elepy() {
         return attribute("elepyContext");
     }
@@ -236,96 +225,6 @@ public interface Request {
         } else {
             return ReflectionUtils.toObjectIdFromString(cls, id);
         }
-    }
-
-
-    default SortingSpecification sortingForModel(Schema<?> schema) {
-
-
-        String[] sorts = queryParamValues("sort");
-        SortingSpecification sortingSpecification = new SortingSpecification();
-
-
-        if (sorts == null || sorts.length == 0) {
-            sortingSpecification.add(schema.getDefaultSortField(), schema.getDefaultSortDirection());
-        } else {
-            for (String sort : sorts) {
-                String[] split = sort.split(",");
-
-                if (split.length == 1) {
-                    sortingSpecification.add(split[0], SortOption.ASCENDING);
-                } else {
-                    sortingSpecification.add(split[0], SortOption.get(split[1]));
-                }
-            }
-        }
-
-
-        return sortingSpecification;
-    }
-
-    default Query parseQuery() {
-
-        String q = Optional.ofNullable(queryParams("q")).orElse("");
-
-        final var sortingSpec = sortingForModel(schema(null).orElseThrow());
-        String ps = queryParams("pageSize");
-        String pn = queryParams("pageNumber");
-        int pageSize = ps == null ? Integer.MAX_VALUE : Integer.parseInt(ps);
-        int pageNumber = pn == null ? 1 : Integer.parseInt(pn);
-
-        final var or = or(filtersForModel(null));
-        return create(and(Queries.parse(q).getExpression(), or.getExpressions().isEmpty() ? search("") : or))
-                .purge().sort(sortingSpec).page(pageNumber, pageSize);
-    }
-
-    default <T> Optional<Schema> schema(Class<T> t) {
-        final var restModelType = Optional.ofNullable(t).orElse(attribute("modelClass"));
-
-        if (restModelType == null) {
-            return Optional.empty();
-        }
-
-        return schemas().stream().filter(s -> s.getJavaClass().equals(restModelType)).findFirst();
-
-    }
-
-    default <T> List<Schema> schemas() {
-        return Optional.ofNullable((List<Schema>) attribute("schemas")).orElse(List.of());
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<Filter> filtersForModel(Class modelClass) {
-
-        final Optional<Schema> schema = schema(modelClass);
-        final List<Filter> filterQueries = new ArrayList<>();
-        for (String queryParam : queryParams()) {
-            if (queryParam.contains("_")) {
-                String[] propertyNameFilter = queryParam.split("_");
-
-                //Get the property name like this, incase you have a property called 'customer_type'
-                List<String> propertyNameList = new ArrayList<>(Arrays.asList(propertyNameFilter));
-                propertyNameList.remove(propertyNameFilter.length - 1);
-                String propertyName = String.join("_", propertyNameList);
-
-                FilterType.getByQueryString(propertyNameFilter[propertyNameFilter.length - 1]).ifPresent(filterType1 -> {
-
-                    schema.ifPresent(schema1 -> {
-                        final var property = schema1.getProperty(propertyName);
-                        final var isCompatible = property.getAvailableFilters().stream().map(FilterTypeDescription::filterType)
-                                .anyMatch(filterType1::equals);
-                        if (!isCompatible) {
-                            throw
-                                    ElepyException.translated("{elepy.messages.exceptions.badFilter}", filterType1.getPrettyName(), property.getLabel());
-                        }
-                    });
-
-                    Filter filter = new Filter(propertyName, filterType1, queryParams(queryParam));
-                    filterQueries.add(filter);
-                });
-            }
-        }
-        return filterQueries;
     }
 
 }

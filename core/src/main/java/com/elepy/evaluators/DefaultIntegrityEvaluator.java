@@ -4,7 +4,7 @@ import com.elepy.annotations.ElepyConstructor;
 import com.elepy.crud.Crud;
 import com.elepy.query.Filters;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.igniters.ModelContext;
+import com.elepy.igniters.ModelDetails;
 import com.elepy.utils.ReflectionUtils;
 
 import java.io.Serializable;
@@ -16,8 +16,8 @@ public class DefaultIntegrityEvaluator<T> implements IntegrityEvaluator<T> {
 
     private final Crud<T> crud;
 
-    public DefaultIntegrityEvaluator(ModelContext<T> modelContext) {
-        this.crud = modelContext.getCrud();
+    public DefaultIntegrityEvaluator(ModelDetails<T> modelDetails) {
+        this.crud = modelDetails.getCrud();
     }
 
     @ElepyConstructor

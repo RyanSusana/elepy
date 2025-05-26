@@ -31,45 +31,21 @@ public interface ElepyContext {
         return getDependency(cls, null);
     }
 
-    /**
-     * Tries to GET a Crud for a RestModel
-     *
-     * @param cls The RestModel class
-     * @param <T> The RestModel type
-     * @return the Crud
-     */
-    default <T> Crud<T> getCrudFor(Class<T> cls) {
-        final Model annotation = Annotations.get(cls, Model.class);
-
-        if (annotation == null) {
-            throw new ElepyConfigException("Resources must have the @Model Annotation");
-        }
-
-        return (Crud<T>) getDependency(Crud.class, annotation.path());
-    }
-
-
     default ObjectMapper objectMapper() {
         return getDependency(ObjectMapper.class);
     }
 
 
-    Set<ContextKey> getDependencyKeys();
-
-    default boolean hasDependency(Class<?> dependency) {
-        return getDependencyKeys().stream().anyMatch(contextKey -> dependency.equals(contextKey.getType()));
-    }
-
-    <T> T initialize(Class<? extends T> cls);
 
     @SuppressWarnings("unchecked")
-    default <T> T initialize(String className) {
-        try {
-            return (T) initialize(Class.forName(className));
-        } catch (ClassNotFoundException e) {
-            throw new ElepyConfigException(String.format("Missing class '%s', make sure you have your dependencies in order", className));
-        }
-
-    }
+//    default <T> T initialize(String className) {
+//        try {
+//            return (T) initialize(Class.forName(className));
+//        } catch (ClassNotFoundException e) {
+//            throw new ElepyConfigException(String.format("Missing class '%s', make sure you have your dependencies in order", className));
+//        }
+//
+//    }
+    <T> Crud<T> getCrudFor(Class<T> cls) ;
 
 }

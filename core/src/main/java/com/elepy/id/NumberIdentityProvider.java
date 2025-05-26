@@ -11,19 +11,18 @@ import java.util.Random;
 /**
  * This {@link IdentityProvider} generates ID's by using random numbers.
  *
- * @param <T> The model type
  */
-public class NumberIdentityProvider<T> implements IdentityProvider<T> {
+public class NumberIdentityProvider implements IdentityProvider {
     private final Random random = new Random();
 
     @Override
-    public void provideId(T item, Crud<T> dao) {
+    public <T> void provideId(T item, Crud<T> dao) {
         Class<?> idType = ReflectionUtils.getIdField(item.getClass()).orElseThrow(() -> ElepyException.internalServerError()).getType();
 
         provideId(item, dao, idType);
     }
 
-    public void provideId(T item, Crud<T> dao, Class<?> idType) {
+    public <T> void provideId(T item, Crud<T> dao, Class<?> idType) {
         Field idProperty = ReflectionUtils.getIdField(dao.getType()).orElseThrow(() -> ElepyException.internalServerError());
 
         idProperty.setAccessible(true);
@@ -42,7 +41,7 @@ public class NumberIdentityProvider<T> implements IdentityProvider<T> {
         }
     }
 
-    private Object generateId(Crud<T> dao, Class<?> wrappedIdType) {
+    private <T> Object generateId(Crud<T> dao, Class<?> wrappedIdType) {
         Serializable randomId;
         if (wrappedIdType.equals(Long.class)) {
             randomId = Math.abs(random.nextLong());

@@ -5,6 +5,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.ReflectionUtils;
 import com.github.slugify.Slugify;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +17,9 @@ import java.util.Optional;
 /**
  * This {@link IdentityProvider} creates an SEO-friendly link Path for an ID.
  *
- * @param <T> The model type
  */
-public class SlugIdentityProvider<T> implements IdentityProvider<T> {
+@ApplicationScoped
+public class SlugIdentityProvider implements IdentityProvider {
     private static final Logger logger = LoggerFactory.getLogger(SlugIdentityProvider.class);
     private final String[] slugFieldNames;
     private final Slugify slugify;
@@ -37,7 +38,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
 
     @Override
-    public void provideId(T item, Crud<T> dao) {
+    public <T>void provideId(T item, Crud<T> dao) {
         final String path = getSlug(item, Arrays.asList(slugFieldNames)).orElseThrow(() -> new ElepyConfigException("There is no available slug property. This must be a String."));
         String generatedPath = generatePath(path, 0, dao);
 
@@ -53,7 +54,7 @@ public class SlugIdentityProvider<T> implements IdentityProvider<T> {
 
     }
 
-    private Optional<String> getSlug(T obj, List<String> slugFieldNames) {
+    private <T> Optional<String> getSlug(T obj, List<String> slugFieldNames) {
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             final Object value;

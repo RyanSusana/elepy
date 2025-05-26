@@ -8,7 +8,7 @@ Here is what a typical handler looks like:
 ```java
 public class ProductDelete<Product> implements DeleteHandler<Product> {
     @Override
-    public void handleDelete(HttpContext context, Crud<Product> crud, ModelContext<Product> modelContext, ObjectMapper objectMapper) {
+    public void handleDelete(HttpContext context, Crud<Product> crud, ModelContext<Product> modelDetails, ObjectMapper objectMapper) {
         String productId = context.recordId();
 
         crud.delete(productId);

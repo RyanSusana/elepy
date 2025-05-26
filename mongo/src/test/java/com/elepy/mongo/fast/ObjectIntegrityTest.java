@@ -3,7 +3,7 @@ package com.elepy.mongo.fast;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.ElepyException;
-import com.elepy.igniters.ModelContext;
+import com.elepy.igniters.ModelDetails;
 import com.elepy.schemas.SchemaFactory;
 import com.elepy.mongo.MongoCrud;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class ObjectIntegrityTest extends BaseFongo {
         super.setUp();
         var modelFactory = new SchemaFactory();
         MongoCrud<Resource> defaultMongoCrud = new MongoCrud<>(getDb(), "resources", modelFactory.createDeepSchema(Resource.class));
-        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelContext<>(modelFactory.createDeepSchema(Resource.class), defaultMongoCrud, null));
+        final DefaultIntegrityEvaluator<Resource> evaluator = new DefaultIntegrityEvaluator<>(new ModelDetails<>(modelFactory.createDeepSchema(Resource.class), defaultMongoCrud, null));
         defaultMongoCrud.create(validObject());
 
 

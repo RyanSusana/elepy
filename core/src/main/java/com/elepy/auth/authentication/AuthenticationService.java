@@ -3,6 +3,7 @@ package com.elepy.auth.authentication;
 import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@ApplicationScoped
 public class AuthenticationService {
     private final List<AuthenticationMethod> authenticationMethods = new ArrayList<>();
     private final List<AuthenticationMethod> loginMethods = new ArrayList<>();
@@ -17,10 +19,6 @@ public class AuthenticationService {
     private TokenAuthority tokenGenerator;
 
     public void addAuthenticationMethod(AuthenticationMethod authenticationMethod) {
-        loginMethods.add(authenticationMethod);
-    }
-
-    public void addLoginMethod(AuthenticationMethod authenticationMethod) {
         loginMethods.add(authenticationMethod);
     }
 

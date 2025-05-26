@@ -2,8 +2,6 @@ package com.elepy.configuration;
 
 import com.elepy.Elepy;
 import com.elepy.crud.Crud;
-import com.elepy.di.ElepyContext;
-import com.elepy.http.Route;
 import com.elepy.igniters.ModelChange;
 import com.elepy.schemas.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,37 +20,17 @@ public class ElepyPostConfiguration {
     public ObjectMapper getObjectMapper() {
         return elepy.objectMapper();
     }
-
-    /**
-     * Attaches a context object to the void instance. This object would then later be used
-     * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
-     * object is a Database for void or another component to use.
-     * <p>
-     * The elepy object is bound with a unique key. The key is a combination of the object's class
-     * and a tag. This makes it so that you can bind multiple objects of the same type(such as
-     * multiple DB classes) with different tags.
-     * <p>
-     * This object can be accessed via {@link ElepyContext#getDependency(Class, String)}
-     *
-     * @param cls    The class type of the object
-     * @param tag    An optional name
-     * @param object The object
-     * @param <T>    The type of the object
-     * @see ElepyContext
-     */
-    public <T> void registerDependency(Class<T> cls, String tag, T object) {
-        elepy.registerDependency(cls, tag, object);
+    public Elepy getElepy(){
+        return elepy;
     }
 
     /**
      * Attaches a context object with a null tag.
      * <p>
-     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param cls    The class type of the object
      * @param object The object
      * @param <T>    The type of the object
-     * @see #registerDependency(Class, String, Object)
      */
     public <T> void registerDependency(Class<T> cls, T object) {
         elepy.registerDependency(cls, object);
@@ -61,11 +39,9 @@ public class ElepyPostConfiguration {
     /**
      * Attaches a context object with a null tag, and guesses it's class type.
      * <p>
-     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param object The object
      * @param <T>    Any type of object
-     * @see #registerDependency(Class, String, Object)
      */
     public <T> void registerDependency(T object) {
         elepy.registerDependency(object);
@@ -74,12 +50,10 @@ public class ElepyPostConfiguration {
     /**
      * Attaches a context object and guesses it's class type.
      * <p>
-     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param object The object
      * @param tag    An optional name
      * @param <T>    Any type of object
-     * @see #registerDependency(Class, String, Object)
      */
     public <T> void registerDependency(T object, String tag) {
         elepy.registerDependency(object, tag);
@@ -110,9 +84,6 @@ public class ElepyPostConfiguration {
         return elepy.getDependency(cls);
     }
 
-    public <T> T getDependency(Class<T> cls, String tag) {
-        return elepy.getDependency(cls, tag);
-    }
 
     /**
      * Tries to GET a Crud for a RestModel
@@ -125,9 +96,6 @@ public class ElepyPostConfiguration {
         return elepy.getCrudFor(cls);
     }
 
-    public <T> T initializeElepyObject(Class<? extends T> cls) {
-        return elepy.initialize(cls);
-    }
 
     /**
      * @param clazz The RestModel's class
@@ -141,23 +109,10 @@ public class ElepyPostConfiguration {
     /**
      * @return All ModelContext
      */
-    public List<Schema<?>> modelSchemas() {
+    public List<Schema> modelSchemas() {
         return elepy.modelSchemas();
     }
 
-
-    /**
-     * @param tClass      the class of the model
-     * @param modelChange the change to execute to the model
-     */
-    public void alterModel(Class<?> tClass, ModelChange modelChange) {
-        elepy.alterModel(tClass, modelChange);
-    }
-
-
-    public void injectFields(Object o) {
-        elepy.injectFields(o);
-    }
 
     public Configuration getPropertyConfig() {
         return elepy.getPropertyConfig();

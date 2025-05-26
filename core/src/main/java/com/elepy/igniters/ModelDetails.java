@@ -4,15 +4,15 @@ import com.elepy.crud.Crud;
 import com.elepy.id.IdentityProvider;
 import com.elepy.schemas.Schema;
 
-public class ModelContext<T> {
+public class ModelDetails<T> {
     private final Schema<T> schema;
 
     private Crud<T> crud;
-    private IdentityProvider<T> identityProvider;
+    private IdentityProvider identityProvider;
 
-    public ModelContext(Schema<T> schema,
+    public ModelDetails(Schema<T> schema,
                         Crud<T> crud,
-                        IdentityProvider<T> identityProvider
+                        IdentityProvider identityProvider
                         ) {
         this.schema = schema;
         this.crud = crud;
@@ -27,20 +27,12 @@ public class ModelContext<T> {
         this.crud = crud;
     }
 
-    public void changeModel(ModelChange modelChange) {
-        modelChange.change(this);
-    }
-
     public Schema<T> getSchema() {
         return schema;
     }
 
-    public IdentityProvider<T> getIdentityProvider() {
+    public IdentityProvider getIdentityProvider() {
         return identityProvider;
-    }
-
-    public void setIdentityProvider(IdentityProvider<T> identityProvider) {
-        this.identityProvider = identityProvider;
     }
 
     public String getName() {

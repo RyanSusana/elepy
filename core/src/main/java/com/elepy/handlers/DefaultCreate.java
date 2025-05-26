@@ -6,16 +6,19 @@ import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpContext;
-import com.elepy.igniters.ModelContext;
+import com.elepy.id.DefaultIdentityProvider;
+import com.elepy.igniters.ModelDetails;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import jakarta.enterprise.context.Dependent;
 
 import java.util.Collections;
 import java.util.List;
 
+@Dependent
 public class DefaultCreate<T> implements ActionHandler<T> {
 
 
@@ -38,30 +41,33 @@ public class DefaultCreate<T> implements ActionHandler<T> {
         }
     }
 
-    protected void singleCreate(HttpContext context, T item, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
-        evaluate(item, modelContext, context, dao);
+    protected void singleCreate(HttpContext context, T item, Crud<T> dao, ModelDetails<T> modelDetails) throws Exception {
+        evaluate(item, modelDetails, context, dao);
 
         create(context, dao, Collections.singletonList(item));
     }
 
 
-    private void multipleCreate(HttpContext context, List<T> items, Crud<T> dao, ModelContext<T> modelContext) throws Exception {
+    private void multipleCreate(HttpContext context, List<T> items, Crud<T> dao, ModelDetails<T> modelDetails) throws Exception {
         if (ReflectionUtils.hasIntegrityRules(dao.getType())) {
             new AtomicIntegrityEvaluator<T>().evaluate(Lists.newArrayList(Iterables.toArray(items, dao.getType())));
         }
 
         for (T item : items) {
-            evaluate(item, modelContext, context, dao);
+            evaluate(item, modelDetails, context, dao);
         }
         create(context, dao, items);
     }
 
-    private void evaluate(T item, ModelContext<T> modelContext, HttpContext context, Crud<T> dao) throws Exception {
+    private void evaluate(T item, ModelDetails<T> modelDetails, HttpContext context, Crud<T> dao) throws Exception {
         context.validate(item);
 
-        modelContext.getIdentityProvider().provideId(item, dao);
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(item, EvaluationType.CREATE);
+//TODO setup IdentityProvider again
+        new DefaultIdentityProvider().provideId(item, dao);
+        new DefaultIntegrityEvaluator<>(modelDetails).evaluate(item, EvaluationType.CREATE);
     }
+
+
 
     private void create(HttpContext context, Crud<T> dao, Iterable<T> items) {
         dao.create(items);

@@ -2,11 +2,13 @@ package com.elepy.tests.devfrontend;
 
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@ApplicationScoped
 public class ActionPost implements ActionHandler<Post> {
 
     private static int counter = 1;

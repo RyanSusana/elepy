@@ -3,12 +3,18 @@ package com.elepy.tests.devfrontend;
 import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
 import com.elepy.auth.authentication.AuthenticationService;
+import com.elepy.auth.authentication.methods.basic.BasicAuthenticationMethod;
 import com.elepy.auth.authorization.*;
+import com.elepy.auth.users.UserCenter;
+import com.elepy.crud.CrudRegistry;
 import com.elepy.mongo.MongoConfiguration;
+import com.elepy.schemas.SchemaRegistry;
+import com.elepy.sparkjava.SparkService;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -17,7 +23,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         MongoServer mongoServer = new MongoServer(new MemoryBackend());
 
         InetSocketAddress serverAddress = mongoServer.bind();
@@ -29,6 +35,7 @@ public class Main {
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
                 .addLocale(new Locale("nl"), "Nederlands")
+                .withHttpService(new SparkService())
 //                .addConfiguration(OAuthConfiguration.of(
 //                        new GoogleAuthScheme(env("GOOGLE_KEY"), env("GOOGLE_SECRET")),
 //                        new GitHubAuthScheme(env("GH_KEY"), env("GH_SECRET")),
@@ -44,31 +51,24 @@ public class Main {
                         ctx.validate(dog);
                     });
                     http.get("/dynamic", ctx -> {
-
                         ctx.response().json(List.of("Ayee", "Bee", "See"));
                     });
                     http.before(context -> {
                         context.response().header("Access-Control-Allow-Headers", "*");
-                        // TODO
-//                        context.request().addPermissions(Permissions.SUPER_USER);
                     });
                 })
                 .addExtension(new FrontendLoader());
 
-        elepyInstance.alterModel(Post.class, modelContext -> modelContext.getSchema().setKeepRevisionsAmount(10));
         elepyInstance.start();
 
-        var roles = elepyInstance.getDependency(RoleLookup.class);
 
-        var authorization = elepyInstance.getDependency(AuthorizationService.class);
-        var authentication = elepyInstance.getDependency(AuthenticationService.class);
-
-        var policies = elepyInstance.getCrudFor(PolicyBinding.class);
+        Thread.sleep(1000);
 
 
-        var authorizationResult = authorization.testPermissions("ryan", URI.create("/hello/bello"), "resources.create");
 
-        System.out.println(policies);
+
+
+
     }
 
     private static String env(String s) {

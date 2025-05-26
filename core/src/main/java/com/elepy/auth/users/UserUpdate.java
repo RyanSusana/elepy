@@ -9,13 +9,12 @@ import com.elepy.exceptions.Message;
 import com.elepy.handlers.DefaultUpdate;
 import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
-import com.elepy.igniters.ModelContext;
+import com.elepy.igniters.ModelDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.HashSet;
-
+@ApplicationScoped
 public class UserUpdate extends DefaultUpdate<User> {
 
 
@@ -58,12 +57,12 @@ public class UserUpdate extends DefaultUpdate<User> {
         return userToUpdateAfter;
     }
 
-    protected void validateUpdate(HttpContext context, ModelContext<User> modelContext, User userToUpdateBefore, User userToUpdateAfter) throws Exception {
+    protected void validateUpdate(HttpContext context, ModelDetails<User> modelDetails, User userToUpdateBefore, User userToUpdateAfter) throws Exception {
         context.validate(userToUpdateAfter);
         //Elepy evaluation
         new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
 
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
+        new DefaultIntegrityEvaluator<>(modelDetails).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
     }
 
 

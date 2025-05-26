@@ -10,6 +10,7 @@ import com.elepy.schemas.FieldType;
 import com.elepy.schemas.Schema;
 import com.elepy.utils.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.context.Dependent;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Dependent
 public class DefaultUpdate<T> implements ActionHandler<T> {
 
 

@@ -1,20 +1,27 @@
 package com.elepy.http;
 
+import com.elepy.Elepy;
 import com.elepy.auth.authentication.AuthenticationService;
-import com.elepy.auth.authentication.Credentials;
-import com.elepy.auth.authorization.AuthorizationResult;
 import com.elepy.auth.authorization.AuthorizationService;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.control.RequestContextController;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class HttpServiceConfiguration implements HttpService {
+    private static final Logger logger = LoggerFactory.getLogger("HTTP");
 
     private final ElepyContext elepy;
     private HttpService implementation;
@@ -25,13 +32,14 @@ public class HttpServiceConfiguration implements HttpService {
 
     private int port;
 
-    public HttpServiceConfiguration(ElepyContext elepy) {
+    @Inject
+    public HttpServiceConfiguration(Elepy elepy) {
         this(elepy, null);
     }
 
     public HttpServiceConfiguration(ElepyContext elepy, HttpService implementation) {
-        this.implementation = implementation;
         this.elepy = elepy;
+        this.implementation = implementation;
         port(1337);
     }
 
@@ -78,16 +86,21 @@ public class HttpServiceConfiguration implements HttpService {
     }
 
     public void addRoute(Route route) {
+        logger.debug("Adding route {} {}", route.getMethod(), route.getPath());
+
         add(http -> {
             HttpContextHandler handler = context -> {
+                var requestContextController = CDI.current().select(RequestContextController.class).get();
+                try{
+                    requestContextController.activate();
+                    if(!route.getPermissions().isEmpty()){
+                        permissionCheck(route, context);
+                    }
 
-                if(!route.getPermissions().isEmpty()){
-                   permissionCheck(route, context);
+                    route.getHttpContextHandler().handle(context);
+                }finally {
+                    requestContextController.deactivate();
                 }
-
-                route.getHttpContextHandler().handle(context);
-
-                // TODO End request scope
             };
 
             var authenticatedRoute = RouteBuilder.anElepyRoute()
@@ -95,8 +108,22 @@ public class HttpServiceConfiguration implements HttpService {
                        .method(route.getMethod())
                     .acceptType(route.getAcceptType())
                     .route(handler).build();
+
+            logRouteMapping(route);
             http.addRoute(authenticatedRoute);
         });
+    }
+
+    private static void logRouteMapping(Route route) {
+        final int requiredSpace = 7;
+        final int paddingToPrepend = requiredSpace - route.getMethod().name().length();
+        final String padding = StringUtils.repeat(" ", paddingToPrepend);
+
+        if(route.getPermissions().isEmpty()){
+            logger.info("Mapping {}{}\t{}",padding, route.getMethod(), route.getPath());
+        }else{
+            logger.info("Mapping {}{}\t{} with required permissions:\t{}",padding, route.getMethod(), route.getPath(), route.getPermissions());
+        }
     }
 
     // TODO find a better place to do this
@@ -124,7 +151,9 @@ public class HttpServiceConfiguration implements HttpService {
     }
 
     public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> exceptionHandler) {
-        add(http -> http.exception(exceptionClass, (exception, context) -> exceptionHandler.handleException(exception, new DefaultHttpContext(elepy, context))));
+        add(http -> http.exception(exceptionClass, (exception, context) -> {
+            exceptionHandler.handleException(exception, new DefaultHttpContext(elepy, context));
+        }));
     }
 
     @Override

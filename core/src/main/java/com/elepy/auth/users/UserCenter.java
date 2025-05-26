@@ -3,6 +3,7 @@ package com.elepy.auth.users;
 import com.elepy.auth.authentication.Credentials;
 import com.elepy.crud.Crud;
 import com.elepy.utils.StringUtils;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 import static com.elepy.query.Filters.any;
 import static com.elepy.query.Filters.eq;
 
+@ApplicationScoped
 public class UserCenter {
 
     @Inject

@@ -5,6 +5,7 @@ import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.ReflectionUtils;
 import com.elepy.utils.StringUtils;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@ApplicationScoped
 public class SchemaFactory {
 
     private final PropertyFactory propertyFactory = new PropertyFactory();

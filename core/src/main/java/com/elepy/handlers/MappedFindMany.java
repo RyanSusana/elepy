@@ -15,11 +15,11 @@ import java.util.List;
 public abstract class MappedFindMany<T, R extends T> extends DefaultFindMany<T> {
 
     @Override
-    public List<? extends T> find(HttpContext context, Crud<T> dao) {
+    public List<? extends T> find(HttpContext context, HandlerContext<T> handlerContext) {
 
-        List<? extends T> result = super.find(context, dao);
+        List<? extends T> result = super.find(context, handlerContext);
 
-        return mapValues(result, context.request(), dao);
+        return mapValues(result, context.request(), handlerContext.crud());
 
     }
 

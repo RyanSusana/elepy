@@ -7,15 +7,14 @@ import com.elepy.utils.ReflectionUtils;
 /**
  * This is the default {@link IdentityProvider} it delegates to {@link HexIdentityProvider} for Strings and {@link NumberIdentityProvider} for numbers.
  *
- * @param <T> The type of the Model
  */
-public class DefaultIdentityProvider<T> implements IdentityProvider<T> {
+public class DefaultIdentityProvider implements IdentityProvider {
 
-    private final HexIdentityProvider<T> hexIdentityProvider = new HexIdentityProvider<>();
-    private final NumberIdentityProvider<T> numberIdentityProvider = new NumberIdentityProvider<>();
+    private final HexIdentityProvider hexIdentityProvider = new HexIdentityProvider();
+    private final NumberIdentityProvider numberIdentityProvider = new NumberIdentityProvider();
 
     @Override
-    public void provideId(T item, Crud<T> dao) {
+    public <T> void provideId(T item, Crud<T> dao) {
         if (ReflectionUtils.getId(item).isPresent()) {
             return;
         }

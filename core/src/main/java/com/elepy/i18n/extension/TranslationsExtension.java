@@ -6,12 +6,14 @@ import com.elepy.http.HttpService;
 import com.elepy.i18n.Resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class TranslationsExtension implements ElepyExtension {
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {

@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ElepyConfig implements ElepyExtension {
+public class LocaleSettings implements ElepyExtension {
     private final Map<Locale, String> availableLocales = new HashMap<>();
 
-    public ElepyConfig() {
+    public LocaleSettings() {
         availableLocales.put(new Locale("en"), "English");
     }
 
@@ -23,7 +23,7 @@ public class ElepyConfig implements ElepyExtension {
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
-        http.get("/elepy/settings", ctx -> {
+        http.get("/elepy/locales", ctx -> {
             ctx.response().json(this);
         });
     }

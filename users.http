@@ -1,0 +1,12 @@
+@base=http://localhost:1337
+
+### Get All Users
+GET {{base}}/users
+
+### Create Initial User
+POST {{base}}/users
+
+{
+"username": "user-name",
+"password":"<PASSWORD>"
+}

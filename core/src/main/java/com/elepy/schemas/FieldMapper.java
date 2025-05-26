@@ -13,15 +13,15 @@ import java.util.*;
 
 public class FieldMapper {
     public  Serializable toValueFromString(Field field, FieldType fieldType, String value) {
-        if (fieldType.equals(FieldType.ENUM)) {
+        if (FieldType.ENUM.equals(fieldType)) {
             return toEnumFromString(field, value);
         }
-        if (fieldType.equals(FieldType.BOOLEAN)) {
+        if (FieldType.BOOLEAN.equals(fieldType)) {
             return toBooleanFromString(field, value);
         }
-        if (fieldType.equals(FieldType.NUMBER)) {
+        if (FieldType.NUMBER.equals(fieldType)) {
             return toNumberFromString(field, value);
-        } else if (fieldType.equals(FieldType.DATE)) {
+        } else if (FieldType.DATE.equals(fieldType)) {
             final DateTime annotation = Annotations.get(field, DateTime.class);
             final String format;
 

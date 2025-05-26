@@ -4,15 +4,17 @@ import com.elepy.crud.Crud;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
-import com.elepy.igniters.ModelContext;
+import com.elepy.igniters.ModelDetails;
+import jakarta.enterprise.context.Dependent;
 
 import java.io.Serializable;
 import java.util.Optional;
 
+@Dependent
 public class DefaultFindOne<T> implements ActionHandler<T> {
 
 
-    public T findOne(Request request, Response response, Crud<T> dao, ModelContext<T> modelContext) {
+    public T findOne(Request request, Response response, Crud<T> dao, ModelDetails<T> modelDetails) {
         response.type("application/json");
 
         Serializable paramId = request.recordId();
@@ -23,7 +25,7 @@ public class DefaultFindOne<T> implements ActionHandler<T> {
             return id.get();
 
         } else {
-            throw ElepyException.notFound(modelContext.getName());
+            throw ElepyException.notFound(modelDetails.getName());
         }
     }
 

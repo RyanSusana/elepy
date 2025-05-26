@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public class DefaultActions {
 
-
     public static HttpAction getUpdateFromSchema(Schema<?> schema) {
         return getUpdateFromSchema(schema, true);
     }
@@ -44,7 +43,7 @@ public class DefaultActions {
                 permissions, HttpMethod.POST, true, true, "", "", null);
     }
 
-    public static HttpAction getFindFromSchema(Schema<?> schema) {
+    public static HttpAction getFindManyFromSchema(Schema<?> schema) {
         return new HttpAction("Find Many", schema.getPath(),
                 getFindPermissions(schema), HttpMethod.GET, true,
                 true,
@@ -66,7 +65,6 @@ public class DefaultActions {
     }
 
     public static HttpAction getDeleteFromSchema(Schema<?> schema) {
-
         return getDeleteFromSchema(schema, false);
     }
 

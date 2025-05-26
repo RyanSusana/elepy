@@ -2,20 +2,19 @@ package com.elepy;
 
 import com.elepy.annotations.Model;
 import com.elepy.auth.authentication.AuthenticationService;
-import com.elepy.auth.authorization.*;
-import com.elepy.auth.extension.UserAuthenticationExtension;
 import com.elepy.auth.authentication.methods.basic.BasicAuthenticationMethod;
 import com.elepy.auth.authentication.methods.persistedtokens.PersistedTokenGenerator;
+import com.elepy.auth.authentication.methods.persistedtokens.Tokens;
+import com.elepy.auth.authorization.*;
+import com.elepy.auth.extension.UserAuthenticationExtension;
 import com.elepy.auth.authentication.methods.persistedtokens.Token;
 import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 import com.elepy.auth.users.User;
-import com.elepy.auth.users.UserCenter;
 import com.elepy.configuration.*;
 import com.elepy.crud.CrudFactory;
 import com.elepy.crud.Crud;
-import com.elepy.di.ContextKey;
-import com.elepy.di.DefaultElepyContext;
 import com.elepy.di.ElepyContext;
+import com.elepy.di.WeldContext;
 import com.elepy.evaluators.JsonNodeNameProvider;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
@@ -25,17 +24,18 @@ import com.elepy.http.HttpServiceConfiguration;
 import com.elepy.http.Route;
 import com.elepy.i18n.Resources;
 import com.elepy.i18n.extension.TranslationsExtension;
-import com.elepy.igniters.ModelEngine;
-import com.elepy.igniters.ModelChange;
+import com.elepy.igniters.ModelDetailsFactory;
+import com.elepy.igniters.SchemaRouter;
+import com.elepy.schemas.ActionFactory;
 import com.elepy.schemas.Schema;
 import com.elepy.revisions.Revision;
+import com.elepy.schemas.SchemaFactory;
+import com.elepy.schemas.SchemaRegistry;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
-import com.elepy.uploads.FileUploadExtension;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.LogUtils;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
@@ -70,17 +70,16 @@ public class Elepy implements ElepyContext {
 
     private final List<ElepyExtension> modules = new ArrayList<>();
     private final List<String> packages = new ArrayList<>();
-    private final DefaultElepyContext context = new DefaultElepyContext();
-    private final HttpServiceConfiguration http = new HttpServiceConfiguration(this);
-    private final List<Route> routes = new ArrayList<>();
+    private final WeldContext context = new WeldContext();
+    private HttpServiceConfiguration http = new HttpServiceConfiguration(this);
     private boolean initialized = false;
     private Class<? extends CrudFactory> defaultCrudFactoryClass = null;
     private CrudFactory defaultCrudFactoryImplementation;
-    private final ModelEngine modelEngine = new ModelEngine(this);
+    private final Set<Class<?>> schemaClasses = new HashSet<>();
     private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
     private final List<Configuration> configurations = new ArrayList<>();
     private final List<EventHandler> stopEventHandlers = new ArrayList<>();
-    private final ElepyConfig config = new ElepyConfig();
+    private final LocaleSettings config = new LocaleSettings();
 
     public Elepy() {
         init();
@@ -90,8 +89,10 @@ public class Elepy implements ElepyContext {
         this.http.port(1337);
 
         this.propertyConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+        addExtension(new TranslationsExtension());
 
         registerDependency(Resources.class, new Resources());
+        registerDependencySupplier(HttpService.class, () -> http);
         registerDependencySupplier(ValidatorFactory.class,
                 () -> Validation
                         .byProvider(HibernateValidator.class)
@@ -105,23 +106,18 @@ public class Elepy implements ElepyContext {
         registerDependencySupplier(Properties.class, () -> ConfigurationConverter.getProperties(propertyConfiguration));
         withFileService(new DefaultFileService());
 
-        registerDependencySupplier(ObjectMapper.class, this::createObjectMapper);
-    }
 
-
-    private ObjectMapper createObjectMapper() {
-
-        ObjectMapper objectMapper = new ObjectMapper()
-                .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-                .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-        objectMapper.setConfig(objectMapper.getSerializationConfig().withAttribute(ElepyContext.class, this));
-        objectMapper.setConfig(objectMapper.getDeserializationConfig().withAttribute(ElepyContext.class, this));
-        return objectMapper;
+        registerDependency(ObjectMapperProducer.class);
+        registerDependency(SchemaRegistry.class);
+        registerDependency(SchemaFactory.class);
+        registerDependency(SchemaRouter.class);
+        registerDependency(ActionFactory.class);
+        registerDependency(BasicAuthenticationMethod.class);
+        registerDependency(PersistedTokenGenerator.class);
+        registerDependency(Tokens.class);
+        registerDependency(ModelDetailsFactory.class);
 
     }
-
 
     /**
      * Spins up the embedded server and generates all the Elepy routes
@@ -131,38 +127,47 @@ public class Elepy implements ElepyContext {
      */
     public void start() {
 
-        setupDefaults();
 
-        try{
-
-            configurations.forEach(this::injectFields);
+        try {
             configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
-
-
+            context.start();
+            setupDefaults();
             configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
-            modelEngine.start();
-
             setupAuth();
-            context.resolveDependencies();
+
+            setupModels();
 
             igniteAllRoutes();
-            injectExtensions();
+            setupExtensions();
+
             initialized = true;
 
             afterElepyConstruction();
 
+
             http.ignite();
-
-            context.strictMode(true);
-
-            modelEngine.executeChanges();
 
             logger.info(String.format(LogUtils.banner, http.port()));
         } catch (Exception e) {
             logger.error("Something went wrong while setting up Elepy", e);
             System.exit(1);
         }
+    }
+
+    private void setupExtensions() {
+        for (var extension : modules) {
+            extension.setup(this.http, new ElepyPostConfiguration(this));
+        }
+    }
+
+    private void setupModels() {
+        var schemaRegistry = getDependency(SchemaRegistry.class);
+
+        for (var schemaClass : schemaClasses) {
+            schemaRegistry.addSchema(schemaClass);
+        }
+
     }
 
     /**
@@ -194,28 +199,20 @@ public class Elepy implements ElepyContext {
         return this.initialized;
     }
 
-    @Override
     public ObjectMapper objectMapper() {
-        return this.context.objectMapper();
+        return this.context.getDependency(ObjectMapper.class);
     }
 
-    public void injectFields(Object object) {
-        context.injectFields(object);
-    }
 
     @Override
     public <T> T getDependency(Class<T> cls, String tag) {
         return context.getDependency(cls, tag);
     }
 
-    @Override
-    public Set<ContextKey> getDependencyKeys() {
-        return context.getDependencyKeys();
-    }
 
     @Override
-    public <T> T initialize(Class<? extends T> cls) {
-        return context.initialize(cls);
+    public <T> Crud<T> getCrudFor(Class<T> cls) {
+        return context.getCrudFor(cls);
     }
 
 
@@ -271,9 +268,7 @@ public class Elepy implements ElepyContext {
      */
     public Elepy addModels(Class<?>... classes) {
         checkConfig();
-        for (Class<?> aClass : classes) {
-            modelEngine.addModel(aClass);
-        }
+        schemaClasses.addAll(Arrays.asList(classes));
         return this;
     }
 
@@ -298,7 +293,7 @@ public class Elepy implements ElepyContext {
      */
     public <T> Elepy registerDependency(Class<T> cls, String tag, T object) {
         checkConfig();
-        context.registerDependency(cls, tag, object);
+        context.registerDependency(cls, object);
         return this;
     }
 
@@ -426,6 +421,7 @@ public class Elepy implements ElepyContext {
      */
     public Elepy withDefaultCrudFactory(Class<? extends CrudFactory> defaultCrudProvider) {
         this.defaultCrudFactoryClass = defaultCrudProvider;
+        this.registerDependency(defaultCrudProvider);
         return this;
     }
 
@@ -457,31 +453,6 @@ public class Elepy implements ElepyContext {
         return defaultCrudFactoryImplementation;
     }
 
-    /**
-     * Adds a route to be late initialized by Elepy.
-     *
-     * @param elepyRoute the route to add
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy addRouting(Route elepyRoute) {
-        return addRouting(Collections.singleton(elepyRoute));
-    }
-
-    /**
-     * Adds after to be late initialized by Elepy.
-     *
-     * @param elepyRoutes the after to add
-     * @return The {@link com.elepy.Elepy} instance
-     */
-    public Elepy addRouting(Iterable<Route> elepyRoutes) {
-        checkConfig();
-        for (Route route : elepyRoutes) {
-            routes.add(route);
-        }
-        return this;
-    }
-
-
 
     /**
      * @param clazz The RestModel's class
@@ -490,14 +461,14 @@ public class Elepy implements ElepyContext {
      */
     @SuppressWarnings("unchecked")
     public <T> Schema<T> modelSchemaFor(Class<T> clazz) {
-        return modelEngine.getModelForClass(clazz);
+        return modelEngine().getSchema(clazz);
     }
 
     /**
      * @return All ModelContext
      */
-    public List<Schema<?>> modelSchemas() {
-        return modelEngine.getSchemas();
+    public List<Schema> modelSchemas() {
+        return modelEngine().getSchemas();
     }
 
 
@@ -523,20 +494,10 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-
-    public Elepy addConfiguration(Class<? extends Configuration> conf) {
-        return addConfiguration(initialize(conf));
+    public <T> T initialize(Class<T> cls) {
+        return context.initialize(cls);
     }
 
-    /**
-     * @param tClass      the class of the model
-     * @param modelChange the change to execute to the model
-     * @return the Elepy instance
-     */
-    public Elepy alterModel(Class<?> tClass, ModelChange modelChange) {
-        modelEngine.alterModel(tClass, modelChange);
-        return this;
-    }
 
     public Elepy setTokenGenerator(TokenAuthority authenticationMethod) {
         authenticationService().setTokenGenerator(authenticationMethod);
@@ -575,13 +536,16 @@ public class Elepy implements ElepyContext {
     }
 
     private void addDefaultModel(Class<?> model) {
-        if (modelEngine.getSchemas().stream()
-                .map(Schema::getJavaClass)
+        if (schemaClasses.stream()
                 .noneMatch(model::isAssignableFrom)) {
             addModel(model);
         } else {
             logger.info(String.format("Default %s model overridden", Annotations.get(model, Model.class).name()));
         }
+    }
+
+    private SchemaRegistry modelEngine() {
+        return getDependency(SchemaRegistry.class);
     }
 
     private void afterElepyConstruction() {
@@ -613,14 +577,12 @@ public class Elepy implements ElepyContext {
         addDefaultModel(PolicyBinding.class);
         addDefaultModel(FileReference.class);
         addDefaultModel(Revision.class);
-        addExtension(new FileUploadExtension());
-        addExtension(new TranslationsExtension());
         addExtension(config);
-        registerDependency(new UserAuthenticationExtension());
 
         setupLoggingAndExceptions();
         if (!http.hasImplementation()) {
-            http.setImplementation(initialize(DEFAULT_HTTP_SERVICE));
+//            Class<? extends HttpService> cls = (Class<? extends HttpService>) Class.forName(DEFAULT_HTTP_SERVICE);
+//            http.setImplementation(initialize(cls));
         }
     }
 
@@ -646,81 +608,30 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupAuth() {
-        final var authenticationService = this.authenticationService();
-        registerDependency(RoleLookup.class, initialize(DefaultRoleLookup.class));
-        registerDependency(PolicyLookup.class, initialize(DefaultPolicyLookup.class));
-        registerDependency(AuthorizationService.class);
-
-
         addExtension(new UserAuthenticationExtension());
-        registerDependency(initialize(UserCenter.class));
-
-        authenticationService.addLoginMethod(initialize(BasicAuthenticationMethod.class));
+        var authenticationService = initialize(AuthenticationService.class);
+        var basicAuthenticationMethod = initialize(
+                BasicAuthenticationMethod.class);
+        authenticationService.addAuthenticationMethod(basicAuthenticationMethod);
         if (!authenticationService.hasTokenGenerator()) {
             authenticationService.setTokenGenerator(initialize(PersistedTokenGenerator.class));
         }
     }
 
-    private void injectExtensions() {
-        try {
-            for (ElepyExtension module : modules) {
-                context.injectFields(module);
-            }
-        } catch (Exception e) {
-            throw new ElepyConfigException("Error injecting modules: " + e.getMessage());
-        }
-    }
 
     private void igniteAllRoutes() {
-        for (Route extraRoute : routes) {
-            http.addRoute(extraRoute);
-        }
+        var modelRouting = this.initialize(SchemaRouter.class);
+        modelRouting.setupRoutingForSchemas();
     }
 
 
     private void setupLoggingAndExceptions() {
-        http.before(ctx -> {
-            ctx.request().attribute("elepyContext", this);
-            ctx.request().attribute("schemas", this.schemas());
-            ctx.request().attribute("start", System.currentTimeMillis());
-        });
-        http.after(ctx -> {
-            ctx.response().header("Access-Control-Allow-Origin", "*");
-            ctx.response().header("Access-Control-Allow-Methods", "POST, PUT, DELETE");
-            ctx.response().header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin, Accept-Language");
-
-            if (!ctx.request().method().equalsIgnoreCase("OPTIONS") && ctx.response().status() != 404)
-                logger.info(String.format("%s\t['%s']: %dms", ctx.request().method(), ctx.request().uri(), System.currentTimeMillis() - ((Long) ctx.attribute("start"))));
-        });
-
-        http.exception(Exception.class, (exception, context) -> {
-            final ElepyException elepyException;
-            if (exception instanceof InvocationTargetException && ((InvocationTargetException) exception).getTargetException() instanceof ElepyException) {
-                exception = (ElepyException) ((InvocationTargetException) exception).getTargetException();
-            }
-            if (exception instanceof ElepyException) {
-                logger.debug("ElepyException", exception);
-                elepyException = (ElepyException) exception;
-            } else {
-                logger.error(exception.getMessage(), exception);
-                elepyException = ElepyException.internalServerError(exception);
-            }
-
-            if (elepyException.getStatus() == 500) {
-                logger.error(exception.getMessage(), exception);
-                exception.printStackTrace();
-            }
-            context.type("application/json");
-
-            context.status(elepyException.getStatus());
-            final var message = elepyException.getTranslatedMessage();
-            context.result(Message.of(message, elepyException.getMetadata(), elepyException.getStatus()));
-
-        });
+        addExtension(new BasicHttpExtension());
+        addExtension(new SchemaExtension());
     }
 
-    public List<Schema<?>> schemas() {
-        return modelEngine.getSchemas();
+    public List<Schema> schemas() {
+        return modelEngine().getSchemas();
     }
 
     private void checkConfig() {

@@ -66,35 +66,12 @@ public class ElepyPreConfiguration {
     }
 
     /**
-     * Attaches a context object to the void instance. This object would then later be used
-     * in Elepy. An example can be an EmailService, or a SessionFactory. The most important
-     * object is a Database for void or another component to use.
-     * <p>
-     * The elepy object is bound with a unique key. The key is a combination of the object's class
-     * and a tag. This makes it so that you can bind multiple objects of the same type(such as
-     * multiple DB classes) with different tags.
-     * <p>
-     * This object can be accessed via {@link ElepyContext#getDependency(Class, String)}
-     *
-     * @param cls    The class type of the object
-     * @param tag    An optional name
-     * @param object The object
-     * @param <T>    The type of the object
-     * @see ElepyContext
-     */
-    public <T> void registerDependency(Class<T> cls, String tag, T object) {
-        elepy.registerDependency(cls, tag, object);
-    }
-
-    /**
      * Attaches a context object with a null tag.
      * <p>
-     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param cls    The class type of the object
      * @param object The object
      * @param <T>    The type of the object
-     * @see #registerDependency(Class, String, Object)
      */
     public <T> void registerDependency(Class<T> cls, T object) {
         elepy.registerDependency(cls, object);
@@ -103,28 +80,12 @@ public class ElepyPreConfiguration {
     /**
      * Attaches a context object with a null tag, and guesses it's class type.
      * <p>
-     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
      *
      * @param object The object
      * @param <T>    Any type of object
-     * @see #registerDependency(Class, String, Object)
      */
     public <T> void registerDependency(T object) {
         elepy.registerDependency(object);
-    }
-
-    /**
-     * Attaches a context object and guesses it's class type.
-     * <p>
-     * See {@link #registerDependency(Class, String, Object)} for a more detailed description.
-     *
-     * @param object The object
-     * @param tag    An optional name
-     * @param <T>    Any type of object
-     * @see #registerDependency(Class, String, Object)
-     */
-    public <T> void registerDependency(T object, String tag) {
-        elepy.registerDependency(object, tag);
     }
 
     /**
@@ -198,11 +159,11 @@ public class ElepyPreConfiguration {
     /**
      * @return the list of Elepy RestModels
      */
-    public List<Schema<?>> modelSchemas() {
+    public List<Schema> modelSchemas() {
         return elepy.modelSchemas();
     }
 
-    public List<Schema<?>> schemas() {
+    public List<Schema> schemas() {
         return elepy.schemas();
     }
 
@@ -210,16 +171,7 @@ public class ElepyPreConfiguration {
         return elepy.authenticationService();
     }
 
-
-    /**
-     * @param tClass      the class of the model
-     * @param modelChange the change to execute to the model
-     */
-    public void alterModel(Class<?> tClass, ModelChange modelChange) {
-        elepy.alterModel(tClass, modelChange);
-    }
-
-    public void setTokenGenerator(TokenAuthority method) {
+        public void setTokenGenerator(TokenAuthority method) {
         elepy.setTokenGenerator(method);
     }
 

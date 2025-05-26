@@ -4,8 +4,10 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class UserDelete implements ActionHandler<User> {
 
     @Override

@@ -9,7 +9,7 @@ import java.util.Optional;
 public abstract class TokenAuthority implements AuthenticationMethod {
 
     @Override
-    public final Optional<Credentials> getCredentials(Request request) {
+    public Optional<Credentials> getCredentials(Request request) {
         final var token = request.token();
 
         if (token == null) {

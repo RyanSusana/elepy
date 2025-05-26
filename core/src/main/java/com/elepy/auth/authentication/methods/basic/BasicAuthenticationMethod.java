@@ -4,12 +4,15 @@ import com.elepy.auth.authentication.Credentials;
 import com.elepy.auth.authentication.AuthenticationMethod;
 import com.elepy.auth.users.UserCenter;
 import com.elepy.http.Request;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
 
+@ApplicationScoped
 public class BasicAuthenticationMethod implements AuthenticationMethod {
 
     @Inject

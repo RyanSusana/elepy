@@ -3,11 +3,13 @@ package com.elepy.uploads;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.io.Serializable;
 import java.util.Set;
 
+@ApplicationScoped
 public class FileReferenceDelete implements ActionHandler<FileReference> {
 
     @Inject

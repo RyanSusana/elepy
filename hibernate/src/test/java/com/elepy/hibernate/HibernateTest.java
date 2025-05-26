@@ -3,7 +3,6 @@ package com.elepy.hibernate;
 import com.elepy.crud.Crud;
 import com.elepy.query.Filters;
 import com.elepy.query.Queries;
-import com.elepy.di.DefaultElepyContext;
 import com.elepy.http.HttpContext;
 import com.elepy.http.Request;
 import com.elepy.http.Response;
@@ -43,12 +42,12 @@ public class HibernateTest {
         hibernateConfiguration.addAnnotatedClass(Resource.class);
 
         sessionFactory = hibernateConfiguration.buildSessionFactory();
-        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
-        defaultElepyContext.registerDependency(SessionFactory.class, sessionFactory);
-        defaultElepyContext.registerDependency(new ObjectMapper());
-
-
-        resourceCrud = defaultElepyContext.initialize(HibernateCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
+//        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
+//        defaultElepyContext.registerDependency(SessionFactory.class, sessionFactory);
+//        defaultElepyContext.registerDependency(new ObjectMapper());
+//
+//
+//        resourceCrud = defaultElepyContext.initialize(HibernateCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
 
 
     }
@@ -63,35 +62,6 @@ public class HibernateTest {
         assertThat(count()).isEqualTo(2);
     }
 
-    @Test
-    @Disabled("Replace with better mocking of Request and Response")
-    public void testFilterEndToEnd() throws IOException {
-        Resource resource = validObject();
-        resource.setUnique("filterUnique");
-        resource.setId(4);
-        resourceCrud.create(resource);
-        resourceCrud.create(validObject());
-
-        long tenSecondsFromNow = Calendar.getInstance().getTimeInMillis() + 10000;
-        long tenSecondsBefore = Calendar.getInstance().getTimeInMillis() - 10000;
-
-        Map<String, String> map = new HashMap<>();
-
-        map.put("id_equals", "4");
-        map.put("date_gt", "" + tenSecondsBefore);
-        map.put("date_lte", "" + tenSecondsFromNow);
-        map.put("unique_contains", "filt");
-
-        Request request = mockedContextWithQueryMap(map).request();
-
-        List<Resource> resourceResult = resourceCrud.find(
-                new com.elepy.query.Query(Filters.and(request.filtersForModel(Resource.class)))
-        );
-
-        assertThat(resourceResult.size()).isEqualTo(1);
-
-        assertThat(resourceResult.get(0).getUnique()).isEqualTo("filterUnique");
-    }
 
     @Test
     public void testDelete() {
@@ -158,16 +128,6 @@ public class HibernateTest {
         resource.setDate(Calendar.getInstance().getTime());
 
         return resource;
-    }
-
-    private HttpContext mockedContextWithQueryMap(Map<String, String> map) {
-        HttpContext mockedContext = mockedContext();
-        when(mockedContext.request().queryParams()).thenReturn(map.keySet());
-
-        when(mockedContext.request().queryParams(anyString())).thenAnswer(invocationOnMock -> map.get(invocationOnMock.getArgument(0)));
-
-        when(mockedContext.request().filtersForModel(any())).thenCallRealMethod();
-        return mockedContext;
     }
 
     private HttpContext mockedContext() {

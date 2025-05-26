@@ -45,7 +45,6 @@ public class Base {
 
         when(mockedContext.request().queryParams(anyString())).thenAnswer(invocationOnMock -> map.get(invocationOnMock.getArgument(0)));
 
-        when(mockedContext.request().filtersForModel(any())).thenCallRealMethod();
         return mockedContext;
     }
 

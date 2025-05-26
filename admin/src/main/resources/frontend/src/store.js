@@ -97,7 +97,7 @@ export default new Vuex.Store({
             console.debug('initializing store')
             await dispatch('changeLocale', state.locale)
 
-            await axios.get("/elepy/settings", {exceptionHandled: true}).then(({data}) => {
+            await axios.get("/elepy/locales", {exceptionHandled: true}).then(({data}) => {
                 commit('SET_SETTINGS', data)
             })
             await axios.get("/elepy/has-users", {exceptionHandled: true})

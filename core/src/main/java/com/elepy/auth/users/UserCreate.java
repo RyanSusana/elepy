@@ -4,20 +4,20 @@ import com.elepy.auth.authorization.PolicyBinding;
 import com.elepy.crud.Crud;
 import com.elepy.evaluators.DefaultIntegrityEvaluator;
 import com.elepy.evaluators.EvaluationType;
-import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpContext;
 import com.elepy.id.HexIdentityProvider;
-import com.elepy.igniters.ModelContext;
-import jakarta.inject.Inject;
+import com.elepy.igniters.ModelDetails;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.UUID;
 
 
+@ApplicationScoped
 public class UserCreate implements ActionHandler<User> {
 
 
@@ -53,19 +53,19 @@ public class UserCreate implements ActionHandler<User> {
         context.response().result(Message.of("Successfully created the user", 200));
     }
 
-    protected void createAdditionalUser(ModelContext<User> modelContext, HttpContext context, Crud<User> crud, User user) throws Exception {
+    protected void createAdditionalUser(ModelDetails<User> modelDetails, HttpContext context, Crud<User> crud, User user) throws Exception {
         context.loggedInUserOrThrow();
         // TODO
 //        context.requirePermissions("users.create");
 
-        evaluateIntegrity(modelContext, user);
+        evaluateIntegrity(modelDetails, user);
 
         createUser(crud, user);
         context.response().result(Message.of("Successfully created user", 200).withProperty("createdRecords", List.of(user)));
     }
 
-    private void evaluateIntegrity(ModelContext<User> modelContext, User user) {
-        new DefaultIntegrityEvaluator<>(modelContext).evaluate(user, EvaluationType.CREATE);
+    private void evaluateIntegrity(ModelDetails<User> modelDetails, User user) {
+        new DefaultIntegrityEvaluator<>(modelDetails).evaluate(user, EvaluationType.CREATE);
     }
 
     private void createUser(Crud<User> crud, User user) {
@@ -73,7 +73,7 @@ public class UserCreate implements ActionHandler<User> {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 
         //This line didn't exist before for some reason it got deleted
-        new HexIdentityProvider<User>().provideId(user, crud);
+        new HexIdentityProvider().provideId(user, crud);
 
         crud.create(user);
     }

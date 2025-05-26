@@ -52,7 +52,7 @@ You would have to make a `FindOnGoogle` [handler](core-functionality/handlers.md
 public class FindOnGoogle implements ActionHandler<Article> {
     
     @Override
-    public void handleAction(HttpContext context, Crud<Article> articles, ModelContext<Article> modelContext, ObjectMapper objectMapper) {
+    public void handleAction(HttpContext context, Crud<Article> articles, ModelContext<Article> modelDetails, ObjectMapper objectMapper) {
         var article = articles.getById(context.recordId())
                 .orElseThrow(() -> ElepyException.notFound("Article"));
 

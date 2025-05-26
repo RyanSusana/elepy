@@ -7,6 +7,7 @@ import com.elepy.query.Filters;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.*;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class FileUploadExtension implements ElepyExtension {
 
     @Inject

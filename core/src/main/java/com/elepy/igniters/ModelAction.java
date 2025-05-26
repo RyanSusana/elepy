@@ -3,14 +3,13 @@ package com.elepy.igniters;
 import com.elepy.handlers.ActionHandler;
 import com.elepy.http.HttpAction;
 
-public class ModelAction<T> {
+public class ModelAction {
 
     private final HttpAction action;
 
+    private final Class<? extends ActionHandler> actionHandler;
 
-    private final ActionHandler<T> actionHandler;
-
-    public ModelAction(HttpAction action, ActionHandler<T> actionHandler) {
+    public ModelAction(HttpAction action, Class<? extends ActionHandler> actionHandler) {
         this.actionHandler = actionHandler;
         this.action = action;
 
@@ -20,7 +19,7 @@ public class ModelAction<T> {
         return action;
     }
 
-    public ActionHandler<T> getActionHandler() {
+    public Class<? extends ActionHandler> getActionHandler() {
         return actionHandler;
     }
 }

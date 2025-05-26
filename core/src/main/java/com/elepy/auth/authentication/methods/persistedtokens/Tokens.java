@@ -6,6 +6,7 @@ import com.elepy.crud.Crud;
 import com.elepy.query.Filters;
 import com.elepy.query.Queries;
 import com.elepy.query.Query;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class Tokens {
 
     public Credentials getCredentials(String elepyToken) {
