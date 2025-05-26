@@ -22,7 +22,7 @@ import java.util.Objects;
 @Table(name = "elepy_users")
 
 // Required permission is handled in UserCreate.class
-@Create(handler = UserCreate.class, requiredPermissions = {})
+@Create(handler = UserCreate.class, requiredPermissions = {"users.create"})
 
 @Find(findManyHandler = UserFind.class,
         findOneHandler = UserFind.class,

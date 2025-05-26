@@ -26,4 +26,6 @@ public @interface Create {
      * A list of required permissions to execute this A
      */
     String[] requiredPermissions() default {"resources.create"};
+
+    boolean disabled() default false;
 }

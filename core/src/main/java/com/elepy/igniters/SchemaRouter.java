@@ -77,8 +77,10 @@ public class SchemaRouter {
         var allDefaultActions = DefaultActionFactory.values();
         for (var allDefaultAction : allDefaultActions) {
             var factory = allDefaultAction.factoryMethod();
-            var action = (ModelAction) factory.apply(beanManager, schema);
-            actions.add(action);
+            var action = factory.apply(beanManager, schema);
+
+            // Can be disabled :)
+            if (action!= null) actions.add(action);
         }
         return actions;
     }

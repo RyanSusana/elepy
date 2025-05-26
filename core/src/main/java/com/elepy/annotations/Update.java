@@ -28,4 +28,6 @@ public @interface Update {
      * A list of required permissions to execute this A
      */
     String[] requiredPermissions() default {"resources.update"};
+
+    boolean disabled() default false;
 }

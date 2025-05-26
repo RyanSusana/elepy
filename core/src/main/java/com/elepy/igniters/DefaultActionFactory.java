@@ -41,11 +41,14 @@ public enum DefaultActionFactory {
         Class<? extends ActionHandler> handlerClass = DefaultCreate.class;
 
         final var definedHandlerOptional = Optional
-                .ofNullable(Annotations.get(schema.getJavaClass(), Create.class))
-                .map(Create::handler);
+                .ofNullable(Annotations.get(schema.getJavaClass(), Create.class));
+
 
         if (definedHandlerOptional.isPresent()) {
-            handlerClass = definedHandlerOptional.get();
+            if (definedHandlerOptional.get().disabled()) {
+                return null;
+            }
+            handlerClass = definedHandlerOptional.get().handler();
         }
 
         return new ModelAction(DefaultActions.getCreateFromSchema(schema), handlerClass);
@@ -55,11 +58,13 @@ public enum DefaultActionFactory {
         Class<? extends ActionHandler> handlerClass = DefaultDelete.class;
 
         final var definedHandlerOptional = Optional
-                .ofNullable(Annotations.get(schema.getJavaClass(), Delete.class))
-                .map(Delete::handler);
+                .ofNullable(Annotations.get(schema.getJavaClass(), Delete.class));
 
         if (definedHandlerOptional.isPresent()) {
-            handlerClass = definedHandlerOptional.get();
+            if (definedHandlerOptional.get().disabled()) {
+                return null;
+            }
+            handlerClass = definedHandlerOptional.get().handler();
         }
 
         return new ModelAction(DefaultActions.getDeleteFromSchema(schema, many), handlerClass);
@@ -69,9 +74,12 @@ public enum DefaultActionFactory {
         Class<? extends ActionHandler> handlerClass = DefaultUpdate.class;
         final var definedHandlerOptional = Optional
                 .ofNullable(Annotations.get(schema.getJavaClass(), Update.class))
-                .map(Update::handler);
+                ;
         if (definedHandlerOptional.isPresent()) {
-            handlerClass = definedHandlerOptional.get();
+            if (definedHandlerOptional.get().disabled()) {
+                return null;
+            }
+            handlerClass = definedHandlerOptional.get().handler();
         }
 
         return new ModelAction(DefaultActions.getUpdateFromSchema(schema, whole), handlerClass);

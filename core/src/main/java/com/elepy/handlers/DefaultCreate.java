@@ -62,8 +62,7 @@ public class DefaultCreate<T> implements ActionHandler<T> {
     private void evaluate(T item, ModelDetails<T> modelDetails, HttpContext context, Crud<T> dao) throws Exception {
         context.validate(item);
 
-//TODO setup IdentityProvider again
-        new DefaultIdentityProvider().provideId(item, dao);
+        modelDetails.getIdentityProvider().provideId(item, dao);
         new DefaultIntegrityEvaluator<>(modelDetails).evaluate(item, EvaluationType.CREATE);
     }
 

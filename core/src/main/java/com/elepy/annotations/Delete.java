@@ -27,4 +27,6 @@ public @interface Delete {
      */
     String[] requiredPermissions() default {"resources.delete"} ;
 
+    boolean disabled() default false;
+
 }
