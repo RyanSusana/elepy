@@ -2,25 +2,42 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useMainStore } from './stores/main'
 import utils from "@/utils";
 
+const UIkit = require('uikit');
+
 const requireLogin = (to, from, next) => {
     const store = useMainStore()
     
-    const unwatch = store.$subscribe((mutation, state) => {
-        if (state.ready) {
-            unwatch() // Stop watching
-            
-            if (store.loggedIn) {
-                next();
+    if (store.ready) {
+        if (store.loggedIn) {
+            next();
+        } else {
+            next({
+                path: '/login',
+                query: {
+                    redirect: to.fullPath,
+                },
+            });
+        }
+    } else {
+        // Wait for store to be ready
+        const checkReady = () => {
+            if (store.ready) {
+                if (store.loggedIn) {
+                    next();
+                } else {
+                    next({
+                        path: '/login',
+                        query: {
+                            redirect: to.fullPath,
+                        },
+                    });
+                }
             } else {
-                next({
-                    path: '/login',
-                    query: {
-                        redirect: to.fullPath,
-                    },
-                });
+                setTimeout(checkReady, 50)
             }
         }
-    }, { immediate: true })
+        checkReady()
+    }
 };
 
 const noLogin = (to, from, next) => {
@@ -37,25 +54,43 @@ const noLogin = (to, from, next) => {
         );
     }
     
-    const unwatch = store.$subscribe((mutation, state) => {
-        if (state.hasUsers !== null) {
-            unwatch() // Stop watching
-            
-            if (state.hasUsers && (to.path !== '/login')) {
-                next({
-                    path: '/login',
-                    query: to.query
-                });
-            } else if (!state.hasUsers && to.path !== '/initial-user') {
-                next({
-                    path: '/initial-user',
-                    query: to.query
-                });
+    if (store.hasUsers !== null) {
+        if (store.hasUsers && (to.path !== '/login')) {
+            next({
+                path: '/login',
+                query: to.query
+            });
+        } else if (!store.hasUsers && to.path !== '/initial-user') {
+            next({
+                path: '/initial-user',
+                query: to.query
+            });
+        } else {
+            next();
+        }
+    } else {
+        // Wait for hasUsers to be determined
+        const checkHasUsers = () => {
+            if (store.hasUsers !== null) {
+                if (store.hasUsers && (to.path !== '/login')) {
+                    next({
+                        path: '/login',
+                        query: to.query
+                    });
+                } else if (!store.hasUsers && to.path !== '/initial-user') {
+                    next({
+                        path: '/initial-user',
+                        query: to.query
+                    });
+                } else {
+                    next();
+                }
             } else {
-                next();
+                setTimeout(checkHasUsers, 50)
             }
         }
-    }, { immediate: true })
+        checkHasUsers()
+    }
 };
 
 const routes = [

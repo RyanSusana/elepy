@@ -9,7 +9,7 @@
 
 
         <div class=" logo">
-          <img :src="$store.getters.logo"
+          <img :src="logo"
                alt="logo">
         </div>
 
@@ -66,9 +66,26 @@ import ActionButton from '../components/base/ActionButton';
 import LanguageSelect from "@/components/LanguageSelect";
 import OAuthButtons from "@/components/OAuthButtons";
 
+<script>
+import LanguageSelect from "@/components/LanguageSelect";
+import ActionButton from "@/components/base/ActionButton";
+import OAuthButtons from "@/components/OAuthButtons";
+import { useMainStore } from "@/stores/main";
+import { useRouter } from 'vue-router'
+
 export default {
   name: "LoginView",
   components: {OAuthButtons, LanguageSelect, ActionButton},
+  setup() {
+    const store = useMainStore()
+    const router = useRouter()
+    
+    return {
+      store,
+      router,
+      logo: store.logo
+    }
+  },
   data() {
     return {
       username: "",
@@ -94,10 +111,10 @@ export default {
     },
 
     login() {
-      return this.$store.dispatch("logIn", {username: this.username, password: this.password})
+      return this.store.logIn({username: this.username, password: this.password})
           .then(() => {
 
-            this.$router.push(this.$route.query.redirect ?? '/')
+            this.router.push(this.$route.query.redirect ?? '/')
           })
     }
   }
