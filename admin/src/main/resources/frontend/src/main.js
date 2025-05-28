@@ -1,6 +1,8 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
-import store from "./store";
+import { useMainStore } from "./stores/main";
 import Utils from "./utils"
 import router from './router'
 import axios from "axios"
@@ -13,33 +15,32 @@ if (process.env.NODE_ENV !== 'production') {
     // This is the URL to the instance that gets run from 'develop_frontend.sh'
     axios.defaults.baseURL = 'http://localhost:7331';
 }
-const vue = new Vue({
-    i18n,
-    router,
-    store,
-    render: h => h(App),
-}).$mount('#app');
 
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
-Vue.config.productionTip = false;
+const app = createApp(App)
+app.use(i18n)
+app.use(router)
+app.use(pinia)
 
+// Global properties to replace Vue 2 filters
+app.config.globalProperties.$filters = {
+    t: (value) => {
+        if (!value) return "";
+        return i18next.t(value);
+    },
+    relativeTime: (value) => {
+        if (!value) return "";
+        return moment(value).fromNow();
+    }
+}
 
 Utils.url = "";
-store.dispatch('init');
 
-Vue.filter("t", value => {
-    if (!value) return "";
-
-
-    return i18next.t(value);
-});
-
-Vue.filter("relativeTime", value => {
-    if (!value) return "";
-
-    return moment(value).fromNow();
-
-});
+// Initialize store after Vue app is created
+const store = useMainStore()
+store.init();
 axios.interceptors.request.use(function (config) {
 
     const uniqueId = Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -49,7 +50,7 @@ axios.interceptors.request.use(function (config) {
 
     config.requestInfo = {uniqueId, description, timestamp}
 
-    store.commit("ADD_LOAD_ITEM", config.requestInfo)
+    store.addLoadItem(config.requestInfo)
     return config;
 }, function (error) {
     // Do something with request error
@@ -58,12 +59,12 @@ axios.interceptors.request.use(function (config) {
 
 // Add a response interceptor
 axios.interceptors.response.use((response) => {
-    store.commit("REMOVE_LOAD_ITEM", response.config.requestInfo.id);
+    store.removeLoadItem(response.config.requestInfo.id);
     logResponse(response);
     return response;
 }, (error) => {
     if (error.response && !error.response.config.exceptionHandled) {
-        store.commit("REMOVE_LOAD_ITEM", error.response.config.requestInfo.id);
+        store.removeLoadItem(error.response.config.requestInfo.id);
         logResponse(error.response)
         Utils.displayError(error);
     } else if (!error.response) {
@@ -81,7 +82,7 @@ function adjust(color, amount) {
     return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
 }
 
-Vibrant.from(store.getters.logo).getPalette()
+Vibrant.from(store.logo).getPalette()
     .then((palette) => {
 
         let primary = palette.Vibrant.hex;
@@ -101,4 +102,6 @@ Vibrant.from(store.getters.logo).getPalette()
             .setProperty('--primary-disabled-color', primaryDisabled);
     });
 
-export default vue
+app.mount('#app')
+
+export default app
