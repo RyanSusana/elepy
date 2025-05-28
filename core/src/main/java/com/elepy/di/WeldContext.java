@@ -66,7 +66,6 @@ public class WeldContext implements ElepyContext {
         container = weld.initialize();
 
     }
-
     public <T> void registerDependency(Class<T> cls, T object) {
         extension.registerDependency(cls, object);
     }
@@ -104,11 +103,7 @@ public class WeldContext implements ElepyContext {
                 // Scan URLs relevant to the base package to potentially speed things up
                 .setUrls(ClasspathHelper.forPackage(basePackage))
                 // Filter inputs to only include resources within the base package
-                .filterInputsBy(new FilterBuilder().includePackage(basePackage))
-                // Use Scanners.SubTypes to find all class names
-                // Using 'false' for SubTypesScanner constructor is deprecated/changed in newer versions.
-                // Prefer using the Scanners enum/class constants.
-                .setScanners(Scanners.SubTypes); // Scan for subtypes (effectively finding classes)
+                .filterInputsBy(new FilterBuilder().includePackage(basePackage));
 
         Reflections reflections = new Reflections(configBuilder);
 

@@ -7,6 +7,11 @@
         <groupId>com.elepy</groupId>
         <version>${revision}</version>
     </parent>
+    <packaging>pom</packaging>
+    <modules>
+        <module>cloudstorage</module>
+        <module>firestore</module>
+    </modules>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>elepy-gcp</artifactId>

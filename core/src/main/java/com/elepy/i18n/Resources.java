@@ -1,5 +1,6 @@
 package com.elepy.i18n;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+@ApplicationScoped
 public class Resources implements ResourceBundleLocator {
     private ResourceBundleLocator resourceBundleLocator;
 

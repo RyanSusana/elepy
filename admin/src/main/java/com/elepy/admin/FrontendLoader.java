@@ -3,6 +3,7 @@ package com.elepy.admin;
 import com.elepy.configuration.ElepyExtension;
 import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.http.HttpService;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
+@ApplicationScoped
 public class FrontendLoader implements ElepyExtension {
 
     @Override

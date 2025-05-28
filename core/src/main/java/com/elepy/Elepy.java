@@ -97,28 +97,20 @@ public class Elepy implements ElepyContext {
     private void setupDependencies() {
         this.propertyConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
 
-        registerDependency(Resources.class, new Resources());
-
-        registerDependencySupplier(ValidatorFactory.class,
-                () -> Validation
-                        .byProvider(HibernateValidator.class)
-                        .configure()
-                        .propertyNodeNameProvider(new JsonNodeNameProvider())
-                        .buildValidatorFactory());
-
+        registerDependency(SchemaFactory.class, schemaFactory);
+        registerDependency(SchemaRegistry.class, schemaRegistry);
+        registerDependencySupplier(HttpServiceInterceptor.class, () -> http);
 
         registerDependencySupplier(org.apache.commons.configuration2.Configuration.class, () -> propertyConfiguration);
-
         registerDependencySupplier(Properties.class, () -> ConfigurationConverter.getProperties(propertyConfiguration));
         withFileService(new DefaultFileService());
-        registerDependencySupplier(HttpServiceInterceptor.class, () -> http);
+
+        registerDependency(ValidatorFactoryProducer.class);
+        registerDependency(Resources.class);
         registerDependency(UserService.class);
         registerDependency(AuthenticationService.class);
         registerDependency(AuthorizationService.class);
-
         registerDependency(ObjectMapperProducer.class);
-        registerDependency(SchemaFactory.class, schemaFactory);
-        registerDependency(SchemaRegistry.class, schemaRegistry);
         registerDependency(SchemaRouter.class);
         registerDependency(ActionFactory.class);
         registerDependency(BasicAuthenticationMethod.class);
@@ -126,6 +118,7 @@ public class Elepy implements ElepyContext {
         registerDependency(Tokens.class);
         registerDependency(ModelDetailsFactory.class);
         registerDependency(ExtensionRegistry.class);
+
         addExtension(TranslationsExtension.class);
         addExtension(LocaleSettings.class);
         addExtension(FileUploadExtension.class);

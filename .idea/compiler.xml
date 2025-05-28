@@ -11,16 +11,16 @@
         <module name="elepy-hibernate" />
         <module name="elepy-mongo" />
         <module name="elepy-core" />
+        <module name="elepy-gcp-cloudstorage" />
         <module name="elepy-oauth" />
         <module name="elepy-sparkjava" />
         <module name="elepy-admin" />
         <module name="elepy-jwt" />
         <module name="elepy-tests" />
         <module name="elepy-swagger" />
-        <module name="elepy-firebase" />
         <module name="elepy-javalin" />
+        <module name="elepy-gcp-firestore" />
         <module name="elepy-aws-s3" />
-        <module name="elepy-gcp" />
       </profile>
     </annotationProcessing>
   </component>

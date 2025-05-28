@@ -2,11 +2,14 @@ package com.elepy.uploads;
 
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.http.RawFile;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+//@ApplicationScoped
+// TODO
 public class DefaultFileService implements FileService {
 
     @Override

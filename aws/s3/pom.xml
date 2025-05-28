@@ -9,6 +9,7 @@
         <version>${revision}</version>
     </parent>
 
+    <name>Elepy AWS S3</name>
     <artifactId>elepy-aws-s3</artifactId>
 
     <properties>
