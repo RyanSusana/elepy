@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HibernateDao<T> implements Crud<T> {
-    private static final Logger logger = LoggerFactory.getLogger(HibernateDao.class);
+    private static final Logger logger = LoggerFactory.getLogger("hibernate");
     private final SessionFactory sessionFactory;
     private final Schema<T> schema;
     private final ObjectMapper objectMapper;
@@ -106,15 +107,22 @@ public class HibernateDao<T> implements Crud<T> {
 
     @Override
     public void create(T item) {
+        logger.debug("Creating {}", item.getClass().getSimpleName());
+        TransactionStatus status;
         try (Session session = sessionFactory.openSession()) {
             final Transaction transaction = session.beginTransaction();
 
             create(session, item);
+
+            session.flush();
             transaction.commit();
+            status = transaction.getStatus();
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw ElepyException.internalServerError(e);
         }
+        var all = getAll();
     }
 
     @Override

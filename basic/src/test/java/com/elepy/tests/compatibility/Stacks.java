@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Stacks {
-    public static final ElepyConfigHelper SPARKJAVA = elepy -> elepy.withHttpService(new SparkService());
-    public static final ElepyConfigHelper JAVALIN = elepy -> elepy.withHttpService(new JavalinService());
+    public static final ElepyConfigHelper SPARKJAVA = elepy -> elepy.withHttpService(SparkService.class);
+    public static final ElepyConfigHelper JAVALIN = elepy -> elepy.withHttpService(JavalinService.class);
 
     public static final ElepyConfigHelper MONGO = new MongoStack();
     public static final ElepyConfigHelper HIBERNATE = elepy -> elepy.addConfiguration(HibernateConfiguration.inMemory());

@@ -42,22 +42,18 @@ public class HibernateTest {
         hibernateConfiguration.addAnnotatedClass(Resource.class);
 
         sessionFactory = hibernateConfiguration.buildSessionFactory();
-//        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
-//        defaultElepyContext.registerDependency(SessionFactory.class, sessionFactory);
-//        defaultElepyContext.registerDependency(new ObjectMapper());
-//
-//
-//        resourceCrud = defaultElepyContext.initialize(HibernateCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
+        var sessionFactoryProvider = new SessionFactoryProvider();
+        sessionFactoryProvider.setSessionFactory(sessionFactory);
+        var crudFactory = new HibernateCrudFactory(sessionFactoryProvider, new ObjectMapper());
+        resourceCrud  = crudFactory.crudFor(new SchemaFactory().createDeepSchema(Resource.class));
 
 
     }
 
     @Test
     public void testCreate() {
-
         resourceCrud.create(validObject());
         resourceCrud.create(validObject());
-
 
         assertThat(count()).isEqualTo(2);
     }

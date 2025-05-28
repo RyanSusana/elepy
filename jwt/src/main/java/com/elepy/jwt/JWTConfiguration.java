@@ -39,6 +39,12 @@ public class JWTConfiguration implements Configuration {
 
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
+
+
+    }
+
+    @Override
+    public void postConfig(ElepyPostConfiguration elepy) {
         if (algorithm != null) {
             elepy.setTokenGenerator(new JWTGenerator(algorithm));
         } else {
@@ -47,11 +53,5 @@ public class JWTConfiguration implements Configuration {
 
             elepy.setTokenGenerator(new JWTGenerator(Algorithm.HMAC256(secret)));
         }
-
-    }
-
-    @Override
-    public void postConfig(ElepyPostConfiguration elepy) {
-
     }
 }

@@ -23,6 +23,9 @@ public class Product {
     @Id
     private Integer id;
 
+    @Label("Some number")
+    private Integer number;
+
     @Label("Price")
     private BigDecimal price;
 
@@ -115,5 +118,13 @@ public class Product {
         final var product = new Product();
         product.setShortDescription(s);
         return product;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public Integer getNumber() {
+        return number;
     }
 }

@@ -1,6 +1,7 @@
 package com.elepy.configuration;
 
 import com.elepy.Elepy;
+import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 import com.elepy.crud.Crud;
 import com.elepy.igniters.ModelChange;
 import com.elepy.schemas.Schema;
@@ -116,5 +117,10 @@ public class ElepyPostConfiguration {
 
     public Configuration getPropertyConfig() {
         return elepy.getPropertyConfig();
+    }
+
+    // TODO: This should be moved to a more appropriate place
+    public void setTokenGenerator(TokenAuthority tokenAuthority) {
+        elepy.authenticationService().setTokenGenerator(tokenAuthority);
     }
 }

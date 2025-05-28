@@ -1,11 +1,13 @@
 package com.elepy.crud;
 
+import com.elepy.annotations.Dao;
 import com.elepy.revisions.Revision;
 import com.elepy.revisions.RevisionCrud;
 import com.elepy.schemas.Schema;
 import com.elepy.schemas.SchemaRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 
@@ -14,9 +16,8 @@ import java.util.Map;
 
 @ApplicationScoped
 public class CrudRegistry {
+    private Class<? extends CrudFactory> defaultCrudFactoryClass;
 
-    @Inject
-    private CrudFactory crudFactory;
     @Inject
     private SchemaRegistry schemaRegistry;
 
@@ -38,9 +39,16 @@ public class CrudRegistry {
     // the container automatically detects the problem and treats it as a definition error.
     private <T>Crud<T> cachedGetCrud(Schema<T> schema){
         if (!cruds.containsKey(schema.getJavaClass())) {
+            final Class<? extends CrudFactory> crudFactoryClass = defaultCrudFactoryClass;
+
+            CrudFactory crudFactory = CDI.current().select(crudFactoryClass).get();
             var crud = crudFactory.crudFor(schema);
             cruds.put(schema.getJavaClass(), crud);
         }
         return (Crud<T>) cruds.get(schema.getJavaClass());
+    }
+
+    public void setDefaultCrudFactoryClass(Class<? extends CrudFactory> defaultCrudFactoryClass) {
+        this.defaultCrudFactoryClass = defaultCrudFactoryClass;
     }
 }

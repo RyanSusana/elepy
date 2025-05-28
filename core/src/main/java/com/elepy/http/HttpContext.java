@@ -1,7 +1,6 @@
 package com.elepy.http;
 
 import com.elepy.auth.authentication.AuthenticationService;
-import com.elepy.auth.users.User;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.Message;
 
@@ -32,11 +31,6 @@ public interface HttpContext {
      */
     default Set<Serializable> recordIds() {
         return request().recordIds();
-    }
-
-    default HttpContext injectModelClassInHttpContext(Class<?> cls) {
-        request().attribute("modelClass", cls);
-        return this;
     }
 
     default ElepyContext elepy() {
@@ -139,14 +133,6 @@ public interface HttpContext {
 
     default Set<String> attributes() {
         return request().attributes();
-    }
-
-    default Optional<User> loggedInUser() {
-        return request().loggedInUser();
-    }
-
-    default User loggedInUserOrThrow() {
-        return request().loggedInUserOrThrow();
     }
 
 

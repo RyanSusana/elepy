@@ -4,9 +4,11 @@ import com.elepy.crud.Crud;
 import com.elepy.query.Expression;
 import com.elepy.query.Query;
 import com.elepy.exceptions.ElepyException;
+import com.elepy.query.SortingSpecification;
 import com.elepy.schemas.Schema;
 import com.elepy.utils.ReflectionUtils;
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.*;
 
 import java.io.Serializable;
@@ -32,15 +34,16 @@ public class FirestoreCrud<T> implements Crud<T> {
 
 
     /**
-    * If the collection name starts with a "/", it will be removed.
+     * If the collection name starts with a "/", it will be removed.
      * Non-leading "/" characters will be replaced with "_".
-    * */
+     */
     private String normalizeCollection(String collection) {
         if (collection.startsWith("/")) {
             collection = collection.substring(1);
         }
         return collection.replace("/", "_");
     }
+
     @Override
 
     public List<T> find(Query query) {
@@ -49,6 +52,14 @@ public class FirestoreCrud<T> implements Crud<T> {
         q = q.where(filterFactory.createFilterFromExpression(query.getExpression()));
         q = q.offset(query.getSkip());
         q = q.limit(query.getLimit());
+
+        var sortingSpecification = query.getSortingSpecification();
+        for (var stringSortOptionEntry : sortingSpecification.getMap().entrySet()) {
+            q = switch (stringSortOptionEntry.getValue()) {
+                case ASCENDING -> q.orderBy(stringSortOptionEntry.getKey(), com.google.cloud.firestore.Query.Direction.ASCENDING);
+                case DESCENDING -> q.orderBy(stringSortOptionEntry.getKey(), com.google.cloud.firestore.Query.Direction.DESCENDING);
+            };
+        }
         return toList(q);
     }
 
@@ -129,9 +140,10 @@ public class FirestoreCrud<T> implements Crud<T> {
     public void delete(Expression expression) {
         try {
             var documents = db.collection(collection).where(filterFactory.createFilterFromExpression(expression)).get().get().getDocuments();
-            for (QueryDocumentSnapshot document : documents) {
-                document.getReference().delete();
-            }
+            var deletes = documents.stream().map(x -> x.getReference().delete()).toList();
+
+            ApiFuture<List<WriteResult>> future = ApiFutures.allAsList(deletes);
+            future.get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
@@ -140,7 +152,22 @@ public class FirestoreCrud<T> implements Crud<T> {
     }
 
     @Override
+    public long count() {
+        try {
+            return db.collection(collection).count().get().get().getCount();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return 0;
+        } catch (ExecutionException e) {
+            throw ElepyException.internalServerError(e);
+        }
+    }
+
+    @Override
     public long count(Expression query) {
+        if (query == null || query.canBeIgnored()) {
+            return count();
+        }
         try {
             AggregateQuery count = db.collection(collection).where(filterFactory.createFilterFromExpression(query)).count();
             return count.get().get().getCount();

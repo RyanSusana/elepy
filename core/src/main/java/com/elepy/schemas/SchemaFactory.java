@@ -83,7 +83,7 @@ public class SchemaFactory {
         Field field = ReflectionUtils.getIdField(cls).orElseThrow(() -> new ElepyConfigException(cls.getName() + " doesn't have a valid identifying field, please annotate a String/Long/Int field with @Identifier"));
 
         if (!Arrays.asList(Long.class, String.class, Integer.class).contains(org.apache.commons.lang3.ClassUtils.primitivesToWrappers(field.getType())[0])) {
-            throw new ElepyConfigException(String.format("The id field '%s' is not a Long, String or Int", field.getName()));
+            throw new ElepyConfigException(String.format("The id field '%s' on '%s' is not a Long, String or Int", field.getName(), cls.getName()));
         }
 
         schema.setIdProperty(ReflectionUtils.getPropertyName(field));

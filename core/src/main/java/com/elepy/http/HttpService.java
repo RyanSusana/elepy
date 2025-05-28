@@ -9,12 +9,12 @@ public interface HttpService {
 
     int port();
 
-    void addRoute(Route route);
 
     void ignite();
 
     void stop();
 
+    void addRoute(Route route);
     default void staticFile(String path, String resourceLocation, String contentType, boolean gzip) {
         final var file = RouteBuilder.anElepyRoute().acceptType(contentType)
                 .method(HttpMethod.GET)

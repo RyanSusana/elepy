@@ -63,7 +63,7 @@ public class DefaultCreate<T> implements ActionHandler<T> {
         context.validate(item);
 
         modelDetails.getIdentityProvider().provideId(item, dao);
-        new DefaultIntegrityEvaluator<>(modelDetails).evaluate(item, EvaluationType.CREATE);
+        new DefaultIntegrityEvaluator<>(modelDetails.getCrud()).evaluate(item, EvaluationType.CREATE);
     }
 
 

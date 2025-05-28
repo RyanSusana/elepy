@@ -10,6 +10,9 @@ import com.elepy.schemas.Schema;
 import com.elepy.schemas.SchemaRegistry;
 import com.elepy.utils.Annotations;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.BeanContainer;
+import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 
@@ -24,6 +27,9 @@ public class ModelDetailsFactory {
     @Inject
     private SchemaRegistry schemaRegistry;
 
+    @Inject
+    private Instance<IdentityProvider> identityProviders;
+
     public <T> ModelDetails<T> getModelDetailsFor(Class<T> clazz) {
         final Crud<T> crud = crudRegistry.getCrudFor(clazz);
         final Schema<T> schema = schemaRegistry.getSchema(clazz);
@@ -32,7 +38,7 @@ public class ModelDetailsFactory {
 
         final IdentityProvider identityProvider;
         if (providedIdProvider.isPresent()) {
-            identityProvider = CDI.current().select(providedIdProvider.get()).get();
+            identityProvider = identityProviders.select(providedIdProvider.get()).get();
         } else {
             identityProvider = new DefaultIdentityProvider();
         }

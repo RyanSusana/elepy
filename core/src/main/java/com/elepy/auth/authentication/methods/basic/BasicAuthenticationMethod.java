@@ -2,10 +2,9 @@ package com.elepy.auth.authentication.methods.basic;
 
 import com.elepy.auth.authentication.Credentials;
 import com.elepy.auth.authentication.AuthenticationMethod;
-import com.elepy.auth.users.UserCenter;
+import com.elepy.auth.users.UserService;
 import com.elepy.http.Request;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 
 import java.nio.charset.StandardCharsets;
@@ -16,7 +15,7 @@ import java.util.Optional;
 public class BasicAuthenticationMethod implements AuthenticationMethod {
 
     @Inject
-    private UserCenter userCenter;
+    private UserService userService;
 
     @Override
     public Optional<Credentials> getCredentials(Request request) {
@@ -28,8 +27,8 @@ public class BasicAuthenticationMethod implements AuthenticationMethod {
 
         final String[] authorization = authorizationOpt.get();
 
-        return userCenter.login(authorization[0], authorization[1])
-                .map(userCenter::getCredentialsForUser);
+        return userService.login(authorization[0], authorization[1])
+                .map(userService::getCredentialsForUser);
     }
 
 

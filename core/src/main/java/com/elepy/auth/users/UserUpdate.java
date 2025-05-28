@@ -22,7 +22,7 @@ public class UserUpdate extends DefaultUpdate<User> {
     public User handleUpdate(HandlerContext<User> ctx, ObjectMapper objectMapper) throws Exception {
         final var context = ctx.http();
         Crud<User> crud = ctx.crud();
-        User loggedInUser = context.loggedInUserOrThrow();
+        User loggedInUser = context.request().loggedInUserOrThrow();
 
         User userToUpdateBefore = crud.getById(context.recordId()).orElseThrow(() -> ElepyException.notFound("User"));
 
@@ -62,7 +62,7 @@ public class UserUpdate extends DefaultUpdate<User> {
         //Elepy evaluation
         new DefaultObjectUpdateEvaluator<>().evaluate(userToUpdateBefore, userToUpdateAfter);
 
-        new DefaultIntegrityEvaluator<>(modelDetails).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
+        new DefaultIntegrityEvaluator<>(modelDetails.getCrud()).evaluate(userToUpdateAfter, EvaluationType.UPDATE);
     }
 
 

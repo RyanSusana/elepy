@@ -1,7 +1,7 @@
 package com.elepy.auth.authentication.methods.persistedtokens;
 
 import com.elepy.auth.authentication.Credentials;
-import com.elepy.auth.users.UserCenter;
+import com.elepy.auth.users.UserService;
 import com.elepy.crud.Crud;
 import com.elepy.query.Filters;
 import com.elepy.query.Queries;
@@ -37,7 +37,7 @@ public class Tokens {
     private Crud<Token> tokens;
 
     @Inject
-    private UserCenter users;
+    private UserService users;
     private final Map<Token, Credentials> cached = new HashMap<>();
 
     private Optional<Credentials> getGrantFromCache(String token) {

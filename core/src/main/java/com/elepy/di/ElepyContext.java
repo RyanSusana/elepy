@@ -36,16 +36,6 @@ public interface ElepyContext {
     }
 
 
-
-    @SuppressWarnings("unchecked")
-//    default <T> T initialize(String className) {
-//        try {
-//            return (T) initialize(Class.forName(className));
-//        } catch (ClassNotFoundException e) {
-//            throw new ElepyConfigException(String.format("Missing class '%s', make sure you have your dependencies in order", className));
-//        }
-//
-//    }
     <T> Crud<T> getCrudFor(Class<T> cls) ;
 
 }

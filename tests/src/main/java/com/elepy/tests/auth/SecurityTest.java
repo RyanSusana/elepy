@@ -8,13 +8,19 @@ import com.elepy.tests.CustomUser;
 import com.elepy.tests.ElepyConfigHelper;
 import com.elepy.tests.ElepySystemUnderTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,21 +28,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 public abstract class SecurityTest implements ElepyConfigHelper {
 
     private ElepySystemUnderTest elepy;
+    private HttpClient httpClient;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void before() {
         elepy = ElepySystemUnderTest.create();
-
         this.configureElepy(elepy);
         elepy.addModel(CustomUser.class);
-
         elepy.start();
 
-        Unirest.setHttpClient(HttpClients.custom().disableCookieManagement().build());
+        httpClient = HttpClient.newHttpClient();
+        objectMapper = new ObjectMapper();
     }
 
+    @AfterEach
+    void tearDown() {
+        elepy.stop();
+    }
+
+    private HttpResponse<String> sendGetRequest(String url, String authorizationHeader) throws IOException, InterruptedException {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET();
+        if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
+            requestBuilder.header("Authorization", authorizationHeader);
+        }
+        HttpRequest request = requestBuilder.build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> sendPostRequest(String url, String body, String contentType, String authorizationHeader) throws IOException, InterruptedException {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : body, StandardCharsets.UTF_8));
+
+        if (contentType != null && !contentType.isEmpty()) {
+            requestBuilder.header("Content-Type", contentType);
+        }
+        if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
+            requestBuilder.header("Authorization", authorizationHeader);
+        }
+        HttpRequest request = requestBuilder.build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private String createBasicAuthHeader(String username, String password) {
+        String auth = username + ":" + password;
+        return "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+    }
+
+
     @Test
-    void can_Login_withToken() throws UnirestException {
+    void can_Login_withToken() throws IOException, InterruptedException {
         elepy.createInitialUserViaHttp("michelle", "bowers");
 
         var reference = new AtomicReference<User>();
@@ -46,115 +90,131 @@ public abstract class SecurityTest implements ElepyConfigHelper {
                 .method(HttpMethod.GET)
                 .path("/random-secured-route")
                 .route(context -> {
-                            reference.set(context.loggedInUserOrThrow());
+                            reference.set(context.request().loggedInUserOrThrow());
                             context.result(Message.of("Perfect!", 200));
                         }
                 )
                 .build());
 
-        final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
-                .basicAuth("michelle", "bowers")
-                .asString();
+        // Get token
+        final var getTokenResponse = sendPostRequest(
+                elepy.url() + "/elepy/token-login",
+                null, // No request body for basic auth
+                null,
+                createBasicAuthHeader("michelle", "bowers")
+        );
 
-
-        final var token = getTokenResponse.getBody().replaceAll("\"", "");
-
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route").header("Authorization", "Bearer " + token).asString();
-
-        assertThat(authenticationResponse.getStatus())
+        assertThat(getTokenResponse.statusCode())
                 .isEqualTo(200);
-        assertThat(authenticationResponse.getBody())
+
+        final var token = objectMapper.readValue(getTokenResponse.body(), String.class); // Assuming token is a plain string in the body
+
+        // Access secured route with token
+        final var authenticationResponse = sendGetRequest(
+                elepy.url() + "/random-secured-route",
+                "Bearer " + token
+        );
+
+        assertThat(authenticationResponse.statusCode())
+                .isEqualTo(200);
+        assertThat(authenticationResponse.body())
                 .contains("Perfect!");
         assertThat(reference.get().getUsername())
                 .isEqualTo("michelle");
     }
 
     @Test
-    void cannot_RetrieveToken_withInvalidCredentials() throws UnirestException {
+    void cannot_RetrieveToken_withInvalidCredentials() throws IOException, InterruptedException {
         elepy.createInitialUserViaHttp("michelle", "bowers");
 
+        final var getTokenResponse = sendPostRequest(
+                elepy.url() + "/elepy/token-login",
+                null, // No request body for basic auth
+                null,
+                createBasicAuthHeader("michelle", "bows")
+        );
 
-        final var getTokenResponse = Unirest.post(elepy + "/elepy/token-login")
-                .basicAuth("michelle", "bows")
-                .asString();
-
-        assertThat(getTokenResponse.getStatus())
+        assertThat(getTokenResponse.statusCode())
                 .isEqualTo(401);
-
     }
 
     @Test
-    void cannot_AccessSecuredRoute_withWrongToken() throws UnirestException {
+    void cannot_AccessSecuredRoute_withWrongToken() throws IOException, InterruptedException {
         var reference = new AtomicReference<User>();
-
 
         elepy.addRoute(RouteBuilder.anElepyRoute()
                 .permissions("authenticated")
                 .method(HttpMethod.GET)
                 .path("/random-secured-route")
                 .route(context -> {
-                            reference.set(context.loggedInUserOrThrow());
+                            reference.set(context.request().loggedInUserOrThrow());
                             context.result(Message.of("Perfect!", 200));
                         }
                 )
                 .build());
 
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route")
-                .header("Authorization", "Bearer a_wrong_token").asString();
+        final var authenticationResponse = sendGetRequest(
+                elepy.url() + "/random-secured-route",
+                "Bearer a_wrong_token"
+        );
 
-        assertThat(authenticationResponse.getStatus())
+        assertThat(authenticationResponse.statusCode())
                 .isEqualTo(401);
     }
 
     @Test
-    void cannot_AccessSecuredRoute_withoutToken() throws UnirestException {
+    void cannot_AccessSecuredRoute_withoutToken() throws IOException, InterruptedException {
         var reference = new AtomicReference<User>();
-
 
         elepy.addRoute(RouteBuilder.anElepyRoute()
                 .permissions("authenticated")
                 .method(HttpMethod.GET)
                 .path("/random-secured-route")
                 .route(context -> {
-                            reference.set(context.loggedInUserOrThrow());
+                            reference.set(context.request().loggedInUserOrThrow());
                             context.result(Message.of("Perfect!", 200));
                         }
                 )
                 .build());
 
-        final var authenticationResponse = Unirest.get(elepy + "/random-secured-route")
-                .asString();
+        final var authenticationResponse = sendGetRequest(
+                elepy.url() + "/random-secured-route",
+                null
+        );
 
-        assertThat(authenticationResponse.getStatus())
+        assertThat(authenticationResponse.statusCode())
                 .isEqualTo(401);
     }
 
     @Test
-    void can_AccessSelf() throws JsonProcessingException, UnirestException {
+    void can_AccessSelf() throws IOException, InterruptedException {
 
         final var user1 = new CustomUser();
-
         user1.setId("user");
         user1.setUsername("user");
         user1.setEmail("ryansemail@live.com");
         user1.setPassword("userPassword");
 
-        Unirest
-                .post(elepy + "/users")
-                .basicAuth("user", "user")
-                .body(new ObjectMapper().writeValueAsString(user1))
-                .asString();
+        // Create user
+        sendPostRequest(
+                elepy.url() + "/users",
+                objectMapper.writeValueAsString(user1),
+                "application/json",
+                createBasicAuthHeader("user", "user") // Assuming Elepy's /users endpoint for creation also uses basic auth
+        );
 
 
-        final var response = Unirest.get(elepy + "/elepy/logged-in-user").basicAuth("user", "userPassword").asJson();
+        // Access logged-in user info
+        final var response = sendGetRequest(
+                elepy.url() + "/elepy/logged-in-user",
+                createBasicAuthHeader("user", "userPassword")
+        );
 
-        assertThat(response.getStatus())
+        assertThat(response.statusCode())
                 .isEqualTo(200);
 
-        final var responseBody = response.getBody().getObject();
-        assertThat(responseBody.getString("email"))
+        final JsonNode responseBody = objectMapper.readTree(response.body());
+        assertThat(responseBody.get("email").asText())
                 .isEqualTo("ryansemail@live.com");
-
-
     }
 }

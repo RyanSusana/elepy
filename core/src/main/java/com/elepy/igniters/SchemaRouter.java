@@ -3,6 +3,7 @@ package com.elepy.igniters;
 import com.elepy.annotations.*;
 import com.elepy.handlers.HandlerContext;
 import com.elepy.http.HttpService;
+import com.elepy.http.HttpServiceInterceptor;
 import com.elepy.http.RouteBuilder;
 import com.elepy.schemas.ActionFactory;
 import com.elepy.schemas.Schema;
@@ -28,7 +29,7 @@ public class SchemaRouter {
     private ActionFactory actionFactory;
 
     @Inject
-    private HttpService httpService;
+    private HttpServiceInterceptor httpService;
 
     public void setupRoutingForSchemas() {
 
@@ -48,6 +49,10 @@ public class SchemaRouter {
                         .method(actionDescription.getMethod())
                         .permissions(actionDescription.getRequiredPermissions())
                         .route(ctx -> {
+
+                            // Inject the schema class as an attribute so that it can be used in the action handler.
+                            ctx.request().attribute("schemaClass", schema.getJavaClass());
+
                             var modelDetailsFactory = CDI.current().select(ModelDetailsFactory.class).get();
                             var actionHandler = DefaultActionFactory.selectActionHandler(beanManager, actionHandlerClass);
 

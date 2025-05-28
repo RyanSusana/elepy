@@ -31,7 +31,7 @@ public class AdminPanelConfiguration implements Configuration {
 
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
-        elepy.addExtension(new FrontendLoader());
+        elepy.addExtension(FrontendLoader.class);
     }
 
     @Override

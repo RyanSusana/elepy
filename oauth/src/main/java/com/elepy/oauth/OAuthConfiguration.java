@@ -24,7 +24,7 @@ public class OAuthConfiguration implements Configuration {
     public void preConfig(ElepyPreConfiguration elepy) {
         elepy.authenticationService().addAuthenticationMethod(new OAuthAuthenticationMethod());
         elepy.registerDependency(AuthSchemes.class, services);
-        elepy.addExtension(new OAuthExtension());
+        elepy.addExtension(OAuthExtension.class);
     }
 
     @Override

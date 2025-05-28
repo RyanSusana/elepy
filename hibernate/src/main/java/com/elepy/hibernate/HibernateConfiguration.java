@@ -2,6 +2,7 @@ package com.elepy.hibernate;
 
 import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.configuration.ElepyPreConfiguration;
+import com.elepy.schemas.Schema;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -10,6 +11,8 @@ import java.util.Properties;
 public class HibernateConfiguration implements com.elepy.configuration.Configuration {
 
     private final Configuration hibernateConfiguration;
+
+    private final SessionFactoryProvider sessionFactoryProvider = new SessionFactoryProvider();
 
     public HibernateConfiguration(Configuration hibernateConfiguration) {
         this.hibernateConfiguration = hibernateConfiguration;
@@ -53,17 +56,18 @@ public class HibernateConfiguration implements com.elepy.configuration.Configura
 
     @Override
     public void preConfig(ElepyPreConfiguration elepy) {
-
+        elepy.withDefaultCrudFactory(HibernateCrudFactory.class);
+        elepy.registerDependency(SessionFactoryProvider.class, sessionFactoryProvider);
     }
 
     @Override
     public void afterPreConfig(ElepyPreConfiguration elepy) {
-        elepy.schemas().forEach(schema -> hibernateConfiguration.addAnnotatedClass(schema.getJavaClass()));
+        for (Schema schema : elepy.schemas()) {
+            hibernateConfiguration.addAnnotatedClass(schema.getJavaClass());
+        }
 
         SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
-
-        elepy.registerDependency(SessionFactory.class, sessionFactory);
-        elepy.withDefaultCrudFactory(HibernateCrudFactory.class);
+        sessionFactoryProvider.setSessionFactory(sessionFactory);
     }
 
     @Override

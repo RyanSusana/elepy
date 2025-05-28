@@ -4,10 +4,12 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
+import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 
 public class InMemoryClientFactory {
+    static final Logger logger = org.slf4j.LoggerFactory.getLogger(InMemoryClientFactory.class);
 
 
     private InMemoryClientFactory() {
@@ -18,7 +20,7 @@ public class InMemoryClientFactory {
         MongoServer mongoServer = new MongoServer(new MemoryBackend());
 
         InetSocketAddress serverAddress = mongoServer.bind();
-        System.out.println("Mongo started on " + serverAddress);
+        logger.info("Mongo started on {}", serverAddress);
         return new MongoClient(new ServerAddress(serverAddress));
 
     }

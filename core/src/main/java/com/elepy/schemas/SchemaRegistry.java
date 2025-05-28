@@ -1,5 +1,6 @@
 package com.elepy.schemas;
 
+import com.elepy.auth.users.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
@@ -17,23 +18,30 @@ public class SchemaRegistry {
 
     private final Map<Class<?>, Schema<?>> schemas = new HashMap<>();
 
+    private final SchemaFactory schemaFactory;
+
     @Inject
-    private SchemaFactory schemaFactory;
-    public SchemaRegistry(){
+    public SchemaRegistry(SchemaFactory schemaFactory) {
+        this.schemaFactory = schemaFactory;
+    }
+
+    public boolean hasSchema(Class<?> clazz) {
+        return getClassKeyIncludingParentTypes(clazz) != null;
     }
 
     public void addSchema(Class<?> clazz) {
         schemas.put(clazz, null);
     }
 
-    public <T> Schema<T> getSchema(Class<T> clazz){
-        if(!schemas.containsKey(clazz)){
+    public <T> Schema<T> getSchema(Class<T> clazz) {
+        var key = getClassKeyIncludingParentTypes(clazz);
+        if (!schemas.containsKey(key)) {
             throw new IllegalArgumentException("No schema found for class: " + clazz.getName());
         }
-        if (schemas.get(clazz) == null) {
-            schemas.put(clazz, schemaFactory.createDeepSchema(clazz));
+        if (schemas.get(key) == null) {
+            schemas.put(key, schemaFactory.createDeepSchema(key));
         }
-        return (Schema<T>) schemas.get(clazz);
+        return (Schema<T>) schemas.get(key);
     }
 
     @Produces
@@ -52,6 +60,16 @@ public class SchemaRegistry {
         Class<T> genericType = (Class<T>) actualTypeArgument;
 
         return getSchema(genericType);
+    }
+
+
+    private Class<?> getClassKeyIncludingParentTypes(Class<?> classToGetKey) {
+        for (var aClass : schemas.keySet()) {
+            if (classToGetKey.isAssignableFrom(aClass)) {
+                return aClass;
+            }
+        }
+        return null;
     }
 
 }

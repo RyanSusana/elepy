@@ -6,9 +6,7 @@ import com.elepy.auth.authorization.AuthorizationService;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyConfigException;
 import com.elepy.exceptions.ElepyException;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.control.RequestContextController;
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class HttpServiceConfiguration implements HttpService {
+public class HttpServiceInterceptor implements HttpService {
+
+
     private static final Logger logger = LoggerFactory.getLogger("HTTP");
 
     private final ElepyContext elepy;
@@ -32,12 +32,7 @@ public class HttpServiceConfiguration implements HttpService {
 
     private int port;
 
-    @Inject
-    public HttpServiceConfiguration(Elepy elepy) {
-        this(elepy, null);
-    }
-
-    public HttpServiceConfiguration(ElepyContext elepy, HttpService implementation) {
+    public HttpServiceInterceptor(Elepy elepy, HttpService implementation) {
         this.elepy = elepy;
         this.implementation = implementation;
         port(1337);
@@ -45,14 +40,6 @@ public class HttpServiceConfiguration implements HttpService {
 
     public boolean hasImplementation() {
         return implementation != null;
-    }
-
-    private void add(Consumer<HttpService> action) {
-        if (started) {
-            action.accept(implementation);
-        } else {
-            this.actions.add(action);
-        }
     }
 
     public void setImplementation(HttpService implementation) {
@@ -67,6 +54,31 @@ public class HttpServiceConfiguration implements HttpService {
         }
     }
 
+    public void staticFiles(String path, StaticFileLocation location) {
+        //Add staticfiles to the front
+        if (started) {
+            implementation.staticFiles(path, location);
+        } else {
+            this.actions.add(0, http -> http.staticFiles(path, location));
+        }
+    }
+
+    public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> exceptionHandler) {
+        intercept(http -> http.exception(exceptionClass, (exception, context) -> {
+            exceptionHandler.handleException(exception, new DefaultHttpContext(elepy, context));
+        }));
+    }
+
+    @Override
+    public void before(HttpContextHandler contextHandler) {
+        intercept(http -> http.before(wrapContextHandler(contextHandler)));
+    }
+
+    @Override
+    public void after(HttpContextHandler contextHandler) {
+        intercept(http -> http.after(wrapContextHandler(contextHandler)));
+    }
+
     public void ignite() {
         if (implementation == null) {
             throw new ElepyConfigException("Please provide an implementation of HttpService to Elepy");
@@ -77,18 +89,17 @@ public class HttpServiceConfiguration implements HttpService {
     }
 
     public void stop() {
-        add(HttpService::stop);
+        intercept(HttpService::stop);
     }
 
     public void port(int port) {
         this.port = port;
-        add(http -> http.port(port));
+        intercept(http -> http.port(port));
     }
 
     public void addRoute(Route route) {
         logger.debug("Adding route {} {}", route.getMethod(), route.getPath());
-
-        add(http -> {
+        intercept(http -> {
             HttpContextHandler handler = context -> {
                 var requestContextController = CDI.current().select(RequestContextController.class).get();
                 try{
@@ -128,8 +139,10 @@ public class HttpServiceConfiguration implements HttpService {
 
     // TODO find a better place to do this
     private void permissionCheck(Route route, HttpContext ctx){
-        var authentication = ctx.elepy().getDependency(AuthenticationService.class);
-        var authorization = ctx.elepy().getDependency(AuthorizationService.class);
+
+        var cdi = CDI.current();
+        var authentication = cdi.select(AuthenticationService.class).get();
+        var authorization = cdi.select(AuthorizationService.class).get();
 
         var credentials = authentication.getCredentials(ctx.request()).orElseThrow(ElepyException::notAuthorized);
 
@@ -141,32 +154,19 @@ public class HttpServiceConfiguration implements HttpService {
         }
     }
 
-    public void staticFiles(String path, StaticFileLocation location) {
-        //Add staticfiles to the front
+    private void intercept(Consumer<HttpService> action) {
         if (started) {
-            implementation.staticFiles(path, location);
+            action.accept(implementation);
         } else {
-            this.actions.add(0, http -> http.staticFiles(path, location));
+            this.actions.add(action);
         }
     }
 
-    public <T extends Exception> void exception(Class<T> exceptionClass, ExceptionHandler<? super T> exceptionHandler) {
-        add(http -> http.exception(exceptionClass, (exception, context) -> {
-            exceptionHandler.handleException(exception, new DefaultHttpContext(elepy, context));
-        }));
-    }
+    private HttpContextHandler wrapContextHandler(HttpContextHandler ctxHandler) {
+        return ctx -> {
+            ctxHandler.handle(new DefaultHttpContext(elepy, ctx));
 
-    @Override
-    public void before(HttpContextHandler contextHandler) {
-        add(http -> http.before(wrapContextHandler(contextHandler)));
-    }
-
-    @Override
-    public void after(HttpContextHandler contextHandler) {
-        add(http -> http.after(wrapContextHandler(contextHandler)));
-    }
-
-    public HttpContextHandler wrapContextHandler(HttpContextHandler ctxHandler) {
-        return ctx -> ctxHandler.handle(new DefaultHttpContext(elepy, ctx));
+            logger.debug("Handled request");
+        };
     }
 }

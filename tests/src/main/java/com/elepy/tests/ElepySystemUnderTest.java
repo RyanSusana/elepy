@@ -2,18 +2,23 @@ package com.elepy.tests;
 
 import com.elepy.Elepy;
 import com.elepy.auth.users.User;
+import com.elepy.auth.users.UserService;
+import com.elepy.crud.Crud;
 import com.elepy.http.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ElepySystemUnderTest extends Elepy implements HttpService {
     private final String url;
@@ -103,17 +108,36 @@ public class ElepySystemUnderTest extends Elepy implements HttpService {
         return url();
     }
 
-    public void createInitialUserViaHttp(String username, String password) throws UnirestException {
+    public void createInitialUserViaHttp(String username, String password) throws IOException, InterruptedException {
         User user = new User("admin", username, password);
+        var userCrud = this.getCrudFor(User.class);
 
-        var userUrl = url + "/users";
-        final HttpResponse<String> response = Unirest
-                .post(userUrl)
-                .body(json(user))
-                .asString();
-
-        assertEquals(200, response.getStatus());
+        final HttpResponse<String> response = sendPostRequest(
+                url + "/users",
+                json(user),
+                "application/json",
+                null
+        );
+        assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
+        assertThat(userCrud.count()).isEqualTo(1);
     }
+
+    private HttpResponse<String> sendPostRequest(String url, String body, String contentType, String authorizationHeader) throws IOException, InterruptedException {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : body, StandardCharsets.UTF_8));
+
+        if (contentType != null && !contentType.isEmpty()) {
+            requestBuilder.header("Content-Type", contentType);
+        }
+        if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
+            requestBuilder.header("Authorization", authorizationHeader);
+        }
+        HttpRequest request = requestBuilder.build();
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+
 
     private String json(Object o) {
         try {

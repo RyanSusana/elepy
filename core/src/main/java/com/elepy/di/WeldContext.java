@@ -1,12 +1,11 @@
 package com.elepy.di;
 
 import com.elepy.Elepy;
-import com.elepy.ObjectMapperProducer;
 import com.elepy.crud.Crud;
 import com.elepy.crud.CrudRegistry;
-import com.elepy.schemas.SchemaRegistry;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
-import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
+import jakarta.inject.Singleton;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.reflections.Reflections;
@@ -15,8 +14,6 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -34,7 +31,7 @@ public class WeldContext implements ElepyContext {
 
     @Override
     public <T> T getDependency(Class<T> cls, String tag) {
-        return container.select(cls).get();
+        return CDI.current().select(cls).get();
     }
 
 
@@ -44,7 +41,7 @@ public class WeldContext implements ElepyContext {
 
     @Override
     public <T> Crud<T> getCrudFor(Class<T> cls) {
-        return container.select(CrudRegistry.class).get().getCrudFor(cls);
+        return (Crud<T>) container.select(CrudRegistry.class).get().getCrudFor(cls);
 
     }
 
@@ -64,7 +61,6 @@ public class WeldContext implements ElepyContext {
                 .collect(Collectors.toSet());
 
 
-        System.out.println(SchemaRegistry.class);
         weld.addPackages(pkgNameToPkg.toArray(Package[]::new));
         weld.addExtensions(extension);
         container = weld.initialize();
@@ -92,20 +88,14 @@ public class WeldContext implements ElepyContext {
     }
 
     public void registerDependency(Class<?> clazz) {
-        extension.registerDependency(clazz);
-    }
-
-    public void registerDependency(Class<?> clazz, String tag) {
-        extension.registerDependency(clazz, tag);
-    }
-
-    public static void main(String[] args) {
-        String basePackage = "com.elepy"; // Your target base package
-
-        Set<String> subPackages = findSubPackages(basePackage);
-
-        System.out.println("Found subpackages of '" + basePackage + "':");
-        subPackages.forEach(System.out::println);
+        // Check if the class has a CDI annotation
+        if (clazz.isAnnotationPresent(ApplicationScoped.class) ||
+            clazz.isAnnotationPresent(Singleton.class)) {
+            weld.addBeanClass(clazz);
+        }else{
+            throw new IllegalArgumentException("Class " + clazz.getName() + " is not a CDI bean. " +
+                    "Please annotate it with @ApplicationScoped or @Singleton.");
+        }
     }
 
     public static Set<String> findSubPackages(String basePackage) {
@@ -139,5 +129,9 @@ public class WeldContext implements ElepyContext {
                 // Also includes the basePackage itself if it contains classes
                 .filter(pkgName -> !pkgName.isEmpty() && pkgName.startsWith(basePackage))
                 .collect(Collectors.toSet()); // Use a Set to automatically handle duplicates
+    }
+
+    public void stop() {
+        weld.shutdown();
     }
 }

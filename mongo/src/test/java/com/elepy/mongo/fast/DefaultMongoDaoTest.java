@@ -31,13 +31,10 @@ public class DefaultMongoDaoTest extends BaseFongo {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-//        DefaultElepyContext defaultElepyContext = new DefaultElepyContext();
         final var db = getDb();
-//        defaultElepyContext.registerDependency(MongoDatabase.class, db);
-//        defaultElepyContext.registerDependency(new ObjectMapper());
+        var mongoCrudFactory = new MongoCrudFactory(db);
 
-//        defaultMongoCrud = (MongoCrud<Resource>) defaultElepyContext.initialize(MongoCrudFactory.class).crudFor(new SchemaFactory().createDeepSchema(Resource.class));
-//
+        defaultMongoCrud = (MongoCrud<Resource>) mongoCrudFactory.crudFor(new SchemaFactory().createDeepSchema(Resource.class));
         final var objectMapper = new ObjectMapper();
 
         MongoJackModule.configure(objectMapper);

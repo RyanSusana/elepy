@@ -14,15 +14,15 @@
     <url>https://elepy.com</url>
 
     <properties>
-        <commons-io.version>2.11.0</commons-io.version>
+        <commons-io.version>2.19.0</commons-io.version>
         <exclude.tests>nothing-to-exclude</exclude.tests>
         <exclude.groups>nothing</exclude.groups>
         <junit.version>5.8.2</junit.version>
         <awaitility.version>4.1.1</awaitility.version>
         <unirest.version>1.4.9</unirest.version>
-        <jackson.version>2.13.1</jackson.version>
+        <jackson.version>2.13.4</jackson.version>
         <tika.version>2.2.1</tika.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>33.4.4-jre</guava.version>
         <assertj.version>3.22.0</assertj.version>
         <h2.version>2.1.210</h2.version>
         <mongo-java-server.version>1.39.0</mongo-java-server.version>
@@ -122,12 +122,7 @@
             <version>1.7.35</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.mashape.unirest</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>${unirest.version}</version>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>

@@ -19,8 +19,8 @@ public class ModelDetails<T> {
         this.identityProvider = identityProvider;
     }
 
-    public <C extends Crud<T>> C getCrud() {
-        return (C) crud;
+    public Crud<T> getCrud() {
+        return crud;
     }
 
     public void setCrud(Crud<T> crud) {
@@ -43,7 +43,7 @@ public class ModelDetails<T> {
         return schema.getPath();
     }
 
-    public Class<T> getModelType() {
+    public Class<? extends T> getModelType() {
         return schema.getJavaClass();
     }
 

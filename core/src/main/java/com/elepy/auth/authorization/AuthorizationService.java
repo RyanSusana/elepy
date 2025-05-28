@@ -1,5 +1,6 @@
 package com.elepy.auth.authorization;
 
+import com.elepy.exceptions.ElepyException;
 import com.elepy.utils.StringUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,6 +28,14 @@ public class AuthorizationService {
 
     public void setRoles(RoleLookup roles) {
         this.roles = roles;
+    }
+
+    public void ensurePrincipalHasPermissions(String principalToCheck, URI mainTarget, String... permissions) {
+        var authorizationResult = testPermissions(principalToCheck, mainTarget, permissions);
+
+        if(!authorizationResult.isSuccessful()){
+            throw ElepyException.notAuthorized();
+        }
     }
 
     public AuthorizationResult testPermissions(String principalToCheck, URI mainTarget, String... permissions) {

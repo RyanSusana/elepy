@@ -10,18 +10,17 @@ import com.elepy.auth.extension.UserAuthenticationExtension;
 import com.elepy.auth.authentication.methods.persistedtokens.Token;
 import com.elepy.auth.authentication.methods.tokens.TokenAuthority;
 import com.elepy.auth.users.User;
+import com.elepy.auth.users.UserService;
 import com.elepy.configuration.*;
 import com.elepy.crud.CrudFactory;
 import com.elepy.crud.Crud;
+import com.elepy.crud.CrudRegistry;
 import com.elepy.di.ElepyContext;
 import com.elepy.di.WeldContext;
 import com.elepy.evaluators.JsonNodeNameProvider;
 import com.elepy.exceptions.ElepyConfigException;
-import com.elepy.exceptions.ElepyException;
-import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
-import com.elepy.http.HttpServiceConfiguration;
-import com.elepy.http.Route;
+import com.elepy.http.HttpServiceInterceptor;
 import com.elepy.i18n.Resources;
 import com.elepy.i18n.extension.TranslationsExtension;
 import com.elepy.igniters.ModelDetailsFactory;
@@ -34,6 +33,7 @@ import com.elepy.schemas.SchemaRegistry;
 import com.elepy.uploads.DefaultFileService;
 import com.elepy.uploads.FileReference;
 import com.elepy.uploads.FileService;
+import com.elepy.uploads.FileUploadExtension;
 import com.elepy.utils.Annotations;
 import com.elepy.utils.LogUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,9 +51,9 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -64,35 +64,41 @@ public class Elepy implements ElepyContext {
 
 
     public static final String DEFAULT_HTTP_SERVICE = "com.elepy.sparkjava.SparkService";
-
     public static final Set<Class<?>> DEFAULT_MODELS = Set.of(User.class, FileReference.class, Token.class);
     private static final Logger logger = LoggerFactory.getLogger(Elepy.class);
 
-    private final List<ElepyExtension> modules = new ArrayList<>();
-    private final List<String> packages = new ArrayList<>();
-    private final WeldContext context = new WeldContext();
-    private HttpServiceConfiguration http = new HttpServiceConfiguration(this);
+    private final List<String> packages;
+    private final WeldContext context;
+    private HttpServiceInterceptor http;
     private boolean initialized = false;
+    private final Set<Class<? extends  ElepyExtension>> extensions ;
     private Class<? extends CrudFactory> defaultCrudFactoryClass = null;
-    private CrudFactory defaultCrudFactoryImplementation;
-    private final Set<Class<?>> schemaClasses = new HashSet<>();
-    private final CombinedConfiguration propertyConfiguration = new CombinedConfiguration();
-    private final List<Configuration> configurations = new ArrayList<>();
-    private final List<EventHandler> stopEventHandlers = new ArrayList<>();
-    private final LocaleSettings config = new LocaleSettings();
+    private Class<? extends HttpService> httpServiceClass = null;
+    private final CombinedConfiguration propertyConfiguration;
+    private final List<Configuration> configurations;
+    private final LocaleSettings config;
+    private final SchemaRegistry schemaRegistry;
+    private final SchemaFactory schemaFactory;
+    private Consumer<HttpService> httpServiceConfigurer;
 
     public Elepy() {
-        init();
+        http = new HttpServiceInterceptor(this, null);
+        schemaFactory = new SchemaFactory(); // pre-initialized and manually put into CDI, because it is used by SchemaRegistry
+        schemaRegistry = new SchemaRegistry(schemaFactory); // pre-initialized as users can provide schema before WeldContext is started
+        config = new LocaleSettings();
+        configurations = new ArrayList<>();
+        propertyConfiguration = new CombinedConfiguration();
+        context = new WeldContext();
+        packages = new ArrayList<>();
+        extensions = new HashSet<>();
+        setupDependencies();
     }
 
-    private void init() {
-        this.http.port(1337);
-
+    private void setupDependencies() {
         this.propertyConfiguration.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
-        addExtension(new TranslationsExtension());
 
         registerDependency(Resources.class, new Resources());
-        registerDependencySupplier(HttpService.class, () -> http);
+
         registerDependencySupplier(ValidatorFactory.class,
                 () -> Validation
                         .byProvider(HibernateValidator.class)
@@ -105,18 +111,28 @@ public class Elepy implements ElepyContext {
 
         registerDependencySupplier(Properties.class, () -> ConfigurationConverter.getProperties(propertyConfiguration));
         withFileService(new DefaultFileService());
-
+        registerDependencySupplier(HttpServiceInterceptor.class, () -> http);
+        registerDependency(UserService.class);
+        registerDependency(AuthenticationService.class);
+        registerDependency(AuthorizationService.class);
 
         registerDependency(ObjectMapperProducer.class);
-        registerDependency(SchemaRegistry.class);
-        registerDependency(SchemaFactory.class);
+        registerDependency(SchemaFactory.class, schemaFactory);
+        registerDependency(SchemaRegistry.class, schemaRegistry);
         registerDependency(SchemaRouter.class);
         registerDependency(ActionFactory.class);
         registerDependency(BasicAuthenticationMethod.class);
         registerDependency(PersistedTokenGenerator.class);
         registerDependency(Tokens.class);
         registerDependency(ModelDetailsFactory.class);
-
+        registerDependency(ExtensionRegistry.class);
+        addExtension(TranslationsExtension.class);
+        addExtension(LocaleSettings.class);
+        addExtension(FileUploadExtension.class);
+        addExtension(LocaleSettings.class);
+        addExtension(BasicHttpExtension.class);
+        addExtension(SchemaExtension.class);
+        addExtension(UserAuthenticationExtension.class);
     }
 
     /**
@@ -126,48 +142,55 @@ public class Elepy implements ElepyContext {
      * @see #stop()
      */
     public void start() {
-
-
         try {
+            setupHttpServiceDefaults();
             configurations.forEach(configuration -> configuration.preConfig(new ElepyPreConfiguration(this)));
             context.start();
             setupDefaults();
             configurations.forEach(configuration -> configuration.afterPreConfig(new ElepyPreConfiguration(this)));
 
             setupAuth();
-
-            setupModels();
-
-            igniteAllRoutes();
-            setupExtensions();
+            setupSchemaRouting();
 
             initialized = true;
 
+
             afterElepyConstruction();
+            setupExtensions();
+            startHttpServer();
 
-
-            http.ignite();
-
-            logger.info(String.format(LogUtils.banner, http.port()));
+            logger.info(String.format(LogUtils.banner, http().port()));
         } catch (Exception e) {
             logger.error("Something went wrong while setting up Elepy", e);
-            System.exit(1);
+            throw e;
         }
+    }
+
+    private void startHttpServer() {
+        HttpService dependency = getDependency(httpServiceClass);
+        http.setImplementation(dependency);
+        http.ignite();
+    }
+
+    private void setupHttpServiceDefaults() {
+        if (httpServiceClass == null) {
+            try {
+                httpServiceClass = (Class<? extends HttpService>) Class.forName(DEFAULT_HTTP_SERVICE);
+            }catch (ClassNotFoundException e){
+                throw new ElepyConfigException("No HttpService set and could not find default http implementation: " + DEFAULT_HTTP_SERVICE, e);
+            }
+        }
+
+        registerDependency(httpServiceClass);
     }
 
     private void setupExtensions() {
-        for (var extension : modules) {
-            extension.setup(this.http, new ElepyPostConfiguration(this));
-        }
-    }
-
-    private void setupModels() {
-        var schemaRegistry = getDependency(SchemaRegistry.class);
-
-        for (var schemaClass : schemaClasses) {
-            schemaRegistry.addSchema(schemaClass);
+        var extensionRegistry = getDependency(ExtensionRegistry.class);
+        for (var extension : extensions) {
+            extensionRegistry.addExtension(extension);
         }
 
+        extensionRegistry.initiateExtensions();
     }
 
     /**
@@ -176,8 +199,8 @@ public class Elepy implements ElepyContext {
      * @see #start()
      */
     public void stop() {
-        http.stop();
-        stopEventHandlers.forEach(EventHandler::handle);
+        http().stop();
+        context.stop();
     }
 
     /**
@@ -222,9 +245,9 @@ public class Elepy implements ElepyContext {
      * @param httpService The httpService you want to swap to
      * @return The {@link com.elepy.Elepy} instance
      */
-    public Elepy withHttpService(HttpService httpService) {
+    public Elepy withHttpService(Class<? extends HttpService> httpService) {
         checkConfig();
-        this.http.setImplementation(httpService);
+        this.httpServiceClass = httpService;
         return this;
     }
 
@@ -237,12 +260,12 @@ public class Elepy implements ElepyContext {
      * @return The {@link com.elepy.Elepy} instance
      */
 
-    public Elepy addExtension(ElepyExtension module) {
+    public Elepy addExtension(Class<? extends ElepyExtension> module) {
         if (initialized) {
             throw new ElepyConfigException("Elepy already initialized, you must add modules before calling start().");
         }
+        extensions.add(module);
         registerDependency(module);
-        modules.add(module);
         return this;
     }
 
@@ -268,7 +291,16 @@ public class Elepy implements ElepyContext {
      */
     public Elepy addModels(Class<?>... classes) {
         checkConfig();
-        schemaClasses.addAll(Arrays.asList(classes));
+        var schemaRegistry = schemaRegistry();
+
+        for (var schemaClass : classes) {
+            schemaRegistry.addSchema(schemaClass);
+        }
+        return this;
+    }
+
+    public Elepy configureHttp(Consumer<HttpService> httpServiceConfigurer){
+        this.httpServiceConfigurer = httpServiceConfigurer;
         return this;
     }
 
@@ -406,7 +438,7 @@ public class Elepy implements ElepyContext {
      */
     public Elepy withPort(int port) {
         checkConfig();
-        http.port(port);
+        http().port(port);
         return this;
     }
 
@@ -425,34 +457,6 @@ public class Elepy implements ElepyContext {
         return this;
     }
 
-    /**
-     * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link Crud} implementations. For MongoDB you should consider
-     *
-     * @param defaultCrudProvider the default crud provider
-     * @return The {@link com.elepy.Elepy} instance
-     * @see CrudFactory
-     * @see Crud
-     */
-    public Elepy withDefaultCrudFactory(CrudFactory defaultCrudProvider) {
-        this.defaultCrudFactoryImplementation = defaultCrudProvider;
-        return this;
-    }
-
-    /**
-     * @return The Default CrudFactory of Elepy. The Default CrudFactory is what creates Crud's for Elepy's models.
-     */
-    public CrudFactory defaultCrudFactory() {
-        if (defaultCrudFactoryImplementation == null) {
-            if (defaultCrudFactoryClass == null) {
-                throw new ElepyConfigException("No default CrudFactory selected, please configure one.");
-            }
-            defaultCrudFactoryImplementation = initialize(defaultCrudFactoryClass);
-        }
-
-        return defaultCrudFactoryImplementation;
-    }
-
 
     /**
      * @param clazz The RestModel's class
@@ -461,14 +465,14 @@ public class Elepy implements ElepyContext {
      */
     @SuppressWarnings("unchecked")
     public <T> Schema<T> modelSchemaFor(Class<T> clazz) {
-        return modelEngine().getSchema(clazz);
+        return schemaRegistry().getSchema(clazz);
     }
 
     /**
      * @return All ModelContext
      */
     public List<Schema> modelSchemas() {
-        return modelEngine().getSchemas();
+        return schemaRegistry().getSchemas();
     }
 
 
@@ -536,29 +540,24 @@ public class Elepy implements ElepyContext {
     }
 
     private void addDefaultModel(Class<?> model) {
-        if (schemaClasses.stream()
-                .noneMatch(model::isAssignableFrom)) {
+        if (!schemaRegistry().hasSchema(model)) {
             addModel(model);
         } else {
             logger.info(String.format("Default %s model overridden", Annotations.get(model, Model.class).name()));
         }
     }
 
-    private SchemaRegistry modelEngine() {
-        return getDependency(SchemaRegistry.class);
+    private SchemaRegistry schemaRegistry() {
+        return schemaRegistry;
     }
 
     private void afterElepyConstruction() {
         for (Configuration configuration : configurations) {
             configuration.postConfig(new ElepyPostConfiguration(this));
         }
-        for (ElepyExtension module : modules) {
-            module.setup(http, new ElepyPostConfiguration(this));
-        }
     }
 
     private void setupDefaults() {
-
         final var elepyDefaultProperties = getClass().getClassLoader().getResource("elepy-default.properties");
         withProperties(Objects.requireNonNull(elepyDefaultProperties));
 
@@ -577,13 +576,14 @@ public class Elepy implements ElepyContext {
         addDefaultModel(PolicyBinding.class);
         addDefaultModel(FileReference.class);
         addDefaultModel(Revision.class);
-        addExtension(config);
 
         setupLoggingAndExceptions();
-        if (!http.hasImplementation()) {
-//            Class<? extends HttpService> cls = (Class<? extends HttpService>) Class.forName(DEFAULT_HTTP_SERVICE);
-//            http.setImplementation(initialize(cls));
+        if (defaultCrudFactoryClass == null){
+            throw new ElepyConfigException("No default CrudFactory class set, please configure one. Have a look at MongoConfiguration or HibernateConfiguration for examples.");
         }
+
+        var crudRegistry = getDependency(CrudRegistry.class);
+        crudRegistry.setDefaultCrudFactoryClass(defaultCrudFactoryClass);
     }
 
     private void retrievePackageModels() {
@@ -608,7 +608,6 @@ public class Elepy implements ElepyContext {
     }
 
     private void setupAuth() {
-        addExtension(new UserAuthenticationExtension());
         var authenticationService = initialize(AuthenticationService.class);
         var basicAuthenticationMethod = initialize(
                 BasicAuthenticationMethod.class);
@@ -619,19 +618,18 @@ public class Elepy implements ElepyContext {
     }
 
 
-    private void igniteAllRoutes() {
+    private void setupSchemaRouting() {
         var modelRouting = this.initialize(SchemaRouter.class);
         modelRouting.setupRoutingForSchemas();
     }
 
 
     private void setupLoggingAndExceptions() {
-        addExtension(new BasicHttpExtension());
-        addExtension(new SchemaExtension());
+
     }
 
     public List<Schema> schemas() {
-        return modelEngine().getSchemas();
+        return schemaRegistry().getSchemas();
     }
 
     private void checkConfig() {

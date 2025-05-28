@@ -39,7 +39,7 @@ public class ElepyPreConfiguration {
      *
      * @param module The module
      */
-    public void addExtension(ElepyExtension module) {
+    public void addExtension(Class<? extends ElepyExtension> module) {
         elepy.addExtension(module);
     }
 
@@ -122,7 +122,6 @@ public class ElepyPreConfiguration {
     }
 
 
-
     /**
      * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
      * used to construct {@link Crud} implementations. For MongoDB you should consider
@@ -132,18 +131,6 @@ public class ElepyPreConfiguration {
      * @see Crud
      */
     public void withDefaultCrudFactory(Class<? extends CrudFactory> defaultCrudProvider) {
-        elepy.withDefaultCrudFactory(defaultCrudProvider);
-    }
-
-    /**
-     * Changes the default {@link CrudFactory} of the Elepy instance. The {@link CrudFactory} is
-     * used to construct {@link Crud} implementations. For MongoDB you should consider
-     *
-     * @param defaultCrudProvider the default crud provider
-     * @see CrudFactory
-     * @see Crud
-     */
-    public void withDefaultCrudFactory(CrudFactory defaultCrudProvider) {
         elepy.withDefaultCrudFactory(defaultCrudProvider);
     }
 
@@ -171,9 +158,7 @@ public class ElepyPreConfiguration {
         return elepy.authenticationService();
     }
 
-        public void setTokenGenerator(TokenAuthority method) {
-        elepy.setTokenGenerator(method);
-    }
+
 
     public Configuration getPropertyConfig() {
         return elepy.getPropertyConfig();

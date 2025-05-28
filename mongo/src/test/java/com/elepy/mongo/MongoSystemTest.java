@@ -1,6 +1,7 @@
 package com.elepy.mongo;
 
 import com.elepy.Elepy;
+import com.elepy.sparkjava.SparkService;
 import com.elepy.tests.SystemTest;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -25,6 +26,7 @@ public class MongoSystemTest extends SystemTest {
 
         MongoClient client = new MongoClient(new ServerAddress(serverAddress));
         elepy.addConfiguration(MongoConfiguration.of(client, "test", "bucket"));
+        elepy.withHttpService(SparkService.class);
     }
 
     @Override

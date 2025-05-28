@@ -5,8 +5,10 @@ import com.elepy.crud.CrudFactory;
 import com.elepy.di.ElepyContext;
 import com.elepy.schemas.Schema;
 import com.google.cloud.firestore.Firestore;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class FirestoreCrudFactory implements CrudFactory {
 
     @Inject

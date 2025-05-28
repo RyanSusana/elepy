@@ -2,6 +2,7 @@ package com.elepy.mongo.fast;
 
 import com.elepy.Elepy;
 import com.elepy.mongo.MongoConfiguration;
+import com.elepy.sparkjava.SparkService;
 import com.elepy.tests.basic.BasicFunctionalityTest;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -31,5 +32,6 @@ public class MongoFunctionalityTest extends BasicFunctionalityTest {
         MongoClient client = new MongoClient(new ServerAddress(serverAddress));
 
         elepy.addConfiguration(MongoConfiguration.of(client, "test", "bucket"));
+        elepy.withHttpService(SparkService.class);
     }
 }

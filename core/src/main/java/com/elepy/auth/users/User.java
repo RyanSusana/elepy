@@ -22,7 +22,7 @@ import java.util.Objects;
 @Table(name = "elepy_users")
 
 // Required permission is handled in UserCreate.class
-@Create(handler = UserCreate.class, requiredPermissions = {"users.create"})
+@Create(handler = UserCreate.class, requiredPermissions = {})
 
 @Find(findManyHandler = UserFind.class,
         findOneHandler = UserFind.class,
@@ -30,7 +30,7 @@ import java.util.Objects;
 )
 
 // Required permission is handled in UserUpdate.class
-@Update(handler = UserUpdate.class)
+@Update(handler = UserUpdate.class, requiredPermissions = {})
 @Delete(handler = UserDelete.class, requiredPermissions = "users.delete")
 @UserPasswordValidator
 public class User {
@@ -113,12 +113,7 @@ public class User {
         return Objects.hash(id);
     }
 
-    /**
-     * Method to make sure that all email addresses are lowercase
-     */
     public void cleanUsername() {
-        if (username.contains("@")) {
             username = username.toLowerCase();
-        }
     }
 }

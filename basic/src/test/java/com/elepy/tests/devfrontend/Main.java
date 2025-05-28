@@ -2,25 +2,16 @@ package com.elepy.tests.devfrontend;
 
 import com.elepy.Elepy;
 import com.elepy.admin.FrontendLoader;
-import com.elepy.auth.authentication.AuthenticationService;
-import com.elepy.auth.authentication.methods.basic.BasicAuthenticationMethod;
-import com.elepy.auth.authorization.*;
-import com.elepy.auth.users.UserCenter;
-import com.elepy.crud.CrudRegistry;
 import com.elepy.mongo.MongoConfiguration;
-import com.elepy.schemas.SchemaRegistry;
 import com.elepy.sparkjava.SparkService;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-import jakarta.enterprise.inject.spi.CDI;
 
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -35,38 +26,20 @@ public class Main {
                 .withPort(7331)
                 .addModelPackage("com.elepy.tests.devfrontend")
                 .addLocale(new Locale("nl"), "Nederlands")
-                .withHttpService(new SparkService())
+                .withHttpService(SparkService.class)
 //                .addConfiguration(OAuthConfiguration.of(
 //                        new GoogleAuthScheme(env("GOOGLE_KEY"), env("GOOGLE_SECRET")),
 //                        new GitHubAuthScheme(env("GH_KEY"), env("GH_SECRET")),
 //                        new MicrosoftADAuthScheme(env("MS_TENANT"), env("MS_KEY"), env("MS_SECRET")),
 //                        new FacebookAuthScheme(env("FB_KEY"), env("FB_SECRET")))
 //                )
-                .addExtension((http, elepy) -> {
-                    http.get("/doggo", ctx -> {
-                        final var dog = new Dog();
-                        dog.setName("Doug, the Pug");
-                        dog.setDescription("A very very very good fluffin boy");
-                        dog.setNicknames(List.of("Roberto"));
-                        ctx.validate(dog);
-                    });
-                    http.get("/dynamic", ctx -> {
-                        ctx.response().json(List.of("Ayee", "Bee", "See"));
-                    });
-                    http.before(context -> {
-                        context.response().header("Access-Control-Allow-Headers", "*");
-                    });
-                })
-                .addExtension(new FrontendLoader());
+
+                .addExtension(FrontendLoader.class);
 
         elepyInstance.start();
 
 
         Thread.sleep(1000);
-
-
-
-
 
 
     }

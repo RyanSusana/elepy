@@ -1,12 +1,14 @@
 package com.elepy.hibernate;
 
 import com.elepy.Elepy;
+import com.elepy.sparkjava.SparkService;
 import com.elepy.tests.dao.FiltersTest;
 import org.junit.jupiter.api.Disabled;
 
 public class HibernateFiltersTest extends FiltersTest {
     @Override
     public void configureElepy(Elepy elepy) {
+        elepy.withHttpService(SparkService.class);
         elepy.addConfiguration(DatabaseConfigurations.H2);
     }
 

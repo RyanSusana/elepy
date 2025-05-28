@@ -1,0 +1,8 @@
+{
+  "projects": {
+    // This line is very important. I still don't really know why firebase emulator needs the exact project
+    // most probably this is needed to load project metadata to mimic the env as close as possible
+    // so put your project id here. Otherwise you will get auth (403) errors while trying to run.
+    "default": "dummy-project"
+  }
+}

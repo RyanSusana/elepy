@@ -3,7 +3,7 @@ package com.elepy.oauth;
 import com.elepy.auth.authentication.AuthenticationMethod;
 import com.elepy.auth.authentication.Credentials;
 import com.elepy.auth.users.User;
-import com.elepy.auth.users.UserCenter;
+import com.elepy.auth.users.UserService;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.http.Request;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,7 +23,7 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod {
     @Override
     public Optional<Credentials> getCredentials(Request request) {
         try {
-            final var userCenter = request.elepy().getDependency(UserCenter.class);
+            final var userCenter = request.elepy().getDependency(UserService.class);
             final var code = request.queryParams("code");
             final var services = request.elepy().getDependency(AuthSchemes.class);
 

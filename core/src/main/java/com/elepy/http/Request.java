@@ -3,7 +3,7 @@ package com.elepy.http;
 import com.elepy.auth.authentication.Credentials;
 import com.elepy.auth.authentication.AuthenticationService;
 import com.elepy.auth.users.User;
-import com.elepy.auth.users.UserCenter;
+import com.elepy.auth.users.UserService;
 import com.elepy.i18n.ElepyInterpolator;
 import com.elepy.di.ElepyContext;
 import com.elepy.exceptions.ElepyException;
@@ -104,7 +104,7 @@ public interface Request {
         final String id = queryParams("id");
 
         if (id != null) {
-            return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), id);
+            return ReflectionUtils.toObjectIdFromString(attribute("schemaClass"), id);
         }
 
         final String ids = queryParams("ids");
@@ -112,10 +112,10 @@ public interface Request {
         if (ids != null) {
             final String[] split = ids.split(",");
 
-            return ReflectionUtils.toObjectIdFromString(attribute("modelClass"), split[0]);
+            return ReflectionUtils.toObjectIdFromString(attribute("schemaClass"), split[0]);
         }
 
-        return recordId(attribute("modelClass"));
+        return recordId(attribute("schemaClass"));
     }
 
 
@@ -150,7 +150,7 @@ public interface Request {
 
         if (ids != null) {
             final String[] split = ids.split(",");
-            return Arrays.stream(split).map(s -> ReflectionUtils.toObjectIdFromString(attribute("modelClass"), s)).collect(Collectors.toSet());
+            return Arrays.stream(split).map(s -> ReflectionUtils.toObjectIdFromString(attribute("schemaClass"), s)).collect(Collectors.toSet());
         }
         return new HashSet<>(Collections.singletonList(recordId()));
     }
@@ -188,7 +188,7 @@ public interface Request {
             return Optional.of(userFromAttributes);
         }
 
-        final var userCenter = elepy().getDependency(UserCenter.class);
+        final var userCenter = elepy().getDependency(UserService.class);
         final var user = loggedInCredentials().flatMap(userCenter::getUserFromCredentials);
         user.ifPresent(u -> attribute("user", user.orElse(null)));
 

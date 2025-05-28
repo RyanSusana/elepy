@@ -32,9 +32,12 @@ public class FirestoreFilterFactory<T> {
     }
 
     private Filter elepySearchQuery(SearchQuery filter) {
+        if( filter.getTerm() == null || filter.getTerm().isBlank()) {
+            return Filter.and(); // No search term, return an empty filter
+        }
         final var equalToFilters = schema.getProperties().stream()
                 .filter(Property::isSearchable)
-                .map(prop -> Filter.equalTo(prop.getName(), filter.getTerm()))
+                .map(prop -> startsWith(prop.getName(), filter.getTerm()))
                 .toArray(Filter[]::new);
 
         return Filter.or(equalToFilters);
@@ -63,12 +66,25 @@ public class FirestoreFilterFactory<T> {
             case LESSER_THAN -> Filter.lessThan(filter.getPropertyName(), filterValue);
             case GREATER_THAN_OR_EQUALS -> Filter.greaterThanOrEqualTo(filter.getPropertyName(), filterValue);
             case LESSER_THAN_OR_EQUALS -> Filter.lessThanOrEqualTo(filter.getPropertyName(), filterValue);
-            case STARTS_WITH -> Filter.equalTo(filter.getPropertyName(), filterValue);
+            case STARTS_WITH -> startsWith(filter.getPropertyName(), filterValue.toString());
             case CONTAINS -> switch (filterValue) {
-                case Collection<?> collection -> Filter.arrayContains(filter.getPropertyName(), collection);
-                case String string -> Filter.equalTo(filter.getPropertyName(), string);
+                case Collection<?> collection -> Filter.arrayContainsAny(filter.getPropertyName(), collection);
+                case String string -> startsWith(filter.getPropertyName(), string);
                 default -> throw new IllegalStateException("Unexpected value: " + filterValue);
             };
         };
     }
+
+    private Filter startsWith(String propertyName, String strSearch) {
+        int strLength = strSearch.length();
+        String strFrontCode = strSearch.substring(0, strLength - 1);
+        String strEndCode = strSearch.substring(strLength - 1, strLength); // Or just strSearch.substring(strLength - 1)
+
+        String startCode = strSearch;
+        // Get the ASCII strSearch of the last character, increment it, and convert back to char
+        String endCode = strFrontCode + (char) (strEndCode.charAt(0) + 1);
+
+        return Filter.and(Filter.greaterThanOrEqualTo(propertyName, startCode), Filter.lessThan(propertyName, endCode));
+    }
+
 }

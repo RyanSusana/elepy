@@ -5,22 +5,28 @@ import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.exceptions.ElepyException;
 import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
+import com.elepy.schemas.SchemaRegistry;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
+@ApplicationScoped
 public class BasicHttpExtension implements ElepyExtension {
     private static final Logger logger = LoggerFactory.getLogger(BasicHttpExtension.class);
 
+    @Inject
+    private SchemaRegistry schemaRegistry;
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepyCfg) {
-        final var schemas = elepyCfg.modelSchemas();
         http.before(ctx -> {
             ctx.request().attribute("elepyContext", elepyCfg.getElepy());
-            ctx.request().attribute("schemas", schemas);
+            ctx.request().attribute("schemas", schemaRegistry.getSchemas());
             ctx.request().attribute("start", System.currentTimeMillis());
+            logger.debug("Request started: {} {}", ctx.request().method(), ctx.request().uri());
         });
         http.after(ctx -> {
             ctx.response().header("Access-Control-Allow-Origin", "*");
@@ -46,7 +52,6 @@ public class BasicHttpExtension implements ElepyExtension {
 
             if (elepyException.getStatus() == 500) {
                 logger.error(exception.getMessage(), exception);
-                exception.printStackTrace();
             }
             context.type("application/json");
 

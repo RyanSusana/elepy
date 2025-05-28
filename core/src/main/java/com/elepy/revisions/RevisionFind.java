@@ -19,27 +19,27 @@ public class RevisionFind implements ActionHandler<Revision> {
 
     @Override
     public void handle(HandlerContext<Revision> ctx) throws Exception {
-
-        final var context = ctx.http();
-
-        final var revisions = ctx.crud();
-
-        final Schema<?> schema = Optional.ofNullable(context.queryParams("schema"))
-                .flatMap(schemaPath -> context.request().schemas().stream().filter(s -> s.getPath().equalsIgnoreCase(schemaPath)).findFirst())
-                .orElseThrow(() -> ElepyException.notFound("Schema"));
-
-        // TODO
-        final var query = createQuery(schema,
-                context.queryParams("user"),
-                context.queryParams("record"),
-                context.queryParams("skip"),
-                context.queryParams("limit"));
-
-        if ("true".equalsIgnoreCase(context.queryParams("count"))) {
-            context.response().json(revisions.count(query.getExpression()));
-        } else {
-            context.response().json(revisions.find(query));
-        }
+//
+//        final var context = ctx.http();
+//
+//        final var revisions = ctx.crud();
+//
+//        final Schema<?> schema = Optional.ofNullable(context.queryParams("schema"))
+//                .flatMap(schemaPath -> context.request().schemas().stream().filter(s -> s.getPath().equalsIgnoreCase(schemaPath)).findFirst())
+//                .orElseThrow(() -> ElepyException.notFound("Schema"));
+//
+//        // TODO
+//        final var query = createQuery(schema,
+//                context.queryParams("user"),
+//                context.queryParams("record"),
+//                context.queryParams("skip"),
+//                context.queryParams("limit"));
+//
+//        if ("true".equalsIgnoreCase(context.queryParams("count"))) {
+//            context.response().json(revisions.count(query.getExpression()));
+//        } else {
+//            context.response().json(revisions.find(query));
+//        }
     }
 
     private Query createQuery(Schema<?> schema, String userId, String recordId, String skip, String limit) {

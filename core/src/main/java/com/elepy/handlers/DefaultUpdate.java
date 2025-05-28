@@ -63,7 +63,7 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
     public T evaluateAndUpdate(HandlerContext<T> ctx, T update) throws Exception {
         ctx.http().validate(update);
 
-        new DefaultIntegrityEvaluator<>(ctx.model()).evaluate(update, EvaluationType.UPDATE);
+        new DefaultIntegrityEvaluator<>(ctx.model().getCrud()).evaluate(update, EvaluationType.UPDATE);
         ctx.crud().update(update);
 
         return update;
@@ -71,13 +71,13 @@ public class DefaultUpdate<T> implements ActionHandler<T> {
 
 
     @SuppressWarnings("unchecked")
-    private T setParamsOnObject(Request request, ObjectMapper objectMapper, T object, Class<T> modelClass) {
+    private T setParamsOnObject(Request request, ObjectMapper objectMapper, T object, Class<T> schemaClass) {
         Map<String, Object> map = objectMapper.convertValue(object, Map.class);
 
         Map<String, Object> params = new HashMap<>();
         request.queryParams().forEach(queryParam -> params.put(queryParam, request.queryParams(queryParam)));
 
-        return combineMapsIntoNewObject(objectMapper, map, params, modelClass);
+        return combineMapsIntoNewObject(objectMapper, map, params, schemaClass);
     }
 
 

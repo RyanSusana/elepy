@@ -167,7 +167,7 @@ public class RevisionCrud<T> implements Crud<T> {
     }
 
     private String getUserId() {
-        return http.loggedInUser().map(User::getId).orElse(null);
+        return http.request().loggedInUser().map(User::getId).orElse(null);
     }
 
     // Query methods

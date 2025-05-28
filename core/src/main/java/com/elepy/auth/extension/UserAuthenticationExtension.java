@@ -2,7 +2,7 @@ package com.elepy.auth.extension;
 
 
 import com.elepy.auth.authentication.AuthenticationService;
-import com.elepy.auth.users.UserCenter;
+import com.elepy.auth.users.UserService;
 import com.elepy.configuration.ElepyExtension;
 import com.elepy.configuration.ElepyPostConfiguration;
 import com.elepy.exceptions.ElepyException;
@@ -10,27 +10,33 @@ import com.elepy.exceptions.Message;
 import com.elepy.http.HttpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class UserAuthenticationExtension implements ElepyExtension {
 
+    @Inject
+    private UserService userService;
+
+    @Inject
+    private AuthenticationService authenticationService;
+
+    @Inject
+    private ObjectMapper objectMapper;
+
 
     @Override
     public void setup(HttpService http, ElepyPostConfiguration elepy) {
-        var userCrud = elepy.getDependency(UserCenter.class);
-
-        var authenticationService = elepy.getDependency(AuthenticationService.class);
-        var objectMapper = elepy.getDependency(ObjectMapper.class);
         http.get("/elepy/has-users", ctx -> {
-            if (userCrud.hasUsers()) {
+            if (userService.hasUsers()) {
                 ctx.result(Message.of("Users exist", 200));
             } else {
                 ctx.result(Message.of("No users exist", 404));
             }
         });
         http.get("/elepy/login-check", ctx -> {
-            ctx.loggedInUserOrThrow();
+            ctx.request().loggedInUserOrThrow();
             ctx.result(Message.of("Your are logged in", 200));
             ctx.response().header("Vary", "*");
         });

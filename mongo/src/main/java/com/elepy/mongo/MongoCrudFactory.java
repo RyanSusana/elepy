@@ -5,15 +5,18 @@ import com.elepy.crud.CrudFactory;
 import com.elepy.schemas.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoDatabase;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class MongoCrudFactory implements CrudFactory {
 
-    @Inject
     private MongoDatabase database;
 
     @Inject
-    private ObjectMapper objectMapper;
+    public MongoCrudFactory(MongoDatabase database) {
+        this.database = database;
+    }
 
 
     @Override

@@ -5,14 +5,33 @@ import com.elepy.exceptions.ElepyException;
 import com.elepy.http.HttpService;
 import com.elepy.http.RawFile;
 import com.google.common.net.HttpHeaders;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
+import com.elepy.http.RawFile;
+import com.elepy.tests.ElepySystemUnderTest;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -547,30 +566,65 @@ public abstract class HttpServiceTest {
         await().atMost(1, TimeUnit.SECONDS).untilAtomic(attribute, equalTo("theAttribute"));
 
     }
-
-
     @Test
-    void requests_haveProper_FileUploads() throws IOException, UnirestException {
-
+    void requests_haveProper_FileUploads() throws IOException, InterruptedException {
         AtomicReference<List<RawFile>> atomicReference = new AtomicReference<>();
 
-        service.post("/elepy/uploads", ctx -> atomicReference.set(ctx.request().uploadedFiles("files")));
+        service.post("/elepy/uploads", ctx -> {
+            atomicReference.set(ctx.request().uploadedFiles("files"));
+            ctx.response().result("Files uploaded successfully");
+        });
 
+        // Start the Elepy service, equivalent to service.ignite()
         service.ignite();
-        final InputStream file1 = inputStream("cv.pdf");
 
-        Unirest.post("http://localhost:3030/elepy/uploads")
-                .field("files", file1, "cv.pdf")
-                .asString();
+        final String boundary = "----WebKitFormBoundary" + System.currentTimeMillis();
+        final String CRLF = "\r\n"; // Line separator required by multipart/form-data
 
-        file1.close();
+        // Prepare the file content as bytes
+        byte[] fileContent;
+        try (InputStream file1 = inputStream("cv.pdf")) {
+            fileContent = IOUtils.toByteArray(file1);
+        }
 
+        // Build the multipart/form-data request body
+        ByteArrayOutputStream requestBody = new ByteArrayOutputStream();
+
+        // Part for the "files" field
+        requestBody.write(("--" + boundary + CRLF).getBytes(StandardCharsets.UTF_8));
+        requestBody.write(("Content-Disposition: form-data; name=\"files\"; filename=\"cv.pdf\"" + CRLF).getBytes(StandardCharsets.UTF_8));
+        requestBody.write(("Content-Type: application/pdf" + CRLF).getBytes(StandardCharsets.UTF_8)); // Specify content type of the file
+        requestBody.write((CRLF).getBytes(StandardCharsets.UTF_8)); // Empty line to separate headers from body
+        requestBody.write(fileContent);
+        requestBody.write((CRLF).getBytes(StandardCharsets.UTF_8));
+
+        // Closing boundary
+        requestBody.write(("--" + boundary + "--" + CRLF).getBytes(StandardCharsets.UTF_8));
+
+
+        // Build the HttpRequest
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:3030/elepy/uploads"))
+                .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(requestBody.toByteArray()))
+                .build();
+
+        // Send the request
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Assert HTTP response status
+        assertThat(response.statusCode()).isEqualTo(200);
+
+        // Await for the file to be processed by the Elepy service
         await().atMost(5, TimeUnit.SECONDS).untilAtomic(atomicReference, hasSize(1));
 
         final List<RawFile> rawFiles = atomicReference.get();
         final RawFile rawFile1 = rawFiles.get(0);
 
-        assertThat(IOUtils.contentEquals(rawFile1.getContent(), inputStream("cv.pdf"))).isTrue();
+        // Verify the content of the uploaded file
+        try (InputStream expectedInputStream = inputStream("cv.pdf")) {
+            assertThat(IOUtils.contentEquals(rawFile1.getContent(), expectedInputStream)).isTrue();
+        }
     }
 
     @Test

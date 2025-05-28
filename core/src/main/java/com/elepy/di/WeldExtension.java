@@ -2,10 +2,7 @@ package com.elepy.di;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
-import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
-import jakarta.enterprise.inject.spi.Extension;
-import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.inject.spi.*;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -16,20 +13,13 @@ public class WeldExtension implements Extension {
     private Set<Class<?>> dependencyClasses = new HashSet<>();
 
 
+
     public void registerUninitializedDependencies(@Observes BeforeBeanDiscovery bbdEvent) {
         dependencyClasses.forEach(cls -> {
             bbdEvent.addAnnotatedType(cls, cls.getName());
         });
     }
 
-    public void configureUninitializedDependencies(@Observes ProcessAnnotatedType<?> event){
-        final var javaClass  = event.getAnnotatedType().getJavaClass();
-
-        if (dependencyClasses.contains(javaClass)) {
-            event.configureAnnotatedType()
-                    .add(ApplicationScoped.Literal.INSTANCE);
-        }
-    }
     public void registerInitializedDependencies(@Observes AfterBeanDiscovery abdEvent) {
         dependenciesObjects.forEach((cls, obj) -> {
             abdEvent.addBean()
