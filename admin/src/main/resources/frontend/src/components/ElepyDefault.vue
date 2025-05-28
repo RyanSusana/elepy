@@ -86,7 +86,8 @@ import Table from "./tables/Table.vue";
 import Pagination from "./settings/Pagination.vue";
 import BaseLayout from "./base/BaseLayout.vue";
 import ActionsButton from "./base/ActionsButton";
-import {mapGetters, mapState} from "vuex";
+import { useMainStore } from "@/stores/main";
+import { storeToRefs } from 'pinia'
 import ActionButton from "./base/ActionButton";
 
 import axios from "axios";
@@ -95,6 +96,16 @@ import Search from "@/search/Search";
 
 export default {
   name: "Elepy",
+  setup() {
+    const store = useMainStore()
+    const { selectedRows } = storeToRefs(store)
+    
+    return {
+      selectedRows,
+      canExecute: store.canExecute,
+      setSelectedRows: store.setSelectedRows
+    }
+  },
   watch: {
     $route: {
       handler: 'getModelData',
@@ -110,9 +121,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(["selectedRows"]),
-    ...mapGetters(["canExecute"]),
-
     allActions() {
       return this.model.actions.filter(this.canExecute);
     },
@@ -164,7 +172,7 @@ export default {
                       this.selectedRows.join(",")
                 })
                     .then(response => {
-                      this.$store.commit("SET_SELECTED_ROWS", []);
+                      this.setSelectedRows([]);
                       this.getModelData();
                       Utils.displayResponse(response);
                     })

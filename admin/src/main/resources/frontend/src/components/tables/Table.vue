@@ -86,7 +86,8 @@ import TableRow from "./TableRow.vue";
 import Utils from "../../utils";
 import Pagination from "../settings/Pagination";
 
-import {mapGetters, mapState} from "vuex"
+import { useMainStore } from "@/stores/main";
+import { storeToRefs } from 'pinia'
 import EventBus from "../../event-bus";
 
 import axios from "axios";
@@ -96,14 +97,23 @@ export default {
 
 
   components: {TableRow, Pagination},
+  setup() {
+    const store = useMainStore()
+    const { selectedRows } = storeToRefs(store)
+    
+    return {
+      selectedRows,
+      canExecute: store.canExecute,
+      selectRows: store.selectRows,
+      setSelectedRows: store.setSelectedRows
+    }
+  },
   watch: {
     $route(to, from) {
       this.deselectAll();
     }
   },
   computed: {
-    ...mapState(["selectedRows"]),
-    ...mapGetters(["canExecute"]),
     singleActions() {
       return this.model.actions.filter(action => action.singleRecord && this.canExecute(action));
     },
@@ -155,18 +165,18 @@ export default {
     },
     selectAll() {
       this.deselectAll();
-      this.$store.commit("SELECT_ROWS", this.currentPageIds);
+      this.selectRows(this.currentPageIds);
     },
     deselectAll() {
-      this.$store.commit("SET_SELECTED_ROWS", this.selectedRows.filter(
+      this.setSelectedRows(this.selectedRows.filter(
           el => this.currentPageIds.indexOf(el) < 0
       ));
     },
     tableRowSelected(id) {
       if (!this.isSelected(id)) {
-        this.$store.commit("SELECT_ROWS", [id])
+        this.selectRows([id])
       } else {
-        this.$store.commit("SET_SELECTED_ROWS", this.selectedRows.filter(i => i !== id));
+        this.setSelectedRows(this.selectedRows.filter(i => i !== id));
       }
     },
     isSelected(id) {
