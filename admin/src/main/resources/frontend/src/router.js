@@ -1,21 +1,16 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import vue from "./main"
-
-import store from './store'
+import { createRouter, createWebHistory } from 'vue-router'
+import { useMainStore } from './stores/main'
 import utils from "@/utils";
 
 const requireLogin = (to, from, next) => {
-
-    store.watch(
-        (state, getters) => getters.ready,
-        (ready) => {
-
-            if (!ready) {
-                return;
-            }
-
-            if (store.getters.loggedIn) {
+    const store = useMainStore();
+    
+    // For Vue 3 with Pinia, we can use reactive directly
+    const unwatch = store.$subscribe((mutation, state) => {
+        if (state.ready) {
+            unwatch(); // Stop watching once ready
+            
+            if (store.loggedIn) {
                 next();
             } else {
                 next({
@@ -25,16 +20,29 @@ const requireLogin = (to, from, next) => {
                     },
                 });
             }
-        },
-        {immediate: true}
-    )
+        }
+    }, { immediate: true });
 
-
+    // Check if already ready
+    if (store.ready) {
+        if (store.loggedIn) {
+            next();
+        } else {
+            next({
+                path: '/login',
+                query: {
+                    redirect: to.fullPath,
+                },
+            });
+        }
+    }
 };
 
 const noLogin = (to, from, next) => {
+    const store = useMainStore();
+    
     if (to.query && to.query.code) {
-        return store.dispatch("loginOAuth", to.query).then(() => {
+        return store.loginOAuth(to.query).then(() => {
             return next(to.query.redirect ?? '/')
         }).catch(
             error => {
@@ -43,17 +51,17 @@ const noLogin = (to, from, next) => {
             }
         );
     }
-    store.watch(
-        (state, getters) => getters.elepyInitialized,
-        (initialized) => {
-
-
-            if (initialized && (to.path !== '/login')) {
+    
+    const unwatch = store.$subscribe((mutation, state) => {
+        if (state.hasUsers !== null) {
+            unwatch(); // Stop watching once initialized
+            
+            if (state.hasUsers && (to.path !== '/login')) {
                 next({
                     path: '/login',
                     query: to.query
                 });
-            } else if (!initialized && to.path !== '/initial-user') {
+            } else if (!state.hasUsers && to.path !== '/initial-user') {
                 next({
                     path: '/initial-user',
                     query: to.query
@@ -62,13 +70,26 @@ const noLogin = (to, from, next) => {
             } else {
                 next();
             }
+        }
+    }, { immediate: true });
 
-        },
-        {immediate: true}
-    );
-
+    // Check if already initialized
+    if (store.hasUsers !== null) {
+        if (store.hasUsers && (to.path !== '/login')) {
+            next({
+                path: '/login',
+                query: to.query
+            });
+        } else if (!store.hasUsers && to.path !== '/initial-user') {
+            next({
+                path: '/initial-user',
+                query: to.query
+            });
+        } else {
+            next();
+        }
+    }
 };
-Vue.use(VueRouter)
 
 const routes = [
     {
@@ -124,30 +145,30 @@ const routes = [
 
 ];
 
-const router = new VueRouter({
-    mode: 'history',
-    base: '/elepy/admin',
+const router = createRouter({
+    history: createWebHistory('/elepy/admin'),
     routes,
 
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
         } else {
-            return {x: 0, y: 0}
+            return {top: 0, left: 0}
         }
     },
 });
 
 router.beforeEach((to, from, next) => {
-    if (store.state.navigationWarning) {
-        UIkit.modal.confirm(store.state.navigationWarning, {
+    const store = useMainStore();
+    if (store.navigationWarning) {
+        UIkit.modal.confirm(store.navigationWarning, {
             labels: {
-                ok: vue.$t('elepy.ui.yes'),
-                cancel: vue.$t('elepy.ui.no'),
+                ok: 'Yes', // We'll need to handle i18n differently in Vue 3
+                cancel: 'No',
             }
         }).then(
             () => {
-                store.commit('CLEAR_NAVIGATION_WARNING')
+                store.clearNavigationWarning()
                 next();
             },
             () => {
