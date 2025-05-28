@@ -6,9 +6,17 @@
 </template>
 
 <script>
+import { useMainStore } from "@/stores/main";
+
 export default {
   name: "ActionButton",
   props: ['action', 'actionName'],
+  setup() {
+    const store = useMainStore()
+    return {
+      store
+    }
+  },
 
   data() {
     return {busy: false}
@@ -24,7 +32,7 @@ export default {
 
       try {
         await this.action();
-        this.$store.commit('CLEAR_NAVIGATION_WARNING')
+        this.store.clearNavigationWarning()
       } finally {
         this.busy = false;
       }

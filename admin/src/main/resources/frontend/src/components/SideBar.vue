@@ -2,7 +2,7 @@
   <div id="sidebar" class="">
     <div class="sidebar-content">
       <router-link to="/" class="sidebar-header uk-flex uk-flex-center">
-        <img class="banner-image" :src="$store.getters.logo" alt="logo">
+        <img class="banner-image" :src="logo" alt="logo">
       </router-link>
       <div class="sidebar-main uk-light">
         <h4 class="sidebar-heading">{{ $t('elepy.ui.resources') }}</h4>
@@ -32,21 +32,28 @@
   </div>
 </template>
 <script>
-import {mapGetters, mapState} from "vuex";
+import { useMainStore } from "@/stores/main";
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import LanguageSelect from "@/components/LanguageSelect";
 
 export default {
   name: 'SideBar',
   components: {LanguageSelect},
-  computed: {
-    ...mapState(['allModels', 'locale']),
-    ...mapGetters(['canExecute']),
-  },
-  methods: {
-
-    logOut() {
-      this.$store.dispatch('logOut');
-      this.$store.dispatch('init').then(_ => this.$router.replace('/login'))
+  setup() {
+    const store = useMainStore()
+    const router = useRouter()
+    const { allModels, locale } = storeToRefs(store)
+    
+    return {
+      allModels,
+      locale,
+      logo: store.logo,
+      canExecute: store.canExecute,
+      logOut: () => {
+        store.logOut();
+        store.init().then(_ => router.replace('/login'))
+      }
     }
   }
 }

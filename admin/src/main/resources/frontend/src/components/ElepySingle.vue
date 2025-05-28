@@ -110,13 +110,21 @@ import ActionsButton from "./base/ActionsButton";
 
 import isEqual from "lodash/isEqual"
 import ActionButton from "./base/ActionButton";
-import {mapGetters} from "vuex";
+import { useMainStore } from "@/stores/main";
 import RevisionHistory from "@/components/modals/RevisionHistory";
 
 const UIkit = require("uikit");
 const axios = require("axios/index");
 
-Vue.use(require('vue-shortkey'));
+export default {
+  name: "ElepySingle",
+  setup() {
+    const store = useMainStore()
+    return {
+      store,
+      canExecute: store.canExecute
+    }
+  },
 export default {
   name: "ElepySingle",
   data() {
@@ -133,8 +141,6 @@ export default {
   components: {RevisionHistory, ActionButton, ObjectField, ActionsButton, BaseLayout},
 
   computed: {
-    ...mapGetters(['canExecute']),
-
     revisionsEnabled() {
       return (this.model.keepRevisionsFor || this.model.keepRevisionsAmount) && this.itemIsLoaded && this.canSave;
     },
@@ -196,9 +202,9 @@ export default {
   methods: {
     navigationGuard() {
       if (isEqual(this.item, this.itemCopy)) {
-        this.$store.commit('CLEAR_NAVIGATION_WARNING')
+        this.store.clearNavigationWarning()
       } else {
-        this.$store.commit('SET_NAVIGATION_WARNING', this.$t('elepy.ui.prompts.back'))
+        this.store.setNavigationWarning(this.$t('elepy.ui.prompts.back'))
       }
     },
     goBack() {
@@ -236,7 +242,7 @@ export default {
                       url
                 })
                     .then(response => {
-                      this.$store.commit('CLEAR_NAVIGATION_WARNING')
+                      this.store.clearNavigationWarning()
                       this.violations = [];
                       Utils.displayResponse(response);
                       if (this.isCreating) {

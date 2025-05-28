@@ -1,40 +1,50 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import vue from "./main"
-
-import store from './store'
+import { createRouter, createWebHistory } from 'vue-router'
+import { useMainStore } from './stores/main'
 import utils from "@/utils";
 
+const UIkit = require('uikit');
+
 const requireLogin = (to, from, next) => {
-
-    store.watch(
-        (state, getters) => getters.ready,
-        (ready) => {
-
-            if (!ready) {
-                return;
-            }
-
-            if (store.getters.loggedIn) {
-                next();
+    const store = useMainStore()
+    
+    if (store.ready) {
+        if (store.loggedIn) {
+            next();
+        } else {
+            next({
+                path: '/login',
+                query: {
+                    redirect: to.fullPath,
+                },
+            });
+        }
+    } else {
+        // Wait for store to be ready
+        const checkReady = () => {
+            if (store.ready) {
+                if (store.loggedIn) {
+                    next();
+                } else {
+                    next({
+                        path: '/login',
+                        query: {
+                            redirect: to.fullPath,
+                        },
+                    });
+                }
             } else {
-                next({
-                    path: '/login',
-                    query: {
-                        redirect: to.fullPath,
-                    },
-                });
+                setTimeout(checkReady, 50)
             }
-        },
-        {immediate: true}
-    )
-
-
+        }
+        checkReady()
+    }
 };
 
 const noLogin = (to, from, next) => {
+    const store = useMainStore()
+    
     if (to.query && to.query.code) {
-        return store.dispatch("loginOAuth", to.query).then(() => {
+        return store.loginOAuth(to.query).then(() => {
             return next(to.query.redirect ?? '/')
         }).catch(
             error => {
@@ -43,32 +53,45 @@ const noLogin = (to, from, next) => {
             }
         );
     }
-    store.watch(
-        (state, getters) => getters.elepyInitialized,
-        (initialized) => {
-
-
-            if (initialized && (to.path !== '/login')) {
-                next({
-                    path: '/login',
-                    query: to.query
-                });
-            } else if (!initialized && to.path !== '/initial-user') {
-                next({
-                    path: '/initial-user',
-                    query: to.query
-                });
-
+    
+    if (store.hasUsers !== null) {
+        if (store.hasUsers && (to.path !== '/login')) {
+            next({
+                path: '/login',
+                query: to.query
+            });
+        } else if (!store.hasUsers && to.path !== '/initial-user') {
+            next({
+                path: '/initial-user',
+                query: to.query
+            });
+        } else {
+            next();
+        }
+    } else {
+        // Wait for hasUsers to be determined
+        const checkHasUsers = () => {
+            if (store.hasUsers !== null) {
+                if (store.hasUsers && (to.path !== '/login')) {
+                    next({
+                        path: '/login',
+                        query: to.query
+                    });
+                } else if (!store.hasUsers && to.path !== '/initial-user') {
+                    next({
+                        path: '/initial-user',
+                        query: to.query
+                    });
+                } else {
+                    next();
+                }
             } else {
-                next();
+                setTimeout(checkHasUsers, 50)
             }
-
-        },
-        {immediate: true}
-    );
-
+        }
+        checkHasUsers()
+    }
 };
-Vue.use(VueRouter)
 
 const routes = [
     {
@@ -124,9 +147,8 @@ const routes = [
 
 ];
 
-const router = new VueRouter({
-    mode: 'history',
-    base: '/elepy/admin',
+const router = createRouter({
+    history: createWebHistory('/elepy/admin'),
     routes,
 
     scrollBehavior(to, from, savedPosition) {
@@ -139,15 +161,16 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (store.state.navigationWarning) {
-        UIkit.modal.confirm(store.state.navigationWarning, {
+    const store = useMainStore()
+    if (store.navigationWarning) {
+        UIkit.modal.confirm(store.navigationWarning, {
             labels: {
-                ok: vue.$t('elepy.ui.yes'),
-                cancel: vue.$t('elepy.ui.no'),
+                ok: 'Yes', // We'll fix this after filters are converted
+                cancel: 'No',
             }
         }).then(
             () => {
-                store.commit('CLEAR_NAVIGATION_WARNING')
+                store.clearNavigationWarning()
                 next();
             },
             () => {

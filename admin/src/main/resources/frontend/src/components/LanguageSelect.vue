@@ -1,7 +1,7 @@
 <template>
   <select @change="switchLanguage" :value="locale" id="" class="language-select light "
           v-if="settings && Object.keys(settings.availableLocales).length>1">
-    <option v-for="(localeName, code) in settings.availableLocales" :value="code">{{ localeName }}</option>
+    <option v-for="(localeName, code) in settings.availableLocales" :key="code" :value="code">{{ localeName }}</option>
   </select>
 </template>
 <style lang="scss">
@@ -26,12 +26,22 @@
 }
 </style>
 <script>
-import {mapState} from "vuex";
+import { useMainStore } from "@/stores/main";
+import { storeToRefs } from 'pinia'
 
 export default {
   name: 'LanguageSelect',
-  computed: {
-    ...mapState(['locale', 'settings']),
+  setup() {
+    const store = useMainStore()
+    const { locale, settings } = storeToRefs(store)
+    
+    return {
+      locale,
+      settings,
+      switchLanguage: (event) => {
+        return store.changeLocale(event.target.value);
+      }
+    }
   },
   data() {
     return {
@@ -39,11 +49,6 @@ export default {
         "en": "English",
         "nl": "Nederlands"
       }
-    }
-  },
-  methods: {
-    switchLanguage(event) {
-      return this.$store.dispatch('changeLocale', event.target.value);
     }
   }
 }

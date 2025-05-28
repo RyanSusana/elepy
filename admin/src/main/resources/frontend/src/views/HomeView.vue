@@ -4,22 +4,28 @@
 
 
         <div class="models">
-            <ModelCard v-for="model in allModels" :model="model"/>
+            <ModelCard v-for="model in allModels" :key="model.name" :model="model"/>
         </div>
 
     </div>
 </template>
 
 <script>
-    import {mapGetters, mapState} from "vuex"
+    import { useMainStore } from "@/stores/main";
+    import { storeToRefs } from 'pinia'
     import ModelCard from "./ModelCard";
 
     export default {
         name: "HomeView",
         components: {ModelCard},
-        computed: {
-            ...mapState(['allModels']),
-            ...mapGetters(['canExecute'])
+        setup() {
+            const store = useMainStore()
+            const { allModels } = storeToRefs(store)
+            
+            return {
+                allModels,
+                canExecute: store.canExecute
+            }
         }
     }
 </script>

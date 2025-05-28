@@ -9,7 +9,7 @@
 
 
         <div class="uk-background-primary">
-          <img :src="$store.getters.logo"
+          <img :src="logo"
                alt="logo">
         </div>
 
@@ -75,10 +75,19 @@ import ActionButton from '../components/base/ActionButton';
 import Utils from '../utils';
 import LanguageSelect from "@/components/LanguageSelect";
 import OAuthButtons from "@/components/OAuthButtons";
+import { useMainStore } from "@/stores/main";
 
 export default {
   name: "InitialUserView",
   components: {OAuthButtons, LanguageSelect, ActionButton},
+  setup() {
+    const store = useMainStore()
+    
+    return {
+      store,
+      logo: store.logo
+    }
+  },
   data() {
     return {
       confirmPassword: "",
@@ -92,7 +101,7 @@ export default {
     register() {
       if (this.confirmPassword === this.user.password) {
         return axios.post("/users", this.user)
-            .then(() => this.$store.dispatch('init'));
+            .then(() => this.store.init());
       } else {
         Utils.displayError("Passwords do not match!");
       }
